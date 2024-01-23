@@ -1,0 +1,13 @@
+:host {
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 40vh;
+
+    display: block;
+
+    &__img {
+      object-fit: cover;
+    }
+  }
+}
