@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
+@import url('https://fonts.googleapis.com/css2?family=Aleo:wght@200;400;600&display=swap');
 
 /* Order */
-@layer reset, primeng;
+@layer reset, primeng, custom;
 
 /* Reset CSS */
 @layer reset {
@@ -50,5 +51,12 @@
   input {
     -webkit-appearance: none;
     border-radius: 0;
+  }
+}
+
+@layer custom {
+  body,
+  body .p-component {
+    font-family: 'Aleo', serif;
   }
 }

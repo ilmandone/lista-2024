@@ -10,4 +10,12 @@
       object-fit: cover;
     }
   }
+
+  main {
+    position: relative;
+    width: 100vw;
+    height: 60vh;
+
+    background-color: red;
+  }
 }
