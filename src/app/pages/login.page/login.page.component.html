@@ -1,9 +1,23 @@
 <picture class="hero">
     <source media="(min-width:1440px)" srcset="https://picsum.photos/1920/1080">
     <source media="(min-width:768px)" srcset="https://picsum.photos/1024/768">
-    <img class="hero__img" ngSrc="https://picsum.photos/480/640" alt="Decorative image for login page" fill>
+    <img class="hero__img" ngSrc="https://picsum.photos/480/640" alt="Decorative image for login page" fill priority="true">
 </picture>
 <main>
     <h1>Tati's list</h1>
 
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+        <span class="p-float-label">
+            <input id="username" type="text" pInputText  formControlName="username">
+            <label for="username">Username</label>
+        </span>
+        
+        <span class="p-float-label">
+            <input id="password" type="text" pInputText  formControlName="password">
+            <label for="password">Password</label>
+        </span>
+       
+        <button pButton pRipple type="submit" label="Login"></button>
+    </form>
 </main>

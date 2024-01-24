@@ -1,14 +1,13 @@
 
 $head-size: (
-    'h1': 6rem
+    'h1': 3rem
 );
 
 $head-weight: (
     'h1': 200
 );
 
-@mixin header($size) {
-    font-family: 'Aleo', serif;
+@mixin header($size) {    
     font-size: map-get($map: $head-size, $key: $size);
     font-weight: map-get($map: $head-weight, $key: $size)
 

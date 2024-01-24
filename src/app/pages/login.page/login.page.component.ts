@@ -1,15 +1,37 @@
-import { Component } from '@angular/core';
-import {NgOptimizedImage} from "@angular/common";
+import { Component, OnInit } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+
+interface LoginFormGroup {
+  username: FormControl<string | null>;
+  password: FormControl<string | null>;
+}
 
 @Component({
   selector: 'app-login.page',
   standalone: true,
-    imports: [
-        NgOptimizedImage
-    ],
+  imports: [
+    NgOptimizedImage,
+    ReactiveFormsModule,
+    InputTextModule,
+    ButtonModule,
+  ],
   templateUrl: './login.page.component.html',
-  styleUrl: './login.page.component.scss'
+  styleUrl: './login.page.component.scss',
 })
-export class LoginPageComponent {
+export class LoginPageComponent implements OnInit {
+  loginForm!: FormGroup<any>;
 
+  ngOnInit(): void {
+    this.loginForm = new FormGroup({
+      username: new FormControl<string | null>(null),
+      password: new FormControl<string | null>(null),
+    });
+  }
+
+  login() {
+    console.log(this.loginForm.value)
+  }
 }
