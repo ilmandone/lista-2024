@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@use "./styles/typo.scss";
+
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import url('https://fonts.googleapis.com/css2?family=Aleo:wght@200;400;600&display=swap');
@@ -59,4 +61,6 @@
   body .p-component {
     font-family: 'Aleo', serif;
   }
+
+  @include typo.createHeaders();
 }
