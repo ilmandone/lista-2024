@@ -8,12 +8,12 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="login()">
 
-        <span class="p-float-label">
-            <input id="username" type="text" pInputText  formControlName="username">
+        <span class="input-wrapper p-float-label">
+            <input id="username" type="text" pInputText  formControlName="username" [required]="true">
             <label for="username">Username</label>
         </span>
         
-        <span class="p-float-label">
+        <span class="input-wrapper p-float-label">
             <input id="password" type="text" pInputText  formControlName="password">
             <label for="password">Password</label>
         </span>

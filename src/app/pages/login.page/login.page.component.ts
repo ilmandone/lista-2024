@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
@@ -26,8 +26,12 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
-      username: new FormControl<string | null>(null),
-      password: new FormControl<string | null>(null),
+      username: new FormControl<string | null>(null,{
+        validators: [Validators.required]
+      }),
+      password: new FormControl<string | null>(null, {
+        validators: [Validators.required]
+      }),
     });
   }
 
