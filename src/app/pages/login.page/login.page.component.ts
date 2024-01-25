@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { NgOptimizedImage } from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {NgOptimizedImage} from '@angular/common';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
+import {ButtonModule} from 'primeng/button';
+import {RippleModule} from "primeng/ripple";
 
 interface LoginFormGroup {
   username: FormControl<string | null>;
@@ -22,6 +23,7 @@ interface LoginFormGroup {
     ReactiveFormsModule,
     InputTextModule,
     ButtonModule,
+    RippleModule,
   ],
   templateUrl: './login.page.component.html',
   styleUrl: './login.page.component.scss',

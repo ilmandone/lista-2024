@@ -1,11 +1,11 @@
 <picture class="hero">
-  <source media="(min-width:1440px)" srcset="https://picsum.photos/1920/1080" />
-  <source media="(min-width:768px)" srcset="https://picsum.photos/1024/768" />
+  <source media="(min-width:1440px)" srcset="https://picsum.photos/1920/1080"/>
+  <source media="(min-width:768px)" srcset="https://picsum.photos/1024/768"/>
   <img
     class="hero__img"
     ngSrc="https://picsum.photos/480/640"
     alt="Decorative image for login page"
-    fill
+    fill="true"
     priority="true"
   />
 </picture>
@@ -26,15 +26,19 @@
 
     @if (userFC.invalid && userFC.touched) {
       <div class="error-msg">Username richiesto</div>
+    } @else {
+      <div class="error-ph"></div>
     }
 
     <span class="input-wrapper p-float-label">
-      <input id="password" type="text" pInputText [formControl]="pswFC" />
+      <input id="password" type="password" pInputText [formControl]="pswFC"/>
       <label for="password">Password</label>
     </span>
 
     @if (pswFC.invalid && pswFC.touched) {
       <div class="error-msg">Password richiesta</div>
+    } @else {
+      <div class="error-ph"></div>
     }
 
     <button pButton pRipple type="submit" [disabled]="loginFG.invalid">

@@ -29,17 +29,24 @@
     form {
       @include utils.flex-column-centered;
 
-      .input-wrapper,
+      .input-wrapper:not(:first-child),
       button {
-        margin-top: 2rem;
+        margin-top: 1.85rem;
       }
 
-	  .error-msg {
-		width: 100%;
-		color: var(--red-500);
-		padding: 0.2rem;
-		font-size: vars.$font-size-small;
-	  }
+      .error {
+        &-ph,
+        &-msg {
+          width: 100%;
+          height: 1rem;
+        }
+      }
+
+      .error-msg {
+        padding-top: 0.5rem;
+        color: var(--red-500);
+        font-size: vars.$font-size-small;
+      }
     }
   }
 }
