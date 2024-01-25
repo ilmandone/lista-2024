@@ -2,10 +2,11 @@
 @use "~styles/vars.scss";
 
 :host {
+
   .hero {
     position: relative;
     width: 100vw;
-    height: 40vh;
+    height: utils.getRealVh(30);
 
     display: block;
 
@@ -17,9 +18,12 @@
   main {
     position: relative;
     width: 100vw;
-    height: 60vh;
+    height: utils.getRealVh(70);
+
+    background-color: var(--surface-0);
 
     @include utils.flex-column-centered;
+    justify-content: space-between;
 
     h1 {
       margin-top: 4rem;
@@ -29,9 +33,19 @@
     form {
       @include utils.flex-column-centered;
 
-      .input-wrapper:not(:first-child),
-      button {
+      .input-wrapper:not(:first-child) {
         margin-top: 1.85rem;
+      }
+
+      .input-wrapper,
+      input {
+        width: 100%;
+      }
+
+      button {
+        margin-top: 4.5vh;
+        width: 100%;
+        justify-content: center;
       }
 
       .error-msg {
@@ -41,6 +55,11 @@
         color: var(--red-500);
         font-size: vars.$font-size-small;
       }
+    }
+
+    .forgot-password {
+      margin-top: 2rem;
+      margin-bottom: 7vh;
     }
   }
 }

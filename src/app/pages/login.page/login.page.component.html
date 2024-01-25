@@ -10,11 +10,13 @@
   />
 </picture>
 <main>
-  <h1>Tati's list</h1>
+  <div class="main-section">
+    <h1>Tati's list</h1>
 
-  <form [formGroup]="loginFG" (ngSubmit)="login()">
+    <form [formGroup]="loginFG" (ngSubmit)="login()">
     <span class="input-wrapper p-float-label">
       <input
+        #inputElement
         id="username"
         type="text"
         pInputText
@@ -24,25 +26,31 @@
       <label for="username">Username</label>
     </span>
 
-    <div class="error-msg">
-      @if (userFC.invalid && userFC.touched) {
-        <span>Username richiesto</span>
-      }
-    </div>
+      <div class="error-msg">
+        @if (userFC.invalid && userFC.touched) {
+          <span>Username richiesto</span>
+        }
+      </div>
 
-    <span class="input-wrapper p-float-label">
+      <span class="input-wrapper p-float-label">
       <input id="password" type="password" pInputText [formControl]="pswFC"/>
       <label for="password">Password</label>
     </span>
 
-    <div class="error-msg">
-      @if (pswFC.invalid && pswFC.touched) {
-        <span>Password richiesta</span>
-      }
-    </div>
+      <div class="error-msg">
+        @if (pswFC.invalid && pswFC.touched) {
+          <span>Password richiesta</span>
+        }
+      </div>
 
-    <button pButton pRipple type="submit" [disabled]="loginFG.invalid">
-      Login
-    </button>
-  </form>
+      <button pButton pRipple type="submit" [disabled]="loginFG.invalid">
+        Login
+      </button>
+    </form>
+  </div>
+
+
+  <!--  Forgot password-->
+  <a class="forgot-password" [routerLink]="'/forgot-password'">Password dimenticata ?</a>
+
 </main>

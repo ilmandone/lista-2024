@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {
   FormControl,
@@ -9,10 +9,12 @@ import {
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import {RippleModule} from "primeng/ripple";
+import {RouterModule} from "@angular/router";
+import {Nullable} from "../../utils/commons";
 
 interface LoginFormGroup {
-  username: FormControl<string | null>;
-  password: FormControl<string | null>;
+  username: FormControl<Nullable<string>>;
+  password: FormControl<Nullable<string>>;
 }
 
 @Component({
@@ -24,28 +26,50 @@ interface LoginFormGroup {
     InputTextModule,
     ButtonModule,
     RippleModule,
+    RouterModule
   ],
   templateUrl: './login.page.component.html',
   styleUrl: './login.page.component.scss',
 })
 export class LoginPageComponent implements OnInit {
+
+  @ViewChild('inputElement', {static: true, read: ElementRef}) private _inputEl!: ElementRef
+
   loginFG!: FormGroup<LoginFormGroup>;
-  userFC!: FormControl<string | null>;
-  pswFC!: FormControl<string | null>;
+  userFC!: FormControl<Nullable<string>>;
+  pswFC!: FormControl<Nullable<string>>;
+
+  /**
+   * Create the login form group and controls
+   * @private
+   * @return {{loginFG: FormGroup<LoginFormGroup>,
+   *     userFC: FormControl<Nullable<string>>,
+   *     pswFC: FormControl<Nullable<string>>}}
+   */
+  private _createFG(): {
+    loginFG: FormGroup<LoginFormGroup>,
+    userFC: FormControl<Nullable<string>>,
+    pswFC: FormControl<Nullable<string>>
+  } {
+    const userFC = new FormControl<Nullable<string>>(null, {
+      validators: [Validators.required],
+    });
+
+    const pswFC = new FormControl<Nullable<string>>(null, {
+      validators: [Validators.required],
+    });
+
+    const loginFG = new FormGroup({
+      username: userFC,
+      password: pswFC,
+    });
+
+    return {loginFG, userFC, pswFC}
+  }
 
   ngOnInit(): void {
-    this.userFC = new FormControl<string | null>(null, {
-      validators: [Validators.required],
-    });
-
-    this.pswFC = new FormControl<string | null>(null, {
-      validators: [Validators.required],
-    });
-
-    this.loginFG = new FormGroup({
-      username: this.userFC,
-      password: this.pswFC,
-    });
+    Object.assign(this, this._createFG())
+    this._inputEl.nativeElement.focus()
   }
 
   login() {
