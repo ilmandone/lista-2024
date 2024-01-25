@@ -24,22 +24,22 @@
       <label for="username">Username</label>
     </span>
 
-    @if (userFC.invalid && userFC.touched) {
-      <div class="error-msg">Username richiesto</div>
-    } @else {
-      <div class="error-ph"></div>
-    }
+    <div class="error-msg">
+      @if (userFC.invalid && userFC.touched) {
+        <span>Username richiesto</span>
+      }
+    </div>
 
     <span class="input-wrapper p-float-label">
       <input id="password" type="password" pInputText [formControl]="pswFC"/>
       <label for="password">Password</label>
     </span>
 
-    @if (pswFC.invalid && pswFC.touched) {
-      <div class="error-msg">Password richiesta</div>
-    } @else {
-      <div class="error-ph"></div>
-    }
+    <div class="error-msg">
+      @if (pswFC.invalid && pswFC.touched) {
+        <span>Password richiesta</span>
+      }
+    </div>
 
     <button pButton pRipple type="submit" [disabled]="loginFG.invalid">
       Login
