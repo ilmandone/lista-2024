@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
@@ -22,20 +27,26 @@ interface LoginFormGroup {
   styleUrl: './login.page.component.scss',
 })
 export class LoginPageComponent implements OnInit {
-  loginForm!: FormGroup<any>;
+  loginFG!: FormGroup<LoginFormGroup>;
+  userFC!: FormControl<string | null>;
+  pswFC!: FormControl<string | null>;
 
   ngOnInit(): void {
-    this.loginForm = new FormGroup({
-      username: new FormControl<string | null>(null,{
-        validators: [Validators.required]
-      }),
-      password: new FormControl<string | null>(null, {
-        validators: [Validators.required]
-      }),
+    this.userFC = new FormControl<string | null>(null, {
+      validators: [Validators.required],
+    });
+
+    this.pswFC = new FormControl<string | null>(null, {
+      validators: [Validators.required],
+    });
+
+    this.loginFG = new FormGroup({
+      username: this.userFC,
+      password: this.pswFC,
     });
   }
 
   login() {
-    console.log(this.loginForm.value)
+    console.log(this.loginFG.value);
   }
 }
