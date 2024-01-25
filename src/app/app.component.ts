@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { PrimeNGConfig } from 'primeng/api';
+import {Component, inject, OnInit} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {ButtonModule} from 'primeng/button';
+import {PrimeNGConfig} from 'primeng/api';
 
 @Component({
   selector: 'app-root',
