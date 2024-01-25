@@ -69,12 +69,12 @@
   // Fix invalid state for touched input text with requried validator
   .p-inputtext.ng-dirty.ng-invalid,
   .p-inputtext.ng-touched.ng-invalid {
-    border: 1px solid red !important;
+    border: 1px solid var(--red-500) !important;
   }
 
   .p-float-label > .ng-invalid.ng-dirty + label,
   .p-float-label > .ng-invalid.ng-touched + label {
-    color: #e24c4c;
+    color: var(--red-500);
   }
 
   body,
