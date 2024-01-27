@@ -2,6 +2,7 @@ import {Injectable, Injector, signal} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {initializeApp, FirebaseApp} from "firebase/app"
 import {getAuth, type Auth, signInWithEmailAndPassword, signOut} from "firebase/auth"
+import {Nullable} from "primeng/ts-helpers";
 
 
 interface IFirebaseConfig {
@@ -23,7 +24,7 @@ export class FirebaseAuthentication {
 	private _app!: FirebaseApp
 	private _auth!: Auth
 
-	public isLoggedIn = signal<boolean>(false)
+	public isLoggedIn = signal<Nullable<boolean>>(null)
 
 	constructor(private _injector: Injector) {
 		this._firebaseAppConfig = {

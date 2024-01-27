@@ -1,15 +1,9 @@
-import {Component, effect, EffectRef, ElementRef, inject, Injector, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EffectRef, inject, Injector, OnDestroy, OnInit} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
-import {
-	FormControl,
-	FormGroup,
-	ReactiveFormsModule,
-	Validators,
-} from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import {RippleModule} from "primeng/ripple";
-import {Router, RouterModule} from "@angular/router";
 import {Nullable} from "../../utils/commons";
 import {FirebaseAuthentication} from "../../services/firebase/authe";
 
@@ -26,8 +20,7 @@ interface LoginFormGroup {
 		ReactiveFormsModule,
 		InputTextModule,
 		ButtonModule,
-		RippleModule,
-		RouterModule
+		RippleModule
 	],
 	templateUrl: './login.page.component.html',
 	styleUrl: './login.page.component.scss',
@@ -35,7 +28,6 @@ interface LoginFormGroup {
 export class LoginPageComponent implements OnInit, OnDestroy {
 
 	private _authSrv = inject(FirebaseAuthentication)
-	private _router = inject(Router)
 	private _loginEffectRef!: EffectRef
 
 	loginFG!: FormGroup<LoginFormGroup>;
@@ -80,13 +72,6 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-
-		this._loginEffectRef = effect(() => {
-			const loggedIn = this._authSrv.isLoggedIn()
-			if(loggedIn) void this._router.navigate(['/home'])
-
-		}, {injector: this._injector})
-
 		Object.assign(this, this._createFG())
 	}
 
