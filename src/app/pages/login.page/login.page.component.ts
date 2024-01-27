@@ -33,8 +33,6 @@ interface LoginFormGroup {
 })
 export class LoginPageComponent implements OnInit {
 
-  @ViewChild('inputElement', {static: true, read: ElementRef}) private _inputEl!: ElementRef
-
   loginFG!: FormGroup<LoginFormGroup>;
   userFC!: FormControl<Nullable<string>>;
   pswFC!: FormControl<Nullable<string>>;
@@ -69,7 +67,6 @@ export class LoginPageComponent implements OnInit {
 
   ngOnInit(): void {
     Object.assign(this, this._createFG())
-    this._inputEl.nativeElement.focus()
   }
 
   login() {
