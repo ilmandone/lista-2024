@@ -35,6 +35,8 @@ export class LoginPageComponent implements OnInit {
 	userFC!: FormControl<Nullable<string>>;
 	pswFC!: FormControl<Nullable<string>>;
 
+	loggingIn = false
+
 	beErrors: { user: Nullable<string>, psw: Nullable<string> } = {
 		user: null,
 		psw: null
@@ -73,9 +75,7 @@ export class LoginPageComponent implements OnInit {
 	 * @param {string} key
 	 */
 	resetBeError(key: string) {
-		console.log(key);
 		this.beErrors = {...this.beErrors, [key]: null}
-		console.log(this.beErrors);
 	}
 
 	/**
@@ -85,10 +85,12 @@ export class LoginPageComponent implements OnInit {
 	login() {
 		const values = this.loginFG.value
 
-		if (values.username && values.password)
+		if (values.username && values.password) {
+			this.loggingIn = true
 			this._authSrv.login(values.username, values.password)
-				.then()
-				.catch(e => {
+			.then()
+			.catch(e => {
+					this.loggingIn = false
 					const message = e.message as string
 
 					if (message.includes('auth/invalid-email')) {
@@ -100,6 +102,7 @@ export class LoginPageComponent implements OnInit {
 					// TODO HANDLE TOO MANY ERROR IN LOGIN AND USER LOCKED
 				}
 			)
+		}
 	}
 
 	ngOnInit(): void {
