@@ -68,12 +68,16 @@
 @layer custom {
   // Fix invalid state for touched input text with requried validator
   .p-inputtext.ng-dirty.ng-invalid,
-  .p-inputtext.ng-touched.ng-invalid {
+  .p-inputtext.ng-touched.ng-invalid,
+  .p-inputtext.be-error
+  {
     border: 1px solid var(--red-500) !important;
   }
 
   .p-float-label > .ng-invalid.ng-dirty + label,
-  .p-float-label > .ng-invalid.ng-touched + label {
+  .p-float-label > .ng-invalid.ng-touched + label,
+  .p-float-label > .be-error + label
+  {
     color: var(--red-500);
   }
 

@@ -1,4 +1,4 @@
-import {Component, EffectRef, inject, Injector, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {NgOptimizedImage} from '@angular/common';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
@@ -6,6 +6,7 @@ import {ButtonModule} from 'primeng/button';
 import {RippleModule} from "primeng/ripple";
 import {Nullable} from "../../utils/commons";
 import {FirebaseAuthentication} from "../../services/firebase/authe";
+import {RouterModule} from "@angular/router";
 
 interface LoginFormGroup {
 	username: FormControl<Nullable<string>>;
@@ -20,21 +21,24 @@ interface LoginFormGroup {
 		ReactiveFormsModule,
 		InputTextModule,
 		ButtonModule,
-		RippleModule
+		RippleModule,
+		RouterModule
 	],
 	templateUrl: './login.page.component.html',
 	styleUrl: './login.page.component.scss',
 })
-export class LoginPageComponent implements OnInit, OnDestroy {
+export class LoginPageComponent implements OnInit {
 
 	private _authSrv = inject(FirebaseAuthentication)
-	private _loginEffectRef!: EffectRef
 
 	loginFG!: FormGroup<LoginFormGroup>;
 	userFC!: FormControl<Nullable<string>>;
 	pswFC!: FormControl<Nullable<string>>;
 
-	constructor(private _injector: Injector) {}
+	beErrors: { user: Nullable<string>, psw: Nullable<string> } = {
+		user: null,
+		psw: null
+	}
 
 	/**
 	 * Create the login form group and controls
@@ -64,18 +68,41 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 		return {loginFG, userFC, pswFC}
 	}
 
+	/**
+	 * Reset the be error messages
+	 * @param {string} key
+	 */
+	resetBeError(key: string) {
+		console.log(key);
+		this.beErrors = {...this.beErrors, [key]: null}
+		console.log(this.beErrors);
+	}
+
+	/**
+	 * Login with authentication service
+	 * @description If the auth fails a message is shown
+	 */
 	login() {
 		const values = this.loginFG.value
 
-		if(values.username && values.password)
-			void this._authSrv.login(values.username, values.password)
+		if (values.username && values.password)
+			this._authSrv.login(values.username, values.password)
+				.then()
+				.catch(e => {
+					const message = e.message as string
+
+					if (message.includes('auth/invalid-email')) {
+						this.beErrors = {...this.beErrors, user: 'Email errata'}
+					} else if (message.includes('auth/wrong-password')) {
+						this.beErrors = {user: null, psw: 'Password errata'}
+					}
+
+					// TODO HANDLE TOO MANY ERROR IN LOGIN AND USER LOCKED
+				}
+			)
 	}
 
 	ngOnInit(): void {
 		Object.assign(this, this._createFG())
-	}
-
-	ngOnDestroy() {
-		this._loginEffectRef && this._loginEffectRef.destroy()
 	}
 }
