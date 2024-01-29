@@ -1,12 +1,19 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {NgOptimizedImage} from '@angular/common';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {InputTextModule} from 'primeng/inputtext';
-import {ButtonModule} from 'primeng/button';
-import {RippleModule} from "primeng/ripple";
-import {Nullable} from "../../utils/commons";
-import {FirebaseAuthentication} from "../../services/firebase/authe";
-import {RouterModule} from "@angular/router";
+import { Component, inject, OnInit } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
+import {
+	FormControl,
+	FormGroup,
+	ReactiveFormsModule,
+	Validators,
+} from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { Nullable } from '../../utils/commons';
+import { FirebaseAuthentication } from '../../services/firebase/authe';
+import { RouterModule } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 interface LoginFormGroup {
 	username: FormControl<Nullable<string>>;
@@ -22,25 +29,26 @@ interface LoginFormGroup {
 		InputTextModule,
 		ButtonModule,
 		RippleModule,
-		RouterModule
+		RouterModule,
+		ToastModule,
 	],
 	templateUrl: './login.page.component.html',
 	styleUrl: './login.page.component.scss',
 })
 export class LoginPageComponent implements OnInit {
-
-	private _authSrv = inject(FirebaseAuthentication)
+	private _authSrv = inject(FirebaseAuthentication);
+	private _messageSrv = inject(MessageService);
 
 	loginFG!: FormGroup<LoginFormGroup>;
 	userFC!: FormControl<Nullable<string>>;
 	pswFC!: FormControl<Nullable<string>>;
 
-	loggingIn = false
+	loggingIn = false;
 
-	beErrors: { user: Nullable<string>, psw: Nullable<string> } = {
+	beErrors: { user: Nullable<string>; psw: Nullable<string> } = {
 		user: null,
-		psw: null
-	}
+		psw: null,
+	};
 
 	/**
 	 * Create the login form group and controls
@@ -50,9 +58,9 @@ export class LoginPageComponent implements OnInit {
 	 *     pswFC: FormControl<Nullable<string>>}}
 	 */
 	private _createFG(): {
-		loginFG: FormGroup<LoginFormGroup>,
-		userFC: FormControl<Nullable<string>>,
-		pswFC: FormControl<Nullable<string>>
+		loginFG: FormGroup<LoginFormGroup>;
+		userFC: FormControl<Nullable<string>>;
+		pswFC: FormControl<Nullable<string>>;
 	} {
 		const userFC = new FormControl<Nullable<string>>(null, {
 			validators: [Validators.required],
@@ -67,7 +75,7 @@ export class LoginPageComponent implements OnInit {
 			password: pswFC,
 		});
 
-		return {loginFG, userFC, pswFC}
+		return { loginFG, userFC, pswFC };
 	}
 
 	/**
@@ -75,7 +83,7 @@ export class LoginPageComponent implements OnInit {
 	 * @param {string} key
 	 */
 	resetBeError(key: string) {
-		this.beErrors = {...this.beErrors, [key]: null}
+		this.beErrors = { ...this.beErrors, [key]: null };
 	}
 
 	/**
@@ -83,29 +91,50 @@ export class LoginPageComponent implements OnInit {
 	 * @description If the auth fails a message is shown
 	 */
 	login() {
-		const values = this.loginFG.value
+		const values = this.loginFG.value;
 
 		if (values.username && values.password) {
-			this.loggingIn = true
-			this._authSrv.login(values.username, values.password)
-			.then()
-			.catch(e => {
-					this.loggingIn = false
-					const message = e.message as string
+			this.loggingIn = true;
+			this._authSrv
+				.login(values.username, values.password)
+				.then()
+				.catch((e) => {
+					console.log(
+						'@@@ ~ LoginPageComponent ~ login ~ e:',
+						e.code,
+					);
 
-					if (message.includes('auth/invalid-email')) {
-						this.beErrors = {...this.beErrors, user: 'Email errata'}
-					} else if (message.includes('auth/wrong-password')) {
-						this.beErrors = {user: null, psw: 'Password errata'}
+					this.loggingIn = false;
+
+					switch (e.code as string) {
+						case 'auth/user-not-found':
+						case 'auth/invalid-email':
+							this.beErrors = {
+								...this.beErrors,
+								user: 'Email errata',
+							};
+							break;
+						case 'auth/wrong-password':
+							this.beErrors = {
+								user: null,
+								psw: 'Password errata',
+							};
+							break;
+						case 'auth/too-many-requests':
+							console.log('TOO MANY');
+							this._messageSrv.add({
+								key: 'et',
+								severity: 'error',
+								summary: 'Attenzione',
+								detail: 'Troppi tentativi effettuati, riprova tra poco',
+							});
+							break;
 					}
-
-					// TODO HANDLE TOO MANY ERROR IN LOGIN AND USER LOCKED
-				}
-			)
+				});
 		}
 	}
 
 	ngOnInit(): void {
-		Object.assign(this, this._createFG())
+		Object.assign(this, this._createFG());
 	}
 }

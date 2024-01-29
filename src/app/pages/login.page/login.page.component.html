@@ -1,6 +1,9 @@
 <picture class="hero">
-	<source media="(min-width:1440px)" srcset="https://picsum.photos/1920/1080"/>
-	<source media="(min-width:768px)" srcset="https://picsum.photos/1024/768"/>
+	<source
+		media="(min-width:1440px)"
+		srcset="https://picsum.photos/1920/1080"
+	/>
+	<source media="(min-width:768px)" srcset="https://picsum.photos/1024/768" />
 	<img
 		class="hero__img"
 		ngSrc="https://picsum.photos/480/640"
@@ -15,16 +18,16 @@
 
 		<form [formGroup]="loginFG" (ngSubmit)="login()">
 			<span class="input-wrapper p-float-label">
-			  <input
-				  id="username"
-				  type="text"
-				  pInputText
-				  [class.be-error]="beErrors.user"
-				  [formControl]="userFC"
-				  [required]="true"
-				  (focus)="resetBeError('user')"
-			  />
-			  <label for="username">Username</label>
+				<input
+					id="username"
+					type="text"
+					pInputText
+					[class.be-error]="beErrors.user"
+					[formControl]="userFC"
+					[required]="true"
+					(focus)="resetBeError('user')"
+				/>
+				<label for="username">Username</label>
 			</span>
 
 			<div class="error-msg">
@@ -36,15 +39,15 @@
 			</div>
 
 			<span class="input-wrapper p-float-label">
-			  <input
-				  id="password"
-				  type="password"
-				  pInputText
-				  [class.be-error]="beErrors.psw"
-				  [formControl]="pswFC"
-				  (focus)="resetBeError('psw')"
-			  />
-			  <label for="password">Password</label>
+				<input
+					id="password"
+					type="password"
+					pInputText
+					[class.be-error]="beErrors.psw"
+					[formControl]="pswFC"
+					(focus)="resetBeError('psw')"
+				/>
+				<label for="password">Password</label>
 			</span>
 
 			<div class="error-msg">
@@ -55,14 +58,21 @@
 				}
 			</div>
 
-			<button pButton pRipple type="submit" [disabled]="loginFG.invalid || loggingIn">
-				{{loggingIn ? 'Logging in' : 'Login'}}
+			<button
+				pButton
+				pRipple
+				type="submit"
+				[disabled]="loginFG.invalid || loggingIn"
+			>
+				{{ loggingIn ? "Logging in" : "Login" }}
 			</button>
 		</form>
 	</div>
 
+	<p-toast position="bottom-center" key="et"></p-toast>
 
 	<!--  Forgot password-->
-	<a class="forgot-password" [routerLink]="'/forgot-password'">Password dimenticata ?</a>
-
+	<a class="forgot-password" [routerLink]="'/forgot-password'"
+		>Password dimenticata ?</a
+	>
 </main>
