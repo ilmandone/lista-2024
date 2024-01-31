@@ -9,7 +9,7 @@ import {
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { PrimeNGConfig } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { FirebaseAuthentication } from './services/firebase/authe';
+import { FirebaseAuthentication } from './services/firebase/authe.service';
 
 @Component({
 	selector: 'app-root',

@@ -10,7 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { Nullable } from '../../utils/commons';
-import { FirebaseAuthentication } from '../../services/firebase/authe';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
