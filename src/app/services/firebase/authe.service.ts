@@ -39,6 +39,15 @@ export class FirebaseAuthentication {
 		};
 	}
 
+	// Return the firebase application
+	get app() {
+		if (!this._app) throw new Error('Firebase app not initialized');
+		return this._app;
+	}
+
+	/**
+	 *
+	 */
 	init() {
 		this._app = initializeApp(this._firebaseAppConfig);
 		this._auth = getAuth(this._app);
