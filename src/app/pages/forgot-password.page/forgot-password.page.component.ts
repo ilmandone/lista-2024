@@ -5,12 +5,13 @@ import {
 	ReactiveFormsModule,
 	Validators,
 } from '@angular/forms';
+import { InputErrorMsgComponent } from 'app/components/error-msg/error-msg.component';
 import { FirebaseAuthentication } from 'app/services/firebase/authe.service';
+import { Nullable } from 'app/utils/commons';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
-import { Nullable } from 'primeng/ts-helpers';
 
 interface IResetPasswordFG {
 	username: FormControl<Nullable<string>>;
@@ -19,7 +20,13 @@ interface IResetPasswordFG {
 @Component({
 	selector: 'app-forgot-password.page',
 	standalone: true,
-	imports: [ButtonModule, RippleModule, ReactiveFormsModule, InputTextModule],
+	imports: [
+		ButtonModule,
+		RippleModule,
+		ReactiveFormsModule,
+		InputTextModule,
+		InputErrorMsgComponent,
+	],
 	templateUrl: './forgot-password.page.component.html',
 	styleUrl: './forgot-password.page.component.scss',
 })
@@ -27,7 +34,7 @@ export class ForgotPasswordPageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
 
 	emailFC!: FormControl<Nullable<string>>;
-	beErrors!: Nullable<string>;
+	errorMsg!: Nullable<string>;
 	resetPswFg!: FormGroup<IResetPasswordFG>;
 
 	private _createResetPswFg(
@@ -38,8 +45,16 @@ export class ForgotPasswordPageComponent implements OnInit {
 		});
 	}
 
-	resetBeError() {
-		this.beErrors = null;
+	blur() {
+		if (this.emailFC.errors) {
+			this.errorMsg = this.emailFC.errors['required']
+				? 'Email richiesta'
+				: 'Email non valida';
+		}
+	}
+
+	focus() {
+		this.errorMsg = null;
 	}
 
 	sendReq(): void {
@@ -48,11 +63,10 @@ export class ForgotPasswordPageComponent implements OnInit {
 				console.log('DONE: Email sent');
 			})
 			.catch((e) => {
-				console.log('@@@ ~ LoginPageComponent ~ login ~ e:', e.code);
 				switch (e.code) {
 					case 'auth/user-not-found':
 					case 'auth/invalid-email':
-						this.beErrors = 'Email non valida';
+						this.errorMsg = 'Email non valida';
 						break;
 				}
 			});

@@ -14,6 +14,7 @@ import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { InputErrorMsgComponent } from 'app/components/error-msg/error-msg.component';
 
 interface LoginFormGroup {
 	username: FormControl<Nullable<string>>;
@@ -31,6 +32,7 @@ interface LoginFormGroup {
 		RippleModule,
 		RouterModule,
 		ToastModule,
+		InputErrorMsgComponent,
 	],
 	templateUrl: './login.page.component.html',
 	styleUrl: './login.page.component.scss',
@@ -45,7 +47,7 @@ export class LoginPageComponent implements OnInit {
 
 	loggingIn = false;
 
-	beErrors: { user: Nullable<string>; psw: Nullable<string> } = {
+	errorMsg: { user: Nullable<string>; psw: Nullable<string> } = {
 		user: null,
 		psw: null,
 	};
@@ -63,7 +65,7 @@ export class LoginPageComponent implements OnInit {
 		pswFC: FormControl<Nullable<string>>;
 	} {
 		const userFC = new FormControl<Nullable<string>>(null, {
-			validators: [Validators.required],
+			validators: [Validators.required, Validators.email],
 		});
 
 		const pswFC = new FormControl<Nullable<string>>(null, {
@@ -83,7 +85,22 @@ export class LoginPageComponent implements OnInit {
 	 * @param {string} key
 	 */
 	resetBeError(key: string) {
-		this.beErrors = { ...this.beErrors, [key]: null };
+		this.errorMsg = { ...this.errorMsg, [key]: null };
+	}
+
+	blur(fc: FormControl, key: string): void {
+		if (fc.errors) {
+			switch (key) {
+				case 'user':
+					this.errorMsg.user = fc.errors['required']
+						? 'Email richiesta'
+						: 'Email non valida';
+					break;
+				case 'psw':
+					this.errorMsg.psw = 'Password richiesta';
+					break;
+			}
+		}
 	}
 
 	/**
@@ -104,13 +121,13 @@ export class LoginPageComponent implements OnInit {
 					switch (e.code as string) {
 						case 'auth/user-not-found':
 						case 'auth/invalid-email':
-							this.beErrors = {
-								...this.beErrors,
+							this.errorMsg = {
+								...this.errorMsg,
 								user: 'Email errata',
 							};
 							break;
 						case 'auth/wrong-password':
-							this.beErrors = {
+							this.errorMsg = {
 								user: null,
 								psw: 'Password errata',
 							};

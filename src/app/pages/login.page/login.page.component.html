@@ -17,46 +17,36 @@
 		<h1>Tati's list</h1>
 
 		<form [formGroup]="loginFG" (ngSubmit)="login()">
-			<span class="input-wrapper p-float-label">
-				<input
-					id="username"
-					type="text"
-					pInputText
-					[class.be-error]="beErrors.user"
-					[formControl]="userFC"
-					[required]="true"
-					(focus)="resetBeError('user')"
-				/>
-				<label for="username">Username</label>
-			</span>
+			<app-error-msg [msg]="errorMsg.user">
+				<span class="input-wrapper p-float-label">
+					<input
+						id="username"
+						type="text"
+						pInputText
+						[class.be-error]="errorMsg.user"
+						[formControl]="userFC"
+						[required]="true"
+						(focus)="resetBeError('user')"
+						(blur)="blur(userFC, 'user')"
+					/>
+					<label for="username">Username</label>
+				</span>
+			</app-error-msg>
 
-			<div class="error-msg">
-				@if (userFC.invalid && userFC.touched) {
-					<span>Username richiesto</span>
-				} @else if (beErrors.user) {
-					<span>{{ beErrors.user }}</span>
-				}
-			</div>
-
-			<span class="input-wrapper p-float-label">
-				<input
-					id="password"
-					type="password"
-					pInputText
-					[class.be-error]="beErrors.psw"
-					[formControl]="pswFC"
-					(focus)="resetBeError('psw')"
-				/>
-				<label for="password">Password</label>
-			</span>
-
-			<div class="error-msg">
-				@if (pswFC.invalid && pswFC.touched) {
-					<span>Password richiesta</span>
-				} @else if (beErrors.psw) {
-					<span>{{ beErrors.psw }}</span>
-				}
-			</div>
+			<app-error-msg [msg]="errorMsg.psw">
+				<span class="input-wrapper p-float-label">
+					<input
+						id="password"
+						type="password"
+						pInputText
+						[class.be-error]="errorMsg.psw"
+						[formControl]="pswFC"
+						(focus)="resetBeError('psw')"
+						(blur)="blur(pswFC, 'psw')"
+					/>
+					<label for="password">Password</label>
+				</span>
+			</app-error-msg>
 
 			<button
 				pButton

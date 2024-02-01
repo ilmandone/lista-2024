@@ -34,28 +34,24 @@
     form {
       @include utils.flex-column-centered;
 
+      .input-wrapper,
+      input {
+        width: 100%;
+      }
+
       .input-wrapper:not(:first-child) {
         margin-top: 1.85rem;
       }
 
-      .input-wrapper,
-      input {
-        width: 100%;
+      app-error-msg{
+        margin-bottom: 1rem;
       }
 
       button {
         margin-top: 4.5vh;
         width: 100%;
         justify-content: center;
-      }
-
-      .error-msg {
-        width: 100%;
-        height: 1rem;
-        padding-top: 0.5rem;
-        color: var(--red-500);
-        font-size: vars.$font-size-small;
-      }
+      }      
     }
 
     .forgot-password {
