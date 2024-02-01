@@ -99,11 +99,6 @@ export class LoginPageComponent implements OnInit {
 				.login(values.username, values.password)
 				.then()
 				.catch((e) => {
-					console.log(
-						'@@@ ~ LoginPageComponent ~ login ~ e:',
-						e.code,
-					);
-
 					this.loggingIn = false;
 
 					switch (e.code as string) {
@@ -121,7 +116,6 @@ export class LoginPageComponent implements OnInit {
 							};
 							break;
 						case 'auth/too-many-requests':
-							console.log('TOO MANY');
 							this._messageSrv.add({
 								key: 'et',
 								severity: 'error',

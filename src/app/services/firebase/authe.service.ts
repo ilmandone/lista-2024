@@ -45,6 +45,11 @@ export class FirebaseAuthentication {
 		return this._app;
 	}
 
+	get auth() {
+		if (!this._auth) throw new Error('Firebase auth not initialized');
+		return this._auth;
+	}
+
 	/**
 	 *
 	 */
