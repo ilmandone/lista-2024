@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import { DbService } from 'app/services/firebase/db.service';
 
 @Component({
 	selector: 'app-home.page',
@@ -13,12 +14,14 @@ import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 })
 export class HomePageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
+	private _dbSrv = inject(DbService);
 
 	logOut() {
 		void this._authSrv.logout();
 	}
 
 	ngOnInit() {
-		console.log('HOME STARTED');
+		this._dbSrv.init();
+		this._dbSrv.loadLists();
 	}
 }
