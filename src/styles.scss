@@ -1,17 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
-@import "primeng/resources/themes/lara-light-blue/theme.css";
+@use "./styles/typo.scss";
+
+// @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap");
 
 /* Order */
-@layer reset, primeng;
+@layer reset, primeng, custom;
 
 /* Reset CSS */
 @layer reset {
-  *, *:before, *:after {
+  *,
+  *:before,
+  *:after {
     box-sizing: border-box;
   }
 
-  html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: none;
+  }
+
+  /* html, body, div, span, object, iframe, figure, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, code, em, img, small, strike, strong, sub, sup, tt, b, u, i, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th, td, main, canvas, embed, footer, header, nav, section, video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -45,10 +62,29 @@
   table {
     border-collapse: collapse;
     border-spacing: 0;
+  }  */
+}
+
+@layer custom {
+  // Fix invalid state for touched input text with requried validator
+  .p-inputtext.ng-dirty.ng-invalid,
+  .p-inputtext.ng-touched.ng-invalid,
+  .p-inputtext.be-error
+  {
+    border: 1px solid var(--red-500) !important;
   }
 
-  input {
-    -webkit-appearance: none;
-    border-radius: 0;
+  .p-float-label > .ng-invalid.ng-dirty + label,
+  .p-float-label > .ng-invalid.ng-touched + label,
+  .p-float-label > .be-error + label
+  {
+    color: var(--red-500);
   }
+
+  body,
+  body .p-component {
+    font-family: "Roboto", sans-serif;
+  }
+
+  @include typo.createHeaders();
 }

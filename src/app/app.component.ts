@@ -1,22 +1,50 @@
-import {Component, inject, OnInit} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {
+	Component,
+	effect,
+	HostListener,
+	inject,
+	Injector,
+	OnInit,
+} from '@angular/core';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { PrimeNGConfig } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { PrimeNGConfig} from "primeng/api";
+import { FirebaseAuthentication } from './services/firebase/authe.service';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, ButtonModule],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+	selector: 'app-root',
+	standalone: true,
+	imports: [RouterOutlet, ButtonModule, RouterModule],
+	templateUrl: './app.component.html',
+	styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
+	private _primeNGConfig = inject(PrimeNGConfig);
+	private _authSrv = inject(FirebaseAuthentication);
+	private _injector = inject(Injector);
+	private _router = inject(Router);
 
-  private _primeNGConfig = inject(PrimeNGConfig)
+	@HostListener('window:resize')
+	private _updateVh() {
+		document.documentElement.style.setProperty(
+			'--vh',
+			`${window.innerHeight * 0.01}px`,
+		);
+	}
 
-  title = 'lista-2024';
+	ngOnInit() {
+		this._primeNGConfig.ripple = true;
+		this._updateVh();
+		this._authSrv.init();
 
-  ngOnInit() {
-    this._primeNGConfig.ripple = true
-  }
+		effect(
+			() => {
+				const isLogged = this._authSrv.isLoggedIn();
+				if (isLogged === false) void this._router.navigate(['/login']);
+				else if (this._router.url === '/login')
+					void this._router.navigate(['/home']);
+			},
+			{ injector: this._injector },
+		);
+	}
 }

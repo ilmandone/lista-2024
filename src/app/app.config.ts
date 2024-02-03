@@ -1,9 +1,10 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
 import { routes } from './app.routes';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes), BrowserAnimationsModule]
+	providers: [provideRouter(routes), MessageService, provideAnimations()],
 };
