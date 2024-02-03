@@ -15,7 +15,7 @@ import {
 	providedIn: 'root',
 })
 export class DbService {
-	private _autheSrv = inject(FirebaseAuthentication);
+	private _authSrv = inject(FirebaseAuthentication);
 
 	private _db!: Firestore;
 	private _collection!: CollectionReference<DocumentData, DocumentData>;
@@ -42,7 +42,7 @@ export class DbService {
 	}
 
 	init() {
-		const app = this._autheSrv.app;
+		const app = this._authSrv.app;
 		this._db = getFirestore(app);
 		this._collection = collection(this._db, 'ListaDellaSpesaV2');
 	}

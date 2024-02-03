@@ -1,0 +1,19 @@
+:host {
+	header {
+		width: 100vw;
+		height: 6rem;
+
+		display: grid;
+		grid-template-columns: 2fr 10fr;
+		gap: 0.5rem;
+
+		justify-items: flex-start;
+		align-items: center;
+
+		p-button {
+			width: 2rem;
+			display: block;
+			justify-self: center;
+		}
+	}
+}
