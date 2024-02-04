@@ -1,0 +1,36 @@
+<p-sidebar
+	[style]="{width: '60vw'}"
+	[transitionOptions]="'250ms cubic-bezier(0, 0, 0.2, 1)'"
+	[showCloseIcon]="false"
+	[blockScroll]="true"
+	[visible]="visible"
+	(visibleChange)="visibleChange.emit($event)">
+
+	<div class="side-menu-wrapper">
+		<p-button
+			icon="pi pi-refresh"
+			[styleClass]="'p-button-full-width'"
+			[label]="'Reload'"
+			[text]="true"
+			(onClick)="action.emit('reload')"
+		></p-button>
+
+		<p-button
+			icon="pi pi-list"
+			[styleClass]="'p-button-full-width'"
+			[label]="'Groups'"
+			[text]="true"
+			(onClick)="action.emit('groups')"
+		></p-button>
+
+		<p-button
+			icon="pi pi-sign-out"
+			[styleClass]="'p-button-full-width'"
+			[label]="'Sign out'"
+			[text]="true"
+			(onClick)="action.emit('logout')"
+		></p-button>
+
+
+	</div>
+</p-sidebar>

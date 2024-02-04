@@ -1,13 +1,9 @@
-<!--
-<p>home.page works!</p>
-<a [routerLink]="'/list'">Vai alla lista</a>
-<button pButton pRipple type="button" (click)="logOut()">Logout</button>
--->
-<p-sidebar [(visible)]="mainMenuOpen">
 
-</p-sidebar>
+<app-side-menu [(visible)]="mainMenuOpen" (action)="sideMenuAction($event)"
+></app-side-menu>
 
 <header>
-	<p-button [icon]="mainMenuOpen ? 'pi pi-times' :  'pi pi-bars'" [text]="true" (onClick)="mainMenuOpen = true"></p-button>
+	<p-button [icon]="mainMenuOpen ? 'pi pi-times' :  'pi pi-bars'" [text]="true"
+			  (onClick)="mainMenuOpen = true"></p-button>
 	<h1>DASHBOARD</h1>
 </header>
