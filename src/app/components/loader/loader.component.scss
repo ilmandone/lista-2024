@@ -1,0 +1,17 @@
+@use "~styles/utils.scss";
+:host {
+	.loader-wrapper {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: utils.getRealVh(100);
+
+		display: flex;
+		justify-content: center;
+		align-items: center	;
+
+		background-color: var(--surface-d);
+		z-index: utils.zIndex('loader');
+	}
+}
