@@ -29,7 +29,10 @@
 				<span>Dark</span>
 			</div>
 
-			<p-inputSwitch [formControl]="checkedFC"></p-inputSwitch>
+			<p-inputSwitch
+				[formControl]="checkedFC"
+				(onChange)="changeTheme($event)"
+			></p-inputSwitch>
 		</div>
 
 		<p-button

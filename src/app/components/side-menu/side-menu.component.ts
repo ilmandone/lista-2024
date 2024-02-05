@@ -1,17 +1,18 @@
 import {
 	Component,
 	EventEmitter,
+	Injector,
 	Input,
 	OnInit,
 	Output,
 	effect,
 	inject,
 } from '@angular/core';
-import { SidebarModule } from 'primeng/sidebar';
-import { ButtonModule } from 'primeng/button';
-import { InputSwitchModule } from 'primeng/inputswitch';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Theme, ThemeService } from 'app/services/_common/theme.service';
+import { ButtonModule } from 'primeng/button';
+import { InputSwitchChangeEvent, InputSwitchModule } from 'primeng/inputswitch';
+import { SidebarModule } from 'primeng/sidebar';
 
 export type SideMenuAction = 'logout' | 'reload' | 'groups';
 
@@ -33,12 +34,28 @@ export class SideMenuComponent implements OnInit {
 	@Output() action = new EventEmitter<SideMenuAction>();
 
 	private _themeSrv = inject(ThemeService);
+	private _injector = inject(Injector);
 
 	checkedFC = new FormControl(false);
 
+	/**
+	 * A description of the entire function.
+	 *
+	 * @param {InputSwitchChangeEvent} e - the switch input event
+	 * @return {void}
+	 */
+	changeTheme(e: InputSwitchChangeEvent) {
+		this._themeSrv.setTheme(e.checked ? Theme.DARK : Theme.LIGHT);
+	}
+
 	ngOnInit(): void {
-		this.checkedFC.valueChanges.subscribe((r) => {
-			this._themeSrv.setTheme(r ? Theme.DARK : Theme.LIGHT);
-		});
+		effect(
+			() => {
+				this.checkedFC.patchValue(
+					this._themeSrv.theme() === Theme.DARK,
+				);
+			},
+			{ injector: this._injector },
+		);
 	}
 }
