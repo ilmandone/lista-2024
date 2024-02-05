@@ -1,11 +1,11 @@
 <p-sidebar
-	[style]="{width: '60vw'}"
+	[style]="{ width: '60vw', maxWidth: '15rem' }"
 	[transitionOptions]="'250ms cubic-bezier(0, 0, 0.2, 1)'"
 	[showCloseIcon]="false"
 	[blockScroll]="true"
 	[visible]="visible"
-	(visibleChange)="visibleChange.emit($event)">
-
+	(visibleChange)="visibleChange.emit($event)"
+>
 	<div class="side-menu-wrapper">
 		<p-button
 			icon="pi pi-refresh"
@@ -23,6 +23,15 @@
 			(onClick)="action.emit('groups')"
 		></p-button>
 
+		<div class="theme-switch-wrapper">
+			<div class="theme-switch-wrapper__label">
+				<i class="pi pi-moon"></i>
+				<span>Dark</span>
+			</div>
+
+			<p-inputSwitch [formControl]="checkedFC"></p-inputSwitch>
+		</div>
+
 		<p-button
 			icon="pi pi-sign-out"
 			[styleClass]="'p-button-full-width'"
@@ -30,7 +39,5 @@
 			[text]="true"
 			(onClick)="action.emit('logout')"
 		></p-button>
-
-
 	</div>
 </p-sidebar>
