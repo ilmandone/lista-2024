@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
@@ -26,13 +26,18 @@ import { LoaderComponent } from '../../components/loader/loader.component';
 export class HomePageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
 	private _dbSrv = inject(DbService);
+	private _router = inject(Router);
 
 	loading = false;
 	mainMenuOpen = false;
 
 	ngOnInit() {
-		/*this._dbSrv.init();
-		this._dbSrv.loadLists();*/
+		this._dbSrv.init();
+		this._dbSrv.loadLists();
+	}
+
+	newList() {
+		console.log('CREATE NEW LIST');
 	}
 
 	sideMenuAction($event: SideMenuAction) {
@@ -41,10 +46,11 @@ export class HomePageComponent implements OnInit {
 				this.loading = true;
 				this._authSrv
 					.logout()
-					.then((_) => {
+					.then(() => {
+						this._router.navigate(['login']);
 						this.loading = false;
 					})
-					.catch((_) => {
+					.catch(() => {
 						this.loading = false;
 					});
 				break;

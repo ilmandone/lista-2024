@@ -1,12 +1,17 @@
-
-<app-side-menu [(visible)]="mainMenuOpen" (action)="sideMenuAction($event)"
+<app-side-menu
+	[(visible)]="mainMenuOpen"
+	(action)="sideMenuAction($event)"
 ></app-side-menu>
 
 <header>
-	<p-button [icon]="mainMenuOpen ? 'pi pi-times' :  'pi pi-bars'" [text]="true"
-			  (onClick)="mainMenuOpen = true"></p-button>
+	<p-button
+		[icon]="mainMenuOpen ? 'pi pi-times' : 'pi pi-bars'"
+		[text]="true"
+		(onClick)="mainMenuOpen = true"
+	></p-button>
 	<h1>DASHBOARD</h1>
 
+	<p-button icon="pi pi-plus" [text]="true" (onClick)="newList()"></p-button>
 </header>
 
 <app-loader [visible]="loading"></app-loader>

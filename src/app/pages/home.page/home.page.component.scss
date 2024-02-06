@@ -2,9 +2,10 @@
 	header {
 		width: 100vw;
 		height: 6rem;
+        padding: 0 1.5rem 0 0.5rem;
 
 		display: grid;
-		grid-template-columns: 2fr 10fr;
+		grid-template-columns: 2fr 10fr 2fr;
 		gap: 0.5rem;
 
 		justify-items: flex-start;
