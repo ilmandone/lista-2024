@@ -11,7 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { Nullable } from '../../utils/commons';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { InputErrorMsgComponent } from 'app/components/error-msg/error-msg.component';
@@ -40,6 +40,7 @@ interface LoginFormGroup {
 export class LoginPageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
 	private _messageSrv = inject(MessageService);
+	private _router = inject(Router);
 
 	loginFG!: FormGroup<LoginFormGroup>;
 	userFC!: FormControl<Nullable<string>>;
@@ -114,7 +115,9 @@ export class LoginPageComponent implements OnInit {
 			this.loggingIn = true;
 			this._authSrv
 				.login(values.username, values.password)
-				.then()
+				.then(() => {
+					this._router.navigate(['/']);
+				})
 				.catch((e) => {
 					this.loggingIn = false;
 

@@ -1,13 +1,14 @@
-import { Injectable, Injector, signal } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { initializeApp, FirebaseApp } from 'firebase/app';
+import { Injectable, Injector, inject } from '@angular/core';
+import { FirebaseApp, initializeApp } from 'firebase/app';
 import {
 	getAuth,
-	type Auth,
 	signInWithEmailAndPassword,
 	signOut,
+	type Auth,
 } from 'firebase/auth';
 import { Nullable } from 'primeng/ts-helpers';
+import { environment } from '../../../environments/environment';
+import { LocalStorageService } from '../_common/local-storage.service';
 
 interface IFirebaseConfig {
 	apiKey: string;
@@ -24,8 +25,10 @@ export class FirebaseAuthentication {
 	private _firebaseAppConfig!: IFirebaseConfig;
 	private _app!: FirebaseApp;
 	private _auth!: Auth;
+	private _localStorageSrv = inject(LocalStorageService);
 
-	public isLoggedIn = signal<Nullable<boolean>>(null);
+	private _isLoggedIn!: Nullable<boolean>;
+	public userEmail!: string;
 
 	constructor(private _injector: Injector) {
 		this._firebaseAppConfig = {
@@ -37,6 +40,10 @@ export class FirebaseAuthentication {
 			projectId: environment.firebase_keys.PROJECT_ID,
 			storageBucket: environment.firebase_keys.STORAGE_BUCKET,
 		};
+	}
+
+	get isLoggedIn() {
+		return this._isLoggedIn;
 	}
 
 	// Return the firebase application
@@ -59,18 +66,27 @@ export class FirebaseAuthentication {
 
 		// Listen the auth state change and update the logged in signal
 		this._auth.onAuthStateChanged((e) => {
-			console.log(e);
-			this.isLoggedIn.set(e != null);
+			this._isLoggedIn = e != null;
 		});
 	}
 
 	async login(email: string, password: string) {
 		if (!this._auth) this.init();
-		return signInWithEmailAndPassword(this._auth, email, password);
+		return signInWithEmailAndPassword(this._auth, email, password).then(
+			(r) => {
+				this.userEmail = email;
+				const data = {
+					user: email,
+					ref: r.user.uid,
+				};
+				this._localStorageSrv.set('authe', JSON.stringify(data));
+			},
+		);
 	}
 
 	async logout() {
 		if (!this._auth) this.init();
+		this._localStorageSrv.delete('authe');
 		return signOut(this._auth);
 	}
 }
