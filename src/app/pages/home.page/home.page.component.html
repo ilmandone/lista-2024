@@ -10,18 +10,33 @@
 			[text]="true"
 			(onClick)="mainMenuOpen = true"
 		></p-button>
-		<h1>DASHBOARD</h1>
 
-		<p-button icon="pi pi-plus" [text]="true" (onClick)="newList()"></p-button>
+		@if(showFullHeader) {
+			<h1>DASHBOARD</h1>
+			<p-button icon="pi pi-plus" [text]="true" (onClick)="newList()"></p-button>
+		}
 	</header>
 
 	<main>
-		@for (list of (lists$ | async)?.data; track list["UUID"]) {
-			{{ list["label"] }}
+		@if ((lists$ | async)?.data; as lists) {
+			@if (lists.length > 0) {
+				@for (list of lists; track list["UUID"]) {
+					{{ list["label"] }}
+				}
+			} @else {
+				<section class="no-lists-available">
+					<div class="message">
+						<h1>Benvenuto</h1>
+						<p>Nessuna lista disponibile</p>
+						<p-button label="Crea la prima lista" (onClick)="newList()"></p-button>
+					</div>
+
+				</section>
+			}
 		}
+
 	</main>
 </div>
-
 
 
 <app-loader [visible]="loading"></app-loader>

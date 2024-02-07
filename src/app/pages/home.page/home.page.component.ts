@@ -1,16 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
-import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { DbService, DocumentsData } from 'app/services/firebase/db.service';
-import {
-	SideMenuAction,
-	SideMenuComponent,
-} from '../../components/side-menu/side-menu.component';
-import { LoaderComponent } from '../../components/loader/loader.component';
-import { Observable } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import {Component, inject, OnInit} from '@angular/core';
+import {Router, RouterModule} from '@angular/router';
+import {ButtonModule} from 'primeng/button';
+import {RippleModule} from 'primeng/ripple';
+import {FirebaseAuthentication} from '../../services/firebase/authe.service';
+import {DbService, DocumentsData} from 'app/services/firebase/db.service';
+import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
+import {LoaderComponent} from '../../components/loader/loader.component';
+import {Observable, tap} from 'rxjs';
+import {CommonModule} from '@angular/common';
 
 @Component({
 	selector: 'app-home.page',
@@ -33,12 +30,25 @@ export class HomePageComponent implements OnInit {
 
 	public lists$!: Observable<DocumentsData>;
 
-	loading = false;
-	mainMenuOpen = false;
+	public loading = false;
+	public showFullHeader: boolean = false
+	public mainMenuOpen = false;
 
 	ngOnInit() {
 		this._dbSrv.init();
-		this.lists$ = this._dbSrv.loadLists();
+
+		// Autoload all the lists
+		this.loading = true
+		this.lists$ =
+			this._dbSrv.loadLists().pipe(
+				/*switchMap(() => {
+					return of({data: []})
+				}),*/
+				tap((r) => {
+					this.showFullHeader = r.data.length > 0
+					this.loading = false
+				}),
+			);
 	}
 
 	newList() {
