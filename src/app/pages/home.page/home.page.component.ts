@@ -9,11 +9,14 @@ import {
 	SideMenuComponent,
 } from '../../components/side-menu/side-menu.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
 	selector: 'app-home.page',
 	standalone: true,
 	imports: [
+		CommonModule,
 		ButtonModule,
 		RippleModule,
 		RouterModule,
@@ -28,16 +31,14 @@ export class HomePageComponent implements OnInit {
 	private _dbSrv = inject(DbService);
 	private _router = inject(Router);
 
-	private _lists!: DocumentsData;
+	public lists$!: Observable<DocumentsData>;
 
 	loading = false;
 	mainMenuOpen = false;
 
 	ngOnInit() {
 		this._dbSrv.init();
-		this._dbSrv.loadLists().subscribe((r) => {
-			console.log('@@@ R', r);
-		});
+		this.lists$ = this._dbSrv.loadLists();
 	}
 
 	newList() {
