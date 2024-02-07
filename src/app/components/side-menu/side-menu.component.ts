@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Theme, ThemeService } from 'app/services/_common/theme.service';
+import { FirebaseAuthentication } from 'app/services/firebase/authe.service';
 import { ButtonModule } from 'primeng/button';
 import { InputSwitchChangeEvent, InputSwitchModule } from 'primeng/inputswitch';
 import { SidebarModule } from 'primeng/sidebar';
@@ -33,10 +34,12 @@ export class SideMenuComponent implements OnInit {
 	@Output() visibleChange = new EventEmitter<boolean>();
 	@Output() action = new EventEmitter<SideMenuAction>();
 
+	private _authSrv = inject(FirebaseAuthentication);
 	private _themeSrv = inject(ThemeService);
 	private _injector = inject(Injector);
 
 	checkedFC = new FormControl(false);
+	user!: string;
 
 	/**
 	 * A description of the entire function.
@@ -49,6 +52,8 @@ export class SideMenuComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.user = this._authSrv.userEmail;
+
 		effect(
 			() => {
 				this.checkedFC.patchValue(

@@ -6,7 +6,12 @@
 	[visible]="visible"
 	(visibleChange)="visibleChange.emit($event)"
 >
-	<div class="side-menu-wrapper">
+	<section class="side-menu-wrapper">
+		<header>
+			<h2>Ciao</h2>
+			<p>{{ user }}</p>
+		</header>
+
 		<p-button
 			icon="pi pi-refresh"
 			[styleClass]="'p-button-full-width'"
@@ -42,5 +47,5 @@
 			[text]="true"
 			(onClick)="action.emit('logout')"
 		></p-button>
-	</div>
+	</section>
 </p-sidebar>

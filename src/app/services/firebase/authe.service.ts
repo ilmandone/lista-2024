@@ -28,7 +28,7 @@ export class FirebaseAuthentication {
 	private _localStorageSrv = inject(LocalStorageService);
 
 	private _isLoggedIn!: Nullable<boolean>;
-	public userEmail!: string;
+	private _userEmail: string = '';
 
 	constructor(private _injector: Injector) {
 		this._firebaseAppConfig = {
@@ -44,6 +44,18 @@ export class FirebaseAuthentication {
 
 	get isLoggedIn() {
 		return this._isLoggedIn;
+	}
+
+	get userEmail() {
+		if (!this._app) throw new Error('Firebase app not initialized');
+		if (!this._userEmail) {
+			const storedData = this._localStorageSrv.get('authe');
+			if (storedData) {
+				this._userEmail = JSON.parse(storedData).user;
+			}
+		}
+
+		return this._userEmail;
 	}
 
 	// Return the firebase application
@@ -74,7 +86,7 @@ export class FirebaseAuthentication {
 		if (!this._auth) this.init();
 		return signInWithEmailAndPassword(this._auth, email, password).then(
 			(r) => {
-				this.userEmail = email;
+				this._userEmail = email;
 				const data = {
 					user: email,
 					ref: r.user.uid,

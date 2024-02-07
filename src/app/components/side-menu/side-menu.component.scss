@@ -1,5 +1,19 @@
 :host {
 	.side-menu-wrapper {
+		header {
+			margin-bottom: 1rem;
+			h2 {
+				margin: 0 0.5rem 0.25rem;
+			}
+			p {
+				margin: 0 0.5rem;
+				white-space: nowrap;
+				word-break: keep-all;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+
 		display: flex;
 		flex-direction: column;
 
@@ -10,22 +24,22 @@
 		margin: 0.5rem 0;
 	}
 
-    .theme-switch-wrapper {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        margin: 1.5rem 0;
-        padding: 0 0.7rem;
+	.theme-switch-wrapper {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		margin: 1.5rem 0;
+		padding: 0 0.7rem;
 
-        &__label {
-            display: flex;
-            align-items: center;
-            color: var(--primary-color);
-            font-weight: 500;
+		&__label {
+			display: flex;
+			align-items: center;
+			color: var(--primary-color);
+			font-weight: 500;
 
-            > * {
-                padding-right: 0.6rem;
-            }
-        }
-    }
+			> * {
+				padding-right: 0.6rem;
+			}
+		}
+	}
 }
