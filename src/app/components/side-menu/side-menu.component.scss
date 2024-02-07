@@ -1,10 +1,17 @@
 :host {
 	.side-menu-wrapper {
+		display: flex;
+		flex-direction: column;
+
+		padding: 0.5rem 1rem;
+
 		header {
 			margin-bottom: 1rem;
+
 			h2 {
 				margin: 0 0.5rem 0.25rem;
 			}
+
 			p {
 				margin: 0 0.5rem;
 				white-space: nowrap;
@@ -13,11 +20,6 @@
 				text-overflow: ellipsis;
 			}
 		}
-
-		display: flex;
-		flex-direction: column;
-
-		padding: 0.5rem 1rem;
 	}
 
 	p-button {

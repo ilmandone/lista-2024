@@ -3,7 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { DbService } from 'app/services/firebase/db.service';
+import { DbService, DocumentsData } from 'app/services/firebase/db.service';
 import {
 	SideMenuAction,
 	SideMenuComponent,
@@ -28,12 +28,16 @@ export class HomePageComponent implements OnInit {
 	private _dbSrv = inject(DbService);
 	private _router = inject(Router);
 
+	private _lists!: DocumentsData;
+
 	loading = false;
 	mainMenuOpen = false;
 
 	ngOnInit() {
 		this._dbSrv.init();
-		this._dbSrv.loadLists();
+		this._dbSrv.loadLists().subscribe((r) => {
+			console.log('@@@ R', r);
+		});
 	}
 
 	newList() {
