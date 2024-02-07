@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { FirebaseAuthentication } from './authe.service';
 import {
 	CollectionReference,
 	DocumentData,
@@ -10,6 +9,12 @@ import {
 	orderBy,
 	query,
 } from 'firebase/firestore';
+import { Observable, from } from 'rxjs';
+import { FirebaseAuthentication } from './authe.service';
+
+export interface DocumentsData {
+	data: DocumentData[];
+}
 
 @Injectable({
 	providedIn: 'root',
@@ -21,9 +26,7 @@ export class DbService {
 	private _collection!: CollectionReference<DocumentData, DocumentData>;
 	constructor() {}
 
-	private async _loadDocsFromCollection(): Promise<
-		{ data: DocumentData[] } | unknown
-	> {
+	private async _loadDocsFromCollection(): Promise<DocumentsData | unknown> {
 		const data: DocumentData[] = [];
 
 		try {
@@ -47,7 +50,9 @@ export class DbService {
 		this._collection = collection(this._db, 'ListaDellaSpesaV2');
 	}
 
-	loadLists() {
-		this._loadDocsFromCollection().then((r) => console.log(r));
+	loadLists(): Observable<DocumentsData> {
+		return from(
+			this._loadDocsFromCollection(),
+		) as Observable<DocumentsData>;
 	}
 }
