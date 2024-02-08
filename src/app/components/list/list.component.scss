@@ -1,0 +1,24 @@
+@use '~styles/vars.scss';
+
+:host {
+    position: relative;
+
+    padding: 1.5rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--gray-50);
+
+    background: var(--gray-200);
+
+    .label {
+        font-weight: 500;
+    }
+
+    .updated {
+        font-size: vars.$font-size-sm;
+        color: var(--gray-700);
+    }
+}

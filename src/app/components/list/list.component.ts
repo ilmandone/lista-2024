@@ -10,4 +10,5 @@ import { Component, Input } from '@angular/core';
 })
 export class ListComponent {
 	@Input() label!: string;
+	@Input() updated!: Date;
 }
