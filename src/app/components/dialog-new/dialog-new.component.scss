@@ -1,11 +1,29 @@
+@use "~styles/typo.scss";
+
 :host {
-	.content {
-        padding: 0 0.5rem;
+	.wrapper {
+		width: 100%;
+		height: 100%;
+		background: var(--surface-0);
+		padding: 1.5rem;
+
+		border-radius: 0.25rem;
 	}
+
+	header {
+		margin-bottom: 2rem;
+
+		h2 {
+			@include typo.header('h2');
+			margin: 0;
+		}
+	}
+
 	.actions {
-		padding: 2rem 0.5rem 0;
 		display: flex;
 		justify-content: space-between;
+
+		margin-top: 2rem;
 
 		&__left {
 			justify-content: flex-start;

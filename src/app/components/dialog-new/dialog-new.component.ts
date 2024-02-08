@@ -19,7 +19,7 @@ export type DialogNewAction = DialogNewActionType;
 export class DialogNewComponent {
 	@Input() visible: boolean = false;
 	@Input() header!: string;
-	@Input() showAdd = true;
+	@Input() showAdd = false;
 
 	@Output() visibleChange = new EventEmitter<boolean>();
 	@Output() action = new EventEmitter<DialogNewAction>();

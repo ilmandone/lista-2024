@@ -16,7 +16,7 @@
 			<p-button
 				icon="pi pi-plus"
 				[text]="true"
-				(onClick)="newList()"
+				(onClick)="showNewListDialog = true"
 			></p-button>
 		}
 	</header>
@@ -41,7 +41,7 @@
 						<p>Nessuna lista disponibile</p>
 						<p-button
 							label="Crea la prima lista"
-							(onClick)="newList()"
+							(onClick)="showNewListDialog = true"
 						></p-button>
 					</div>
 				</section>
@@ -53,6 +53,17 @@
 <app-dialog-new
 	[(visible)]="showNewListDialog"
 	[header]="'Nuova lista'"
-></app-dialog-new>
+	(action)="newListDialogAction($event)"
+>
+		<span class="input-wrapper p-float-label">
+			<input
+				id="new-list"
+				type="text"
+				pInputText
+				[formControl]="newListFC"
+			/>
+			<label for="new-list">Aggiungi una lista</label>
+		</span>
+</app-dialog-new>
 
 <app-loader [visible]="loading"></app-loader>

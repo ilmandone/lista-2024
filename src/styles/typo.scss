@@ -1,10 +1,11 @@
 $head-size: (
   "h1": 2.6rem,
+  "h2": 2rem
 );
 
 $head-weight: (
   "h1": 200,
-  "h2": 400,
+  "h2": 300
 );
 
 @mixin header($size) {
