@@ -3,13 +3,14 @@ import {
 	CollectionReference,
 	DocumentData,
 	Firestore,
+	Timestamp,
 	collection,
 	getDocs,
 	getFirestore,
 	orderBy,
 	query,
 } from 'firebase/firestore';
-import { Observable, from } from 'rxjs';
+import { Observable, from, map } from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
 
 export interface IItemData {
@@ -28,7 +29,7 @@ export interface IListData {
 	items: IItemData;
 }
 
-export interface DocumentsData {
+export interface IListsData {
 	data: IListData[];
 }
 
@@ -42,7 +43,7 @@ export class DbService {
 	private _collection!: CollectionReference<DocumentData, DocumentData>;
 	constructor() {}
 
-	private async _loadDocsFromCollection(): Promise<DocumentsData | unknown> {
+	private async _loadDocsFromCollection(): Promise<IListsData | unknown> {
 		const data: DocumentData[] = [];
 
 		try {
@@ -66,9 +67,18 @@ export class DbService {
 		this._collection = collection(this._db, 'ListaDellaSpesaV2');
 	}
 
-	loadLists(): Observable<DocumentsData> {
-		return from(
-			this._loadDocsFromCollection(),
-		) as Observable<DocumentsData>;
+	loadLists(): Observable<IListsData> {
+		return from(this._loadDocsFromCollection()).pipe(
+			map((r) => {
+				// Convert timestamp to Date
+				(r as IListsData).data.forEach((list: IListData) => {
+					list.updated = (
+						list.updated as unknown as Timestamp
+					).toDate();
+				});
+
+				return r;
+			}),
+		) as Observable<IListsData>;
 	}
 }
