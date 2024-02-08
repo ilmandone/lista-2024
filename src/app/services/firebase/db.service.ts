@@ -12,8 +12,24 @@ import {
 import { Observable, from } from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
 
+export interface IItemData {
+	active: true;
+	field: string;
+	incart: boolean;
+	label: string;
+	qt: number;
+}
+
+export interface IListData {
+	UUID: string;
+	label: string;
+	positin: number;
+	updated: Date;
+	items: IItemData;
+}
+
 export interface DocumentsData {
-	data: DocumentData[];
+	data: IListData[];
 }
 
 @Injectable({
