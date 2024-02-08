@@ -1,13 +1,17 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {Router, RouterModule} from '@angular/router';
-import {ButtonModule} from 'primeng/button';
-import {RippleModule} from 'primeng/ripple';
-import {FirebaseAuthentication} from '../../services/firebase/authe.service';
-import {DbService, DocumentsData} from 'app/services/firebase/db.service';
-import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
-import {LoaderComponent} from '../../components/loader/loader.component';
-import {Observable, tap} from 'rxjs';
-import {CommonModule} from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import { DbService, DocumentsData } from 'app/services/firebase/db.service';
+import {
+	SideMenuAction,
+	SideMenuComponent,
+} from '../../components/side-menu/side-menu.component';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import { Observable, tap } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { ListComponent } from 'app/components/list/list.component';
 
 @Component({
 	selector: 'app-home.page',
@@ -19,6 +23,7 @@ import {CommonModule} from '@angular/common';
 		RouterModule,
 		SideMenuComponent,
 		LoaderComponent,
+		ListComponent,
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -31,24 +36,23 @@ export class HomePageComponent implements OnInit {
 	public lists$!: Observable<DocumentsData>;
 
 	public loading = false;
-	public showFullHeader: boolean = false
+	public showFullHeader: boolean = false;
 	public mainMenuOpen = false;
 
 	ngOnInit() {
 		this._dbSrv.init();
 
 		// Autoload all the lists
-		this.loading = true
-		this.lists$ =
-			this._dbSrv.loadLists().pipe(
-				/*switchMap(() => {
+		this.loading = true;
+		this.lists$ = this._dbSrv.loadLists().pipe(
+			/*switchMap(() => {
 					return of({data: []})
 				}),*/
-				tap((r) => {
-					this.showFullHeader = r.data.length > 0
-					this.loading = false
-				}),
-			);
+			tap((r) => {
+				this.showFullHeader = r.data.length > 0;
+				this.loading = false;
+			}),
+		);
 	}
 
 	newList() {
