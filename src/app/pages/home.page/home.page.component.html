@@ -24,9 +24,14 @@
 	<main>
 		@if ((lists$ | async)?.data; as lists) {
 			@if (lists.length > 0) {
-				<ul>
+				<ul class="lists">
 					@for (list of lists; track list["UUID"]) {
-						<app-list label="{{ list.label }}"></app-list>
+						<li>
+							<app-list
+								[label]="list.label"
+								[updated]="list.updated"
+							></app-list>
+						</li>
 					}
 				</ul>
 			} @else {
@@ -44,5 +49,7 @@
 		}
 	</main>
 </div>
+
+<app-dialog-new [(visible)]="showNewListDialog"></app-dialog-new>
 
 <app-loader [visible]="loading"></app-loader>

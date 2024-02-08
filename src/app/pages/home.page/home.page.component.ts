@@ -1,17 +1,18 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { ListComponent } from 'app/components/list/list.component';
+import { DbService, IListsData } from 'app/services/firebase/db.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { DbService, DocumentsData } from 'app/services/firebase/db.service';
+import { Observable, tap } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
 import {
 	SideMenuAction,
 	SideMenuComponent,
 } from '../../components/side-menu/side-menu.component';
-import { LoaderComponent } from '../../components/loader/loader.component';
-import { Observable, tap } from 'rxjs';
-import { CommonModule } from '@angular/common';
-import { ListComponent } from 'app/components/list/list.component';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import { DialogNewComponent } from 'app/components/dialog-new/dialog-new.component';
 
 @Component({
 	selector: 'app-home.page',
@@ -24,6 +25,7 @@ import { ListComponent } from 'app/components/list/list.component';
 		SideMenuComponent,
 		LoaderComponent,
 		ListComponent,
+		DialogNewComponent,
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -33,11 +35,16 @@ export class HomePageComponent implements OnInit {
 	private _dbSrv = inject(DbService);
 	private _router = inject(Router);
 
-	public lists$!: Observable<DocumentsData>;
+	public lists$!: Observable<IListsData>;
 
 	public loading = false;
+
+	// Header and menu
 	public showFullHeader: boolean = false;
 	public mainMenuOpen = false;
+
+	// New list
+	public showNewListDialog = false;
 
 	ngOnInit() {
 		this._dbSrv.init();
@@ -45,9 +52,6 @@ export class HomePageComponent implements OnInit {
 		// Autoload all the lists
 		this.loading = true;
 		this.lists$ = this._dbSrv.loadLists().pipe(
-			/*switchMap(() => {
-					return of({data: []})
-				}),*/
 			tap((r) => {
 				this.showFullHeader = r.data.length > 0;
 				this.loading = false;
@@ -56,7 +60,12 @@ export class HomePageComponent implements OnInit {
 	}
 
 	newList() {
-		console.log('CREATE NEW LIST');
+		this.showNewListDialog = true;
+
+		console.log(
+			'@@@ ~ HomePageComponent ~ newList ~ this.showNewListDialog:',
+			this.showNewListDialog,
+		);
 	}
 
 	sideMenuAction($event: SideMenuAction) {
