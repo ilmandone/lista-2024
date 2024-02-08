@@ -4,6 +4,7 @@ $head-size: (
 
 $head-weight: (
   "h1": 200,
+  "h2": 400,
 );
 
 @mixin header($size) {
