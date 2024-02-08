@@ -50,6 +50,9 @@
 	</main>
 </div>
 
-<app-dialog-new [(visible)]="showNewListDialog"></app-dialog-new>
+<app-dialog-new
+	[(visible)]="showNewListDialog"
+	[header]="'Nuova lista'"
+></app-dialog-new>
 
 <app-loader [visible]="loading"></app-loader>

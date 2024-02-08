@@ -1,5 +1,19 @@
 :host {
-	.dialog-new {
-		width: 80vw;
+	.content {
+        padding: 0 0.5rem;
+	}
+	.actions {
+		padding: 2rem 0.5rem 0;
+		display: flex;
+		justify-content: space-between;
+
+		&__left {
+			justify-content: flex-start;
+		}
+		&__right {
+			p-button:not(:first-child) {
+				margin-left: 1rem;
+			}
+		}
 	}
 }
