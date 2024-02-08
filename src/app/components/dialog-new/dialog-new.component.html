@@ -4,11 +4,11 @@
 	[dismissableMask]="true"
 	[draggable]="false"
 	[modal]="true"
-	[responsive]="true"
 	[breakpoints]="{ '768px': '90vw' }"
 	[style]="{ width: '500px' }"
 	[visible]="visible"
-	(visibleChange)="visibleChange.emit($event)"
+	(visibleChange)="this.visibleChange.emit($event)"
+	(onHide)="onHide()"
 >
 	<ng-template pTemplate="headless">
 		<section class="wrapper">
@@ -29,7 +29,7 @@
 						<p-button
 							icon="pi pi-plus"
 							[disabled]="!enabled"
-							(click)="closeDialog(dialogNewActionType.ADD)"
+							(click)="actionDialog(dialogNewActionType.ADD)"
 							severity="secondary"
 						></p-button>
 					}
@@ -37,7 +37,7 @@
 				<div class="actions__right">
 					<p-button
 
-						(click)="closeDialog(dialogNewActionType.CANCEL)"
+						(click)="actionDialog(dialogNewActionType.CANCEL)"
 						label="Cancel"
 						severity="secondary"
 						[outlined]="true"
@@ -45,7 +45,7 @@
 
 					<p-button
 						[disabled]="!enabled"
-						(click)="closeDialog(dialogNewActionType.OK)"
+						(click)="actionDialog(dialogNewActionType.OK)"
 						label="Ok"
 					></p-button>
 				</div>

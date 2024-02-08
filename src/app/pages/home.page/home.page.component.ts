@@ -82,10 +82,12 @@ export class HomePageComponent implements OnInit {
 	newListDialogAction($event: DialogNewAction) {
 		switch ($event) {
 			case DialogNewActionType.CANCEL:
+				console.log('CANCEL')
 				this.newListsLabels = []
+				this.newListFC.reset()
 				break
 			case DialogNewActionType.OK:
-
+				this.newListFC.setValue(null)
 				break
 		}
 	}
@@ -105,6 +107,6 @@ export class HomePageComponent implements OnInit {
 		);
 
 		// Create the new list form control
-		this.newListFC = new FormControl<Nullable<string>>(null, {validators:[Validators.required]})
+		this.newListFC = new FormControl<Nullable<string>>(null, {validators: [Validators.required]})
 	}
 }

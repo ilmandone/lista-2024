@@ -27,11 +27,22 @@ export class DialogNewComponent {
 
 	dialogNewActionType = DialogNewActionType;
 
-	closeDialog(action: DialogNewActionType) {
+	/**
+	 * Action emitted by action buttons
+	 * @param {DialogNewActionType} action
+	 */
+	actionDialog(action: DialogNewActionType) {
 		this.action.emit(action);
 		if (action !== DialogNewActionType.ADD) {
 			this.visible = false;
 			this.visibleChange.emit(this.visible);
 		}
+	}
+
+	/**
+	 * On dialog close emit a cancel action
+	 */
+	onHide() {
+		this.action.emit(DialogNewActionType.CANCEL)
 	}
 }
