@@ -1,8 +1,9 @@
 # Lista2024
 
 ## Todo
-- Password recover link
-- Start reading data from db
+- DB create a new list
+- Link the create new list with new list dialog
+- Emit confirm or error message on db create new list feedback
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
 
