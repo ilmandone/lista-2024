@@ -28,6 +28,7 @@
 					@if (showAdd) {
 						<p-button
 							icon="pi pi-plus"
+							[disabled]="!enabled"
 							(click)="closeDialog(dialogNewActionType.ADD)"
 							severity="secondary"
 						></p-button>
@@ -43,7 +44,7 @@
 					></p-button>
 
 					<p-button
-
+						[disabled]="!enabled"
 						(click)="closeDialog(dialogNewActionType.OK)"
 						label="Ok"
 					></p-button>

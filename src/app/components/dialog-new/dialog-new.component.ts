@@ -20,6 +20,7 @@ export class DialogNewComponent {
 	@Input() visible: boolean = false;
 	@Input() header!: string;
 	@Input() showAdd = false;
+	@Input() enabled = false
 
 	@Output() visibleChange = new EventEmitter<boolean>();
 	@Output() action = new EventEmitter<DialogNewAction>();

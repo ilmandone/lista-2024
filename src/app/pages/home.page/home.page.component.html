@@ -53,6 +53,7 @@
 <app-dialog-new
 	[(visible)]="showNewListDialog"
 	[header]="'Nuova lista'"
+	[enabled]="newListFC.valid"
 	(action)="newListDialogAction($event)"
 >
 		<span class="input-wrapper p-float-label">

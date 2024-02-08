@@ -12,7 +12,7 @@ import {FirebaseAuthentication} from '../../services/firebase/authe.service';
 import {DialogNewAction, DialogNewActionType, DialogNewComponent} from 'app/components/dialog-new/dialog-new.component';
 import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
-import {FormControl, ReactiveFormsModule} from "@angular/forms";
+import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Nullable} from "../../utils/commons";
 
 @Component({
@@ -105,6 +105,6 @@ export class HomePageComponent implements OnInit {
 		);
 
 		// Create the new list form control
-		this.newListFC = new FormControl<Nullable<string>>(null)
+		this.newListFC = new FormControl<Nullable<string>>(null, {validators:[Validators.required]})
 	}
 }
