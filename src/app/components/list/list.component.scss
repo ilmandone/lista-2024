@@ -1,24 +1,24 @@
-@use '~styles/vars.scss';
+@use "~styles/vars.scss";
 
 :host {
-    position: relative;
+	position: relative;
 
-    padding: 1.5rem;
+	padding: 1.5rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
-    border-bottom: 1px solid var(--gray-50);
+	border-bottom: 1px solid var(--surface-0);
 
-    background: var(--gray-200);
+	background: var(--surface-50);
 
-    .label {
-        font-weight: 500;
-    }
+	.label {
+		font-weight: 500;
+	}
 
-    .updated {
-        font-size: vars.$font-size-sm;
-        color: var(--gray-700);
-    }
+	.updated {
+		font-size: vars.$font-size-sm;
+		color: var(--surface-600);
+	}
 }
