@@ -12,8 +12,8 @@ import {FirebaseAuthentication} from '../../services/firebase/authe.service';
 import {DialogNewAction, DialogNewActionType, DialogNewComponent} from 'app/components/dialog-new/dialog-new.component';
 import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
-import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Nullable} from "../../utils/commons";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {MAIN_TOAST_KEY, Nullable} from "../../utils/commons";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 
@@ -31,8 +31,7 @@ import {ToastModule} from "primeng/toast";
 		DialogNewComponent,
 		InputTextModule,
 		PaginatorModule,
-		ReactiveFormsModule,
-		ToastModule
+		ReactiveFormsModule
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -42,8 +41,6 @@ export class HomePageComponent implements OnInit {
 	private _dbSrv = inject(DbService);
 	private _router = inject(Router);
 	private _messageSrv = inject(MessageService);
-
-	public readonly MAIN_TOAST_KEY = 'main-ts'
 
 	public lists$!: Observable<IListsData>;
 
@@ -56,6 +53,9 @@ export class HomePageComponent implements OnInit {
 	// New list
 	public showNewListDialog = false;
 	public newListFC!: FormControl<Nullable<string>>;
+	public newListFG!: FormGroup<{
+		newList: FormControl<Nullable<string>>
+	}>
 
 
 	//#region Side Menu
@@ -70,7 +70,7 @@ export class HomePageComponent implements OnInit {
 				this._authSrv
 					.logout()
 					.then(() => {
-						this._router.navigate(['login']);
+						void this._router.navigate(['login']);
 						this.loading = false;
 					})
 					.catch(() => {
@@ -83,8 +83,34 @@ export class HomePageComponent implements OnInit {
 	//#endregion
 
 	//#region New list
+	public createNewList(name: Nullable<string>): void {
+		const newListName = name
 
-	newListDialogAction($event: DialogNewAction) {
+		// Check that newListName have a valid string
+		if (newListName && newListName.trim().length > 0)
+
+			this.lists$ = this._dbSrv.createList(newListName).pipe(
+				catchError((r) => {
+					this._messageSrv.add({
+						key: MAIN_TOAST_KEY,
+						severity: 'warn',
+						summary: 'Nuova lista',
+						detail: r.msg,
+						sticky: true,
+						life: 2000
+					})
+					return of(r)
+				})
+			)
+	}
+
+	submitNewList() {
+		this.showNewListDialog = false
+		this.createNewList(this.newListFC.value)
+	}
+
+
+	public newListDialogAction($event: DialogNewAction) {
 		switch ($event) {
 
 			case DialogNewActionType.SHOW:
@@ -93,25 +119,7 @@ export class HomePageComponent implements OnInit {
 
 			// On OK call the create list if the
 			case DialogNewActionType.OK:
-				const newListName = this.newListFC.value
-
-				// Check that newListName have a valid string
-				if (newListName && newListName.trim().length > 0)
-
-					this.lists$ = this._dbSrv.createList(newListName).pipe(
-						catchError((r) => {
-							this._messageSrv.add({
-								key: this.MAIN_TOAST_KEY,
-								severity: 'warn',
-								summary: 'Nuova lista',
-								detail: r.msg,
-								sticky: true,
-								life: 2000
-							})
-							console.error('ERROR ON LIST CREATION', r.msg)
-							return of(r)
-						})
-					)
+				this.createNewList(this.newListFC.value)
 				break
 		}
 	}
@@ -132,5 +140,6 @@ export class HomePageComponent implements OnInit {
 
 		// Create the new list form control
 		this.newListFC = new FormControl<Nullable<string>>(null, {validators: [Validators.required]})
+		this.newListFG = new FormGroup({newList: this.newListFC});
 	}
 }

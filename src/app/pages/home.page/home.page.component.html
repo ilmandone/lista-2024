@@ -55,6 +55,7 @@
 	[header]="'Nuova lista'"
 	[enabled]="newListFC.valid"
 	(action)="newListDialogAction($event)">
+	<form [formGroup]="newListFG" (ngSubmit)="submitNewList()">
 		<span class="input-wrapper p-float-label">
 			<input
 				id="new-list"
@@ -64,9 +65,7 @@
 			/>
 			<label for="new-list">Aggiungi una lista</label>
 		</span>
+	</form>
 </app-dialog-new>
 
 <app-loader [visible]="loading"></app-loader>
-
-<p-toast position="bottom-center" [key]="MAIN_TOAST_KEY"></p-toast>
-
