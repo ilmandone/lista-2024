@@ -82,6 +82,37 @@ export class LoginPageComponent implements OnInit {
 	}
 
 	/**
+	 * Handle login error string
+	 * @param {string} errorCode
+	 * @private
+	 */
+	private _handleLoginError(errorCode: string) {
+		switch (errorCode) {
+			case 'auth/user-not-found':
+			case 'auth/invalid-email':
+				this.errorMsg = {
+					...this.errorMsg,
+					user: 'Email errata',
+				};
+				break;
+			case 'auth/wrong-password':
+				this.errorMsg = {
+					user: null,
+					psw: 'Password errata',
+				};
+				break;
+			case 'auth/too-many-requests':
+				this._messageSrv.add({
+					key: MAIN_TOAST_KEY,
+					severity: 'error',
+					summary: 'Attenzione',
+					detail: 'Troppi tentativi effettuati, riprova tra poco',
+				});
+				break;
+		}
+	}
+
+	/**
 	 * Reset the be error messages
 	 * @param {string} key
 	 */
@@ -89,6 +120,11 @@ export class LoginPageComponent implements OnInit {
 		this.errorMsg = { ...this.errorMsg, [key]: null };
 	}
 
+	/**
+	 * F/E validation on blur
+	 * @param fc
+	 * @param key
+	 */
 	blur(fc: FormControl, key: string): void {
 		if (fc.errors) {
 			switch (key) {
@@ -120,30 +156,7 @@ export class LoginPageComponent implements OnInit {
 				})
 				.catch((e) => {
 					this.loggingIn = false;
-
-					switch (e.code as string) {
-						case 'auth/user-not-found':
-						case 'auth/invalid-email':
-							this.errorMsg = {
-								...this.errorMsg,
-								user: 'Email errata',
-							};
-							break;
-						case 'auth/wrong-password':
-							this.errorMsg = {
-								user: null,
-								psw: 'Password errata',
-							};
-							break;
-						case 'auth/too-many-requests':
-							this._messageSrv.add({
-								key: MAIN_TOAST_KEY,
-								severity: 'error',
-								summary: 'Attenzione',
-								detail: 'Troppi tentativi effettuati, riprova tra poco',
-							});
-							break;
-					}
+					this._handleLoginError(e.code as string)
 				});
 		}
 	}

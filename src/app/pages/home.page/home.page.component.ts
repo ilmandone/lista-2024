@@ -15,7 +15,6 @@ import {PaginatorModule} from "primeng/paginator";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MAIN_TOAST_KEY, Nullable} from "../../utils/commons";
 import {MessageService} from "primeng/api";
-import {ToastModule} from "primeng/toast";
 
 @Component({
 	selector: 'app-home.page',
@@ -57,7 +56,6 @@ export class HomePageComponent implements OnInit {
 		newList: FormControl<Nullable<string>>
 	}>
 
-
 	//#region Side Menu
 	/**
 	 * Side menu actions
@@ -83,7 +81,12 @@ export class HomePageComponent implements OnInit {
 	//#endregion
 
 	//#region New list
-	public createNewList(name: Nullable<string>): void {
+	/**
+	 * Create a new list
+	 * @param {Nullable<string>} name
+	 * @private
+	 */
+	private _createNewList(name: Nullable<string>): void {
 		const newListName = name
 
 		// Check that newListName have a valid string
@@ -104,12 +107,18 @@ export class HomePageComponent implements OnInit {
 			)
 	}
 
+	/**
+	 * Handle new list fg submit action
+	 */
 	submitNewList() {
 		this.showNewListDialog = false
-		this.createNewList(this.newListFC.value)
+		this._createNewList(this.newListFC.value)
 	}
 
-
+	/**
+	 * Handle dialog actions
+	 * @param {DialogNewAction} $event
+	 */
 	public newListDialogAction($event: DialogNewAction) {
 		switch ($event) {
 
@@ -117,9 +126,8 @@ export class HomePageComponent implements OnInit {
 				this.newListFC.reset()
 				break
 
-			// On OK call the create list if the
 			case DialogNewActionType.OK:
-				this.createNewList(this.newListFC.value)
+				this._createNewList(this.newListFC.value)
 				break
 		}
 	}
