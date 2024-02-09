@@ -14,7 +14,6 @@ import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
 import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Nullable} from "../../utils/commons";
-import {MessageModule} from "primeng/message";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 
