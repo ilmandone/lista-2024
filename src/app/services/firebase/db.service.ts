@@ -118,7 +118,7 @@ export class DbService {
 			return throwError(() => {
 				return {
 					data: this._rawData.data,
-					msg: 'Esiste una lista con questo nome'
+					msg: 'Esiste già una lista con questo nome'
 				}
 			})
 		}
@@ -132,7 +132,7 @@ export class DbService {
 			// On error return the cached data
 			catchError(() => of({
 				data: this._rawData.data,
-				msg: 'error di firebase'
+				msg: 'Errore di connessione - Riprova'
 			})),
 			// On success load the lists and return the observable
 			switchMap(() => this.loadLists()

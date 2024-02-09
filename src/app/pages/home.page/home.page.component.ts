@@ -14,6 +14,9 @@ import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
 import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Nullable} from "../../utils/commons";
+import {MessageModule} from "primeng/message";
+import {MessageService} from "primeng/api";
+import {ToastModule} from "primeng/toast";
 
 @Component({
 	selector: 'app-home.page',
@@ -30,6 +33,7 @@ import {Nullable} from "../../utils/commons";
 		InputTextModule,
 		PaginatorModule,
 		ReactiveFormsModule,
+		ToastModule
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -38,6 +42,9 @@ export class HomePageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
 	private _dbSrv = inject(DbService);
 	private _router = inject(Router);
+	private _messageSrv = inject(MessageService);
+
+	public readonly MAIN_TOAST_KEY = 'main-ts'
 
 	public lists$!: Observable<IListsData>;
 
@@ -90,10 +97,18 @@ export class HomePageComponent implements OnInit {
 				const newListName = this.newListFC.value
 
 				// Check that newListName have a valid string
-				if(newListName && newListName.trim().length > 0)
+				if (newListName && newListName.trim().length > 0)
 
 					this.lists$ = this._dbSrv.createList(newListName).pipe(
 						catchError((r) => {
+							this._messageSrv.add({
+								key: this.MAIN_TOAST_KEY,
+								severity: 'warn',
+								summary: 'Nuova lista',
+								detail: r.msg,
+								sticky: true,
+								life: 2000
+							})
 							console.error('ERROR ON LIST CREATION', r.msg)
 							return of(r)
 						})
