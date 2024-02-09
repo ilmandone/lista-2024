@@ -6,6 +6,7 @@ export enum DialogNewActionType {
 	OK,
 	CANCEL,
 	ADD,
+	SHOW
 }
 export type DialogNewAction = DialogNewActionType;
 
@@ -44,5 +45,9 @@ export class DialogNewComponent {
 	 */
 	onHide() {
 		this.action.emit(DialogNewActionType.CANCEL)
+	}
+
+	onShow() {
+		this.action.emit(DialogNewActionType.SHOW)
 	}
 }
