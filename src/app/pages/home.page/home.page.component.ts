@@ -94,7 +94,7 @@ export class HomePageComponent implements OnInit {
 
 					this.lists$ = this._dbSrv.createList(newListName).pipe(
 						catchError((r) => {
-							console.error('ERROR ON LIST CREATION')
+							console.error('ERROR ON LIST CREATION', r.msg)
 							return of(r)
 						})
 					)

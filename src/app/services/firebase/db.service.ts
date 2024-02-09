@@ -13,7 +13,7 @@ import {
 	setDoc,
 	serverTimestamp
 } from 'firebase/firestore';
-import {Observable, from, map, catchError, of, switchMap} from 'rxjs';
+import {Observable, from, map, catchError, of, switchMap, throwError} from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
 
 export interface IItemData {
@@ -34,6 +34,7 @@ export interface IListData {
 
 export interface IListsData {
 	data: IListData[];
+	msg?: string
 }
 
 @Injectable({
@@ -113,6 +114,15 @@ export class DbService {
 		const newListUUID = this._generateUUID()
 		const newListLabel = name.charAt(0).toUpperCase() + name.toLowerCase().slice(1)
 
+		if(this._rawData.data.some(d => d.label === newListLabel)) {
+			return throwError(() => {
+				return {
+					data: this._rawData.data,
+					msg: 'Esiste una lista con questo nome'
+				}
+			})
+		}
+
 		return from(setDoc(doc(this._collection, newListUUID), {
 			label: newListLabel,
 			items: [],
@@ -120,7 +130,10 @@ export class DbService {
 			updated: serverTimestamp()
 		})).pipe(
 			// On error return the cached data
-			catchError(() => of(this._rawData)),
+			catchError(() => of({
+				data: this._rawData.data,
+				msg: 'error di firebase'
+			})),
 			// On success load the lists and return the observable
 			switchMap(() => this.loadLists()
 			)
