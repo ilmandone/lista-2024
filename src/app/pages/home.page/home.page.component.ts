@@ -5,7 +5,7 @@ import {ListComponent} from 'app/components/list/list.component';
 import {DbService, IListsData} from 'app/services/firebase/db.service';
 import {ButtonModule} from 'primeng/button';
 import {RippleModule} from 'primeng/ripple';
-import {Observable, tap} from 'rxjs';
+import {catchError, Observable, of, tap} from 'rxjs';
 import {LoaderComponent} from '../../components/loader/loader.component';
 import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
 import {FirebaseAuthentication} from '../../services/firebase/authe.service';
@@ -80,12 +80,24 @@ export class HomePageComponent implements OnInit {
 
 	newListDialogAction($event: DialogNewAction) {
 		switch ($event) {
+
 			case DialogNewActionType.SHOW:
 				this.newListFC.reset()
 				break
+
+			// On OK call the create list if the
 			case DialogNewActionType.OK:
-				if(this.newListFC.value)
-					this._dbSrv.createList(this.newListFC.value)
+				const newListName = this.newListFC.value
+
+				// Check that newListName have a valid string
+				if(newListName && newListName.trim().length > 0)
+
+					this.lists$ = this._dbSrv.createList(newListName).pipe(
+						catchError((r) => {
+							console.error('ERROR ON LIST CREATION')
+							return of(r)
+						})
+					)
 				break
 		}
 	}
