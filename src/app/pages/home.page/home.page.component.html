@@ -11,15 +11,19 @@
 			(onClick)="mainMenuOpen = true"
 		></p-button>
 
+		<!--Show full header if we have a list at last-->
 		@if (showFullHeader) {
 			<h1>DASHBOARD</h1>
 			<p-button
-				icon="pi pi-plus"
+				icon="pi pi-ellipsis-v"
 				[text]="true"
-				(onClick)="showNewListDialog = true"
+				(onClick)="sideMenu.toggle($event)"
 			></p-button>
+			<!--Side menu-->
+			<p-menu #sideMenu [model]="sideMenuItems" [popup]="true"></p-menu>
 		}
 	</header>
+
 
 	<main>
 		@if ((lists$ | async)?.data; as lists) {

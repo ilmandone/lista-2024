@@ -14,7 +14,8 @@ import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MAIN_TOAST_KEY, Nullable} from "../../utils/commons";
-import {MessageService} from "primeng/api";
+import {MenuItem, MessageService} from "primeng/api";
+import {MenuModule} from "primeng/menu";
 
 @Component({
 	selector: 'app-home.page',
@@ -30,7 +31,8 @@ import {MessageService} from "primeng/api";
 		DialogNewComponent,
 		InputTextModule,
 		PaginatorModule,
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		MenuModule
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -42,8 +44,10 @@ export class HomePageComponent implements OnInit {
 	private _messageSrv = inject(MessageService);
 
 	public lists$!: Observable<IListsData>;
-
 	public loading = false;
+
+	// Side menu
+	public sideMenuItems!: MenuItem[]
 
 	// Header and menu
 	public showFullHeader: boolean = false;
@@ -149,5 +153,28 @@ export class HomePageComponent implements OnInit {
 		// Create the new list form control
 		this.newListFC = new FormControl<Nullable<string>>(null, {validators: [Validators.required]})
 		this.newListFG = new FormGroup({newList: this.newListFC});
+
+		// Side menu
+		this.sideMenuItems = [
+			{
+				label: 'Le tue liste',
+				items: [
+					{
+						label: 'Aggiungi',
+						icon: 'pi pi-plus',
+						command: () => {
+							this.showNewListDialog = true
+						}
+					},
+					{
+						label: 'Modifica',
+						icon: 'pi pi-pencil',
+						command: () => {
+							console.log('start edit mode')
+						}
+					}
+				]
+			}
+		]
 	}
 }
