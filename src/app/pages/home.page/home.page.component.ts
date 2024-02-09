@@ -49,7 +49,6 @@ export class HomePageComponent implements OnInit {
 
 	// New list
 	public showNewListDialog = false;
-	public newListsLabels: string[] = []
 	public newListFC!: FormControl<Nullable<string>>;
 
 
@@ -81,13 +80,12 @@ export class HomePageComponent implements OnInit {
 
 	newListDialogAction($event: DialogNewAction) {
 		switch ($event) {
-			case DialogNewActionType.CANCEL:
-				console.log('CANCEL')
-				this.newListsLabels = []
+			case DialogNewActionType.SHOW:
 				this.newListFC.reset()
 				break
 			case DialogNewActionType.OK:
-				this.newListFC.setValue(null)
+				if(this.newListFC.value)
+					this._dbSrv.createList(this.newListFC.value)
 				break
 		}
 	}
