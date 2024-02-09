@@ -1,9 +1,9 @@
 # Lista2024
 
 ## Todo
-- DB create a new list
-- Link the create new list with new list dialog
-- Emit confirm or error message on db create new list feedback
+- Improve the home side menu with a better template
+- Start the editing mode for lists
+- Create an item component that include the edit mode
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
 
