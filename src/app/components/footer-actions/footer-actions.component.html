@@ -1,8 +1,20 @@
-<div class="actions-wrapper">
-	<p-button
-		[raised]="true"
-		icon="pi pi-times"
-		severity="secondary"
-	></p-button>
-	<p-button [raised]="true" icon="pi pi-check"></p-button>
-</div>
+@if(fASrv.visible) {
+	<div class="actions-wrapper">
+		<p-button
+			icon="pi pi-times"
+			severity="secondary"
+			size="large"
+			[raised]="true"
+			[style]="{width: '100%'}"
+			(onClick)="fASrv.action.set(FACTIONS.CANCEL)"
+		></p-button>
+		<p-button
+			icon="pi pi-check"
+			size="large"
+			[raised]="true"
+			[style]="{width: '100%'}"
+			(onClick)="fASrv.action.set(FACTIONS.CONFIRM)"
+		></p-button>
+	</div>
+}
+

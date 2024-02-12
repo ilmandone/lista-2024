@@ -15,4 +15,14 @@
 		@include utils.media('tl') {max-width: 980px;}
 		@include utils.media('d') {max-width: 1200px;}
 	}
+
+	.footer-actions {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+
+		width: 100%;
+
+		z-index: utils.zIndex('footer-actions');
+	}
 }

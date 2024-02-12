@@ -38,22 +38,11 @@
 		}
 	}
 
-	main {        
+	main {
 		width: 100%;
 		height: calc(#{utils.getRealVh(100)} - 6rem);
 		overflow-y: auto;
 	}
-
-    .footer-actions {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-
-        width: 100%;
-        
-        z-index: utils.zIndex('footer-actions');
-
-    }
 
     // No lists
 	.no-lists-available {

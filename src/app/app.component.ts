@@ -7,11 +7,12 @@ import {ToastModule} from "primeng/toast";
 import {MAIN_TOAST_KEY} from "./utils/commons";
 import {LoaderComponent} from "./components/loader/loader.component";
 import {LoadingService} from "./services/_common/loading.service";
+import {FooterActionsComponent} from "./components/footer-actions/footer-actions.component";
 
 @Component({
 	selector: 'app-root',
 	standalone: true,
-	imports: [RouterOutlet, ButtonModule, RouterModule, ToastModule, LoaderComponent],
+	imports: [RouterOutlet, ButtonModule, RouterModule, ToastModule, LoaderComponent, FooterActionsComponent],
 	templateUrl: './app.component.html',
 	styleUrl: './app.component.scss',
 })

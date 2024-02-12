@@ -13,11 +13,11 @@
 	<!--Show full header if we have a list at last-->
 	@if (showFullHeader) {
 		<h1>DASHBOARD</h1>
-		@if (editMode === false) {
+		@if (!editMode) {
 			<p-button
 				icon="pi pi-pencil"
 				[text]="true"
-				(onClick)="editMode = true"
+				(onClick)="enableEditing()"
 			></p-button>
 		} @else {
 			<p-button
@@ -56,8 +56,6 @@
 		}
 	}
 </main>
-
-<app-footer-actions class="footer-actions"></app-footer-actions>
 
 <app-dialog-new
 	[(visible)]="showNewListDialog"
