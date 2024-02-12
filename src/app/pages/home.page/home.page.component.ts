@@ -29,6 +29,7 @@ import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { FooterActionsComponent } from 'app/components/footer-actions/footer-actions.component';
+import {LoadingService} from "../../services/_common/loading.service";
 
 @Component({
 	selector: 'app-home.page',
@@ -56,9 +57,9 @@ export class HomePageComponent implements OnInit {
 	private _dbSrv = inject(DbService);
 	private _router = inject(Router);
 	private _messageSrv = inject(MessageService);
+	private _loadingSrv = inject(LoadingService)
 
 	public lists$!: Observable<IListsData>;
-	public loading = false;
 
 	public editMode = false;
 
@@ -84,15 +85,15 @@ export class HomePageComponent implements OnInit {
 	sideMenuAction($event: SideMenuAction) {
 		switch ($event) {
 			case 'logout':
-				this.loading = true;
+				this._loadingSrv.visible = true;
 				this._authSrv
 					.logout()
 					.then(() => {
 						void this._router.navigate(['login']);
-						this.loading = false;
+						this._loadingSrv.visible = false;
 					})
 					.catch(() => {
-						this.loading = false;
+						this._loadingSrv.visible = false;
 					});
 				break;
 		}
@@ -156,11 +157,11 @@ export class HomePageComponent implements OnInit {
 		this._dbSrv.init();
 
 		// Autoload all the lists
-		this.loading = true;
+		this._loadingSrv.visible = true;
 		this.lists$ = this._dbSrv.loadLists().pipe(
 			tap((r) => {
 				this.showFullHeader = r.data.length > 0;
-				this.loading = false;
+				this._loadingSrv.visible = false;
 			}),
 		);
 
@@ -169,28 +170,5 @@ export class HomePageComponent implements OnInit {
 			validators: [Validators.required],
 		});
 		this.newListFG = new FormGroup({ newList: this.newListFC });
-
-		// Side menu
-		/* this.sideMenuItems = [
-			{
-				label: 'Le tue liste',
-				items: [
-					{
-						label: 'Aggiungi',
-						icon: 'pi pi-plus',
-						command: () => {
-							this.showNewListDialog = true;
-						},
-					},
-					{
-						label: 'Modifica',
-						icon: 'pi pi-pencil',
-						command: () => {
-							console.log('start edit mode');
-						},
-					},
-				],
-			},
-		]; */
 	}
 }
