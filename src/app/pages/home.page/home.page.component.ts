@@ -21,7 +21,7 @@ import {MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
 import {MenuItem, MessageService} from 'primeng/api';
 import {MenuModule} from 'primeng/menu';
 import {LoadingService} from "../../services/_common/loading.service";
-import {FACTIONS, FooterActionsService} from "../../services/_common/footer-actions.service";
+import {F_ACTIONS, F_VISIBILITY, FooterActionsService} from "../../services/_common/footer-actions.service";
 
 @Component({
 	selector: 'app-home.page',
@@ -71,12 +71,14 @@ export class HomePageComponent implements OnInit {
 
 	constructor() {
 		effect(() => {
+			const action = this._fASrv.action()
+
 			if (this.editMode) {
-				switch (this._fASrv.action()) {
-					case FACTIONS.CANCEL:
+				switch (action) {
+					case F_ACTIONS.CANCEL:
 						this.editMode = false
 						break
-					case FACTIONS.CONFIRM:
+					case F_ACTIONS.CONFIRM:
 						console.log('UPDATE THE LISTS INFO')
 						break
 				}
@@ -165,7 +167,7 @@ export class HomePageComponent implements OnInit {
 
 	enableEditing(): void {
 		this.editMode = true
-		this._fASrv.visible = true
+		this._fASrv.visible = F_VISIBILITY.CANCEL
 	}
 
 	//#endregion

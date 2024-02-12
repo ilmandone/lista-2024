@@ -10,7 +10,12 @@
         justify-content: center;
 
 		p-button {
+			width: 100%;
+		}
+
+		&.confirm p-button {
 			width: 50%;
 		}
     }
+
 }
