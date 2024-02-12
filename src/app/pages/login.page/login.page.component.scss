@@ -4,7 +4,9 @@
 
 :host {
 	.hero {
-		position: relative;
+		position: fixed;
+		top: 0;
+		left: 0;
 		width: 100vw;
 		height: utils.getRealVh(30);
 
@@ -17,7 +19,8 @@
 
 	main {
 		position: relative;
-		width: 100vw;
+		width: 100%;
+		margin-top: 30vh;
 		height: utils.getRealVh(70);
 
 		background-color: var(--surface-0);

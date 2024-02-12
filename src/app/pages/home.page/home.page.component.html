@@ -3,63 +3,61 @@
 	(action)="sideMenuAction($event)"
 ></app-side-menu>
 
-<div class="container">
-	<header>
-		<p-button
-			[icon]="mainMenuOpen ? 'pi pi-times' : 'pi pi-bars'"
-			[text]="true"
-			(onClick)="mainMenuOpen = true"
-		></p-button>
+<header>
+	<p-button
+		[icon]="mainMenuOpen ? 'pi pi-times' : 'pi pi-bars'"
+		[text]="true"
+		(onClick)="mainMenuOpen = true"
+	></p-button>
 
-		<!--Show full header if we have a list at last-->
-		@if (showFullHeader) {
-			<h1>DASHBOARD</h1>
-			@if (editMode === false) {
-				<p-button
-					icon="pi pi-pencil"
-					[text]="true"
-					(onClick)="editMode = true"
-				></p-button>
-			} @else {
-				<p-button
-					icon="pi pi-plus"
-					[text]="true"
-					(onClick)="showNewListDialog = true"
-				></p-button>
-			}
+	<!--Show full header if we have a list at last-->
+	@if (showFullHeader) {
+		<h1>DASHBOARD</h1>
+		@if (editMode === false) {
+			<p-button
+				icon="pi pi-pencil"
+				[text]="true"
+				(onClick)="editMode = true"
+			></p-button>
+		} @else {
+			<p-button
+				icon="pi pi-plus"
+				[text]="true"
+				(onClick)="showNewListDialog = true"
+			></p-button>
 		}
-	</header>
+	}
+</header>
 
-	<main>
-		@if ((lists$ | async)?.data; as lists) {
-			@if (lists.length > 0) {
-				<ul class="lists">
-					@for (list of lists; track list["UUID"]) {
-						<li>
-							<app-list
-								[label]="list.label"
-								[updated]="list.updated"
-							></app-list>
-						</li>
-					}
-				</ul>
-			} @else {
-				<section class="no-lists-available">
-					<div class="message">
-						<h1>Benvenuto</h1>
-						<p>Nessuna lista disponibile</p>
-						<p-button
-							label="Crea la prima lista"
-							(onClick)="showNewListDialog = true"
-						></p-button>
-					</div>
-				</section>
-			}
+<main>
+	@if ((lists$ | async)?.data; as lists) {
+		@if (lists.length > 0) {
+			<ul class="lists">
+				@for (list of lists; track list["UUID"]) {
+					<li>
+						<app-list
+							[label]="list.label"
+							[updated]="list.updated"
+						></app-list>
+					</li>
+				}
+			</ul>
+		} @else {
+			<section class="no-lists-available">
+				<div class="message">
+					<h1>Benvenuto</h1>
+					<p>Nessuna lista disponibile</p>
+					<p-button
+						label="Crea la prima lista"
+						(onClick)="showNewListDialog = true"
+					></p-button>
+				</div>
+			</section>
 		}
-	</main>
+	}
+</main>
 
-	<app-footer-actions class="footer-actions"></app-footer-actions>
-</div>
+<app-footer-actions class="footer-actions"></app-footer-actions>
 
 <app-dialog-new
 	[(visible)]="showNewListDialog"
