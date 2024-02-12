@@ -5,23 +5,22 @@ import {
 	Firestore,
 	Timestamp,
 	collection,
+	doc,
 	getDocs,
 	getFirestore,
 	orderBy,
 	query,
-	doc,
-	setDoc,
 	serverTimestamp,
+	setDoc,
 } from 'firebase/firestore';
 import {
 	Observable,
+	catchError,
 	from,
 	map,
-	catchError,
 	of,
 	switchMap,
 	throwError,
-	concat,
 } from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
 

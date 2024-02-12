@@ -14,16 +14,21 @@
 		<!--Show full header if we have a list at last-->
 		@if (showFullHeader) {
 			<h1>DASHBOARD</h1>
-			<p-button
-				icon="pi pi-ellipsis-v"
-				[text]="true"
-				(onClick)="sideMenu.toggle($event)"
-			></p-button>
-			<!--Side menu-->
-			<p-menu #sideMenu [model]="sideMenuItems" [popup]="true"></p-menu>
+			@if (editMode === false) {
+				<p-button
+					icon="pi pi-pencil"
+					[text]="true"
+					(onClick)="editMode = true"
+				></p-button>
+			} @else {
+				<p-button
+					icon="pi pi-plus"
+					[text]="true"
+					(onClick)="showNewListDialog = true"
+				></p-button>
+			}
 		}
 	</header>
-
 
 	<main>
 		@if ((lists$ | async)?.data; as lists) {
@@ -58,7 +63,8 @@
 	[(visible)]="showNewListDialog"
 	[header]="'Nuova lista'"
 	[enabled]="newListFC.valid"
-	(action)="newListDialogAction($event)">
+	(action)="newListDialogAction($event)"
+>
 	<form [formGroup]="newListFG" (ngSubmit)="submitNewList()">
 		<span class="input-wrapper p-float-label">
 			<input

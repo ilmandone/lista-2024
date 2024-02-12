@@ -1,21 +1,33 @@
-import {CommonModule} from '@angular/common';
-import {Component, inject, OnInit} from '@angular/core';
-import {Router, RouterModule} from '@angular/router';
-import {ListComponent} from 'app/components/list/list.component';
-import {DbService, IListsData} from 'app/services/firebase/db.service';
-import {ButtonModule} from 'primeng/button';
-import {RippleModule} from 'primeng/ripple';
-import {catchError, Observable, of, tap} from 'rxjs';
-import {LoaderComponent} from '../../components/loader/loader.component';
-import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
-import {FirebaseAuthentication} from '../../services/firebase/authe.service';
-import {DialogNewAction, DialogNewActionType, DialogNewComponent} from 'app/components/dialog-new/dialog-new.component';
-import {InputTextModule} from "primeng/inputtext";
-import {PaginatorModule} from "primeng/paginator";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MAIN_TOAST_KEY, Nullable} from "../../utils/commons";
-import {MenuItem, MessageService} from "primeng/api";
-import {MenuModule} from "primeng/menu";
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { ListComponent } from 'app/components/list/list.component';
+import { DbService, IListsData } from 'app/services/firebase/db.service';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { catchError, Observable, of, tap } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import {
+	SideMenuAction,
+	SideMenuComponent,
+} from '../../components/side-menu/side-menu.component';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import {
+	DialogNewAction,
+	DialogNewActionType,
+	DialogNewComponent,
+} from 'app/components/dialog-new/dialog-new.component';
+import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
+import {
+	FormControl,
+	FormGroup,
+	ReactiveFormsModule,
+	Validators,
+} from '@angular/forms';
+import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
+import { MenuItem, MessageService } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 
 @Component({
 	selector: 'app-home.page',
@@ -32,7 +44,7 @@ import {MenuModule} from "primeng/menu";
 		InputTextModule,
 		PaginatorModule,
 		ReactiveFormsModule,
-		MenuModule
+		MenuModule,
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -46,8 +58,10 @@ export class HomePageComponent implements OnInit {
 	public lists$!: Observable<IListsData>;
 	public loading = false;
 
+	public editMode = false;
+
 	// Side menu
-	public sideMenuItems!: MenuItem[]
+	public sideMenuItems!: MenuItem[];
 
 	// Header and menu
 	public showFullHeader: boolean = false;
@@ -57,8 +71,8 @@ export class HomePageComponent implements OnInit {
 	public showNewListDialog = false;
 	public newListFC!: FormControl<Nullable<string>>;
 	public newListFG!: FormGroup<{
-		newList: FormControl<Nullable<string>>
-	}>
+		newList: FormControl<Nullable<string>>;
+	}>;
 
 	//#region Side Menu
 	/**
@@ -91,11 +105,10 @@ export class HomePageComponent implements OnInit {
 	 * @private
 	 */
 	private _createNewList(name: Nullable<string>): void {
-		const newListName = name
+		const newListName = name;
 
 		// Check that newListName have a valid string
 		if (newListName && newListName.trim().length > 0)
-
 			this.lists$ = this._dbSrv.createList(newListName).pipe(
 				catchError((r) => {
 					this._messageSrv.add({
@@ -104,19 +117,19 @@ export class HomePageComponent implements OnInit {
 						summary: 'Nuova lista',
 						detail: r.msg,
 						sticky: true,
-						life: 2000
-					})
-					return of(r)
-				})
-			)
+						life: 2000,
+					});
+					return of(r);
+				}),
+			);
 	}
 
 	/**
 	 * Handle new list fg submit action
 	 */
 	submitNewList() {
-		this.showNewListDialog = false
-		this._createNewList(this.newListFC.value)
+		this.showNewListDialog = false;
+		this._createNewList(this.newListFC.value);
 	}
 
 	/**
@@ -125,14 +138,13 @@ export class HomePageComponent implements OnInit {
 	 */
 	public newListDialogAction($event: DialogNewAction) {
 		switch ($event) {
-
 			case DialogNewActionType.SHOW:
-				this.newListFC.reset()
-				break
+				this.newListFC.reset();
+				break;
 
 			case DialogNewActionType.OK:
-				this._createNewList(this.newListFC.value)
-				break
+				this._createNewList(this.newListFC.value);
+				break;
 		}
 	}
 
@@ -151,11 +163,13 @@ export class HomePageComponent implements OnInit {
 		);
 
 		// Create the new list form control
-		this.newListFC = new FormControl<Nullable<string>>(null, {validators: [Validators.required]})
-		this.newListFG = new FormGroup({newList: this.newListFC});
+		this.newListFC = new FormControl<Nullable<string>>(null, {
+			validators: [Validators.required],
+		});
+		this.newListFG = new FormGroup({ newList: this.newListFC });
 
 		// Side menu
-		this.sideMenuItems = [
+		/* this.sideMenuItems = [
 			{
 				label: 'Le tue liste',
 				items: [
@@ -163,18 +177,18 @@ export class HomePageComponent implements OnInit {
 						label: 'Aggiungi',
 						icon: 'pi pi-plus',
 						command: () => {
-							this.showNewListDialog = true
-						}
+							this.showNewListDialog = true;
+						},
 					},
 					{
 						label: 'Modifica',
 						icon: 'pi pi-pencil',
 						command: () => {
-							console.log('start edit mode')
-						}
-					}
-				]
-			}
-		]
+							console.log('start edit mode');
+						},
+					},
+				],
+			},
+		]; */
 	}
 }
