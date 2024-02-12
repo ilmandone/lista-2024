@@ -1,8 +1,8 @@
-import {Component, HostListener, inject, OnInit, signal} from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
-import { PrimeNGConfig } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { FirebaseAuthentication } from './services/firebase/authe.service';
+import {Component, HostListener, inject, OnInit} from '@angular/core';
+import {RouterModule, RouterOutlet} from '@angular/router';
+import {PrimeNGConfig} from 'primeng/api';
+import {ButtonModule} from 'primeng/button';
+import {FirebaseAuthentication} from './services/firebase/authe.service';
 import {ToastModule} from "primeng/toast";
 import {MAIN_TOAST_KEY} from "./utils/commons";
 import {LoaderComponent} from "./components/loader/loader.component";
