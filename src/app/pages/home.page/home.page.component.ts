@@ -28,6 +28,7 @@ import {
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
+import { FooterActionsComponent } from 'app/components/footer-actions/footer-actions.component';
 
 @Component({
 	selector: 'app-home.page',
@@ -45,6 +46,7 @@ import { MenuModule } from 'primeng/menu';
 		PaginatorModule,
 		ReactiveFormsModule,
 		MenuModule,
+		FooterActionsComponent,
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',

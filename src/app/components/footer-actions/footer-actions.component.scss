@@ -1,0 +1,12 @@
+@use "~styles/utils.scss";
+
+:host {
+    position: relative;
+    display: block;
+
+    .actions-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
