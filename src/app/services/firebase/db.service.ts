@@ -11,9 +11,18 @@ import {
 	query,
 	doc,
 	setDoc,
-	serverTimestamp
+	serverTimestamp,
 } from 'firebase/firestore';
-import {Observable, from, map, catchError, of, switchMap, throwError} from 'rxjs';
+import {
+	Observable,
+	from,
+	map,
+	catchError,
+	of,
+	switchMap,
+	throwError,
+	concat,
+} from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
 
 export interface IItemData {
@@ -34,7 +43,7 @@ export interface IListData {
 
 export interface IListsData {
 	data: IListData[];
-	msg?: string
+	msg?: string;
 }
 
 @Injectable({
@@ -45,7 +54,7 @@ export class DbService {
 
 	private _db!: Firestore;
 	private _collection!: CollectionReference<DocumentData, DocumentData>;
-	private _rawData!: IListsData
+	private _rawData!: IListsData;
 	constructor() {}
 
 	//#region Privates
@@ -71,16 +80,47 @@ export class DbService {
 		}
 	}
 
+	/**
+	 * Create the new list and return the updated lists
+	 * @param {string} newListUUID
+	 * @param {string} newListLabel
+	 * @returns
+	 */
+	private _createNewListInCollection(
+		newListUUID: string,
+		newListLabel: string,
+	): Observable<IListsData> {
+		return from(
+			setDoc(doc(this._collection, newListUUID), {
+				label: newListLabel,
+				items: [],
+				position: this._rawData.data.length,
+				updated: serverTimestamp(),
+			}),
+		).pipe(
+			// On error return the cached data
+			catchError(() =>
+				of({
+					data: this._rawData.data,
+					msg: 'Errore di connessione - Riprova',
+				}),
+			),
+			// On success load the lists and return the observable
+			switchMap(() => this.loadLists()),
+		);
+	}
+
 	private _generateUUID(): string {
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-			.replace(/[xy]/g, function (c) {
-				const r = Math.random() * 16 | 0,
-					v = c == 'x' ? r : (r & 0x3 | 0x8);
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+			/[xy]/g,
+			function (c) {
+				const r = (Math.random() * 16) | 0,
+					v = c == 'x' ? r : (r & 0x3) | 0x8;
 				return v.toString(16);
-			});
+			},
+		);
 	}
 	//#endregion
-
 
 	/**
 	 * Init the db references
@@ -104,39 +144,36 @@ export class DbService {
 					).toDate();
 				});
 
-				this._rawData = r as IListsData
+				this._rawData = r as IListsData;
 				return r;
 			}),
 		) as Observable<IListsData>;
 	}
 
 	createList(name: string): Observable<IListsData> {
-		const newListUUID = this._generateUUID()
-		const newListLabel = name.charAt(0).toUpperCase() + name.toLowerCase().slice(1)
+		// Load all lists and align internal data
+		return this.loadLists().pipe(
+			// Check if the list name exists
+			switchMap((r) => {
+				const newListUUID = this._generateUUID();
+				const newListLabel =
+					name.charAt(0).toUpperCase() + name.toLowerCase().slice(1);
 
-		if(this._rawData.data.some(d => d.label === newListLabel)) {
-			return throwError(() => {
-				return {
-					data: this._rawData.data,
-					msg: 'Esiste già una lista con questo nome'
+				if (r.data.some((d) => d.label === newListLabel)) {
+					return throwError(() => {
+						return {
+							data: this._rawData.data,
+							msg: 'Esiste già una lista con questo nome',
+						};
+					});
 				}
-			})
-		}
 
-		return from(setDoc(doc(this._collection, newListUUID), {
-			label: newListLabel,
-			items: [],
-			position: this._rawData.data.length,
-			updated: serverTimestamp()
-		})).pipe(
-			// On error return the cached data
-			catchError(() => of({
-				data: this._rawData.data,
-				msg: 'Errore di connessione - Riprova'
-			})),
-			// On success load the lists and return the observable
-			switchMap(() => this.loadLists()
-			)
-		)
+				// Create the new list
+				return this._createNewListInCollection(
+					newListUUID,
+					newListLabel,
+				);
+			}),
+		);
 	}
 }
