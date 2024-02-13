@@ -5,7 +5,7 @@ import { ListComponent } from 'app/components/list/list.component';
 import { DbService, IListsData } from 'app/services/firebase/db.service';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import {
 	SideMenuAction,
@@ -63,7 +63,8 @@ export class HomePageComponent implements OnInit {
 	private _loadingSrv = inject(LoadingService);
 	private _fASrv = inject(FooterActionsService);
 
-	public lists$!: Observable<IListsData>;
+	public lists$!: Subscription;
+	public listData!: IListsData;
 
 	public editMode = false;
 
@@ -133,19 +134,21 @@ export class HomePageComponent implements OnInit {
 
 		// Check that newListName have a valid string
 		if (newListName && newListName.trim().length > 0)
-			this.lists$ = this._dbSrv.createList(newListName).pipe(
-				catchError((r) => {
+			this._dbSrv.createList(newListName).subscribe({
+				next: (r) => {
+					this.listData = r;
+				},
+				error: (e) => {
 					this._messageSrv.add({
 						key: MAIN_TOAST_KEY,
 						severity: 'warn',
 						summary: 'Nuova lista',
-						detail: r.msg,
+						detail: e.msg,
 						sticky: true,
 						life: 2000,
 					});
-					return of(r);
-				}),
-			);
+				},
+			});
 	}
 
 	/**
@@ -188,12 +191,11 @@ export class HomePageComponent implements OnInit {
 
 		// Autoload all the lists
 		this._loadingSrv.visible.set(true);
-		this.lists$ = this._dbSrv.loadLists().pipe(
-			tap((r) => {
-				this.showFullHeader = r.data.length > 0;
-				this._loadingSrv.visible.set(false);
-			}),
-		);
+		this.lists$ = this._dbSrv.loadLists().subscribe((r) => {
+			this.showFullHeader = r.data.length > 0;
+			this._loadingSrv.visible.set(false);
+			this.listData = r;
+		});
 
 		// Create the new list form control
 		this.newListFC = new FormControl<Nullable<string>>(null, {

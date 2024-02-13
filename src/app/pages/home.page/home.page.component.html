@@ -30,10 +30,10 @@
 </header>
 
 <main>
-	@if ((lists$ | async)?.data; as lists) {
-		@if (lists.length > 0) {
+	@if (listData?.data) {
+		@if (listData.data.length > 0) {
 			<ul class="lists">
-				@for (list of lists; track list["UUID"]) {
+				@for (list of listData.data; track list["UUID"]) {
 					<li>
 						<app-list
 							[editMode]="editMode"
