@@ -2,8 +2,9 @@
 
 :host {
 	position: relative;
-
-	padding: 1.5rem;
+    height: 4rem;
+    
+	padding: 0.5rem 1.5rem;
 
 	display: flex;
 	align-items: center;
@@ -13,12 +14,32 @@
 
 	background: var(--surface-50);
 
+    cursor: pointer;
+
 	.label {
+        flex: 1;
 		font-weight: 500;
+        white-space: nowrap;
+        word-break: break-all;
+
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
 	}
 
-	.updated {
-		font-size: vars.$font-size-sm;
-		color: var(--surface-600);
-	}
+    .right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .updated {
+            margin-left: 0.5rem;
+            font-size: vars.$font-size-sm;
+            color: var(--surface-600);
+        }
+
+        p-button {
+            margin-left: 0.5rem;
+        }
+    }	
 }

@@ -36,6 +36,7 @@
 				@for (list of lists; track list["UUID"]) {
 					<li>
 						<app-list
+							[editMode]="editMode"
 							[label]="list.label"
 							[updated]="list.updated"
 						></app-list>
