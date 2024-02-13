@@ -28,8 +28,8 @@ $screen-sizes: (
 // Z index
 
 $map-index: (
-    "footer-actions": 9998,
-	"loader": 9999
+    "footer-actions": 998,
+	"loader": 999
 );
 
 @function zIndex($val){

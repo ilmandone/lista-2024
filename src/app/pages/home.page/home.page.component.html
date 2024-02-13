@@ -30,7 +30,7 @@
 </header>
 
 <main>
-	@if (listData?.data) {
+	@if (listData) {
 		@if (listData.data.length > 0) {
 			<ul class="lists">
 				@for (list of listData.data; track list["UUID"]) {

@@ -1,39 +1,39 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, inject, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { ListComponent } from 'app/components/list/list.component';
-import { DbService, IListsData } from 'app/services/firebase/db.service';
-import { ButtonModule } from 'primeng/button';
-import { RippleModule } from 'primeng/ripple';
-import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
-import { LoaderComponent } from '../../components/loader/loader.component';
-import {
-	SideMenuAction,
-	SideMenuComponent,
-} from '../../components/side-menu/side-menu.component';
-import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import {
-	DialogNewAction,
-	DialogNewActionType,
-	DialogNewComponent,
-} from 'app/components/dialog-new/dialog-new.component';
-import { InputTextModule } from 'primeng/inputtext';
-import { PaginatorModule } from 'primeng/paginator';
 import {
 	FormControl,
 	FormGroup,
 	ReactiveFormsModule,
 	Validators,
 } from '@angular/forms';
-import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
+import { Router, RouterModule } from '@angular/router';
+import {
+	DialogNewAction,
+	DialogNewActionType,
+	DialogNewComponent,
+} from 'app/components/dialog-new/dialog-new.component';
+import { ListComponent } from 'app/components/list/list.component';
+import { DbService, IListsData } from 'app/services/firebase/db.service';
 import { MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule } from 'primeng/menu';
-import { LoadingService } from '../../services/_common/loading.service';
+import { PaginatorModule } from 'primeng/paginator';
+import { RippleModule } from 'primeng/ripple';
+import { Subscription } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import {
+	SideMenuAction,
+	SideMenuComponent,
+} from '../../components/side-menu/side-menu.component';
 import {
 	F_ACTIONS,
 	F_VISIBILITY,
 	FooterActionsService,
 } from '../../services/_common/footer-actions.service';
+import { LoadingService } from '../../services/_common/loading.service';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 
 @Component({
 	selector: 'app-home.page',
