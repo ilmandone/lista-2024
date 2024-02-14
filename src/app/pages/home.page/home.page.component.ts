@@ -13,7 +13,11 @@ import {
 	DialogNewComponent,
 } from 'app/components/dialog-new/dialog-new.component';
 import { ListComponent } from 'app/components/list/list.component';
-import { DbService, IListsData } from 'app/services/firebase/db.service';
+import {
+	DbService,
+	IListData,
+	IListsData,
+} from 'app/services/firebase/db.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -89,6 +93,7 @@ export class HomePageComponent implements OnInit {
 			if (this.editMode) {
 				switch (action) {
 					case F_ACTIONS.CANCEL:
+						this.listData = this._dbSrv.cachedData;
 						this.editMode = false;
 						break;
 					case F_ACTIONS.CONFIRM:
@@ -182,6 +187,11 @@ export class HomePageComponent implements OnInit {
 	enableEditing(): void {
 		this.editMode = true;
 		this._fASrv.visible = F_VISIBILITY.CANCEL;
+	}
+
+	deleteItem(list: IListData) {
+		this.listData.data.splice(list.position, 1);
+		this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
 	}
 
 	//#endregion

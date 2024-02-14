@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
@@ -13,4 +13,6 @@ export class ListComponent {
 	@Input() editMode!: boolean;
 	@Input() label!: string;
 	@Input() updated!: Date;
+
+	@Output() delete = new EventEmitter();
 }

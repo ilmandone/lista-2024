@@ -1,7 +1,11 @@
 <div class="label">{{ label }}</div>
 <div class="right">
 	@if (editMode) {
-		<p-button icon="pi pi-trash" [text]="true"></p-button>
+		<p-button
+			icon="pi pi-trash"
+			[text]="true"
+			(onClick)="delete.emit()"
+		></p-button>
 	} @else {
 		<div class="updated">{{ updated | date: "short" }}</div>
 	}
