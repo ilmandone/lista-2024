@@ -23,6 +23,7 @@ import {
 	throwError,
 } from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
+import { cloneDeep } from 'lodash';
 
 export interface IItemData {
 	active: true;
@@ -54,7 +55,10 @@ export class DbService {
 	private _db!: Firestore;
 	private _collection!: CollectionReference<DocumentData, DocumentData>;
 	private _rawData!: IListsData;
-	constructor() {}
+
+	get cachedData(): IListsData {
+		return this._rawData;
+	}
 
 	//#region Privates
 	/**
@@ -143,7 +147,8 @@ export class DbService {
 					).toDate();
 				});
 
-				this._rawData = r as IListsData;
+				this._rawData = cloneDeep(r as IListsData);
+
 				return r;
 			}),
 		) as Observable<IListsData>;
