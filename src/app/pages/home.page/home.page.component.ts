@@ -38,6 +38,7 @@ import {
 import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
+import { Command } from 'app/utils/command';
 
 @Component({
 	selector: 'app-home.page',
@@ -67,9 +68,13 @@ export class HomePageComponent implements OnInit {
 	private _loadingSrv = inject(LoadingService);
 	private _fASrv = inject(FooterActionsService);
 
+	private _command!: Command;
+
 	public lists$!: Subscription;
 	public listData!: IListsData;
 
+	// Edit mode
+	// private _editActions:<list: IListDat undo: (data:IListData) => void>[] = [];
 	public editMode = false;
 
 	// Side menu
@@ -102,6 +107,8 @@ export class HomePageComponent implements OnInit {
 				}
 			}
 		});
+
+		this._command = new Command();
 	}
 
 	//#region Side Menu
@@ -190,7 +197,19 @@ export class HomePageComponent implements OnInit {
 	}
 
 	deleteItem(list: IListData) {
-		this.listData.data.splice(list.position, 1);
+		this._command.execute(
+			(list) => {
+				this.listData.data.splice((list as IListData).position, 1);
+			},
+			(list) => {
+				const findIndex = this.listData.data.findIndex(
+					(l) => l.position === (list as IListData).position + 1,
+				);
+				this.listData.data.splice(findIndex, 0, list as IListData);
+			},
+			list,
+		);
+
 		this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
 	}
 
