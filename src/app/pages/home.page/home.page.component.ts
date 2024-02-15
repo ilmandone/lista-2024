@@ -9,7 +9,7 @@ import {
 } from 'app/components/dialog-new/dialog-new.component';
 import {ListComponent} from 'app/components/list/list.component';
 import {DbService, IListData, IListsData,} from 'app/services/firebase/db.service';
-import {MenuItem, MessageService} from 'primeng/api';
+import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenuModule} from 'primeng/menu';
@@ -21,7 +21,7 @@ import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/sid
 import {F_ACTIONS, F_VISIBILITY, FooterActionsService,} from '../../services/_common/footer-actions.service';
 import {LoadingService} from '../../services/_common/loading.service';
 import {FirebaseAuthentication} from '../../services/firebase/authe.service';
-import {MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
+import {MAIN_CONFIRMATION_KEY, MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
 import {Command} from 'app/utils/command';
 
 @Component({
@@ -42,15 +42,16 @@ import {Command} from 'app/utils/command';
 		MenuModule
 	],
 	templateUrl: './home.page.component.html',
-	styleUrl: './home.page.component.scss',
+	styleUrl: './home.page.component.scss'
 })
 export class HomePageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
+	private _confSrv = inject(ConfirmationService)
 	private _dbSrv = inject(DbService);
-	private _router = inject(Router);
-	private _messageSrv = inject(MessageService);
-	private _loadingSrv = inject(LoadingService);
 	private _fASrv = inject(FooterActionsService);
+	private _loadingSrv = inject(LoadingService);
+	private _messageSrv = inject(MessageService);
+	private _router = inject(Router);
 
 	private _command!: Command;
 
@@ -204,6 +205,21 @@ export class HomePageComponent implements OnInit {
 	 */
 	deleteItem(list: IListData) {
 		// TODO: deletion si instant
+
+		this._confSrv.confirm({
+			message: 'Vuoi procedere e cancellare la lista?',
+			closeOnEscape: false,
+			header: 'Attenzione',
+			acceptLabel: 'Conferma',
+			rejectIcon:"none",
+			rejectLabel: 'Annulla',
+			rejectButtonStyleClass:"p-button-text",
+			accept: () => {
+				this._loadingSrv.visible.set(true)
+				this._dbSrv.deleteList(list)
+			},
+			key: MAIN_CONFIRMATION_KEY
+		})
 
 		/*this._command.execute(
 			(list) => {

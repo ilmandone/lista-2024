@@ -180,4 +180,8 @@ export class DbService {
 			}),
 		);
 	}
+
+	deleteList(list: IListData): void {
+		console.log('DELETE LIST:', list)
+	}
 }

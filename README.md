@@ -2,12 +2,11 @@
 
 ## Todo
 - Start the editing mode for lists where
-  - in edit mode and only if a list is deleted, sorted or renamed the confirm button is show 
-  - in edit mode a list will display the drag icon and the delete button.
-  - on delete the list is temporaly removed from the f/e list and only on confirm the db remove the collection
-  - on sorting no confirmations are required
-  - on creation the list is temporary added and only on confirm the collection are crated on db
-  - NTH: on creation, sorting or deletion an undo / redo button is displayed in the footer action
+  - in edit mode and only if a list is sorted or renamed the confirm button is show 
+  - in edit mode a list will display the drag icon and the delete button. 
+  - on sorting no confirmations are required 
+  - NTH: sorting or list name change an undo / redo button is displayed in the footer action
+    - On confirm the changes are set
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
 
