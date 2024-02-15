@@ -100,9 +100,17 @@ export class HomePageComponent implements OnInit {
 					case F_ACTIONS.CANCEL:
 						this.listData = this._dbSrv.cachedData;
 						this.editMode = false;
+						this._command.reset();
 						break;
 					case F_ACTIONS.CONFIRM:
 						console.log('UPDATE THE LISTS INFO');
+						this._command.reset();
+						break;
+					case F_ACTIONS.UNDO:
+						this._command.undo();
+						break;
+					case F_ACTIONS.REDO:
+						this._command.redo();
 						break;
 				}
 			}
@@ -199,12 +207,16 @@ export class HomePageComponent implements OnInit {
 	deleteItem(list: IListData) {
 		this._command.execute(
 			(list) => {
-				this.listData.data.splice((list as IListData).position, 1);
+				const listIndex = this.listData.data.findIndex(
+					(l) => l.position === (list as IListData).position,
+				);
+				this.listData.data.splice(listIndex, 1);
 			},
 			(list) => {
 				const findIndex = this.listData.data.findIndex(
-					(l) => l.position === (list as IListData).position + 1,
+					(l) => l.position === (list as IListData).position,
 				);
+
 				this.listData.data.splice(findIndex, 0, list as IListData);
 			},
 			list,

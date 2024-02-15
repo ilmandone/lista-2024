@@ -1,3 +1,5 @@
+import { cloneDeep } from 'lodash';
+
 export interface ICommand {
 	data: unknown;
 	undo: (p?: unknown) => void;
@@ -14,23 +16,30 @@ export class Command {
 		undo: (p?: unknown) => void,
 		data: unknown,
 	) {
+		const d = cloneDeep(data);
 		this._commandsList.push({
 			redo,
 			undo,
-			data,
+			data: d,
 		});
-		redo(data);
+		redo(d);
+		this._commandCursor += 1;
 	}
 	redo() {
-		if (this._commandCursor > this._commandsList.length - 1) return;
-		this._commandCursor += 1;
+		if (this._commandCursor >= this._commandsList.length) return;
 		const step = this._commandsList[this._commandCursor];
 		step.redo(step.data);
+		this._commandCursor += 1;
 	}
 	undo() {
-		if (this._commandCursor < 0) return;
+		if (this._commandCursor <= 0) return;
+		this._commandCursor -= 1;
 		const step = this._commandsList[this._commandCursor];
 		step.undo(step.data);
-		this._commandCursor -= 1;
+	}
+
+	reset() {
+		this._commandCursor = 0;
+		this._commandsList = [];
 	}
 }
