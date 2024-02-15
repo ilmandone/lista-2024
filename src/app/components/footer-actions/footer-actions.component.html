@@ -1,25 +1,42 @@
-@if(fASrv.visible !== null) {
+@if (fASrv.visible !== null) {
 	<div
 		class="actions-wrapper"
 		[class.confirm]="fASrv.visible === F_VISIBILITY.CONFIRM_CANCEL"
 	>
+		@if (fASrv.visible === F_VISIBILITY.CONFIRM_CANCEL) {
+			<p-button
+				icon="pi pi-arrow-circle-left"
+				size="large"
+				[raised]="true"
+				[text]="true"
+				[style]="{ width: '100%' }"
+				(onClick)="fASrv.action.set(F_ACTIONS.UNDO)"
+			></p-button>
+			<p-button
+				icon="pi pi-arrow-circle-right"
+				size="large"
+				[raised]="true"
+				[text]="true"
+				[style]="{ width: '100%' }"
+				(onClick)="fASrv.action.set(F_ACTIONS.REDO)"
+			></p-button>
+		}
 		<p-button
 			icon="pi pi-times"
 			severity="secondary"
 			size="large"
 			[raised]="true"
-			[style]="{width: '100%'}"
+			[style]="{ width: '100%' }"
 			(onClick)="fASrv.action.set(F_ACTIONS.CANCEL)"
 		></p-button>
-		@if(fASrv.visible === F_VISIBILITY.CONFIRM_CANCEL) {
+		@if (fASrv.visible === F_VISIBILITY.CONFIRM_CANCEL) {
 			<p-button
 				icon="pi pi-check"
 				size="large"
 				[raised]="true"
-				[style]="{width: '100%'}"
+				[style]="{ width: '100%' }"
 				(onClick)="fASrv.action.set(F_ACTIONS.CONFIRM)"
 			></p-button>
 		}
 	</div>
 }
-
