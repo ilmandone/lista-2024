@@ -4,6 +4,8 @@ import { Nullable } from '../../utils/commons';
 export enum F_ACTIONS {
 	CONFIRM,
 	CANCEL,
+	UNDO,
+	REDO,
 }
 
 export enum F_VISIBILITY {
