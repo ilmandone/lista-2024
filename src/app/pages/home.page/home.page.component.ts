@@ -39,6 +39,7 @@ import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { Command } from 'app/utils/command';
+import {cloneDeep} from "lodash";
 
 @Component({
 	selector: 'app-home.page',
@@ -98,7 +99,7 @@ export class HomePageComponent implements OnInit {
 			if (this.editMode) {
 				switch (action) {
 					case F_ACTIONS.CANCEL:
-						this.listData = this._dbSrv.cachedData;
+						this.listData = cloneDeep(this._dbSrv.cachedData);
 						this.editMode = false;
 						this._command.reset();
 						break;
