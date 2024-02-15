@@ -1,45 +1,28 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect, inject, OnInit } from '@angular/core';
-import {
-	FormControl,
-	FormGroup,
-	ReactiveFormsModule,
-	Validators,
-} from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {Component, effect, inject, OnInit} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {Router, RouterModule} from '@angular/router';
 import {
 	DialogNewAction,
 	DialogNewActionType,
 	DialogNewComponent,
 } from 'app/components/dialog-new/dialog-new.component';
-import { ListComponent } from 'app/components/list/list.component';
-import {
-	DbService,
-	IListData,
-	IListsData,
-} from 'app/services/firebase/db.service';
-import { MenuItem, MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MenuModule } from 'primeng/menu';
-import { PaginatorModule } from 'primeng/paginator';
-import { RippleModule } from 'primeng/ripple';
-import { Subscription } from 'rxjs';
-import { LoaderComponent } from '../../components/loader/loader.component';
-import {
-	SideMenuAction,
-	SideMenuComponent,
-} from '../../components/side-menu/side-menu.component';
-import {
-	F_ACTIONS,
-	F_VISIBILITY,
-	FooterActionsService,
-} from '../../services/_common/footer-actions.service';
-import { LoadingService } from '../../services/_common/loading.service';
-import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
-import { Command } from 'app/utils/command';
-import {cloneDeep} from "lodash";
+import {ListComponent} from 'app/components/list/list.component';
+import {DbService, IListData, IListsData,} from 'app/services/firebase/db.service';
+import {MenuItem, MessageService} from 'primeng/api';
+import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
+import {MenuModule} from 'primeng/menu';
+import {PaginatorModule} from 'primeng/paginator';
+import {RippleModule} from 'primeng/ripple';
+import {Subscription} from 'rxjs';
+import {LoaderComponent} from '../../components/loader/loader.component';
+import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
+import {F_ACTIONS, F_VISIBILITY, FooterActionsService,} from '../../services/_common/footer-actions.service';
+import {LoadingService} from '../../services/_common/loading.service';
+import {FirebaseAuthentication} from '../../services/firebase/authe.service';
+import {MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
+import {Command} from 'app/utils/command';
 
 @Component({
 	selector: 'app-home.page',
@@ -56,7 +39,7 @@ import {cloneDeep} from "lodash";
 		InputTextModule,
 		PaginatorModule,
 		ReactiveFormsModule,
-		MenuModule,
+		MenuModule
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -99,13 +82,12 @@ export class HomePageComponent implements OnInit {
 			if (this.editMode) {
 				switch (action) {
 					case F_ACTIONS.CANCEL:
-						this.listData = cloneDeep(this._dbSrv.cachedData);
+						this.listData = this._dbSrv.cachedData;
 						this.editMode = false;
-						this._command.reset();
+						this._resetEditMode()
 						break;
 					case F_ACTIONS.CONFIRM:
-						console.log('UPDATE THE LISTS INFO');
-						this._command.reset();
+						this._resetEditMode()
 						break;
 					case F_ACTIONS.UNDO:
 						this._command.undo();
@@ -200,13 +182,30 @@ export class HomePageComponent implements OnInit {
 
 	//#region Edit mode
 
+	/**
+	 * Reset al the info for editMode
+	 * @private
+	 */
+	private _resetEditMode() {
+		this._command.reset()
+	}
+
+	/**
+	 * Enable editing
+	 */
 	enableEditing(): void {
 		this.editMode = true;
 		this._fASrv.visible = F_VISIBILITY.CANCEL;
 	}
 
+	/**
+	 * Delete and item with command for redo / undo
+	 * @param {IListData} list
+	 */
 	deleteItem(list: IListData) {
-		this._command.execute(
+		// TODO: deletion si instant
+
+		/*this._command.execute(
 			(list) => {
 				const listIndex = this.listData.data.findIndex(
 					(l) => l.position === (list as IListData).position,
@@ -217,13 +216,12 @@ export class HomePageComponent implements OnInit {
 				const findIndex = this.listData.data.findIndex(
 					(l) => l.position === (list as IListData).position,
 				);
-
 				this.listData.data.splice(findIndex, 0, list as IListData);
 			},
 			list,
 		);
 
-		this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
+		this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;*/
 	}
 
 	//#endregion

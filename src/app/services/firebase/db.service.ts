@@ -57,7 +57,7 @@ export class DbService {
 	private _rawData!: IListsData;
 
 	get cachedData(): IListsData {
-		return this._rawData;
+		return cloneDeep(this._rawData);
 	}
 
 	//#region Privates
