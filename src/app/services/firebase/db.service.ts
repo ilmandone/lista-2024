@@ -12,6 +12,7 @@ import {
 	query,
 	serverTimestamp,
 	setDoc,
+	writeBatch,
 } from 'firebase/firestore';
 import {
 	Observable,
@@ -83,6 +84,26 @@ export class DbService {
 		}
 	}
 
+	private async _deleteItemFromCollection(
+		UUID: string,
+	): Promise<IListsData | unknown> {
+		const batch = writeBatch(this._db);
+
+		let idOffset = 0;
+
+		this._rawData.data.forEach((element, index) => {
+			const ref = doc(this._collection, element.UUID);
+			if (UUID === element.UUID) {
+				batch.delete(ref);
+				idOffset += 1;
+			} else {
+				batch.update(ref, { position: index - idOffset });
+			}
+		});
+
+		return batch.commit();
+	}
+
 	/**
 	 * Create the new list and return the updated lists
 	 * @param {string} newListUUID
@@ -99,6 +120,7 @@ export class DbService {
 				items: [],
 				position: this._rawData.data.length,
 				updated: serverTimestamp(),
+				UUID: newListUUID,
 			}),
 		).pipe(
 			// On error return the cached data
@@ -181,7 +203,15 @@ export class DbService {
 		);
 	}
 
-	deleteList(list: IListData): void {
-		console.log('DELETE LIST:', list)
+	deleteList(list: IListData): Observable<IListsData> {
+		return from(this._deleteItemFromCollection(list.UUID)).pipe(
+			catchError(() =>
+				of({
+					data: this._rawData.data,
+					msg: 'Cancellazione fallita',
+				}),
+			),
+			switchMap(() => this.loadLists()),
+		);
 	}
 }

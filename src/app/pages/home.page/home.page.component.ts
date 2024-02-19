@@ -1,28 +1,48 @@
-import {CommonModule} from '@angular/common';
-import {Component, effect, inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {Router, RouterModule} from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, OnInit } from '@angular/core';
+import {
+	FormControl,
+	FormGroup,
+	ReactiveFormsModule,
+	Validators,
+} from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import {
 	DialogNewAction,
 	DialogNewActionType,
 	DialogNewComponent,
 } from 'app/components/dialog-new/dialog-new.component';
-import {ListComponent} from 'app/components/list/list.component';
-import {DbService, IListData, IListsData,} from 'app/services/firebase/db.service';
-import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
-import {ButtonModule} from 'primeng/button';
-import {InputTextModule} from 'primeng/inputtext';
-import {MenuModule} from 'primeng/menu';
-import {PaginatorModule} from 'primeng/paginator';
-import {RippleModule} from 'primeng/ripple';
-import {Subscription} from 'rxjs';
-import {LoaderComponent} from '../../components/loader/loader.component';
-import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
-import {F_ACTIONS, F_VISIBILITY, FooterActionsService,} from '../../services/_common/footer-actions.service';
-import {LoadingService} from '../../services/_common/loading.service';
-import {FirebaseAuthentication} from '../../services/firebase/authe.service';
-import {MAIN_CONFIRMATION_KEY, MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
-import {Command} from 'app/utils/command';
+import { ListComponent } from 'app/components/list/list.component';
+import {
+	DbService,
+	IListData,
+	IListsData,
+} from 'app/services/firebase/db.service';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenuModule } from 'primeng/menu';
+import { PaginatorModule } from 'primeng/paginator';
+import { RippleModule } from 'primeng/ripple';
+import { Subscription } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import {
+	SideMenuAction,
+	SideMenuComponent,
+} from '../../components/side-menu/side-menu.component';
+import {
+	F_ACTIONS,
+	F_VISIBILITY,
+	FooterActionsService,
+} from '../../services/_common/footer-actions.service';
+import { LoadingService } from '../../services/_common/loading.service';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import {
+	MAIN_CONFIRMATION_KEY,
+	MAIN_TOAST_KEY,
+	Nullable,
+} from '../../utils/commons';
+import { Command } from 'app/utils/command';
 
 @Component({
 	selector: 'app-home.page',
@@ -39,14 +59,14 @@ import {Command} from 'app/utils/command';
 		InputTextModule,
 		PaginatorModule,
 		ReactiveFormsModule,
-		MenuModule
+		MenuModule,
 	],
 	templateUrl: './home.page.component.html',
-	styleUrl: './home.page.component.scss'
+	styleUrl: './home.page.component.scss',
 })
 export class HomePageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
-	private _confSrv = inject(ConfirmationService)
+	private _confSrv = inject(ConfirmationService);
 	private _dbSrv = inject(DbService);
 	private _fASrv = inject(FooterActionsService);
 	private _loadingSrv = inject(LoadingService);
@@ -85,10 +105,10 @@ export class HomePageComponent implements OnInit {
 					case F_ACTIONS.CANCEL:
 						this.listData = this._dbSrv.cachedData;
 						this.editMode = false;
-						this._resetEditMode()
+						this._resetEditMode();
 						break;
 					case F_ACTIONS.CONFIRM:
-						this._resetEditMode()
+						this._resetEditMode();
 						break;
 					case F_ACTIONS.UNDO:
 						this._command.undo();
@@ -188,7 +208,7 @@ export class HomePageComponent implements OnInit {
 	 * @private
 	 */
 	private _resetEditMode() {
-		this._command.reset()
+		this._command.reset();
 	}
 
 	/**
@@ -210,34 +230,20 @@ export class HomePageComponent implements OnInit {
 			message: 'Vuoi procedere e cancellare la lista?',
 			closeOnEscape: false,
 			header: 'Attenzione',
+			acceptIcon: 'none',
 			acceptLabel: 'Conferma',
-			rejectIcon:"none",
+			rejectIcon: 'none',
 			rejectLabel: 'Annulla',
-			rejectButtonStyleClass:"p-button-text",
+			rejectButtonStyleClass: 'p-button-text',
 			accept: () => {
-				this._loadingSrv.visible.set(true)
-				this._dbSrv.deleteList(list)
+				this._loadingSrv.visible.set(true);
+				this._dbSrv.deleteList(list).subscribe((r) => {
+					this.listData = r;
+					this._loadingSrv.visible.set(false);
+				});
 			},
-			key: MAIN_CONFIRMATION_KEY
-		})
-
-		/*this._command.execute(
-			(list) => {
-				const listIndex = this.listData.data.findIndex(
-					(l) => l.position === (list as IListData).position,
-				);
-				this.listData.data.splice(listIndex, 1);
-			},
-			(list) => {
-				const findIndex = this.listData.data.findIndex(
-					(l) => l.position === (list as IListData).position,
-				);
-				this.listData.data.splice(findIndex, 0, list as IListData);
-			},
-			list,
-		);
-
-		this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;*/
+			key: MAIN_CONFIRMATION_KEY,
+		});
 	}
 
 	//#endregion
