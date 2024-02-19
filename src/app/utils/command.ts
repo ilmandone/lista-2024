@@ -6,22 +6,29 @@ export interface ICommand {
 	redo: (p?: unknown) => void;
 }
 
+export type CommandType = 'set' | 'delete' | 'update';
+
 export class Command {
 	private _commandsList: ICommand[] = [];
 	private _commandCursor = 0;
 
 	constructor() {}
 	execute(
+		type: CommandType,
 		redo: (p?: unknown) => void,
 		undo: (p?: unknown) => void,
 		data: unknown,
 	) {
 		const d = cloneDeep(data);
+		if (this._commandCursor < this._commandsList.length - 1) {
+			this._commandsList = this._commandsList.splice(this._commandCursor);
+		}
 		this._commandsList.push({
 			redo,
 			undo,
 			data: d,
 		});
+
 		redo(d);
 		this._commandCursor += 1;
 	}
