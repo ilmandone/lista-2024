@@ -44,7 +44,7 @@
 					</li>
 				}
 			</ul>
-		} @else if(!editMode){
+		} @else if (!editMode) {
 			<section class="no-lists-available">
 				<div class="message">
 					<h1>Benvenuto</h1>
@@ -63,7 +63,7 @@
 	[(visible)]="showNewListDialog"
 	[header]="'Nuova lista'"
 	[enabled]="newListFC.valid"
-	(action)="newListDialogAction($event)"
+	(action)="newItemDialogAction($event)"
 >
 	<form [formGroup]="newListFG" (ngSubmit)="submitNewList()">
 		<span class="input-wrapper p-float-label">
@@ -77,4 +77,3 @@
 		</span>
 	</form>
 </app-dialog-new>
-

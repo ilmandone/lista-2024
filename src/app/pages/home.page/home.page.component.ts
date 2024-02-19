@@ -156,8 +156,10 @@ export class HomePageComponent implements OnInit {
 	private _createNewList(name: Nullable<string>): void {
 		const newListName = name;
 
+		// TODO: Add a command that crate a new list
+
 		// Check that newListName have a valid string
-		if (newListName && newListName.trim().length > 0)
+		/* if (newListName && newListName.trim().length > 0)
 			this._dbSrv.createList(newListName).subscribe({
 				next: (r) => {
 					this.listData = r;
@@ -172,7 +174,7 @@ export class HomePageComponent implements OnInit {
 						life: 2000,
 					});
 				},
-			});
+			}) */
 	}
 
 	/**
@@ -187,7 +189,7 @@ export class HomePageComponent implements OnInit {
 	 * Handle dialog actions
 	 * @param {DialogNewAction} $event
 	 */
-	public newListDialogAction($event: DialogNewAction) {
+	public newItemDialogAction($event: DialogNewAction) {
 		switch ($event) {
 			case DialogNewActionType.SHOW:
 				this.newListFC.reset();
@@ -197,6 +199,36 @@ export class HomePageComponent implements OnInit {
 				this._createNewList(this.newListFC.value);
 				break;
 		}
+	}
+
+	//#endregion
+
+	//#region Delte item
+
+	/**
+	 * Delete and item with command for redo / undo
+	 * @param {IListData} list
+	 */
+	deleteItem(list: IListData) {
+		// TODO: add a command that delete an item in the lists
+		/* this._confSrv.confirm({
+			message: 'Vuoi procedere e cancellare la lista?',
+			closeOnEscape: false,
+			header: 'Attenzione',
+			acceptIcon: 'none',
+			acceptLabel: 'Conferma',
+			rejectIcon: 'none',
+			rejectLabel: 'Annulla',
+			rejectButtonStyleClass: 'p-button-text',
+			accept: () => {
+				this._loadingSrv.visible.set(true);
+				this._dbSrv.deleteList(list).subscribe((r) => {
+					this.listData = r;
+					this._loadingSrv.visible.set(false);
+				});
+			},
+			key: MAIN_CONFIRMATION_KEY,
+		}); */
 	}
 
 	//#endregion
@@ -219,34 +251,7 @@ export class HomePageComponent implements OnInit {
 		this._fASrv.visible = F_VISIBILITY.CANCEL;
 	}
 
-	/**
-	 * Delete and item with command for redo / undo
-	 * @param {IListData} list
-	 */
-	deleteItem(list: IListData) {
-		// TODO: deletion si instant
-
-		this._confSrv.confirm({
-			message: 'Vuoi procedere e cancellare la lista?',
-			closeOnEscape: false,
-			header: 'Attenzione',
-			acceptIcon: 'none',
-			acceptLabel: 'Conferma',
-			rejectIcon: 'none',
-			rejectLabel: 'Annulla',
-			rejectButtonStyleClass: 'p-button-text',
-			accept: () => {
-				this._loadingSrv.visible.set(true);
-				this._dbSrv.deleteList(list).subscribe((r) => {
-					this.listData = r;
-					this._loadingSrv.visible.set(false);
-				});
-			},
-			key: MAIN_CONFIRMATION_KEY,
-		});
-	}
-
-	//#endregion
+	//#end region
 
 	ngOnInit() {
 		this._dbSrv.init();
