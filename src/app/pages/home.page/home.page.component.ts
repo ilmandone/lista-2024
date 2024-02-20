@@ -18,6 +18,7 @@ import {
 	IListData,
 	IListsData,
 } from 'app/services/firebase/db.service';
+import { Command } from 'app/utils/command';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -37,12 +38,7 @@ import {
 } from '../../services/_common/footer-actions.service';
 import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import {
-	MAIN_CONFIRMATION_KEY,
-	MAIN_TOAST_KEY,
-	Nullable,
-} from '../../utils/commons';
-import { Command } from 'app/utils/command';
+import { Nullable } from '../../utils/commons';
 
 @Component({
 	selector: 'app-home.page',
@@ -108,6 +104,7 @@ export class HomePageComponent implements OnInit {
 						this._resetEditMode();
 						break;
 					case F_ACTIONS.CONFIRM:
+						this.editMode = false;
 						this._resetEditMode();
 						break;
 					case F_ACTIONS.UNDO:
@@ -154,27 +151,29 @@ export class HomePageComponent implements OnInit {
 	 * @private
 	 */
 	private _createNewList(name: Nullable<string>): void {
-		const newListName = name;
+		if (!name) return;
 
-		// TODO: Add a command that crate a new list
+		const newList: IListData = {
+			UUID: this._dbSrv.getUUID(),
+			items: [],
+			label: name,
+			position: this.listData.data.length,
+			updated: new Date(),
+		};
 
-		// Check that newListName have a valid string
-		/* if (newListName && newListName.trim().length > 0)
-			this._dbSrv.createList(newListName).subscribe({
-				next: (r) => {
-					this.listData = r;
-				},
-				error: (e) => {
-					this._messageSrv.add({
-						key: MAIN_TOAST_KEY,
-						severity: 'warn',
-						summary: 'Nuova lista',
-						detail: e.msg,
-						sticky: true,
-						life: 2000,
-					});
-				},
-			}) */
+		this._command.execute(
+			'set',
+			(newList) => {
+				this.listData.data.push(newList as IListData);
+			},
+			() => {
+				this.listData.data.pop();
+			},
+			newList,
+		);
+
+		if (this._fASrv.visible === F_VISIBILITY.CANCEL)
+			this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
 	}
 
 	/**
@@ -203,13 +202,32 @@ export class HomePageComponent implements OnInit {
 
 	//#endregion
 
-	//#region Delte item
+	//#region Delete item
 
 	/**
 	 * Delete and item with command for redo / undo
 	 * @param {IListData} list
 	 */
 	deleteItem(list: IListData) {
+		this._command.execute(
+			'delete',
+			(list) => {
+				const ls = list as IListData;
+				const lIndex = this.listData.data.findIndex(
+					(l) => l.UUID === ls.UUID,
+				);
+				this.listData.data.splice(lIndex, 1);
+			},
+			(list) => {
+				const l = list as IListData;
+				this.listData.data.splice(l.position - 1, 0, l);
+			},
+			list,
+		);
+
+		if (this._fASrv.visible === F_VISIBILITY.CANCEL)
+			this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
+
 		// TODO: add a command that delete an item in the lists
 		/* this._confSrv.confirm({
 			message: 'Vuoi procedere e cancellare la lista?',

@@ -21,7 +21,10 @@ export class FooterActionsComponent {
 
 	constructor() {
 		effect(() => {
-			if (this.fASrv.action() === F_ACTIONS.CANCEL)
+			if (
+				this.fASrv.action() === F_ACTIONS.CANCEL ||
+				this.fASrv.action() === F_ACTIONS.CONFIRM
+			)
 				this.fASrv.visible = null;
 		});
 	}

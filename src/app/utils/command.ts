@@ -4,6 +4,7 @@ export interface ICommand {
 	data: unknown;
 	undo: (p?: unknown) => void;
 	redo: (p?: unknown) => void;
+	type: CommandType;
 }
 
 export type CommandType = 'set' | 'delete' | 'update';
@@ -21,12 +22,13 @@ export class Command {
 	) {
 		const d = cloneDeep(data);
 		if (this._commandCursor < this._commandsList.length - 1) {
-			this._commandsList = this._commandsList.splice(this._commandCursor);
+			this._commandsList.splice(this._commandCursor);
 		}
 		this._commandsList.push({
 			redo,
 			undo,
 			data: d,
+			type,
 		});
 
 		redo(d);

@@ -39,7 +39,7 @@ export interface IListData {
 	label: string;
 	position: number;
 	updated: Date;
-	items: IItemData;
+	items: IItemData[];
 }
 
 export interface IListsData {
@@ -146,6 +146,14 @@ export class DbService {
 		);
 	}
 	//#endregion
+
+	/**
+	 * Returns a generated UUID.
+	 * @return {string} the generated UUID
+	 */
+	getUUID(): string {
+		return this._generateUUID();
+	}
 
 	/**
 	 * Init the db references
