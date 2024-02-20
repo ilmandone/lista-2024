@@ -44,15 +44,22 @@
 					</li>
 				}
 			</ul>
-		} @else if (!editMode) {
+		} @else {
 			<section class="no-lists-available">
 				<div class="message">
-					<h1>Benvenuto</h1>
+					@if (editMode) {
+						<h1>Attenzione !</h1>
+					} @else {
+						<h1>Ciao</h1>
+					}
+
 					<p>Nessuna lista disponibile</p>
-					<p-button
-						label="Crea la prima lista"
-						(onClick)="showNewListDialog = true"
-					></p-button>
+					@if (!editMode) {
+						<p-button
+							label="Crea la prima lista"
+							(onClick)="showNewListDialog = true"
+						></p-button>
+					}
 				</div>
 			</section>
 		}

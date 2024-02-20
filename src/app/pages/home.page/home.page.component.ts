@@ -97,31 +97,28 @@ export class HomePageComponent implements OnInit {
 			() => {
 				const action = this._fASrv.action();
 
-				if (this.editMode) {
-					switch (action) {
-						case F_ACTIONS.CANCEL:
-							this.listData = this._dbSrv.cachedData;
-							this.editMode = false;
-							this._resetEditMode();
-							break;
-						case F_ACTIONS.CONFIRM:
-							this.editMode = false;
-							this._loadingSrv.visible.set(true);
-							this._dbSrv
-								.crudOnLists(this._command.getCommands())
-								.subscribe((r) => {
-									this.listData = r;
-									this._loadingSrv.visible.set(false);
-								});
-							this._resetEditMode();
-							break;
-						case F_ACTIONS.UNDO:
-							this._command.undo();
-							break;
-						case F_ACTIONS.REDO:
-							this._command.redo();
-							break;
-					}
+				switch (action) {
+					case F_ACTIONS.CANCEL:
+						this.listData = this._dbSrv.cachedData;
+						this.editMode = false;
+						this._resetEditMode();
+						break;
+					case F_ACTIONS.CONFIRM:
+						this.editMode = false;
+						this._loadingSrv.visible.set(true);
+						this._dbSrv
+							.crudOnLists(this._command.getCommands())
+							.subscribe((r) => {
+								this._onNewData(r);
+							});
+						this._resetEditMode();
+						break;
+					case F_ACTIONS.UNDO:
+						this._command.undo();
+						break;
+					case F_ACTIONS.REDO:
+						this._command.redo();
+						break;
 				}
 			},
 			{ allowSignalWrites: true },
@@ -154,6 +151,16 @@ export class HomePageComponent implements OnInit {
 
 	//#endregion
 
+	//#region Privates
+
+	private _onNewData(r: IListsData) {
+		this.listData = r;
+		this._loadingSrv.visible.set(false);
+		this.showFullHeader = r.data.length > 0;
+	}
+
+	//#endregion
+
 	//#region New list
 	/**
 	 * Create a new list
@@ -182,7 +189,10 @@ export class HomePageComponent implements OnInit {
 			newList,
 		);
 
-		if (this._fASrv.visible === F_VISIBILITY.CANCEL)
+		if (
+			this._fASrv.visible === F_VISIBILITY.CANCEL ||
+			this._fASrv.visible === null
+		)
 			this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
 	}
 
@@ -267,9 +277,7 @@ export class HomePageComponent implements OnInit {
 		// Autoload all the lists
 		this._loadingSrv.visible.set(true);
 		this.lists$ = this._dbSrv.loadLists().subscribe((r) => {
-			this.showFullHeader = r.data.length > 0;
-			this._loadingSrv.visible.set(false);
-			this.listData = r;
+			this._onNewData(r);
 		});
 
 		// Create the new list form control
