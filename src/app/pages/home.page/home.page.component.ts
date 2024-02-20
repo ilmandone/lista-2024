@@ -220,33 +220,13 @@ export class HomePageComponent implements OnInit {
 			},
 			(list) => {
 				const l = list as IListData;
-				this.listData.data.splice(l.position - 1, 0, l);
+				this.listData.data.splice(l.position, 0, l);
 			},
 			list,
 		);
 
 		if (this._fASrv.visible === F_VISIBILITY.CANCEL)
 			this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
-
-		// TODO: add a command that delete an item in the lists
-		/* this._confSrv.confirm({
-			message: 'Vuoi procedere e cancellare la lista?',
-			closeOnEscape: false,
-			header: 'Attenzione',
-			acceptIcon: 'none',
-			acceptLabel: 'Conferma',
-			rejectIcon: 'none',
-			rejectLabel: 'Annulla',
-			rejectButtonStyleClass: 'p-button-text',
-			accept: () => {
-				this._loadingSrv.visible.set(true);
-				this._dbSrv.deleteList(list).subscribe((r) => {
-					this.listData = r;
-					this._loadingSrv.visible.set(false);
-				});
-			},
-			key: MAIN_CONFIRMATION_KEY,
-		}); */
 	}
 
 	//#endregion
