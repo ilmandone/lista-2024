@@ -93,29 +93,39 @@ export class HomePageComponent implements OnInit {
 	}>;
 
 	constructor() {
-		effect(() => {
-			const action = this._fASrv.action();
+		effect(
+			() => {
+				const action = this._fASrv.action();
 
-			if (this.editMode) {
-				switch (action) {
-					case F_ACTIONS.CANCEL:
-						this.listData = this._dbSrv.cachedData;
-						this.editMode = false;
-						this._resetEditMode();
-						break;
-					case F_ACTIONS.CONFIRM:
-						this.editMode = false;
-						this._resetEditMode();
-						break;
-					case F_ACTIONS.UNDO:
-						this._command.undo();
-						break;
-					case F_ACTIONS.REDO:
-						this._command.redo();
-						break;
+				if (this.editMode) {
+					switch (action) {
+						case F_ACTIONS.CANCEL:
+							this.listData = this._dbSrv.cachedData;
+							this.editMode = false;
+							this._resetEditMode();
+							break;
+						case F_ACTIONS.CONFIRM:
+							this.editMode = false;
+							this._loadingSrv.visible.set(true);
+							this._dbSrv
+								.crudOnLists(this._command.getCommands())
+								.subscribe((r) => {
+									this.listData = r;
+									this._loadingSrv.visible.set(false);
+								});
+							this._resetEditMode();
+							break;
+						case F_ACTIONS.UNDO:
+							this._command.undo();
+							break;
+						case F_ACTIONS.REDO:
+							this._command.redo();
+							break;
+					}
 				}
-			}
-		});
+			},
+			{ allowSignalWrites: true },
+		);
 
 		this._command = new Command();
 	}

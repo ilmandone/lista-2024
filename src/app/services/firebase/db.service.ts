@@ -25,6 +25,7 @@ import {
 } from 'rxjs';
 import { FirebaseAuthentication } from './authe.service';
 import { cloneDeep } from 'lodash';
+import { ICommand } from 'app/utils/command';
 
 export interface IItemData {
 	active: true;
@@ -84,6 +85,12 @@ export class DbService {
 		}
 	}
 
+	/**
+	 * Delete item from collection
+	 * @param {string} UUID
+	 * @private
+	 * @deprecated
+	 */
 	private async _deleteItemFromCollection(
 		UUID: string,
 	): Promise<IListsData | unknown> {
@@ -109,6 +116,7 @@ export class DbService {
 	 * @param {string} newListUUID
 	 * @param {string} newListLabel
 	 * @returns
+	 * @deprecated
 	 */
 	private _createNewListInCollection(
 		newListUUID: string,
@@ -184,6 +192,12 @@ export class DbService {
 		) as Observable<IListsData>;
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @returns
+	 * @deprecated
+	 */
 	createList(name: string): Observable<IListsData> {
 		// Load all lists and align internal data
 		return this.loadLists().pipe(
@@ -211,8 +225,50 @@ export class DbService {
 		);
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @returns
+	 * @deprecated
+	 */
 	deleteList(list: IListData): Observable<IListsData> {
 		return from(this._deleteItemFromCollection(list.UUID)).pipe(
+			catchError(() =>
+				of({
+					data: this._rawData.data,
+					msg: 'Cancellazione fallita',
+				}),
+			),
+			switchMap(() => this.loadLists()),
+		);
+	}
+
+	crudOnLists(commandList: ICommand[]): Observable<IListsData> {
+		const batch = writeBatch(this._db);
+
+		if (commandList.length > 0) {
+			commandList.forEach((c) => {
+				const ref = doc(this._collection, (c.data as IListData).UUID);
+				switch (c.type) {
+					case 'set':
+						batch.set(ref, c.data as IListData);
+						break;
+					case 'delete':
+						batch.delete(ref);
+						break;
+					case 'update':
+						batch.set(ref, c.data as IListData);
+						break;
+					default:
+						batch.update(ref, {
+							position: (c.data as IListData).position,
+						});
+						break;
+				}
+			});
+		}
+
+		return from(batch.commit()).pipe(
 			catchError(() =>
 				of({
 					data: this._rawData.data,

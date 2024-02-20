@@ -13,7 +13,10 @@ export class Command {
 	private _commandsList: ICommand[] = [];
 	private _commandCursor = 0;
 
-	constructor() {}
+	getCommands() {
+		return this._commandsList.splice(this._commandCursor - 1);
+	}
+
 	execute(
 		type: CommandType,
 		redo: (p?: unknown) => void,
