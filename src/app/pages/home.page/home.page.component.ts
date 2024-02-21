@@ -177,7 +177,7 @@ export class HomePageComponent implements OnInit {
 			UUID: this._dbSrv.getUUID(),
 			items: [],
 			label: name,
-			position: this.listData.data.length,
+			position: this.listData.data.length + 1,
 			updated: new Date(),
 		};
 
