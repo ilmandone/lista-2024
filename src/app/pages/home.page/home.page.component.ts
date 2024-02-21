@@ -100,18 +100,18 @@ export class HomePageComponent implements OnInit {
 				switch (action) {
 					case F_ACTIONS.CANCEL:
 						this.listData = this._dbSrv.cachedData;
+						this.editMode = false;
 						this._resetEditMode();
 						break;
 					case F_ACTIONS.CONFIRM:
-						{
-							const cS = this._command.getCommands();
-
-							if (cS.some((c) => c.type === 'delete')) {
-								// TODO: Show confirmation dialog
-							} else {
-								this._commandsToDBAction();
-							}
-						}
+						this.editMode = false;
+						this._loadingSrv.visible.set(true);
+						this._dbSrv
+							.crudOnLists(this._command.getCommands())
+							.subscribe((r) => {
+								this._onNewData(r);
+							});
+						this._resetEditMode();
 						break;
 					case F_ACTIONS.UNDO:
 						this._command.undo();
@@ -126,25 +126,6 @@ export class HomePageComponent implements OnInit {
 
 		this._command = new Command();
 	}
-
-	//#region Privates
-
-	private _onNewData(r: IListsData) {
-		this.listData = r;
-		this._loadingSrv.visible.set(false);
-		this.showFullHeader = r.data.length > 0;
-	}
-
-	private _commandsToDBAction() {
-		this._loadingSrv.visible.set(true);
-		this._dbSrv.crudOnLists(this._command.getCommands()).subscribe((r) => {
-			this._onNewData(r);
-		});
-
-		this._resetEditMode();
-	}
-
-	//#endregion
 
 	//#region Side Menu
 	/**
@@ -166,6 +147,16 @@ export class HomePageComponent implements OnInit {
 					});
 				break;
 		}
+	}
+
+	//#endregion
+
+	//#region Privates
+
+	private _onNewData(r: IListsData) {
+		this.listData = r;
+		this._loadingSrv.visible.set(false);
+		this.showFullHeader = r.data.length > 0;
 	}
 
 	//#endregion
@@ -267,7 +258,6 @@ export class HomePageComponent implements OnInit {
 	 * @private
 	 */
 	private _resetEditMode() {
-		this.editMode = false;
 		this._command.reset();
 	}
 
