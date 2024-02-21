@@ -154,6 +154,9 @@ export class HomePageComponent implements OnInit {
 	//#region Privates
 
 	private _onNewData(r: IListsData) {
+		r.data = r.data.sort((a, b) => {
+			return a.position < b.position ? -1 : 1;
+		});
 		this.listData = r;
 		this._loadingSrv.visible.set(false);
 		this.showFullHeader = r.data.length > 0;
@@ -229,6 +232,8 @@ export class HomePageComponent implements OnInit {
 	 * @param {IListData} list
 	 */
 	deleteItem(list: IListData) {
+		// NON VA BENE:
+		// Deve cancellare l'elemento all'interno di una determinata posizione e aggiornare gli indici successivi
 		this._command.execute(
 			'delete',
 			(list) => {

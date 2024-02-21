@@ -251,19 +251,17 @@ export class DbService {
 				const ref = doc(this._collection, (c.data as IListData).UUID);
 				switch (c.type) {
 					case 'set':
+					case 'update':
 						batch.set(ref, c.data as IListData);
 						break;
 					case 'delete':
 						batch.delete(ref);
 						break;
-					case 'update':
-						batch.set(ref, c.data as IListData);
-						break;
-					default:
+					/* default:
 						batch.update(ref, {
 							position: (c.data as IListData).position,
 						});
-						break;
+						break; */
 				}
 			});
 		}
