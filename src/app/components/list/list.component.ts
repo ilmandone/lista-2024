@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
+import {ButtonModule} from 'primeng/button';
 
 @Component({
 	selector: 'app-list',
@@ -24,7 +23,8 @@ export class ListComponent {
 	private _couldBeDoubleClick = false
 
 	@HostListener('pointerdown', ['$event'])
-	onPointerDown(event$: PointerEvent) {
+	onPointerDown(event: PointerEvent) {
+		event.preventDefault()
 		this.pointerDown.emit()
 
 		if(this._dbClickTimeout) clearTimeout(this._dbClickTimeout)
