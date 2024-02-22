@@ -251,13 +251,13 @@ export class HomePageComponent implements OnInit {
 		this._command.execute(
 			'update',
 			(data) => {
-				const index = this.listData.data.findIndex(l => l.UUID === newList.UUID)
+				const index = this.listData.data.findIndex(l => l.UUID === (data as IRenameAction).list.UUID)
 				const newList = cloneDeep(this.listData.data[index])
 				newList.label = (data as IRenameAction).newLabel
 				this.listData.data[index] = newList
 			},
 			(data) => {
-				const index = this.listData.data.findIndex(l => l.UUID === newList.UUID)
+				const index = this.listData.data.findIndex(l => l.UUID === (data as IRenameAction).list.UUID)
 				const newList = cloneDeep(this.listData.data[index])
 				newList.label = (data as IRenameAction).originalLabel
 				this.listData.data[index] = newList
