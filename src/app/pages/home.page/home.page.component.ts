@@ -14,7 +14,7 @@ import {
 } from 'app/components/dialog-new/dialog-new.component';
 import {ListComponent} from 'app/components/list/list.component';
 import {
-	DbService,
+	DbService, ICommandAction,
 	IListData,
 	IListsData,
 } from 'app/services/firebase/db.service';
@@ -40,12 +40,6 @@ import {LoadingService} from '../../services/_common/loading.service';
 import {FirebaseAuthentication} from '../../services/firebase/authe.service';
 import {Nullable} from '../../utils/commons';
 import {cloneDeep} from "lodash";
-
-interface IRenameAction {
-	list: IListData
-	newLabel: string
-	originalLabel: string
-}
 
 @Component({
 	selector: 'app-home.page',
@@ -196,7 +190,7 @@ export class HomePageComponent implements OnInit {
 	private _createNewList(name: Nullable<string>): void {
 		if (!name) return;
 
-		const newList: IListData = {
+		const list: IListData = {
 			UUID: this._dbSrv.getUUID(),
 			items: [],
 			label: name,
@@ -206,13 +200,13 @@ export class HomePageComponent implements OnInit {
 
 		this._command.execute(
 			'set',
-			(newList) => {
-				this.listData.data.push(newList as IListData);
+			(data) => {
+				this.listData.data.push((data as ICommandAction).list);
 			},
 			() => {
 				this.listData.data.pop();
 			},
-			newList,
+			{list},
 		);
 
 		if (
@@ -251,15 +245,15 @@ export class HomePageComponent implements OnInit {
 		this._command.execute(
 			'update',
 			(data) => {
-				const index = this.listData.data.findIndex(l => l.UUID === (data as IRenameAction).list.UUID)
+				const index = this.listData.data.findIndex(l => l.UUID === (data as ICommandAction).list.UUID)
 				const newList = cloneDeep(this.listData.data[index])
-				newList.label = (data as IRenameAction).newLabel
+				newList.label = (data as ICommandAction).newLabel as string
 				this.listData.data[index] = newList
 			},
 			(data) => {
-				const index = this.listData.data.findIndex(l => l.UUID === (data as IRenameAction).list.UUID)
+				const index = this.listData.data.findIndex(l => l.UUID === (data as ICommandAction).list.UUID)
 				const newList = cloneDeep(this.listData.data[index])
-				newList.label = (data as IRenameAction).originalLabel
+				newList.label = (data as ICommandAction).originalLabel as string
 				this.listData.data[index] = newList
 			},
 			{list, newLabel, originalLabel}
@@ -279,8 +273,8 @@ export class HomePageComponent implements OnInit {
 	deleteItem(list: IListData) {
 		this._command.execute(
 			'delete',
-			(list) => {
-				const ls = list as IListData;
+			(data) => {
+				const ls = (data as ICommandAction).list;
 				const lIndex = this.listData.data.findIndex(
 					(l) => l.UUID === ls.UUID,
 				);
@@ -299,8 +293,8 @@ export class HomePageComponent implements OnInit {
 					throw new Error('ERROR: No list item find in datalist');
 				}
 			},
-			(list) => {
-				const l = list as IListData;
+			(data) => {
+				const l = (data as ICommandAction).list;
 				const lIndex = l.position;
 
 				if (lIndex !== undefined) {
@@ -313,7 +307,7 @@ export class HomePageComponent implements OnInit {
 					throw new Error('ERROR: No list item find in datalist');
 				}
 			},
-			list,
+			{list},
 		);
 
 		if (this._fASrv.visible === F_VISIBILITY.CANCEL)

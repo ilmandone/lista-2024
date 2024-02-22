@@ -1,23 +1,21 @@
-import { Injectable, inject } from '@angular/core';
-import { ICommand } from 'app/utils/command';
+import {inject, Injectable} from '@angular/core';
+import {ICommand} from 'app/utils/command';
 import {
+	collection,
 	CollectionReference,
+	doc,
 	DocumentData,
 	Firestore,
-	Timestamp,
-	collection,
-	doc,
 	getDocs,
 	getFirestore,
 	orderBy,
 	query,
-	serverTimestamp,
-	setDoc,
+	Timestamp,
 	writeBatch,
 } from 'firebase/firestore';
-import { cloneDeep } from 'lodash';
-import { Observable, catchError, from, map, of, switchMap } from 'rxjs';
-import { FirebaseAuthentication } from './authe.service';
+import {cloneDeep} from 'lodash';
+import {catchError, from, map, Observable, of, switchMap} from 'rxjs';
+import {FirebaseAuthentication} from './authe.service';
 
 export interface IItemData {
 	active: true;
@@ -38,6 +36,12 @@ export interface IListData {
 export interface IListsData {
 	data: IListData[];
 	msg?: string;
+}
+
+export interface ICommandAction {
+	list: IListData
+	newLabel?: string
+	originalLabel?: string
 }
 
 @Injectable({
@@ -75,64 +79,6 @@ export class DbService {
 		} catch (error) {
 			return error;
 		}
-	}
-
-	/**
-	 * Delete item from collection
-	 * @param {string} UUID
-	 * @private
-	 * @deprecated
-	 */
-	private async _deleteItemFromCollection(
-		UUID: string,
-	): Promise<IListsData | unknown> {
-		const batch = writeBatch(this._db);
-
-		let idOffset = 0;
-
-		this._rawData.data.forEach((element, index) => {
-			const ref = doc(this._collection, element.UUID);
-			if (UUID === element.UUID) {
-				batch.delete(ref);
-				idOffset += 1;
-			} else {
-				batch.update(ref, { position: index - idOffset });
-			}
-		});
-
-		return batch.commit();
-	}
-
-	/**
-	 * Create the new list and return the updated lists
-	 * @param {string} newListUUID
-	 * @param {string} newListLabel
-	 * @returns
-	 * @deprecated
-	 */
-	private _createNewListInCollection(
-		newListUUID: string,
-		newListLabel: string,
-	): Observable<IListsData> {
-		return from(
-			setDoc(doc(this._collection, newListUUID), {
-				label: newListLabel,
-				items: [],
-				position: this._rawData.data.length,
-				updated: serverTimestamp(),
-				UUID: newListUUID,
-			}),
-		).pipe(
-			// On error return the cached data
-			catchError(() =>
-				of({
-					data: this._rawData.data,
-					msg: 'Errore di connessione - Riprova',
-				}),
-			),
-			// On success load the lists and return the observable
-			switchMap(() => this.loadLists()),
-		);
 	}
 
 	private _generateUUID(): string {
@@ -194,18 +140,20 @@ export class DbService {
 			const UUIDS: string[] = [];
 
 			commandList.forEach((c) => {
-				const cUUID = (c.data as IListData).UUID;
+				const cUUID = (c.data as ICommandAction).list.UUID;
 				const ref = doc(this._collection, cUUID);
 				switch (c.type) {
 					case 'set':
-					case 'update':
-						batch.set(ref, c.data as IListData);
+						batch.set(ref, (c.data as ICommandAction).list);
 						UUIDS.push(cUUID);
 						break;
 					case 'delete':
 						batch.delete(ref);
 						UUIDS.push(cUUID);
 						break;
+					case 'update':
+						// TODO USE DATA TO PERFORM A LIST SET
+						break
 				}
 			});
 
