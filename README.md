@@ -1,12 +1,8 @@
 # Lista2024
 
 ## Todo
-- Start the editing mode for lists where
-  - in edit mode and only if a list is sorted or renamed the confirm button is show 
-  - in edit mode a list will display the drag icon and the delete button. 
-  - on sorting no confirmations are required 
-  - NTH: sorting or list name change an undo / redo button is displayed in the footer action
-    - On confirm the changes are set
+- Complete the rename for db service
+  
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
 
