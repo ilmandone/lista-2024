@@ -107,7 +107,10 @@ export class HomePageComponent implements OnInit {
 						this.editMode = false;
 						this._loadingSrv.visible.set(true);
 						this._dbSrv
-							.crudOnLists(this._command.getCommands())
+							.crudOnLists(
+								this._command.getCommands(),
+								this.listData,
+							)
 							.subscribe((r) => {
 								this._onNewData(r);
 							});
@@ -154,9 +157,6 @@ export class HomePageComponent implements OnInit {
 	//#region Privates
 
 	private _onNewData(r: IListsData) {
-		r.data = r.data.sort((a, b) => {
-			return a.position < b.position ? -1 : 1;
-		});
 		this.listData = r;
 		this._loadingSrv.visible.set(false);
 		this.showFullHeader = r.data.length > 0;
@@ -232,8 +232,6 @@ export class HomePageComponent implements OnInit {
 	 * @param {IListData} list
 	 */
 	deleteItem(list: IListData) {
-		// NON VA BENE:
-		// Deve cancellare l'elemento all'interno di una determinata posizione e aggiornare gli indici successivi
 		this._command.execute(
 			'delete',
 			(list) => {
@@ -241,11 +239,34 @@ export class HomePageComponent implements OnInit {
 				const lIndex = this.listData.data.findIndex(
 					(l) => l.UUID === ls.UUID,
 				);
-				this.listData.data.splice(lIndex, 1);
+
+				if (lIndex !== undefined) {
+					for (
+						let i = lIndex + 1;
+						i < this.listData.data.length;
+						i++
+					) {
+						this.listData.data[i].position--;
+					}
+
+					this.listData.data.splice(lIndex, 1);
+				} else {
+					throw new Error('ERROR: No list item find in datalist');
+				}
 			},
 			(list) => {
 				const l = list as IListData;
-				this.listData.data.splice(l.position, 0, l);
+				const lIndex = l.position;
+
+				if (lIndex !== undefined) {
+					this.listData.data.splice(lIndex, 0, l);
+
+					for (let i = lIndex; i < this.listData.data.length; i++) {
+						this.listData.data[i].position++;
+					}
+				} else {
+					throw new Error('ERROR: No list item find in datalist');
+				}
 			},
 			list,
 		);

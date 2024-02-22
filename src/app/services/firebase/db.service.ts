@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { ICommand } from 'app/utils/command';
 import {
 	CollectionReference,
 	DocumentData,
@@ -14,18 +15,9 @@ import {
 	setDoc,
 	writeBatch,
 } from 'firebase/firestore';
-import {
-	Observable,
-	catchError,
-	from,
-	map,
-	of,
-	switchMap,
-	throwError,
-} from 'rxjs';
-import { FirebaseAuthentication } from './authe.service';
 import { cloneDeep } from 'lodash';
-import { ICommand } from 'app/utils/command';
+import { Observable, catchError, from, map, of, switchMap } from 'rxjs';
+import { FirebaseAuthentication } from './authe.service';
 
 export interface IItemData {
 	active: true;
@@ -192,88 +184,55 @@ export class DbService {
 		) as Observable<IListsData>;
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @returns
-	 * @deprecated
-	 */
-	createList(name: string): Observable<IListsData> {
-		// Load all lists and align internal data
-		return this.loadLists().pipe(
-			// Check if the list name exists
-			switchMap((r) => {
-				const newListUUID = this._generateUUID();
-				const newListLabel =
-					name.charAt(0).toUpperCase() + name.toLowerCase().slice(1);
-
-				if (r.data.some((d) => d.label === newListLabel)) {
-					return throwError(() => {
-						return {
-							data: this._rawData.data,
-							msg: 'Esiste già una lista con questo nome',
-						};
-					});
-				}
-
-				// Create the new list
-				return this._createNewListInCollection(
-					newListUUID,
-					newListLabel,
-				);
-			}),
-		);
-	}
-
-	/**
-	 *
-	 * @param name
-	 * @returns
-	 * @deprecated
-	 */
-	deleteList(list: IListData): Observable<IListsData> {
-		return from(this._deleteItemFromCollection(list.UUID)).pipe(
-			catchError(() =>
-				of({
-					data: this._rawData.data,
-					msg: 'Cancellazione fallita',
-				}),
-			),
-			switchMap(() => this.loadLists()),
-		);
-	}
-
-	crudOnLists(commandList: ICommand[]): Observable<IListsData> {
+	crudOnLists(
+		commandList: ICommand[],
+		dataList: IListsData,
+	): Observable<IListsData> {
 		const batch = writeBatch(this._db);
 
 		if (commandList.length > 0) {
+			const UUIDS: string[] = [];
+
 			commandList.forEach((c) => {
-				const ref = doc(this._collection, (c.data as IListData).UUID);
+				const cUUID = (c.data as IListData).UUID;
+				const ref = doc(this._collection, cUUID);
 				switch (c.type) {
 					case 'set':
 					case 'update':
 						batch.set(ref, c.data as IListData);
+						UUIDS.push(cUUID);
 						break;
 					case 'delete':
 						batch.delete(ref);
+						UUIDS.push(cUUID);
 						break;
-					/* default:
-						batch.update(ref, {
-							position: (c.data as IListData).position,
-						});
-						break; */
 				}
 			});
-		}
 
-		return from(batch.commit()).pipe(
-			catchError(() =>
-				of({
-					data: this._rawData.data,
-					msg: 'Cancellazione fallita',
-				}),
-			),
-			switchMap(() => this.loadLists()),
-		);
+			// Update lists positions for non edited items
+			dataList.data
+				.filter((d) => !UUIDS.includes(d.UUID))
+				.forEach((d) => {
+					const ref = doc(this._collection, d.UUID);
+					batch.update(ref, {
+						position: d.position,
+					});
+				});
+
+			return from(batch.commit()).pipe(
+				catchError(() =>
+					of({
+						data: this._rawData.data,
+						msg: 'Cancellazione fallita',
+					}),
+				),
+				switchMap(() => this.loadLists()),
+			);
+		} else {
+			return of({
+				data: this._rawData.data,
+				msg: 'Nessun comando elaborato',
+			});
+		}
 	}
 }

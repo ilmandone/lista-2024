@@ -14,7 +14,7 @@ export class Command {
 	private _commandCursor = 0;
 
 	getCommands() {
-		return this._commandsList.splice(this._commandCursor - 1);
+		return this._commandsList;
 	}
 
 	execute(
@@ -24,7 +24,7 @@ export class Command {
 		data: unknown,
 	) {
 		const d = cloneDeep(data);
-		if (this._commandCursor < this._commandsList.length - 1) {
+		if (this._commandCursor <= this._commandsList.length - 1) {
 			this._commandsList.splice(this._commandCursor);
 		}
 		this._commandsList.push({
