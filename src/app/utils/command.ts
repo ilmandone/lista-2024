@@ -1,4 +1,4 @@
-import {cloneDeep} from 'lodash';
+import { cloneDeep } from 'lodash';
 
 export interface ICommand {
 	data: unknown;
@@ -14,7 +14,9 @@ export class Command {
 	private _commandCursor = 0;
 
 	getCommands() {
-		return this._commandsList;
+		const validCommands = cloneDeep(this._commandsList);
+		validCommands.length = this._commandCursor;
+		return validCommands;
 	}
 
 	execute(
