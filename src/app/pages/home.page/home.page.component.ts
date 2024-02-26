@@ -39,7 +39,7 @@ import {
 } from '../../services/_common/footer-actions.service';
 import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { Nullable } from '../../utils/commons';
+import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { cloneDeep } from 'lodash';
 
 @Component({
@@ -190,6 +190,16 @@ export class HomePageComponent implements OnInit {
 	 */
 	private _createNewList(name: Nullable<string>): void {
 		if (!name) return;
+
+		if (this.listData.data.some((list) => list.label === name)) {
+			this._messageSrv.add({
+				key: MAIN_TOAST_KEY,
+				severity: 'warn',
+				summary: 'Attenzione',
+				detail: 'Questa lista esiste già',
+			});
+			return;
+		}
 
 		const list: IListData = {
 			UUID: this._dbSrv.getUUID(),
@@ -368,8 +378,6 @@ export class HomePageComponent implements OnInit {
 	//#end region
 
 	gotoList(UUID: string) {
-		console.log('@@@ ~ HomePageComponent ~ gotoList ~ UUID:', UUID);
-
 		return false;
 	}
 
