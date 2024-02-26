@@ -40,7 +40,6 @@ import {
 import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
-import { cloneDeep } from 'lodash';
 
 @Component({
 	selector: 'app-home.page',
@@ -262,18 +261,21 @@ export class HomePageComponent implements OnInit {
 				const index = this.listData.data.findIndex(
 					(l) => l.UUID === (data as ICommandAction).list.UUID,
 				);
-				const newList = cloneDeep(this.listData.data[index]);
-				newList.label = (data as ICommandAction).newLabel as string;
-				this.listData.data[index] = newList;
+
+				// Update the cached data
+				(data as ICommandAction).list.label = (data as ICommandAction)
+					.newLabel as string;
+				this.listData.data[index] = (data as ICommandAction).list;
 			},
 			(data) => {
 				const index = this.listData.data.findIndex(
 					(l) => l.UUID === (data as ICommandAction).list.UUID,
 				);
-				const newList = cloneDeep(this.listData.data[index]);
-				newList.label = (data as ICommandAction)
+
+				// Restore the original label in cached data
+				(data as ICommandAction).list.label = (data as ICommandAction)
 					.originalLabel as string;
-				this.listData.data[index] = newList;
+				this.listData.data[index] = (data as ICommandAction).list;
 			},
 			{ list, newLabel, originalLabel },
 		);
@@ -378,6 +380,8 @@ export class HomePageComponent implements OnInit {
 	//#end region
 
 	gotoList(UUID: string) {
+		console.log('@@@ ~ HomePageComponent ~ gotoList ~ UUID:', UUID);
+
 		return false;
 	}
 

@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {ICommand} from 'app/utils/command';
+import { inject, Injectable } from '@angular/core';
+import { ICommand } from 'app/utils/command';
 import {
 	collection,
 	CollectionReference,
@@ -13,9 +13,9 @@ import {
 	Timestamp,
 	writeBatch,
 } from 'firebase/firestore';
-import {cloneDeep} from 'lodash';
-import {catchError, from, map, Observable, of, switchMap} from 'rxjs';
-import {FirebaseAuthentication} from './authe.service';
+import { cloneDeep } from 'lodash';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { FirebaseAuthentication } from './authe.service';
 
 export interface IItemData {
 	active: true;
@@ -39,9 +39,9 @@ export interface IListsData {
 }
 
 export interface ICommandAction {
-	list: IListData
-	newLabel?: string
-	originalLabel?: string
+	list: IListData;
+	newLabel?: string;
+	originalLabel?: string;
 }
 
 @Injectable({
@@ -144,17 +144,15 @@ export class DbService {
 				const ref = doc(this._collection, cUUID);
 				switch (c.type) {
 					case 'set':
+					case 'update':
 						batch.set(ref, (c.data as ICommandAction).list);
-						UUIDS.push(cUUID);
 						break;
 					case 'delete':
 						batch.delete(ref);
-						UUIDS.push(cUUID);
 						break;
-					case 'update':
-						// TODO USE DATA TO PERFORM A LIST SET
-						break
 				}
+
+				c.type !== 'update' && UUIDS.push(cUUID);
 			});
 
 			// Update lists positions for non edited items

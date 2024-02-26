@@ -9,7 +9,7 @@ import {
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import {MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
+import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -156,7 +156,7 @@ export class LoginPageComponent implements OnInit {
 				})
 				.catch((e) => {
 					this.loggingIn = false;
-					this._handleLoginError(e.code as string)
+					this._handleLoginError(e.code as string);
 				});
 		}
 	}
