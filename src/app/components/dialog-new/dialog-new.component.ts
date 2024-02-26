@@ -6,7 +6,7 @@ export enum DialogNewActionType {
 	OK,
 	CANCEL,
 	ADD,
-	SHOW
+	SHOW,
 }
 export type DialogNewAction = DialogNewActionType;
 
@@ -21,7 +21,7 @@ export class DialogNewComponent {
 	@Input() visible: boolean = false;
 	@Input() header!: string;
 	@Input() showAdd = false;
-	@Input() enabled = false
+	@Input() enabled = false;
 
 	@Output() visibleChange = new EventEmitter<boolean>();
 	@Output() action = new EventEmitter<DialogNewAction>();
@@ -44,10 +44,10 @@ export class DialogNewComponent {
 	 * On dialog close emit a cancel action
 	 */
 	onHide() {
-		this.action.emit(DialogNewActionType.CANCEL)
+		this.action.emit(DialogNewActionType.CANCEL);
 	}
 
 	onShow() {
-		this.action.emit(DialogNewActionType.SHOW)
+		this.action.emit(DialogNewActionType.SHOW);
 	}
 }

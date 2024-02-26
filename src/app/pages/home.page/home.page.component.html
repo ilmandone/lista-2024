@@ -23,7 +23,7 @@
 			<p-button
 				icon="pi pi-plus"
 				[text]="true"
-				(onClick)="showDialog = 'new'"
+				(onClick)="(dialogMode = 'new') && (showDialog = true)"
 			></p-button>
 		}
 	}
@@ -41,7 +41,9 @@
 							[updated]="list.updated"
 							(delete)="deleteItem(list)"
 							(pointerDown)="!editMode && gotoList(list.UUID)"
-							(doublePointerDown)="editMode && showDialogForRename(list)"
+							(doublePointerDown)="
+								editMode && showDialogForRename(list)
+							"
 						></app-list>
 					</li>
 				}
@@ -59,7 +61,9 @@
 					@if (!editMode) {
 						<p-button
 							label="Crea la prima lista"
-							(onClick)="showDialog = 'new'"
+							(onClick)="
+								(dialogMode = 'new') && (showDialog = true)
+							"
 						></p-button>
 					}
 				</div>
@@ -69,21 +73,23 @@
 </main>
 
 <app-dialog-new
-	[(visible)]="!!showDialog"
-	[header]="showDialog === 'new'? 'Nuova lista' : 'Rinomina la lista'"
+	[(visible)]="showDialog"
+	[header]="dialogMode === 'new' ? 'Nuova lista' : 'Rinomina la lista'"
 	[enabled]="dialogInputFC.valid"
 	(action)="dialogAction($event)"
 >
 	<form [formGroup]="dialogFG" (ngSubmit)="submitDialogForm()">
 		<span class="input-wrapper p-float-label">
-			<input type="hidden" [formControl]="dialogHiddenFC">
+			<input type="hidden" [formControl]="dialogHiddenFC" />
 			<input
 				id="new-list"
 				type="text"
 				pInputText
 				[formControl]="dialogInputFC"
 			/>
-			<label for="new-list">{{showDialog === 'new' ? 'Aggiungi una lista' : 'Nuovo nome' }}</label>
+			<label for="new-list">{{
+				dialogMode === "new" ? "Aggiungi una lista" : "Nuovo nome"
+			}}</label>
 		</span>
 	</form>
 </app-dialog-new>

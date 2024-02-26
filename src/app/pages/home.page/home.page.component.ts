@@ -1,32 +1,33 @@
-import {CommonModule} from '@angular/common';
-import {Component, effect, inject, OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import {
 	FormControl,
 	FormGroup,
 	ReactiveFormsModule,
 	Validators,
 } from '@angular/forms';
-import {Router, RouterModule} from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
 	DialogNewAction,
 	DialogNewActionType,
 	DialogNewComponent,
 } from 'app/components/dialog-new/dialog-new.component';
-import {ListComponent} from 'app/components/list/list.component';
+import { ListComponent } from 'app/components/list/list.component';
 import {
-	DbService, ICommandAction,
+	DbService,
+	ICommandAction,
 	IListData,
 	IListsData,
 } from 'app/services/firebase/db.service';
-import {Command} from 'app/utils/command';
-import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
-import {ButtonModule} from 'primeng/button';
-import {InputTextModule} from 'primeng/inputtext';
-import {MenuModule} from 'primeng/menu';
-import {PaginatorModule} from 'primeng/paginator';
-import {RippleModule} from 'primeng/ripple';
-import {Subscription} from 'rxjs';
-import {LoaderComponent} from '../../components/loader/loader.component';
+import { Command } from 'app/utils/command';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenuModule } from 'primeng/menu';
+import { PaginatorModule } from 'primeng/paginator';
+import { RippleModule } from 'primeng/ripple';
+import { Subscription } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
 import {
 	SideMenuAction,
 	SideMenuComponent,
@@ -36,10 +37,10 @@ import {
 	F_VISIBILITY,
 	FooterActionsService,
 } from '../../services/_common/footer-actions.service';
-import {LoadingService} from '../../services/_common/loading.service';
-import {FirebaseAuthentication} from '../../services/firebase/authe.service';
-import {Nullable} from '../../utils/commons';
-import {cloneDeep} from "lodash";
+import { LoadingService } from '../../services/_common/loading.service';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import { Nullable } from '../../utils/commons';
+import { cloneDeep } from 'lodash';
 
 @Component({
 	selector: 'app-home.page',
@@ -71,7 +72,7 @@ export class HomePageComponent implements OnInit {
 	private _router = inject(Router);
 
 	private _command!: Command;
-	private _renamingList!: IListData
+	private _renamingList!: IListData;
 
 	public lists$!: Subscription;
 	public listData!: IListsData;
@@ -88,7 +89,8 @@ export class HomePageComponent implements OnInit {
 	public mainMenuOpen = false;
 
 	// New list
-	public showDialog: false | 'new' | 'rename' = false;
+	public showDialog = false;
+	public dialogMode!: 'new' | 'rename';
 	public dialogInputFC!: FormControl<Nullable<string>>;
 	public dialogHiddenFC!: FormControl<Nullable<IListData>>;
 	public dialogFG!: FormGroup<{
@@ -128,7 +130,7 @@ export class HomePageComponent implements OnInit {
 						break;
 				}
 			},
-			{allowSignalWrites: true},
+			{ allowSignalWrites: true },
 		);
 
 		this._command = new Command();
@@ -168,7 +170,7 @@ export class HomePageComponent implements OnInit {
 
 		this.dialogFG = new FormGroup({
 			newList: this.dialogInputFC,
-			renameList: this.dialogHiddenFC
+			renameList: this.dialogHiddenFC,
 		});
 	}
 
@@ -177,7 +179,6 @@ export class HomePageComponent implements OnInit {
 		this._loadingSrv.visible.set(false);
 		this.showFullHeader = r.data.length > 0;
 	}
-
 
 	//#endregion
 
@@ -206,7 +207,7 @@ export class HomePageComponent implements OnInit {
 			() => {
 				this.listData.data.pop();
 			},
-			{list},
+			{ list },
 		);
 
 		if (
@@ -220,10 +221,13 @@ export class HomePageComponent implements OnInit {
 	 * Handle new list fg submit action
 	 */
 	submitDialogForm() {
-		if (this.showDialog === 'new')
+		if (this.dialogMode === 'new')
 			this._createNewList(this.dialogInputFC.value);
 		else if (this.dialogHiddenFC.value && this.dialogInputFC.value)
-			this.renameList(this.dialogHiddenFC.value, this.dialogInputFC.value)
+			this.renameList(
+				this.dialogHiddenFC.value,
+				this.dialogInputFC.value,
+			);
 
 		this.showDialog = false;
 	}
@@ -233,31 +237,36 @@ export class HomePageComponent implements OnInit {
 	//#region Rename
 
 	showDialogForRename(list: IListData) {
-		this.showDialog = 'rename'
-		this.dialogHiddenFC.setValue(list)
-		this.dialogInputFC.setValue(list.label)
+		this.showDialog = true;
+		this.dialogMode = 'rename';
+		this.dialogHiddenFC.setValue(list);
+		this.dialogInputFC.setValue(list.label);
 	}
 
 	renameList(list: IListData, newLabel: string) {
-
-		const originalLabel = list.label
+		const originalLabel = list.label;
 
 		this._command.execute(
 			'update',
 			(data) => {
-				const index = this.listData.data.findIndex(l => l.UUID === (data as ICommandAction).list.UUID)
-				const newList = cloneDeep(this.listData.data[index])
-				newList.label = (data as ICommandAction).newLabel as string
-				this.listData.data[index] = newList
+				const index = this.listData.data.findIndex(
+					(l) => l.UUID === (data as ICommandAction).list.UUID,
+				);
+				const newList = cloneDeep(this.listData.data[index]);
+				newList.label = (data as ICommandAction).newLabel as string;
+				this.listData.data[index] = newList;
 			},
 			(data) => {
-				const index = this.listData.data.findIndex(l => l.UUID === (data as ICommandAction).list.UUID)
-				const newList = cloneDeep(this.listData.data[index])
-				newList.label = (data as ICommandAction).originalLabel as string
-				this.listData.data[index] = newList
+				const index = this.listData.data.findIndex(
+					(l) => l.UUID === (data as ICommandAction).list.UUID,
+				);
+				const newList = cloneDeep(this.listData.data[index]);
+				newList.label = (data as ICommandAction)
+					.originalLabel as string;
+				this.listData.data[index] = newList;
 			},
-			{list, newLabel, originalLabel}
-		)
+			{ list, newLabel, originalLabel },
+		);
 
 		this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
 	}
@@ -307,7 +316,7 @@ export class HomePageComponent implements OnInit {
 					throw new Error('ERROR: No list item find in datalist');
 				}
 			},
-			{list},
+			{ list },
 		);
 
 		if (this._fASrv.visible === F_VISIBILITY.CANCEL)
@@ -325,15 +334,17 @@ export class HomePageComponent implements OnInit {
 	public dialogAction($event: DialogNewAction) {
 		switch ($event) {
 			case DialogNewActionType.SHOW:
-				if (this.showDialog === 'new')
-					this.dialogInputFC.reset();
+				if (this.dialogMode === 'new') this.dialogInputFC.reset();
 				break;
 
 			case DialogNewActionType.OK:
-				if (this.showDialog === 'new')
+				if (this.dialogMode === 'new')
 					this._createNewList(this.dialogInputFC.value);
 				else if (this.dialogHiddenFC.value && this.dialogInputFC.value)
-					this.renameList(this.dialogHiddenFC.value, this.dialogInputFC.value)
+					this.renameList(
+						this.dialogHiddenFC.value,
+						this.dialogInputFC.value,
+					);
 				break;
 		}
 	}
@@ -357,6 +368,8 @@ export class HomePageComponent implements OnInit {
 	//#end region
 
 	gotoList(UUID: string) {
+		console.log('@@@ ~ HomePageComponent ~ gotoList ~ UUID:', UUID);
+
 		return false;
 	}
 
@@ -369,6 +382,6 @@ export class HomePageComponent implements OnInit {
 			this._onNewData(r);
 		});
 
-		this._createDialogFG()
+		this._createDialogFG();
 	}
 }

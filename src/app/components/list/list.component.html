@@ -1,9 +1,10 @@
 <!--<div class="label">{{ label }}</div>-->
 <p-button
 	class="label-button"
-	[ngClass]="{active: editMode}"
+	[ngClass]="{ active: editMode }"
 	[text]="true"
-	[label]="label"></p-button>
+	[label]="label"
+></p-button>
 <div class="right">
 	@if (editMode) {
 		<p-button
