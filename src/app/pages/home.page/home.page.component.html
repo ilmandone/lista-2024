@@ -32,9 +32,17 @@
 <main>
 	@if (listData) {
 		@if (listData.data.length > 0) {
-			<ul class="lists">
+			<ul class="lists" pDroppable="lists" (onDrop)="onDrop($event)">
 				@for (list of listData.data; track list["UUID"]) {
-					<li>
+					<li
+						class="li-item"
+						pDraggable="lists"
+						dragEffect="move"
+						[pDraggableDisabled]="!editMode"
+						(onDragStart)="dragStart($event)"
+						(onDragEnd)="dragEnd($event)"
+						(onDrag)="drag($event)"
+					>
 						<app-list
 							[editMode]="editMode"
 							[label]="list.label"

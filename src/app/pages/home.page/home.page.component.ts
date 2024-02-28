@@ -40,6 +40,7 @@ import {
 import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
+import { DragDropModule } from 'primeng/dragdrop';
 
 @Component({
 	selector: 'app-home.page',
@@ -57,6 +58,7 @@ import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 		PaginatorModule,
 		ReactiveFormsModule,
 		MenuModule,
+		DragDropModule,
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -378,6 +380,39 @@ export class HomePageComponent implements OnInit {
 	}
 
 	//#end region
+
+	underEl!: HTMLElement;
+
+	onDrop($event: DragEvent) {
+		console.log('@@@ ~ HomePageComponent ~ onDrop ~ $event:', $event);
+	}
+
+	dragEnd($event: DragEvent) {
+		const srcElement = $event.target as HTMLElement;
+		srcElement.classList.remove('dragging');
+	}
+	dragStart($event: DragEvent) {
+		const srcElement = $event.target as HTMLElement;
+		srcElement.classList.add('dragging');
+	}
+
+	drag($event: DragEvent) {
+		const targetUnder = document.elementFromPoint(
+			$event.clientX,
+			$event.clientY,
+		);
+
+		if (
+			targetUnder &&
+			targetUnder.classList.contains('li-item') &&
+			this.underEl !== targetUnder
+		) {
+			this.underEl = targetUnder as HTMLElement;
+			if (targetUnder?.classList.contains('translated'))
+				targetUnder?.classList.remove('translated');
+			else targetUnder?.classList.add('translated');
+		}
+	}
 
 	gotoList(UUID: string) {
 		console.log('@@@ ~ HomePageComponent ~ gotoList ~ UUID:', UUID);

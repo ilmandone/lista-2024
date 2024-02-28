@@ -74,6 +74,19 @@
 
         li {
             margin: 0;
+
+            &.translated {
+                transform: translateY(-100%)
+            }
+
+            &:hover {
+                border: 1px solid red;
+            }
+            
+
+            &.dragging {
+                opacity: 0.1;                
+            }
         }
     }
 
