@@ -33,11 +33,17 @@
 	@if (listData) {
 		@if (listData.data.length > 0) {
 			<ul class="lists" pDroppable="lists" (onDrop)="onDrop($event)">
-				@for (list of listData.data; track list["UUID"]) {
+				@for (
+					list of listData.data;
+					let i = $index;
+					track list["UUID"]
+				) {
 					<li
 						class="li-item"
 						pDraggable="lists"
 						dragEffect="move"
+						[attr.data-index]="i"
+						[attr.data-uuid]="list.UUID"
 						[pDraggableDisabled]="!editMode"
 						(onDragStart)="dragStart($event)"
 						(onDragEnd)="dragEnd($event)"
