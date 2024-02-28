@@ -76,13 +76,8 @@
             margin: 0;
 
             &.translated {
-                transform: translateY(-100%)
+                transform: translate3d(0,-100%,0)
             }
-
-            &:hover {
-                border: 1px solid red;
-            }
-            
 
             &.dragging {
                 opacity: 0.1;                

@@ -385,6 +385,9 @@ export class HomePageComponent implements OnInit {
 
 	onDrop($event: DragEvent) {
 		console.log('@@@ ~ HomePageComponent ~ onDrop ~ $event:', $event);
+		document
+			.querySelectorAll('.li-item')
+			.forEach((el) => el.classList.remove('translated'));
 	}
 
 	dragEnd($event: DragEvent) {
@@ -402,12 +405,7 @@ export class HomePageComponent implements OnInit {
 			$event.clientY,
 		);
 
-		if (
-			targetUnder &&
-			targetUnder.classList.contains('li-item') &&
-			this.underEl !== targetUnder
-		) {
-			this.underEl = targetUnder as HTMLElement;
+		if (targetUnder && targetUnder.classList.contains('li-item')) {
 			if (targetUnder?.classList.contains('translated'))
 				targetUnder?.classList.remove('translated');
 			else targetUnder?.classList.add('translated');
