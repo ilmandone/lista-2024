@@ -99,6 +99,10 @@ export class HomePageComponent implements OnInit {
 		renameList: FormControl<Nullable<IListData>>;
 	}>;
 
+	// Drag and drop
+	private _draggedElUUID!: Nullable<string>;
+	private _draggedUnderUUID!: Nullable<string>;
+
 	constructor() {
 		effect(
 			() => {
@@ -385,30 +389,51 @@ export class HomePageComponent implements OnInit {
 
 	onDrop($event: DragEvent) {
 		console.log('@@@ ~ HomePageComponent ~ onDrop ~ $event:', $event);
-		document
-			.querySelectorAll('.li-item')
-			.forEach((el) => el.classList.remove('translated'));
 	}
 
 	dragEnd($event: DragEvent) {
 		const srcElement = $event.target as HTMLElement;
 		srcElement.classList.remove('dragging');
+		this._draggedElUUID = null;
+		this._draggedUnderUUID = null;
+
+		document
+			.querySelectorAll('.li-item')
+			.forEach((el) => el.removeAttribute('style'));
 	}
 	dragStart($event: DragEvent) {
 		const srcElement = $event.target as HTMLElement;
 		srcElement.classList.add('dragging');
+		this._draggedElUUID = srcElement.getAttribute('data-uuid');
+	}
+
+	onDragLeave() {
+		this._draggedUnderUUID = null;
 	}
 
 	drag($event: DragEvent) {
-		const targetUnder = document.elementFromPoint(
-			$event.clientX,
-			$event.clientY,
-		);
+		const tu = document.elementFromPoint($event.clientX, $event.clientY);
 
-		if (targetUnder && targetUnder.classList.contains('li-item')) {
-			if (targetUnder?.classList.contains('translated'))
-				targetUnder?.classList.remove('translated');
-			else targetUnder?.classList.add('translated');
+		if (tu?.classList.contains('li-item')) {
+			const tuUIID = tu.getAttribute('data-uuid');
+			if (
+				this._draggedUnderUUID !== tuUIID &&
+				this._draggedElUUID !== tuUIID
+			) {
+				this._draggedUnderUUID = tuUIID;
+
+				if (tu.hasAttribute('style')) tu.removeAttribute('style');
+				else {
+					tu.setAttribute(
+						'style',
+						'transform: translate3D(0,-100%, 0);',
+					);
+				}
+			} else if (this._draggedElUUID === tuUIID) {
+				this._draggedUnderUUID = null;
+			}
+		} else {
+			this._draggedUnderUUID = null;
 		}
 	}
 
