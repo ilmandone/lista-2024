@@ -10,7 +10,7 @@ import {
 import {ListComponent} from 'app/components/list/list.component';
 import {DbService, ICommandAction, IListData, IListsData,} from 'app/services/firebase/db.service';
 import {Command} from 'app/utils/command';
-import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
+import {MenuItem, MessageService} from 'primeng/api';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenuModule} from 'primeng/menu';
