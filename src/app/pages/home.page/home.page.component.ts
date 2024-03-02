@@ -1,47 +1,29 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect, inject, OnInit } from '@angular/core';
-import {
-	FormControl,
-	FormGroup,
-	ReactiveFormsModule,
-	Validators,
-} from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {Component, effect, inject, OnInit} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {Router, RouterModule} from '@angular/router';
 import {
 	DialogNewAction,
 	DialogNewActionType,
 	DialogNewComponent,
 } from 'app/components/dialog-new/dialog-new.component';
-import { ListComponent } from 'app/components/list/list.component';
-import {
-	DbService,
-	ICommandAction,
-	IListData,
-	IListsData,
-} from 'app/services/firebase/db.service';
-import { Command } from 'app/utils/command';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { MenuModule } from 'primeng/menu';
-import { PaginatorModule } from 'primeng/paginator';
-import { RippleModule } from 'primeng/ripple';
-import { Subscription } from 'rxjs';
-import { LoaderComponent } from '../../components/loader/loader.component';
-import {
-	SideMenuAction,
-	SideMenuComponent,
-} from '../../components/side-menu/side-menu.component';
-import {
-	F_ACTIONS,
-	F_VISIBILITY,
-	FooterActionsService,
-} from '../../services/_common/footer-actions.service';
-import { LoadingService } from '../../services/_common/loading.service';
-import { FirebaseAuthentication } from '../../services/firebase/authe.service';
-import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
-import { DragDropModule } from 'primeng/dragdrop';
-import {debounce} from "lodash";
+import {ListComponent} from 'app/components/list/list.component';
+import {DbService, ICommandAction, IListData, IListsData,} from 'app/services/firebase/db.service';
+import {Command} from 'app/utils/command';
+import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
+import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
+import {MenuModule} from 'primeng/menu';
+import {PaginatorModule} from 'primeng/paginator';
+import {RippleModule} from 'primeng/ripple';
+import {Subscription} from 'rxjs';
+import {LoaderComponent} from '../../components/loader/loader.component';
+import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
+import {F_ACTIONS, F_VISIBILITY, FooterActionsService,} from '../../services/_common/footer-actions.service';
+import {LoadingService} from '../../services/_common/loading.service';
+import {FirebaseAuthentication} from '../../services/firebase/authe.service';
+import {MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
+import {DragDropModule} from 'primeng/dragdrop';
 
 @Component({
 	selector: 'app-home.page',
@@ -66,7 +48,6 @@ import {debounce} from "lodash";
 })
 export class HomePageComponent implements OnInit {
 	private _authSrv = inject(FirebaseAuthentication);
-	private _confSrv = inject(ConfirmationService);
 	private _dbSrv = inject(DbService);
 	private _fASrv = inject(FooterActionsService);
 	private _loadingSrv = inject(LoadingService);
@@ -74,7 +55,6 @@ export class HomePageComponent implements OnInit {
 	private _router = inject(Router);
 
 	private _command!: Command;
-	private _renamingList!: IListData;
 
 	public lists$!: Subscription;
 	public listData!: IListsData;
@@ -419,11 +399,11 @@ export class HomePageComponent implements OnInit {
 	drag($event: DragEvent) {
 		$event.preventDefault()
 		const tus = document.elementsFromPoint($event.clientX, $event.clientY).filter(el => {
-			return el.getAttribute('data-uuid') !== this._draggedElUUID
+			return el.getAttribute('data-uuid') !== this._draggedElUUID && el.classList.contains('li-item')
 		})
-		const tu = tus[0]
+		const tu = tus.length > 0 ? tus[0] : undefined
 
-		if (tu?.classList.contains('li-item')) {
+		if (tu) {
 			const tuUUID = tu.getAttribute('data-uuid');
 			if (
 				this._draggedUnderUUID !== tuUUID
@@ -433,7 +413,6 @@ export class HomePageComponent implements OnInit {
 				if (tu.hasAttribute('style')) tu.removeAttribute('style');
 				else {
 					const index = Number(tu.getAttribute('data-index'))
-					console.log(index, '|', this._draggedELIndex);
 					const translation = index < (this._draggedELIndex as number) ? '100%' : '-100%'
 					tu.setAttribute(
 						'style',
@@ -443,7 +422,6 @@ export class HomePageComponent implements OnInit {
 			}
 		} else {
 			if(this._draggedUnderUUID) {
-				console.log(this._draggedUnderUUID);
 				this._draggedUnderUUID = null;
 			}
 		}
