@@ -73,13 +73,18 @@
         list-style: none;
 
         li {
+			position: relative;
             margin: 0;
 
-            transition: transform 0.3s ease-in-out;
+            transition: transform 0.25s ease-in-out;
 
 
             &.dragging {
-                opacity: 0.3;                
+                opacity: 0.3;
+
+				> * {
+					pointer-events: none;
+				}
             }
         }
     }

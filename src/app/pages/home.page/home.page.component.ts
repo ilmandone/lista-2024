@@ -41,6 +41,7 @@ import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { DragDropModule } from 'primeng/dragdrop';
+import {debounce} from "lodash";
 
 @Component({
 	selector: 'app-home.page',
@@ -101,6 +102,7 @@ export class HomePageComponent implements OnInit {
 
 	// Drag and drop
 	private _draggedElUUID!: Nullable<string>;
+	private _draggedELIndex!: Nullable<number>
 	private _draggedUnderUUID!: Nullable<string>;
 
 	constructor() {
@@ -392,9 +394,11 @@ export class HomePageComponent implements OnInit {
 	}
 
 	dragEnd($event: DragEvent) {
+		console.log($event);
 		const srcElement = $event.target as HTMLElement;
 		srcElement.classList.remove('dragging');
 		this._draggedElUUID = null;
+		this._draggedELIndex = null
 		this._draggedUnderUUID = null;
 
 		document
@@ -405,6 +409,7 @@ export class HomePageComponent implements OnInit {
 		const srcElement = $event.target as HTMLElement;
 		srcElement.classList.add('dragging');
 		this._draggedElUUID = srcElement.getAttribute('data-uuid');
+		this._draggedELIndex = Number(srcElement.getAttribute('data-index'))
 	}
 
 	onDragLeave() {
@@ -412,28 +417,35 @@ export class HomePageComponent implements OnInit {
 	}
 
 	drag($event: DragEvent) {
-		const tu = document.elementFromPoint($event.clientX, $event.clientY);
+		$event.preventDefault()
+		const tus = document.elementsFromPoint($event.clientX, $event.clientY).filter(el => {
+			return el.getAttribute('data-uuid') !== this._draggedElUUID
+		})
+		const tu = tus[0]
 
 		if (tu?.classList.contains('li-item')) {
-			const tuUIID = tu.getAttribute('data-uuid');
+			const tuUUID = tu.getAttribute('data-uuid');
 			if (
-				this._draggedUnderUUID !== tuUIID &&
-				this._draggedElUUID !== tuUIID
+				this._draggedUnderUUID !== tuUUID
 			) {
-				this._draggedUnderUUID = tuUIID;
+				this._draggedUnderUUID = tuUUID;
 
 				if (tu.hasAttribute('style')) tu.removeAttribute('style');
 				else {
+					const index = Number(tu.getAttribute('data-index'))
+					console.log(index, '|', this._draggedELIndex);
+					const translation = index < (this._draggedELIndex as number) ? '100%' : '-100%'
 					tu.setAttribute(
 						'style',
-						'transform: translate3D(0,-100%, 0);',
+						`transform: translate3D(0,${translation}, 0);`,
 					);
 				}
-			} else if (this._draggedElUUID === tuUIID) {
-				this._draggedUnderUUID = null;
 			}
 		} else {
-			this._draggedUnderUUID = null;
+			if(this._draggedUnderUUID) {
+				console.log(this._draggedUnderUUID);
+				this._draggedUnderUUID = null;
+			}
 		}
 	}
 
