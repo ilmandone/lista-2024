@@ -83,7 +83,8 @@ export class HomePageComponent implements OnInit {
 	// Drag and drop
 	private _draggedElUUID!: Nullable<string>;
 	private _draggedELIndex!: Nullable<number>
-	private _draggedUnderUUID!: Nullable<string>;
+	private _draggedUnderEl!: Nullable<HTMLElement>
+	private _draggedLastEl!: Nullable<HTMLElement>;
 
 	constructor() {
 		effect(
@@ -374,12 +375,13 @@ export class HomePageComponent implements OnInit {
 	}
 
 	dragEnd($event: DragEvent) {
-		console.log($event);
 		const srcElement = $event.target as HTMLElement;
+		console.log(this._draggedLastEl);
+		console.log(this._draggedLastEl?.hasAttribute('style'));
+		// TODO: continuare da qui per calcolare la nuova posizione dell'item spostato
+		// Se l'ultimo elemento colpito ha la trasformazione va messo dopo di lui se no prima
 		srcElement.classList.remove('dragging');
-		this._draggedElUUID = null;
-		this._draggedELIndex = null
-		this._draggedUnderUUID = null;
+		this._draggedElUUID = this._draggedELIndex = this._draggedUnderEl = this._draggedLastEl = null;
 
 		document
 			.querySelectorAll('.li-item')
@@ -393,7 +395,7 @@ export class HomePageComponent implements OnInit {
 	}
 
 	onDragLeave() {
-		this._draggedUnderUUID = null;
+		this._draggedUnderEl = null;
 	}
 
 	drag($event: DragEvent) {
@@ -402,13 +404,14 @@ export class HomePageComponent implements OnInit {
 			return el.getAttribute('data-uuid') !== this._draggedElUUID && el.classList.contains('li-item')
 		})
 		const tu = tus.length > 0 ? tus[0] : undefined
+		const draggedUnderUUID = this._draggedUnderEl?.getAttribute('data-UUID')
 
 		if (tu) {
 			const tuUUID = tu.getAttribute('data-uuid');
 			if (
-				this._draggedUnderUUID !== tuUUID
+				draggedUnderUUID !== tuUUID
 			) {
-				this._draggedUnderUUID = tuUUID;
+				this._draggedUnderEl = this._draggedLastEl = tu as HTMLElement
 
 				if (tu.hasAttribute('style')) tu.removeAttribute('style');
 				else {
@@ -421,8 +424,8 @@ export class HomePageComponent implements OnInit {
 				}
 			}
 		} else {
-			if(this._draggedUnderUUID) {
-				this._draggedUnderUUID = null;
+			if(this._draggedUnderEl) {
+				this._draggedUnderEl = null;
 			}
 		}
 	}
