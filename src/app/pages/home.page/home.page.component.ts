@@ -1,29 +1,47 @@
-import {CommonModule} from '@angular/common';
-import {Component, effect, inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
-import {Router, RouterModule} from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, effect, inject, OnInit } from '@angular/core';
+import {
+	FormControl,
+	FormGroup,
+	ReactiveFormsModule,
+	Validators,
+} from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import {
 	DialogNewAction,
 	DialogNewActionType,
 	DialogNewComponent,
 } from 'app/components/dialog-new/dialog-new.component';
-import {ListComponent} from 'app/components/list/list.component';
-import {DbService, ICommandAction, IListData, IListsData,} from 'app/services/firebase/db.service';
-import {Command} from 'app/utils/command';
-import {MenuItem, MessageService} from 'primeng/api';
-import {ButtonModule} from 'primeng/button';
-import {InputTextModule} from 'primeng/inputtext';
-import {MenuModule} from 'primeng/menu';
-import {PaginatorModule} from 'primeng/paginator';
-import {RippleModule} from 'primeng/ripple';
-import {Subscription} from 'rxjs';
-import {LoaderComponent} from '../../components/loader/loader.component';
-import {SideMenuAction, SideMenuComponent,} from '../../components/side-menu/side-menu.component';
-import {F_ACTIONS, F_VISIBILITY, FooterActionsService,} from '../../services/_common/footer-actions.service';
-import {LoadingService} from '../../services/_common/loading.service';
-import {FirebaseAuthentication} from '../../services/firebase/authe.service';
-import {MAIN_TOAST_KEY, Nullable} from '../../utils/commons';
-import {DragDropModule} from 'primeng/dragdrop';
+import { ListItemComponent } from 'app/components/list/list-item/list-item.component';
+import {
+	DbService,
+	ICommandAction,
+	IListData,
+	IListsData,
+} from 'app/services/firebase/db.service';
+import { Command } from 'app/utils/command';
+import { MenuItem, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenuModule } from 'primeng/menu';
+import { PaginatorModule } from 'primeng/paginator';
+import { RippleModule } from 'primeng/ripple';
+import { Subscription } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import {
+	SideMenuAction,
+	SideMenuComponent,
+} from '../../components/side-menu/side-menu.component';
+import {
+	F_ACTIONS,
+	F_VISIBILITY,
+	FooterActionsService,
+} from '../../services/_common/footer-actions.service';
+import { LoadingService } from '../../services/_common/loading.service';
+import { FirebaseAuthentication } from '../../services/firebase/authe.service';
+import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
+import { DragDropModule } from 'primeng/dragdrop';
+import { ListDraggableComponent } from 'app/components/list/list-draggable/list-draggable.component';
 
 @Component({
 	selector: 'app-home.page',
@@ -35,13 +53,14 @@ import {DragDropModule} from 'primeng/dragdrop';
 		RouterModule,
 		SideMenuComponent,
 		LoaderComponent,
-		ListComponent,
+		ListItemComponent,
 		DialogNewComponent,
 		InputTextModule,
 		PaginatorModule,
 		ReactiveFormsModule,
 		MenuModule,
 		DragDropModule,
+		ListDraggableComponent,
 	],
 	templateUrl: './home.page.component.html',
 	styleUrl: './home.page.component.scss',
@@ -79,12 +98,6 @@ export class HomePageComponent implements OnInit {
 		newList: FormControl<Nullable<string>>;
 		renameList: FormControl<Nullable<IListData>>;
 	}>;
-
-	// Drag and drop
-	private _draggedElUUID!: Nullable<string>;
-	private _draggedELIndex!: Nullable<number>
-	private _draggedUnderEl!: Nullable<HTMLElement>
-	private _draggedLastEl!: Nullable<HTMLElement>;
 
 	constructor() {
 		effect(
@@ -367,68 +380,6 @@ export class HomePageComponent implements OnInit {
 	}
 
 	//#end region
-
-	underEl!: HTMLElement;
-
-	onDrop($event: DragEvent) {
-		console.log('@@@ ~ HomePageComponent ~ onDrop ~ $event:', $event);
-	}
-
-	dragEnd($event: DragEvent) {
-		const srcElement = $event.target as HTMLElement;
-		console.log(this._draggedLastEl);
-		console.log(this._draggedLastEl?.hasAttribute('style'));
-		// TODO: continuare da qui per calcolare la nuova posizione dell'item spostato
-		// Se l'ultimo elemento colpito ha la trasformazione va messo dopo di lui se no prima
-		srcElement.classList.remove('dragging');
-		this._draggedElUUID = this._draggedELIndex = this._draggedUnderEl = this._draggedLastEl = null;
-
-		document
-			.querySelectorAll('.li-item')
-			.forEach((el) => el.removeAttribute('style'));
-	}
-	dragStart($event: DragEvent) {
-		const srcElement = $event.target as HTMLElement;
-		srcElement.classList.add('dragging');
-		this._draggedElUUID = srcElement.getAttribute('data-uuid');
-		this._draggedELIndex = Number(srcElement.getAttribute('data-index'))
-	}
-
-	onDragLeave() {
-		this._draggedUnderEl = null;
-	}
-
-	drag($event: DragEvent) {
-		$event.preventDefault()
-		const tus = document.elementsFromPoint($event.clientX, $event.clientY).filter(el => {
-			return el.getAttribute('data-uuid') !== this._draggedElUUID && el.classList.contains('li-item')
-		})
-		const tu = tus.length > 0 ? tus[0] : undefined
-		const draggedUnderUUID = this._draggedUnderEl?.getAttribute('data-UUID')
-
-		if (tu) {
-			const tuUUID = tu.getAttribute('data-uuid');
-			if (
-				draggedUnderUUID !== tuUUID
-			) {
-				this._draggedUnderEl = this._draggedLastEl = tu as HTMLElement
-
-				if (tu.hasAttribute('style')) tu.removeAttribute('style');
-				else {
-					const index = Number(tu.getAttribute('data-index'))
-					const translation = index < (this._draggedELIndex as number) ? '100%' : '-100%'
-					tu.setAttribute(
-						'style',
-						`transform: translate3D(0,${translation}, 0);`,
-					);
-				}
-			}
-		} else {
-			if(this._draggedUnderEl) {
-				this._draggedUnderEl = null;
-			}
-		}
-	}
 
 	gotoList(UUID: string) {
 		console.log('@@@ ~ HomePageComponent ~ gotoList ~ UUID:', UUID);

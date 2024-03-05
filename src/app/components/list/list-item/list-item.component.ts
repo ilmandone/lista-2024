@@ -9,13 +9,13 @@ import {
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-	selector: 'app-list',
+	selector: 'app-list-item',
 	standalone: true,
 	imports: [CommonModule, ButtonModule],
-	templateUrl: './list.component.html',
-	styleUrl: './list.component.scss',
+	templateUrl: './list-item.component.html',
+	styleUrl: './list-item.component.scss',
 })
-export class ListComponent {
+export class ListItemComponent {
 	@Input() editMode!: boolean;
 	@Input() label!: string;
 	@Input() updated!: Date;

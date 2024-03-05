@@ -1,0 +1,25 @@
+<ul
+	class="lists"
+	pDroppable="lists"
+	(onDrop)="onDrop($event)"
+	(onDragLeave)="onDragLeave()"
+>
+	@for (list of listData.data; let i = $index; track list["UUID"]) {
+		<li
+			class="li-item"
+			pDraggable="lists"
+			dragEffect="copy"
+			[attr.data-index]="i"
+			[attr.data-uuid]="list.UUID"
+			[pDraggableDisabled]="!editMode"
+			(onDragStart)="dragStart($event)"
+			(onDragEnd)="dragEnd($event)"
+			(onDrag)="drag($event)"
+		>
+			<ng-container
+				[ngTemplateOutlet]="template"
+				[ngTemplateOutletContext]="{ list: list, editMode: editMode }"
+			></ng-container>
+		</li>
+	}
+</ul>

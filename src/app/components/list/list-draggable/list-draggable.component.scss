@@ -1,0 +1,22 @@
+// Lists
+.lists {
+    margin: 0;
+    padding: 1rem 0;
+    list-style: none;
+
+    li {
+        position: relative;
+        margin: 0;
+
+        transition: transform 0.25s ease-in-out;
+
+
+        &.dragging {
+            opacity: 0.3;
+
+            > * {
+                pointer-events: none;
+            }
+        }
+    }
+}
