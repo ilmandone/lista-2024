@@ -41,7 +41,10 @@ import { LoadingService } from '../../services/_common/loading.service';
 import { FirebaseAuthentication } from '../../services/firebase/authe.service';
 import { MAIN_TOAST_KEY, Nullable } from '../../utils/commons';
 import { DragDropModule } from 'primeng/dragdrop';
-import { ListDraggableComponent } from 'app/components/list/list-draggable/list-draggable.component';
+import {
+	IDraggedEvent,
+	ListDraggableComponent,
+} from 'app/components/list/list-draggable/list-draggable.component';
 
 @Component({
 	selector: 'app-home.page',
@@ -379,7 +382,15 @@ export class HomePageComponent implements OnInit {
 		this._fASrv.visible = F_VISIBILITY.CANCEL;
 	}
 
-	//#end region
+	//#endregion
+
+	//#region Drag and drop
+
+	dragComplete($event: IDraggedEvent) {
+		console.log('@@@ ~ HomePageComponent ~ dragComplete ~ $event:', $event);
+	}
+
+	//#endregion
 
 	gotoList(UUID: string) {
 		console.log('@@@ ~ HomePageComponent ~ gotoList ~ UUID:', UUID);

@@ -36,6 +36,7 @@
 				[listData]="listData"
 				[editMode]="editMode"
 				[template]="listItem"
+				(dragComplete)="dragComplete($event)"
 			>
 				<ng-template #listItem let-list="list" let-editMode="editMode">
 					<app-list-item

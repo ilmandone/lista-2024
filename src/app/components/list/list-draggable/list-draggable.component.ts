@@ -1,8 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, TemplateRef } from '@angular/core';
+import {
+	Component,
+	EventEmitter,
+	Input,
+	Output,
+	TemplateRef,
+} from '@angular/core';
 import { IListsData } from 'app/services/firebase/db.service';
 import { Nullable } from 'app/utils/commons';
 import { DragDropModule } from 'primeng/dragdrop';
+
+export interface IDraggedEvent {
+	draggedUUID: string;
+	targetUUID: string;
+	position: 'before' | 'after';
+}
 
 @Component({
 	selector: 'app-list-draggable',
@@ -16,6 +28,8 @@ export class ListDraggableComponent {
 	@Input() editMode = false;
 	@Input() template!: TemplateRef<unknown>;
 
+	@Output() dragComplete = new EventEmitter<IDraggedEvent>();
+
 	private _draggedElUUID!: Nullable<string>;
 	private _draggedELIndex!: Nullable<number>;
 	private _draggedUnderEl!: Nullable<HTMLElement>;
@@ -27,8 +41,19 @@ export class ListDraggableComponent {
 
 	dragEnd($event: DragEvent) {
 		const srcElement = $event.target as HTMLElement;
-		console.log(this._draggedLastEl);
-		console.log(this._draggedLastEl?.hasAttribute('style'));
+
+		if (this._draggedLastEl) {
+			this.dragComplete.emit({
+				draggedUUID: this._draggedElUUID as string,
+				targetUUID: this._draggedLastEl.getAttribute(
+					'data-uuid',
+				) as string,
+				position: this._draggedLastEl.hasAttribute('style')
+					? 'before'
+					: 'after',
+			});
+		}
+
 		// TODO: continuare da qui per calcolare la nuova posizione dell'item spostato
 		// Se l'ultimo elemento colpito ha la trasformazione va messo dopo di lui se no prima
 		srcElement.classList.remove('dragging');
