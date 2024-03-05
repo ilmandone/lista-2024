@@ -1,9 +1,4 @@
-<ul
-	class="lists"
-	pDroppable="lists"
-	(onDrop)="onDrop($event)"
-	(onDragLeave)="onDragLeave()"
->
+<ul class="lists" pDroppable="lists" (onDragLeave)="onDragLeave()">
 	@for (list of listData.data; let i = $index; track list["UUID"]) {
 		<li
 			class="li-item"

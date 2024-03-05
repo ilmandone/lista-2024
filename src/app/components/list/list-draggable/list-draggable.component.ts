@@ -35,10 +35,6 @@ export class ListDraggableComponent {
 	private _draggedUnderEl!: Nullable<HTMLElement>;
 	private _draggedLastEl!: Nullable<HTMLElement>;
 
-	onDrop($event: DragEvent) {
-		console.log('@@@ ~ HomePageComponent ~ onDrop ~ $event:', $event);
-	}
-
 	dragEnd($event: DragEvent) {
 		const srcElement = $event.target as HTMLElement;
 
@@ -54,8 +50,6 @@ export class ListDraggableComponent {
 			});
 		}
 
-		// TODO: continuare da qui per calcolare la nuova posizione dell'item spostato
-		// Se l'ultimo elemento colpito ha la trasformazione va messo dopo di lui se no prima
 		srcElement.classList.remove('dragging');
 		this._draggedElUUID =
 			this._draggedELIndex =
