@@ -1,7 +1,7 @@
 # Lista2024
 
 ## Todo
-- Complete the rename for db service
+- Completare il riordinamento delle liste (manca solo l'aggiornamento dell'ordine tramite un command)
   
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.

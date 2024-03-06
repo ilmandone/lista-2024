@@ -387,7 +387,38 @@ export class HomePageComponent implements OnInit {
 	//#region Drag and drop
 
 	dragComplete($event: IDraggedEvent) {
-		console.log('@@@ ~ HomePageComponent ~ dragComplete ~ $event:', $event);
+		let insertionIndex = this.listData.data.findIndex(
+			(l) => l.UUID === $event.targetUUID,
+		);
+
+		if (insertionIndex) {
+			insertionIndex += $event.position === 'after' ? 1 : 0;
+
+			const draggedEl = this.listData.data.find(
+				(l) => l.UUID === $event.draggedUUID,
+			);
+
+			this._command.execute(
+				'update',
+				(data) => {
+					/* console.log(
+						'@@@ ~ HomePageComponent ~ dragComplete ~ data:',
+						data,
+						draggedEl,
+					); */
+				},
+				(data) => {
+					console.log(
+						'@@@ ~ HomePageComponent ~ dragComplete ~ data:',
+						data,
+						draggedEl,
+					);
+				},
+				{ list: this.listData.data, insertionIndex },
+			);
+
+			this._fASrv.visible = F_VISIBILITY.CONFIRM_CANCEL;
+		}
 	}
 
 	//#endregion

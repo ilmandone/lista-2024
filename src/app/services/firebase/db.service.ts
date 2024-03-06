@@ -42,6 +42,7 @@ export interface ICommandAction {
 	list: IListData;
 	newLabel?: string;
 	originalLabel?: string;
+	insertionIndex?: number;
 }
 
 @Injectable({
