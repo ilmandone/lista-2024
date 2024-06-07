@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$red-palette,
+  ),
+));
+
+html {
+  @include mat.core-theme($dark-theme);
+  @include mat.button-theme($dark-theme);
+}

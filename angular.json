@@ -32,8 +32,17 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/rose-red.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              {
+                "input": "src/app/styles/themes-light.scss",
+                "bundleName": "theme-light",
+                "inject": false
+              },
+              {
+                "input": "src/app/styles/themes-dark.scss",
+                "bundleName": "theme-dark",
+                "inject": false
+              }
             ],
             "scripts": []
           },
