@@ -4,7 +4,7 @@
   .hero {
     position: relative;
     width: 100vw;
-    height: utils.getRealVh(40);
+    height: utils.getRealVh(32);
 
     display: block;
 
@@ -17,7 +17,7 @@
 
 
   main {
-    height: utils.getRealVh(60);
+    height: utils.getRealVh(68);
 
     display: flex;
     flex-direction: column;
@@ -26,6 +26,7 @@
     h1 {
       font-size: 3rem;
       font-weight: 200;
+      margin: 3rem 0 1rem;
     }
 
     .login-form {
@@ -34,9 +35,13 @@
       align-items: center;
     }
 
-    .login-button {
+    .form-field {
+      margin: 1.5rem 0;
+    }
+
+    button {
       min-width: 10rem;
-      margin: 1rem 0;
+      margin: 2rem 0 0;
     }
   }
 

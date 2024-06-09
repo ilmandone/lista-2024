@@ -14,21 +14,34 @@
 </picture>
 
 <main>
+  <!--Title -->
   <h1>Tati's List</h1>
-  <form class="login-form" [formGroup]="loginFormGroup" (ngSubmit)="loginSubmit()">
-    <mat-form-field>
+
+  <!--Form-->
+  <form class="login-form" [formGroup]="loginFG" (ngSubmit)="loginSubmit()">
+
+    <!--Email-->
+    <mat-form-field class="form-field">
       <mat-label>Email</mat-label>
-      <input [formControl]="loginFormGroup.controls.email" [required]="true" matInput placeholder="Your account email"
+      <input [formControl]="emailFC" [required]="true" matInput placeholder="Your account email"
              type="email"/>
+      @if (emailFC.invalid) {
+        <mat-error>Email required</mat-error>
+      }
     </mat-form-field>
 
+    <!--Password-->
     <mat-form-field>
       <mat-label>Password</mat-label>
-      <input [formControl]="loginFormGroup.controls.password" [required]="true" matInput
+      <input [formControl]="passwordFC" [required]="true" matInput
              placeholder="Your account password" type="password"/>
+      @if (passwordFC.invalid) {
+        <mat-error>Password required</mat-error>
+      }
     </mat-form-field>
 
-    <button mat-flat-button class="login-button" type="submit">Login</button>
+    <!--Submit-->
+    <button mat-flat-button type="submit">Login</button>
   </form>
 
 </main>
