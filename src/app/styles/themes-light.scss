@@ -8,6 +8,13 @@ $light-theme: mat.define-theme((
     theme-type: light,
     primary: mat.$violet-palette,
   ),
+  typography: (
+    plain-family: 'Inter',
+    brand-family: 'Inter',
+    bold-weight: 800,
+    medium-weight: 600,
+    regular-weight: 400,
+  )
 ));
 
 html {
