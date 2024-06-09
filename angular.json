@@ -34,12 +34,12 @@
             "styles": [
               "src/styles.scss",
               {
-                "input": "src/app/styles/themes-light.scss",
+                "input": "src/styles/themes-light.scss",
                 "bundleName": "theme-light",
                 "inject": false
               },
               {
-                "input": "src/app/styles/themes-dark.scss",
+                "input": "src/styles/themes-dark.scss",
                 "bundleName": "theme-dark",
                 "inject": false
               }
