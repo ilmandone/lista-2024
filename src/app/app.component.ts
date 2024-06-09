@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostBinding, OnInit} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {MatButtonModule} from "@angular/material/button";
 
@@ -10,13 +10,19 @@ import {MatButtonModule} from "@angular/material/button";
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit{
-  title = 'lista-2024';
+
+  @HostBinding('window:resize')
+  private _updateBodyVh() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  }
 
   ngOnInit() {
-    const cssEl = document.getElementById('app-theme') as HTMLLinkElement
+    this._updateBodyVh();
+
+    /*const cssEl = document.getElementById('app-theme') as HTMLLinkElement
     setTimeout(() => {
         cssEl.href = 'theme-dark.css'
-    },5000)
+    },5000)*/
 
   }
 }

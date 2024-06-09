@@ -1,8 +1,10 @@
+@use '~styles/utils.scss';
+
 :host {
   .hero {
     position: relative;
     width: 100vw;
-    height: 30vh;
+    height: utils.getRealVh(40);
 
     display: block;
 
