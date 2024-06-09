@@ -2,9 +2,33 @@
 
 @import './app/styles/typo.scss';
 
-html, body { height: 100%; }
-body {
-  margin: 0; font-family: Inter, "Helvetica Neue", sans-serif;
+@layer reset, custom;
+
+/* Reset CSS */
+@layer reset {
+  *,
+  *:before,
+  *:after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: none;
+  }
 }
 
-
+@layer custom {
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: Inter, "Helvetica Neue", sans-serif;
+  }
+}
