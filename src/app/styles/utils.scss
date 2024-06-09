@@ -1,0 +1,3 @@
+@function getRealVh($val) {
+  @return calc(var(--vh) * $val);
+}
