@@ -12,3 +12,23 @@
     priority="true"
   />
 </picture>
+
+<main>
+  <h1>Tati's List</h1>
+  <form class="login-form" [formGroup]="loginFormGroup" (ngSubmit)="loginSubmit()">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input [formControl]="loginFormGroup.controls.email" [required]="true" matInput placeholder="Your account email"
+             type="email"/>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input [formControl]="loginFormGroup.controls.password" [required]="true" matInput
+             placeholder="Your account password" type="password"/>
+    </mat-form-field>
+
+    <button mat-flat-button class="login-button" type="submit">Login</button>
+  </form>
+
+</main>
