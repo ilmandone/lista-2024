@@ -22,4 +22,5 @@ html {
   @include mat.input-theme($dark-theme);
   @include mat.form-field-theme($dark-theme);
 
+  --mdc-filled-button-container-height: 3rem;  
 }
