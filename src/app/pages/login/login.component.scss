@@ -1,10 +1,10 @@
-@use '~styles/utils.scss';
+@use "~styles/utils.scss";
 
 :host {
   .hero {
     position: relative;
     width: 100vw;
-    height: utils.getRealVh(32);
+    height: utils.getRealVh(35);
 
     display: block;
 
@@ -15,9 +15,8 @@
     }
   }
 
-
   main {
-    height: utils.getRealVh(68);
+    height: utils.getRealVh(65);
 
     display: flex;
     flex-direction: column;
@@ -26,17 +25,21 @@
     h1 {
       font-size: 3rem;
       font-weight: 200;
-      margin: 3rem 0 1rem;
+      margin: 3rem 0 0;
     }
 
     .login-form {
+      margin-top: 2rem;
+
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     .form-field {
-      margin: 1.5rem 0;
+      width: 80vw;
+      max-width: 16rem;
+      margin: 1.5rem 0 0;
     }
 
     button {
@@ -45,5 +48,8 @@
     }
   }
 
-
+  .forgot-password {
+    margin: 2.5rem 0 0;
+    text-decoration: underline;
+  }
 }
