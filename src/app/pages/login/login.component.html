@@ -49,7 +49,7 @@
     </mat-form-field>
 
     <!--Submit-->
-    <button mat-flat-button type="submit">Login</button>
+    <button mat-flat-button type="submit" [disabled]="loginFG.invalid">Login</button>
   </form>
 
   <div class="forgot-password">

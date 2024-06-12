@@ -1,34 +1,60 @@
-import { Component } from '@angular/core';
-import {CommonModule, NgOptimizedImage} from "@angular/common";
-import {MatButton} from "@angular/material/button";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
-import {MatInput} from "@angular/material/input";
-import {Nullable} from "../../shared/utils";
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FirebaseService } from 'app/shared/firebase.service';
+import { Nullable } from '../../shared/utils';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 interface ILoginFG {
-  email: FormControl<Nullable<string>>
-  password: FormControl<Nullable<string>>
+  email: FormControl<Nullable<string>>;
+  password: FormControl<Nullable<string>>;
 }
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, MatButton, ReactiveFormsModule, MatFormField, MatInput, MatLabel, MatError],
+  imports: [
+    CommonModule,
+    NgOptimizedImage,
+    MatButton,
+    ReactiveFormsModule,
+    MatFormField,
+    MatInput,
+    MatLabel,
+    MatError,
+  ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  private _fbSrv = inject(FirebaseService);
 
-  emailFC = new FormControl(null, [Validators.required, Validators.email])
-  passwordFC = new FormControl(null, [Validators.required])
+  emailFC = new FormControl(null, [Validators.required, Validators.email]);
+  passwordFC = new FormControl(null, [Validators.required]);
 
-  loginFG= new FormGroup<ILoginFG>({
+  loginFG = new FormGroup<ILoginFG>({
     email: this.emailFC,
-    password: this.passwordFC
-  })
+    password: this.passwordFC,
+  });
 
   loginSubmit() {
-    console.log(this.loginFG.value)
+    const auth = this._fbSrv.auth;
+    signInWithEmailAndPassword(
+      auth,
+      this.loginFG.controls.email.value as string,
+      this.loginFG.controls.password.value as string
+    ).then((resp) => console.log(resp)).catch((err) => console.log(err));
+  }
+
+  ngOnInit(): void {
+    this._fbSrv.init();
   }
 }
