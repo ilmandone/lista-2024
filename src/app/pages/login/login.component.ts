@@ -20,7 +20,7 @@ interface ILoginFG {
 })
 export class LoginComponent {
 
-  emailFC = new FormControl(null, [Validators.required])
+  emailFC = new FormControl(null, [Validators.required, Validators.email])
   passwordFC = new FormControl(null, [Validators.required])
 
   loginFG= new FormGroup<ILoginFG>({

@@ -1,8 +1,5 @@
 <picture class="hero">
-  <source
-    media="(min-width:1440px)"
-    srcset="https://picsum.photos/1920/1080"
-  />
+  <source media="(min-width:1440px)" srcset="https://picsum.photos/1920/1080" />
   <source media="(min-width:768px)" srcset="https://picsum.photos/1024/768" />
   <img
     class="hero__img"
@@ -19,24 +16,35 @@
 
   <!--Form-->
   <form class="login-form" [formGroup]="loginFG" (ngSubmit)="loginSubmit()">
-
     <!--Email-->
     <mat-form-field class="form-field">
       <mat-label>Email</mat-label>
-      <input [formControl]="emailFC" [required]="true" matInput placeholder="Your account email"
-             type="email"/>
+      <input
+        [formControl]="emailFC"
+        [required]="true"
+        matInput
+        placeholder="Your account email"
+        type="email"
+      />
       @if (emailFC.invalid) {
-        <mat-error>Email required</mat-error>
+      <mat-error
+        >{{emailFC.errors?.['email'] ? 'Not a valid email' : 'Email required'}}</mat-error
+      >
       }
     </mat-form-field>
 
     <!--Password-->
     <mat-form-field class="form-field">
       <mat-label>Password</mat-label>
-      <input [formControl]="passwordFC" [required]="true" matInput
-             placeholder="Your account password" type="password"/>
+      <input
+        [formControl]="passwordFC"
+        [required]="true"
+        matInput
+        placeholder="Your account password"
+        type="password"
+      />
       @if (passwordFC.invalid) {
-        <mat-error>Password required</mat-error>
+      <mat-error>Password required</mat-error>
       }
     </mat-form-field>
 
@@ -47,5 +55,4 @@
   <div class="forgot-password">
     <a routerLink="/forgot">Forgot password?</a>
   </div>
-
 </main>
