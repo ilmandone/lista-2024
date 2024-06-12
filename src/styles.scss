@@ -59,4 +59,10 @@
     font-family: Inter, "Helvetica Neue", sans-serif;
     font-size: $text;
   }
+
+  // Snack bars
+  .snack-bar--error {
+    background-color: red;
+    color: white;    
+  }
 }
