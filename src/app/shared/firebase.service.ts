@@ -1,9 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { appConfig } from 'app/app.config';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
-import { Auth, getAuth } from 'firebase/auth';
+import {
+  Auth,
+  UserCredential,
+  UserProfile,
+  getAuth,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 
 import { environment } from 'environments/environment.development';
+
+export interface IIsLogged {
+  state: boolean;
+  error?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -21,16 +32,33 @@ export class FirebaseService {
   };
 
   private _app!: FirebaseApp;
-  private _auth!: Auth
+  private _auth!: Auth;
+  private _userData!: UserCredential;
 
-  get auth() {
-    return this._auth
+  public isLogged = signal<IIsLogged>({state: false});
+
+  get userData() {
+    return this._userData;
   }
 
+  /**
+   * Init firebase application
+   */
   public init() {
     if (!this._app) {
       this._app = initializeApp(this._fireBaseOptions);
       this._auth = getAuth(this._app);
-    }    
+    }
+  }
+
+  login(email: string, password: string) {
+    signInWithEmailAndPassword(this._auth, email, password)
+      .then((resp) => {
+        this._userData = resp;
+        this.isLogged.set({state: true});
+      })
+      .catch((err) => {
+        this.isLogged.set({state: false, error: err.code})        
+      });
   }
 }

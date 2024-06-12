@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, effect, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -35,7 +35,31 @@ interface ILoginFG {
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
+
+  constructor() {
+    effect(() => {
+      if (this._fbSrv.isLogged().state) { 
+        console.log('!!!!! LOGGED')
+      } if(this._fbSrv.isLogged().error) {
+        const e = this._fbSrv.isLogged().error
+        
+        switch(e) {
+          case 'auth/user-not-found':
+            console.log('User not found')
+            break
+          case 'auth/wrong-password':
+            console.log('Wrong password')
+            break
+          default:
+            console.log('ERROR', e)
+        }
+      }
+    })
+  }
+
   private _fbSrv = inject(FirebaseService);
+
+  //#region Form controls and group
 
   emailFC = new FormControl(null, [Validators.required, Validators.email]);
   passwordFC = new FormControl(null, [Validators.required]);
@@ -45,13 +69,13 @@ export class LoginComponent implements OnInit {
     password: this.passwordFC,
   });
 
+  //#endregion
+
   loginSubmit() {
-    const auth = this._fbSrv.auth;
-    signInWithEmailAndPassword(
-      auth,
+    this._fbSrv.login(
       this.loginFG.controls.email.value as string,
       this.loginFG.controls.password.value as string
-    ).then((resp) => console.log(resp)).catch((err) => console.log(err));
+    );
   }
 
   ngOnInit(): void {
