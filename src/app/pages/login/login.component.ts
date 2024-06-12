@@ -8,10 +8,12 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatInput } from '@angular/material/input';
 import { FirebaseService } from 'app/shared/firebase.service';
 import { Nullable } from '../../shared/utils';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { SnackBarComponent } from 'app/shared/snack-bar/snack-bar.component';
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;
@@ -36,6 +38,9 @@ interface ILoginFG {
 })
 export class LoginComponent implements OnInit {
 
+  private _fbSrv = inject(FirebaseService);
+  private _snackBar = inject(MatSnackBar);
+
   constructor() {
     effect(() => {
       if (this._fbSrv.isLogged().state) { 
@@ -46,6 +51,9 @@ export class LoginComponent implements OnInit {
         switch(e) {
           case 'auth/user-not-found':
             console.log('User not found')
+            /* this._snackBar.open('User not found', 'Close', {
+              panelClass: 'snack-bar--error'
+            }) */
             break
           case 'auth/wrong-password':
             console.log('Wrong password')
@@ -57,7 +65,7 @@ export class LoginComponent implements OnInit {
     })
   }
 
-  private _fbSrv = inject(FirebaseService);
+  
 
   //#region Form controls and group
 
@@ -79,6 +87,12 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._fbSrv.init();
+    this._fbSrv.init();    
+    setTimeout(() => {
+      this._snackBar.openFromComponent(SnackBarComponent, {
+        duration: 3000,
+        data: {message: 'Prova', action: 'Close'}
+      })
+    },2000)
   }
 }
