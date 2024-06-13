@@ -1,13 +1,21 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, inject } from '@angular/core';
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { ISnackBar } from './snack-bar.interface';
 
 @Component({
   selector: 'app-snack-bar',
   standalone: true,
   imports: [],
   templateUrl: './snack-bar.component.html',
-  styleUrl: './snack-bar.component.scss'
+  styleUrl: './snack-bar.component.scss',
 })
-export class SnackBarComponent {
-  @Input() message!:string
-  @Input() action!:string  
+export class SnackBarComponent implements OnInit {
+  snackBarData: ISnackBar = inject(MAT_SNACK_BAR_DATA);
+
+  @HostBinding('class')
+  containerClass!: string;
+
+  ngOnInit(): void {
+    this.containerClass = 'snack-bar--' + this.snackBarData.severity;
+  }
 }

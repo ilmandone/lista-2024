@@ -14,6 +14,7 @@ import { FirebaseService } from 'app/shared/firebase.service';
 import { Nullable } from '../../shared/utils';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { SnackBarComponent } from 'app/shared/snack-bar/snack-bar.component';
+import { ISnackBar } from 'app/shared/snack-bar/snack-bar.interface';
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;
@@ -90,8 +91,9 @@ export class LoginComponent implements OnInit {
     this._fbSrv.init();    
     setTimeout(() => {
       this._snackBar.openFromComponent(SnackBarComponent, {
-        duration: 3000,
-        data: {message: 'Prova', action: 'Close'}
+        panelClass: 'snack-bar--error',
+        duration: 28000,
+        data: {message: 'Prova', action: 'Close', severity: 'error'} as ISnackBar
       })
     },2000)
   }
