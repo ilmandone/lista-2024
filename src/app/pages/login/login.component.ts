@@ -1,20 +1,12 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, OnInit, effect, inject } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatInput } from '@angular/material/input';
-import { FirebaseService } from 'app/shared/firebase.service';
-import { Nullable } from '../../shared/utils';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { SnackBarComponent } from 'app/shared/snack-bar/snack-bar.component';
-import { ISnackBar } from 'app/shared/snack-bar/snack-bar.interface';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {Component, effect, inject, OnInit} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
+import {MatButton} from '@angular/material/button';
+import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatInput} from '@angular/material/input';
+import {FirebaseService} from 'app/shared/firebase.service';
+import {Nullable} from '../../shared/utils';
+import {SnackBarService} from "../../shared/snack-bar.service";
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;
@@ -40,24 +32,22 @@ interface ILoginFG {
 export class LoginComponent implements OnInit {
 
   private _fbSrv = inject(FirebaseService);
-  private _snackBar = inject(MatSnackBar);
+  private _snackBarSrv = inject(SnackBarService);
+
 
   constructor() {
     effect(() => {
-      if (this._fbSrv.isLogged().state) { 
+      if (this._fbSrv.isLogged().state) {
         console.log('!!!!! LOGGED')
       } if(this._fbSrv.isLogged().error) {
         const e = this._fbSrv.isLogged().error
-        
+
         switch(e) {
           case 'auth/user-not-found':
-            console.log('User not found')
-            /* this._snackBar.open('User not found', 'Close', {
-              panelClass: 'snack-bar--error'
-            }) */
+            this._snackBarSrv.show({message: 'Utente errato', severity: 'error'})
             break
           case 'auth/wrong-password':
-            console.log('Wrong password')
+            this._snackBarSrv.show({message: 'Password errata', severity: 'error'})
             break
           default:
             console.log('ERROR', e)
@@ -66,19 +56,14 @@ export class LoginComponent implements OnInit {
     })
   }
 
-  
-
   //#region Form controls and group
 
   emailFC = new FormControl(null, [Validators.required, Validators.email]);
   passwordFC = new FormControl(null, [Validators.required]);
-
   loginFG = new FormGroup<ILoginFG>({
     email: this.emailFC,
     password: this.passwordFC,
   });
-
-  //#endregion
 
   loginSubmit() {
     this._fbSrv.login(
@@ -87,14 +72,9 @@ export class LoginComponent implements OnInit {
     );
   }
 
+  //#endregion
+
   ngOnInit(): void {
-    this._fbSrv.init();    
-    setTimeout(() => {
-      this._snackBar.openFromComponent(SnackBarComponent, {
-        panelClass: 'snack-bar--error',
-        duration: 28000,
-        data: {message: 'Prova', action: 'Close', severity: 'error'} as ISnackBar
-      })
-    },2000)
+    this._fbSrv.init();
   }
 }
