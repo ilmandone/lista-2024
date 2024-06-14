@@ -7,6 +7,7 @@ import {MatInput} from '@angular/material/input';
 import {FirebaseService} from 'app/shared/firebase.service';
 import {Nullable} from '../../shared/utils';
 import {SnackBarService} from "../../shared/snack-bar.service";
+import {Router} from "@angular/router";
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;
@@ -33,12 +34,13 @@ export class LoginComponent implements OnInit {
 
   private _fbSrv = inject(FirebaseService);
   private _snackBarSrv = inject(SnackBarService);
+  private _router = inject(Router)
 
 
   constructor() {
     effect(() => {
       if (this._fbSrv.isLogged().state) {
-        console.log('!!!!! LOGGED')
+        this._router.navigate(['/home']);
       } if(this._fbSrv.isLogged().error) {
         const e = this._fbSrv.isLogged().error
 
