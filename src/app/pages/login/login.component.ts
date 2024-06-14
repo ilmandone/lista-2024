@@ -30,7 +30,7 @@ interface ILoginFG {
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   private _fbSrv = inject(FirebaseService);
   private _snackBarSrv = inject(SnackBarService);
@@ -39,20 +39,24 @@ export class LoginComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      if (this._fbSrv.isLogged().state) {
-        this._router.navigate(['/home']);
-      } if(this._fbSrv.isLogged().error) {
+        if (this._fbSrv.isLogged().state === true) {
+          // TODO ????
+        }
+
+        if(this._fbSrv.isLogged().error) {
         const e = this._fbSrv.isLogged().error
 
         switch(e) {
           case 'auth/user-not-found':
+          case 'auth/invalid-email':
             this._snackBarSrv.show({message: 'Utente errato', severity: 'error'})
             break
           case 'auth/wrong-password':
             this._snackBarSrv.show({message: 'Password errata', severity: 'error'})
             break
-          default:
-            console.log('ERROR', e)
+          case 'auth/too-many-requests':
+            this._snackBarSrv.show({message: 'Troppi tentativi. Utente bloccato', severity: 'error'})
+            break
         }
       }
     })
@@ -76,7 +80,5 @@ export class LoginComponent implements OnInit {
 
   //#endregion
 
-  ngOnInit(): void {
-    this._fbSrv.init();
-  }
+
 }

@@ -4,15 +4,16 @@ import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import {
   Auth,
   UserCredential,
-  UserProfile,
+  signOut,
   getAuth,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 
 import { environment } from 'environments/environment.development';
+import {Observable} from "rxjs";
 
 export interface IIsLogged {
-  state: boolean;
+  state: boolean | null;
   error?: string;
 }
 
@@ -41,14 +42,19 @@ export class FirebaseService {
     return this._userData;
   }
 
-  /**
-   * Init firebase application
-   */
-  public init() {
-    if (!this._app) {
+  public start():Observable<boolean> {
+    return new Observable((subscriber) => {
       this._app = initializeApp(this._fireBaseOptions);
       this._auth = getAuth(this._app);
-    }
+
+      // Listen logout / login
+      this._auth.onAuthStateChanged((event) => {
+        this.isLogged.set({state: event != null})
+        console.log('PRIMO CHECK', event)
+        subscriber.next(true)
+        subscriber.complete()
+      })
+    })
   }
 
   login(email: string, password: string) {
@@ -58,7 +64,11 @@ export class FirebaseService {
         this.isLogged.set({state: true});
       })
       .catch((err) => {
-        this.isLogged.set({state: false, error: err.code})        
+        this.isLogged.set({state: false, error: err.code})
       });
+  }
+
+  logout() {
+    return signOut(this._auth)
   }
 }

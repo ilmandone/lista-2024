@@ -6,14 +6,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   const fbSrv = inject(FirebaseService);
   const router = inject(Router);
 
-  if (fbSrv.isLogged().state === false && state.url !== '/login') {
-    router.navigate(['/login']);
-    return false;
-  }
+  console.log('GUARDIA',fbSrv.isLogged())
 
-  if(state.url === '/login' && fbSrv.isLogged().state) {
-    router.navigate(['/home']);
-    return false
+  if (fbSrv.isLogged().state === false && router.url !== '/login') {
+      void router.navigate(['/login']);
+    return false;
   }
 
   return true;
