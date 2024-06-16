@@ -1,14 +1,13 @@
 import {APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection} from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {provideRouter} from '@angular/router';
 
-import { routes } from './app.routes';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {routes} from './app.routes';
+import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {FirebaseService} from "./shared/firebase.service";
-import {firstValueFrom, lastValueFrom} from "rxjs";
 
 export function InitApp(fbSrv: FirebaseService) {
-  return (): Promise<unknown> =>
-    lastValueFrom(fbSrv.start())
+  return (): Promise<void> =>
+    fbSrv.start()
 }
 
 export const appConfig: ApplicationConfig = {

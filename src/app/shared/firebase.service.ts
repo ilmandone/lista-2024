@@ -3,7 +3,6 @@ import {FirebaseApp, FirebaseOptions, initializeApp} from 'firebase/app';
 import {Auth, getAuth, signInWithEmailAndPassword, signOut, UserCredential,} from 'firebase/auth';
 
 import {environment} from 'environments/environment.development';
-import {Observable} from "rxjs";
 
 export interface IIsLogged {
   state: boolean | null;
@@ -35,41 +34,56 @@ export class FirebaseService {
     return this._userData;
   }
 
-
-  public start():Observable<boolean> {
-    return new Observable((subscriber) => {
+  /**
+   * Start the firebase connection
+   */
+  public start():Promise<void> {
+    return new Promise((resolve) => {
       this._app = initializeApp(this._fireBaseOptions);
       this._auth = getAuth(this._app);
 
       // Listen logout / login
       this._auth.onAuthStateChanged((event) => {
         this.isLogged.set({state: event != null})
-        subscriber.next(true)
-        subscriber.complete()
+        resolve()
       })
     })
   }
 
+  /**
+   * Login with email and password
+   * @param {string} email
+   * @param {string} password
+   * @return Promise<void>
+   */
   login(email: string, password: string): Promise<void> {
     return new Promise((resolve, reject) => {
+
       signInWithEmailAndPassword(this._auth, email, password)
         .then((resp) => {
           this._userData = resp;
           this.isLogged.set({state: true});
           resolve()
         })
-        .catch((err) => {
-          this.isLogged.set({state: false, error: err.code})
+        .catch(error => {
+          this.isLogged.set({state: false, error: error.code})
+          reject(error)
         });
     })
-
   }
 
+  /**
+   * Logout
+   * @return Promise<void>
+   */
   logout(): Promise<void> {
     return new Promise((resolve, reject) => {
-      signOut(this._auth).then(() => {
+      signOut(this._auth)
+        .then(() => {
         this.isLogged.set({state: false});
         resolve()
+        }).catch(error => {
+        reject(error)
       })
     })
   }
