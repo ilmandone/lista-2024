@@ -22,6 +22,5 @@ export class AppComponent implements OnInit{
 
   ngOnInit() {
     this._updateBodyVh();
-    // this._fbSrv.init();
   }
 }

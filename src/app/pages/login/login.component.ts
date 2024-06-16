@@ -1,5 +1,5 @@
 import {CommonModule, NgOptimizedImage} from '@angular/common';
-import {Component, effect, inject, OnInit} from '@angular/core';
+import {Component, effect, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators,} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MatError, MatFormField, MatLabel} from '@angular/material/form-field';
@@ -39,11 +39,7 @@ export class LoginComponent {
 
   constructor() {
     effect(() => {
-        if (this._fbSrv.isLogged().state === true) {
-          // TODO ????
-        }
-
-        if(this._fbSrv.isLogged().error) {
+      if(this._fbSrv.isLogged().error) {
         const e = this._fbSrv.isLogged().error
 
         switch(e) {
@@ -75,7 +71,9 @@ export class LoginComponent {
     this._fbSrv.login(
       this.loginFG.controls.email.value as string,
       this.loginFG.controls.password.value as string
-    );
+    ).then(() => {
+      void this._router.navigate(['/home'])
+    });
   }
 
   //#endregion

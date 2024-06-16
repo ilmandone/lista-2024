@@ -1,15 +1,8 @@
-import { Injectable, signal } from '@angular/core';
-import { appConfig } from 'app/app.config';
-import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
-import {
-  Auth,
-  UserCredential,
-  signOut,
-  getAuth,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import {Injectable, signal} from '@angular/core';
+import {FirebaseApp, FirebaseOptions, initializeApp} from 'firebase/app';
+import {Auth, getAuth, signInWithEmailAndPassword, signOut, UserCredential,} from 'firebase/auth';
 
-import { environment } from 'environments/environment.development';
+import {environment} from 'environments/environment.development';
 import {Observable} from "rxjs";
 
 export interface IIsLogged {
@@ -42,6 +35,7 @@ export class FirebaseService {
     return this._userData;
   }
 
+
   public start():Observable<boolean> {
     return new Observable((subscriber) => {
       this._app = initializeApp(this._fireBaseOptions);
@@ -50,25 +44,33 @@ export class FirebaseService {
       // Listen logout / login
       this._auth.onAuthStateChanged((event) => {
         this.isLogged.set({state: event != null})
-        console.log('PRIMO CHECK', event)
         subscriber.next(true)
         subscriber.complete()
       })
     })
   }
 
-  login(email: string, password: string) {
-    signInWithEmailAndPassword(this._auth, email, password)
-      .then((resp) => {
-        this._userData = resp;
-        this.isLogged.set({state: true});
-      })
-      .catch((err) => {
-        this.isLogged.set({state: false, error: err.code})
-      });
+  login(email: string, password: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      signInWithEmailAndPassword(this._auth, email, password)
+        .then((resp) => {
+          this._userData = resp;
+          this.isLogged.set({state: true});
+          resolve()
+        })
+        .catch((err) => {
+          this.isLogged.set({state: false, error: err.code})
+        });
+    })
+
   }
 
-  logout() {
-    return signOut(this._auth)
+  logout(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      signOut(this._auth).then(() => {
+        this.isLogged.set({state: false});
+        resolve()
+      })
+    })
   }
 }
