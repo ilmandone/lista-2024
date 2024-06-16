@@ -1,5 +1,5 @@
-import {Component, effect, HostBinding, inject, OnInit} from '@angular/core';
-import {Router, RouterOutlet} from '@angular/router';
+import {Component, HostListener, inject, OnInit} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
 import {MatButtonModule} from "@angular/material/button";
 import {FirebaseService} from "./shared/firebase.service";
 
@@ -15,7 +15,7 @@ export class AppComponent implements OnInit{
 
   constructor() {}
 
-  @HostBinding('window:resize')
+  @HostListener('window:resize')
   private _updateBodyVh() {
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
   }
