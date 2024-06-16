@@ -1,0 +1,59 @@
+@use "~styles/utils.scss";
+@use "~styles/typo.scss";
+
+:host {
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: utils.getRealVh(35);
+
+    display: block;
+
+    &__img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  main {
+    height: utils.getRealVh(65);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    h1 {
+      font-size: typo.$text-4xl;
+      font-weight: 200;
+      
+    }
+
+    .login-form {
+      margin-top: 0.5rem;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-field {
+      width: 80vw;
+      max-width: 16rem;
+      margin: 1.5rem 0 0;
+    }
+
+    button {
+      min-width: 10rem;
+      margin: 2rem 0 0;
+    }
+  }
+
+  .forgot-password {
+    margin: 2.5rem 0 0;
+
+    font-size: typo.$text-sm;
+    text-decoration: underline;
+  }
+}

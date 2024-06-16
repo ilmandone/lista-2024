@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, HostListener, inject, OnInit} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
 import {MatButtonModule} from "@angular/material/button";
+import {FirebaseService} from "./shared/firebase.service";
 
 @Component({
   selector: 'app-root',
@@ -10,13 +11,16 @@ import {MatButtonModule} from "@angular/material/button";
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit{
-  title = 'lista-2024';
+  private _fbSrv = inject(FirebaseService);
+
+  constructor() {}
+
+  @HostListener('window:resize')
+  private _updateBodyVh() {
+    document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  }
 
   ngOnInit() {
-    const cssEl = document.getElementById('app-theme') as HTMLLinkElement
-    setTimeout(() => {
-        cssEl.href = 'theme-dark.css'
-    },5000)
-
+    this._updateBodyVh();
   }
 }

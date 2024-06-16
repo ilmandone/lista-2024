@@ -1,0 +1,11 @@
+:host {
+  padding-left: 0.5rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .dismiss-btn-icon {
+    margin: 0;
+  }
+}
