@@ -24,4 +24,7 @@ html {
   @include mat.form-field-theme($light-theme);
 
   --mdc-filled-button-container-height: 3rem;  
+
+  background-color: var(--mat-app-background-color);
+  color: var(--mat-app-text-color);
 }
