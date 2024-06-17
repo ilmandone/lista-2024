@@ -4,7 +4,7 @@
 
 $dark-theme: mat.define-theme((
   color: (
-    theme-type: light,
+    theme-type: dark,
     primary: mat.$red-palette,
   ),
   typography: (
@@ -23,4 +23,7 @@ html {
   @include mat.form-field-theme($dark-theme);
 
   --mdc-filled-button-container-height: 3rem;  
+
+  background-color: var(--mat-app-background-color);
+  color: var(--mat-app-text-color);
 }
