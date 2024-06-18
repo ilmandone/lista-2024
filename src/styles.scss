@@ -60,19 +60,23 @@
     font-size: $text;
   }
 
+  p {
+    line-height: 1.5rem;
+  };
+
   // Snack bars
   .snack-bar--error {
-    background-color: red;
-    color: white;    
+    background-color: #dd0808;
+    color: white;
   }
 
   .snack-bar--warning {
-    background-color: orange;
+    background-color: #d47d0a;
     color: white
   }
 
   .snack-bar--info {
-    background-color: cyan;
-    color: white
+    background-color: #69dd64;
+    color: black
   }
 }

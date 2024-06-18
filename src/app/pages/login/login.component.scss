@@ -5,7 +5,7 @@
   .hero {
     position: relative;
     width: 100vw;
-    height: utils.getRealVh(35);
+    height: utils.getRealVh(30);
 
     display: block;
 
@@ -17,7 +17,7 @@
   }
 
   main {
-    height: utils.getRealVh(65);
+    height: utils.getRealVh(70);
 
     display: flex;
     flex-direction: column;
@@ -27,6 +27,7 @@
     h1 {
       font-size: typo.$text-4xl;
       font-weight: 200;
+      color: var(--mdc-filled-button-container-color);
     }
 
     .login-form {
@@ -51,27 +52,6 @@
       button {
         width: 100%;
       }
-    }
-  }
-
-  .spinner-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    background-color: var(--mat-app-background-color);
-
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .submit-spinner {
-      position: absolute;
-      height: 50px;
-      stroke: var(--mdc-filled-button-container-color);
     }
   }
 

@@ -20,7 +20,6 @@
     <mat-form-field class="form-field">
       <mat-label>Email</mat-label>
       <input
-        [disabled]="submitting"
         [formControl]="emailFC"
         [required]="true"
         matInput
@@ -38,7 +37,6 @@
     <mat-form-field class="form-field">
       <mat-label>Password</mat-label>
       <input
-        [disabled]="submitting"
         [formControl]="passwordFC"
         [required]="true"
         matInput
@@ -50,14 +48,14 @@
       }
     </mat-form-field>
 
-    <!--Submit-->
     <div class="submit-wrapper">
+      <!--Submit-->
       <button mat-flat-button type="submit" [disabled]="loginFG.invalid">
         Login
       </button>
 
-      <app-loader [loading]="submitting" [mode]="'indeterminate'"></app-loader>
-
+      <!--Loader-->
+      <app-loader [loading]="emailFC.disabled" [mode]="'indeterminate'"></app-loader>
     </div>
   </form>
 
