@@ -12,7 +12,7 @@
 
 <main>
   <!--Title -->
-  <h1>Tati's List</h1>  
+  <h1>Tati's List</h1>
 
   <!--Form-->
   <form class="login-form" [formGroup]="loginFG" (ngSubmit)="loginSubmit()">
@@ -20,6 +20,7 @@
     <mat-form-field class="form-field">
       <mat-label>Email</mat-label>
       <input
+        [disabled]="submitting"
         [formControl]="emailFC"
         [required]="true"
         matInput
@@ -37,6 +38,7 @@
     <mat-form-field class="form-field">
       <mat-label>Password</mat-label>
       <input
+        [disabled]="submitting"
         [formControl]="passwordFC"
         [required]="true"
         matInput
@@ -49,16 +51,17 @@
     </mat-form-field>
 
     <!--Submit-->
-    <div class="submit-wrapper">      
+    <div class="submit-wrapper">
       <button mat-flat-button type="submit" [disabled]="loginFG.invalid">
         Login
       </button>
 
+      @if(submitting) {
       <div class="spinner-wrapper">
         <mat-spinner class="submit-spinner" [diameter]="25"></mat-spinner>
       </div>
+      }
     </div>
-    
   </form>
 
   <div class="forgot-password">

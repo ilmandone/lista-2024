@@ -42,6 +42,8 @@ export class LoginComponent {
   private _snackBarSrv = inject(SnackBarService);
   private _router = inject(Router);
 
+  public submitting = false;
+
   constructor() {
     effect(() => {
       if (this._fbSrv.isLogged().error) {
@@ -82,14 +84,20 @@ export class LoginComponent {
   });
 
   loginSubmit() {
+
+    this.submitting = true
+
     this._fbSrv
       .login(
         this.loginFG.controls.email.value as string,
-        this.loginFG.controls.password.value as string
+        this.loginFG.controls.password.value as string        
       )
       .then(() => {
-        void this._router.navigate(['/home']);
-      });
+        void this._router.navigate(['/home']);        
+      })
+      .catch(() => {
+        this.submitting = false
+      })
   }
 
   //#endregion

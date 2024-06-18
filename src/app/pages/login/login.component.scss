@@ -27,7 +27,6 @@
     h1 {
       font-size: typo.$text-4xl;
       font-weight: 200;
-      
     }
 
     .login-form {
@@ -52,25 +51,29 @@
       button {
         width: 100%;
       }
-    }    
+    }
   }
 
   .spinner-wrapper {
     position: absolute;
-    top: 0;left: 0;width: 100%;height: 100%;    
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: var(--mat-app-background-color);
+
 
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     .submit-spinner {
       position: absolute;
-      height: 50px;    
+      height: 50px;
       stroke: var(--mdc-filled-button-container-color);
     }
   }
-
-  
 
   .forgot-password {
     margin: 2.5rem 0 0;
