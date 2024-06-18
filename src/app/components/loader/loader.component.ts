@@ -9,9 +9,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './loader.component.scss'
 })
 export class LoaderComponent {
-  diameter = input<number>()
+  diameter = input<number>(30)
   loading = input.required<boolean>()
   mode = input.required<'determinate' | 'indeterminate'>()
-  strokeWidth = input<number>()
-
+  strokeWidth = input<number>(3)
+  value = input<number>(0)
 }
