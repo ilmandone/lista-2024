@@ -1,3 +1,18 @@
 @function getRealVh($val) {
   @return calc(var(--vh) * $val);
 }
+
+// Z index
+
+$z-indexes: (
+  "loader": 9999
+);
+
+@function getZ($key) {
+  @if map-has-key($z-indexes, $key) {
+    @return map-get($z-indexes, $key);
+  } @else {
+    @warn "Chiave `#{$key}` non trovata nella mappa $z-indexes";
+    @return null;
+  }
+}
