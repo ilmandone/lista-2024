@@ -1,6 +1,13 @@
 import {Injectable, signal} from '@angular/core';
 import {FirebaseApp, FirebaseOptions, initializeApp} from 'firebase/app';
-import {Auth, getAuth, signInWithEmailAndPassword, signOut, UserCredential,} from 'firebase/auth';
+import {
+  Auth,
+  getAuth,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  UserCredential
+} from 'firebase/auth';
 
 import {environment} from 'environments/environment.development';
 
@@ -8,6 +15,8 @@ export interface IIsLogged {
   state: boolean | null;
   error?: string;
 }
+
+export type IResetPsw = IIsLogged
 
 @Injectable({
   providedIn: 'root',
@@ -86,5 +95,9 @@ export class FirebaseService {
         reject(error)
       })
     })
+  }
+
+  resetWithPassword(email: string): Promise<void> {
+    return sendPasswordResetEmail(this._auth, email)
   }
 }
