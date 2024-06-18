@@ -1,1 +1,38 @@
-<p>forgot-psw works!</p>
+<!--Title-->
+<h1>{{submitted ? 'Mail inviata' : 'Password dimenticata ?'}}</h1>
+
+@if(!submitted) {
+  <p class="sub-title"> Inserisci la tua email per procedere con l'impostazione di una nuova password.</p>
+
+  <form class="forgot-psw-form" [formGroup]="forgotFG" (ngSubmit)="forgotSubmit()">
+    <!--Email-->
+    <mat-form-field class="form-field">
+      <mat-label>Email</mat-label>
+      <input
+        [formControl]="emailFC"
+        [required]="true"
+        matInput
+        placeholder="Your account email"
+        type="email"
+      />
+      @if (emailFC.invalid) {
+        <mat-error
+        >{{emailFC.errors?.['email'] ? 'Not a valid email' : 'Email required'}}</mat-error
+        >
+      }
+    </mat-form-field>
+
+    <div class="submit-wrapper">
+      <!--Submit-->
+      <button mat-flat-button type="submit" [disabled]="forgotFG.invalid">
+        Invia
+      </button>
+
+      <!--Loader-->
+      <app-loader [loading]="submitting" [mode]="'indeterminate'"></app-loader>
+    </div>
+  </form>
+} @else {
+  <p class="submitted">Controlla la tua casella di posta elettronica.</p>
+}
+
