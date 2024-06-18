@@ -1,0 +1,10 @@
+@if(loading()) {
+<div class="spinner-wrapper">
+  <mat-spinner
+    class="submit-spinner"
+    [diameter]="diameter()"
+    [mode]="mode()"
+    [strokeWidth]="strokeWidth()"
+  ></mat-spinner>
+</div>
+}
