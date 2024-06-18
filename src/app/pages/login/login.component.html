@@ -50,14 +50,14 @@
       }
     </mat-form-field>
 
-    <!--Submit-->
     <div class="submit-wrapper">
+      <!--Submit-->
       <button mat-flat-button type="submit" [disabled]="loginFG.invalid">
         Login
       </button>
 
+      <!--Loader-->
       <app-loader [loading]="submitting" [mode]="'indeterminate'"></app-loader>
-
     </div>
   </form>
 
