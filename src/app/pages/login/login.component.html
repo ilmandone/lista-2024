@@ -56,11 +56,8 @@
         Login
       </button>
 
-      @if(submitting) {
-      <div class="spinner-wrapper">
-        <mat-spinner class="submit-spinner" [diameter]="25"></mat-spinner>
-      </div>
-      }
+      <app-loader [loading]="submitting" [mode]="'indeterminate'"></app-loader>
+
     </div>
   </form>
 

@@ -12,8 +12,9 @@ import { MatInput } from '@angular/material/input';
 import { FirebaseService } from 'app/shared/firebase.service';
 import { Nullable } from '../../shared/utils';
 import { SnackBarService } from '../../shared/snack-bar.service';
-import { Router } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {LoaderComponent} from "../../components/loader/loader.component";
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;
@@ -33,6 +34,8 @@ interface ILoginFG {
     MatLabel,
     MatError,
     MatProgressSpinnerModule,
+    LoaderComponent,
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -90,10 +93,10 @@ export class LoginComponent {
     this._fbSrv
       .login(
         this.loginFG.controls.email.value as string,
-        this.loginFG.controls.password.value as string        
+        this.loginFG.controls.password.value as string
       )
       .then(() => {
-        void this._router.navigate(['/home']);        
+        void this._router.navigate(['/home']);
       })
       .catch(() => {
         this.submitting = false
