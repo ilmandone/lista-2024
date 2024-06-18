@@ -41,13 +41,11 @@ export class ForgotPswComponent {
     email: this.emailFC
   })
 
-  submitting = false
   submitted = false
 
   //#endregion
 
   forgotSubmit() {
-    this.submitting = true
     this.emailFC.disable()
 
     if (this.emailFC.value)
@@ -60,7 +58,6 @@ export class ForgotPswComponent {
           message: 'Utente errato',
           severity: 'error',
         });
-        this.submitting = false
         this.emailFC.enable()
       })
   }

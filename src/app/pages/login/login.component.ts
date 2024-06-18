@@ -45,8 +45,6 @@ export class LoginComponent {
   private _snackBarSrv = inject(SnackBarService);
   private _router = inject(Router);
 
-  public submitting = false;
-
   constructor() {
     effect(() => {
       if (this._fbSrv.isLogged().error) {
@@ -79,8 +77,8 @@ export class LoginComponent {
 
   //#region Form controls and group
 
-  emailFC = new FormControl(null, [Validators.required, Validators.email]);
-  passwordFC = new FormControl(null, [Validators.required]);
+  emailFC = new FormControl({value: null, disabled: false}, [Validators.required, Validators.email]);
+  passwordFC = new FormControl({value: null, disabled: false}, [Validators.required]);
   loginFG = new FormGroup<ILoginFG>({
     email: this.emailFC,
     password: this.passwordFC,
@@ -88,7 +86,8 @@ export class LoginComponent {
 
   loginSubmit() {
 
-    this.submitting = true
+    this.emailFC.disable()
+    this.passwordFC.disable()
 
     this._fbSrv
       .login(
@@ -99,7 +98,8 @@ export class LoginComponent {
         void this._router.navigate(['/home']);
       })
       .catch(() => {
-        this.submitting = false
+        this.emailFC.enable()
+        this.passwordFC.enable()
       })
   }
 
