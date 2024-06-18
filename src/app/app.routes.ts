@@ -14,6 +14,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'forgot',
+    loadComponent: () => import('./pages/forgot-psw/forgot-psw.component').then(c => c.ForgotPswComponent),
+    canActivate: [loginGuard]
+  },
+  {
     path: '',
     redirectTo: '/home',
     pathMatch: 'full',
