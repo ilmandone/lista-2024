@@ -5,6 +5,7 @@
 // Z index
 
 $z-indexes: (
+  "main-menu": 9998,
   "loader": 9999
 );
 
@@ -14,5 +15,23 @@ $z-indexes: (
   } @else {
     @warn "Chiave `#{$key}` non trovata nella mappa $z-indexes";
     @return null;
+  }
+}
+
+// Media query
+
+$media-map: (
+  "t": "(min-width: 768px)",
+  "tl": "(min-width: 1024px)",
+  "m": "(min-width: 1440px)",
+  "l": "(min-width: 1920px)",
+  "w": "(min-width: 2560px)"
+) !default;
+
+@mixin media-query($key) {
+  @if map-has-key($media-map, $key) {
+    @media #{map-get($media-map, $key)} {
+      @content;
+    }
   }
 }
