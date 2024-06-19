@@ -1,12 +1,14 @@
 <!-- <button (click)="logOut()">LOGOUT</button> -->
-<div>Prova</div>
 <mat-drawer-container [hasBackdrop]="true">
     
     <mat-drawer #drawer [mode]="'over'">
         <button (click)="logOut()">LOGOUT</button>
     </mat-drawer>
     <mat-drawer-content>
+        <button mat-icon-button>
+            <mat-icon [fontIcon]="'menu'"></mat-icon>
+        </button>
         <router-outlet></router-outlet>
-    </mat-drawer-content>
-    
+    </mat-drawer-content>    
 </mat-drawer-container>
+
