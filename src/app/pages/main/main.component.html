@@ -1,14 +1,17 @@
 <!-- <button (click)="logOut()">LOGOUT</button> -->
 <mat-drawer-container [hasBackdrop]="true">
-    
-    <mat-drawer #drawer [mode]="'over'">
-        <button (click)="logOut()">LOGOUT</button>
-    </mat-drawer>
-    <mat-drawer-content>
-        <button mat-icon-button>
-            <mat-icon [fontIcon]="'menu'"></mat-icon>
-        </button>
-        <router-outlet></router-outlet>
-    </mat-drawer-content>    
-</mat-drawer-container>
+  <mat-drawer class="side-content" #drawer [mode]="'over'">
+    <button (click)="logOut()">LOGOUT</button>
+  </mat-drawer>
 
+  <mat-drawer-content class="main">
+    <!-- Header -->
+    <nav class="main__nav">
+      <button mat-icon-button (click)="drawer.toggle()" [title]="'Open main menu'">
+        <mat-icon [fontIcon]="'menu'"></mat-icon>
+      </button>
+    </nav>
+
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>
