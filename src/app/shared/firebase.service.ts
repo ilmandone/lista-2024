@@ -93,6 +93,11 @@ export class FirebaseService {
       });    
   }
 
+  /**
+   * Reset account with email
+   * @param {string} email 
+   * @returns {Promise<void>}
+   */
   resetWithPassword(email: string): Promise<void> {
     return sendPasswordResetEmail(this._auth, email);
   }

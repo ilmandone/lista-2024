@@ -95,7 +95,7 @@ export class LoginComponent {
         this.loginFG.controls.password.value as string
       )
       .then(() => {
-        void this._router.navigate(['/home']);
+        void this._router.navigate(['/main']);
       })
       .catch(() => {
         this.emailFC.enable()
