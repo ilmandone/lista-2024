@@ -1,9 +1,9 @@
-@use "~styles/utils.scss";
-@use "~styles/typo.scss";
-@use "~styles/vars.scss";
+@use '~styles/utils.scss';
+@use '~styles/typo.scss';
+@use '~styles/vars.scss';
 
 .main {
-  height: utils.getRealVh(100);  
+  height: utils.getRealVh(100);
 
   &__nav {
     position: absolute;
@@ -16,15 +16,44 @@
     justify-content: center;
     align-items: center;
 
-    z-index: utils.getZ('main-menu');    
+    z-index: utils.getZ('main-menu');
 
     @include utils.media-query('t') {
-        width: vars.$main-nav-big-width;
-        height: vars.$main-header-big-height;
+      width: vars.$main-nav-big-width;
+      height: vars.$main-header-big-height;
     }
   }
 }
 
-.side-content {
-    max-width: 16rem;
+.mat-drawer {
+  max-width: 16rem;
+}
+
+.main-menu {
+  height: 100%;
+  padding: 4vh 1.5rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  &__top {    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    .btn {
+      margin-top: 1.25rem;
+    }
+
+    .btn--first {
+        margin-top: 2.5rem;
+    }
   }
+
+  h2 {
+    font-size: typo.$text-2xl;
+    font-weight: 400;
+  }  
+}

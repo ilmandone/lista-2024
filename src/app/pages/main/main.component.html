@@ -1,7 +1,29 @@
-<!-- <button (click)="logOut()">LOGOUT</button> -->
 <mat-drawer-container [hasBackdrop]="true">
-  <mat-drawer class="side-content" #drawer [mode]="'over'">
-    <button (click)="logOut()">LOGOUT</button>
+  <!-- Sidebar -->
+  <mat-drawer class="mat-drawer" #drawer [mode]="'over'">
+    <div class="main-menu">
+      <div class="main-menu__top">
+        <!-- Title -->
+        <h2>Main Menu</h2>
+
+        <button class="btn--first" mat-button (click)="logOut()">
+          <mat-icon [fontIcon]="'grid_view'"></mat-icon>
+          Groups
+        </button>
+
+        <button class="btn" mat-button (click)="logOut()">
+          <mat-icon [fontIcon]="'cached'"></mat-icon>
+          Reload
+        </button>
+
+        <button class="btn" mat-button (click)="logOut()">
+          <mat-icon [fontIcon]="'logout'"></mat-icon>
+          Sign out
+        </button>
+      </div>
+
+      <div class="main-menu__bottom">UGO</div>
+    </div>
   </mat-drawer>
 
   <mat-drawer-content class="main">
