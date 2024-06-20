@@ -39,15 +39,22 @@
   justify-content: space-between;
 
   &__top {    
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 
     .btn {
-      margin-top: 1.25rem;
+      margin-top: 1.15rem;
+      width: 100%;
+
+      display: flex;
+      justify-content: flex-start;
     }
 
     .btn--first {
+        @extend .btn;
         margin-top: 2.5rem;
     }
   }
