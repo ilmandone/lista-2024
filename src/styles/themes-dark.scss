@@ -23,6 +23,7 @@ html {
   @include mat.form-field-theme($dark-theme);
   @include mat.sidenav-theme($dark-theme);
   @include mat.slide-toggle-theme($dark-theme);
+  @include mat.dialog-theme($dark-theme);
 
   --mdc-filled-button-container-height: 3rem;
 

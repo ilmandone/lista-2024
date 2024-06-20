@@ -6,7 +6,7 @@
 $light-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: mat.$violet-palette,
+    primary: mat.$blue-palette,
   ),
   typography: (
     plain-family: 'Inter',
@@ -24,7 +24,7 @@ html {
   @include mat.form-field-theme($light-theme);
   @include mat.sidenav-theme($light-theme);
   @include mat.slide-toggle-theme($light-theme);
-
+  @include mat.dialog-theme($light-theme);
 
 
   --mdc-filled-button-container-height: 3rem;
