@@ -10,7 +10,7 @@
         <h2>Main Menu</h2>
 
         <!--Buttons-->
-        <button class="btn--first" mat-button (click)="logOut()">
+        <button class="btn--first" mat-button>
           <mat-icon [fontIcon]="'grid_view'"></mat-icon>
           Groups
         </button>
@@ -20,7 +20,7 @@
           Reload
         </button>
 
-        <button class="btn" mat-button>
+        <button class="btn" mat-button (click)="logOut()">
           <mat-icon [fontIcon]="'logout'"></mat-icon>
           Sign out
         </button>
