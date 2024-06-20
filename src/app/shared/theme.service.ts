@@ -5,8 +5,9 @@ import {DOCUMENT} from "@angular/common";
   providedIn: 'root'
 })
 export class ThemeService {
-
   private _document = inject(DOCUMENT)
+
+  isDark = signal(false)
 
   constructor() {
     effect(() => {
@@ -17,6 +18,4 @@ export class ThemeService {
       }
     });
   }
-
-  isDark = signal(false)
 }
