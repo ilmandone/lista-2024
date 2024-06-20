@@ -16,6 +16,7 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./pages/lists/lists.component').then(c => c.ListsComponent),
+        canActivate: [authGuard],
       }
     ]
   },
