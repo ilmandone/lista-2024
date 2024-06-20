@@ -33,7 +33,7 @@
           <span>Dark</span>
         </div>
 
-        <mat-slide-toggle title="Dark theme controller" (change)="themeToggle($event)"></mat-slide-toggle>
+        <mat-slide-toggle title="Dark theme controller" [checked]="themeSrv.isDark()" (change)="themeToggle($event)"></mat-slide-toggle>
       </div>
     </div>
   </mat-drawer>

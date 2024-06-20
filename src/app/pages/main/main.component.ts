@@ -29,7 +29,7 @@ import {LogoutDialogComponent} from "./logout.dialog/logout.dialog.component";
 export class MainComponent {
   private readonly _fbSrv = inject(FirebaseService);
   private readonly _router = inject(Router);
-  private readonly _themeSrv = inject(ThemeService);
+  readonly themeSrv = inject(ThemeService);
   private readonly _dialog = inject(MatDialog);
 
   logOut() {
@@ -44,6 +44,6 @@ export class MainComponent {
   }
 
   themeToggle($event: MatSlideToggleChange) {
-    this._themeSrv.isDark.set($event.checked)
+    this.themeSrv.isDark.set($event.checked)
   }
 }
