@@ -38,12 +38,17 @@
   align-items: flex-start;
   justify-content: space-between;
 
-  &__top {    
+  &__top {
     width: 100%;
 
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+
+    h2 {
+      font-size: typo.$text-2xl;
+      font-weight: 400;
+    }
 
     .btn {
       margin-top: 1.15rem;
@@ -59,8 +64,22 @@
     }
   }
 
-  h2 {
-    font-size: typo.$text-2xl;
-    font-weight: 400;
-  }  
+  &__bottom {
+    width: 100%;
+    padding: 0 0.5rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .theme-label {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      span {
+        margin-left: 0.5rem;
+      }
+    }
+  }
 }

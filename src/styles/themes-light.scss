@@ -23,9 +23,11 @@ html {
   @include mat.input-theme($light-theme);
   @include mat.form-field-theme($light-theme);
   @include mat.sidenav-theme($light-theme);
-  
+  @include mat.slide-toggle-theme($light-theme);
 
-  --mdc-filled-button-container-height: 3rem;  
+
+
+  --mdc-filled-button-container-height: 3rem;
 
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);

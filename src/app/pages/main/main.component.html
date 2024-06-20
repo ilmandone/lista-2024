@@ -2,10 +2,14 @@
   <!-- Sidebar -->
   <mat-drawer class="mat-drawer" #drawer [mode]="'over'">
     <div class="main-menu">
+
+      <!--Top-->
       <div class="main-menu__top">
+
         <!-- Title -->
         <h2>Main Menu</h2>
 
+        <!--Buttons-->
         <button class="btn--first" mat-button (click)="logOut()">
           <mat-icon [fontIcon]="'grid_view'"></mat-icon>
           Groups
@@ -22,7 +26,15 @@
         </button>
       </div>
 
-      <div class="main-menu__bottom">UGO</div>
+      <!--Bottom-->
+      <div class="main-menu__bottom">
+        <div class="theme-label">
+          <mat-icon [fontIcon]="'dark_mode'"></mat-icon>
+          <span>Dark</span>
+        </div>
+
+        <mat-slide-toggle title="Dark theme controller"></mat-slide-toggle>
+      </div>
     </div>
   </mat-drawer>
 

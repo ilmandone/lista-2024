@@ -1,11 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { FirebaseService } from '../../shared/firebase.service';
+import {Component, inject} from '@angular/core';
+import {Router, RouterOutlet} from '@angular/router';
+import {FirebaseService} from '../../shared/firebase.service';
 
-import { CommonModule } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import {CommonModule} from '@angular/common';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
     RouterOutlet,
     MatIconModule,
     MatButtonModule,
+    MatSlideToggleModule
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
