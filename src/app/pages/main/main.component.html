@@ -1,0 +1,51 @@
+<mat-drawer-container [hasBackdrop]="true">
+  <!-- Sidebar -->
+  <mat-drawer class="mat-drawer" #drawer [mode]="'over'">
+    <div class="main-menu">
+
+      <!--Top-->
+      <div class="main-menu__top">
+
+        <!-- Title -->
+        <h2>Main Menu</h2>
+
+        <!--Buttons-->
+        <button class="btn--first" mat-button>
+          <mat-icon [fontIcon]="'grid_view'"></mat-icon>
+          Groups
+        </button>
+
+        <button class="btn" mat-button>
+          <mat-icon [fontIcon]="'cached'"></mat-icon>
+          Reload
+        </button>
+
+        <button class="btn" mat-button (click)="logOut()">
+          <mat-icon [fontIcon]="'logout'"></mat-icon>
+          Sign out
+        </button>
+      </div>
+
+      <!--Bottom-->
+      <div class="main-menu__bottom">
+        <div class="theme-label">
+          <mat-icon [fontIcon]="'dark_mode'"></mat-icon>
+          <span>Dark</span>
+        </div>
+
+        <mat-slide-toggle title="Dark theme controller" [checked]="themeSrv.isDark()" (change)="themeToggle($event)"></mat-slide-toggle>
+      </div>
+    </div>
+  </mat-drawer>
+
+  <mat-drawer-content class="main">
+    <!-- Header -->
+    <nav class="main__nav">
+      <button mat-icon-button (click)="drawer.toggle()" [title]="'Open main menu'">
+        <mat-icon [fontIcon]="'menu'"></mat-icon>
+      </button>
+    </nav>
+
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>

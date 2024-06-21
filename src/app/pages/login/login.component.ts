@@ -1,20 +1,16 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, effect, inject } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { FirebaseService } from 'app/shared/firebase.service';
-import { Nullable } from '../../shared/utils';
-import { SnackBarService } from '../../shared/snack-bar.service';
-import {Router, RouterLink} from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {LoaderComponent} from "../../components/loader/loader.component";
+import { CommonModule, NgOptimizedImage } from '@angular/common'
+import { Component, effect, inject } from '@angular/core'
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
+import { MatAnchor, MatButton } from '@angular/material/button'
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field'
+import { MatInput } from '@angular/material/input'
+import { FirebaseService } from 'app/shared/firebase.service'
+import { Nullable } from '../../shared/utils'
+import { SnackBarService } from '../../shared/snack-bar.service'
+import { Router, RouterLink } from '@angular/router'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { LoaderComponent } from '../../components/loader/loader.component'
+import { ThemeService } from '../../shared/theme.service'
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;
@@ -36,6 +32,7 @@ interface ILoginFG {
     MatProgressSpinnerModule,
     LoaderComponent,
     RouterLink,
+    MatAnchor
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -45,7 +42,7 @@ export class LoginComponent {
   private _snackBarSrv = inject(SnackBarService);
   private _router = inject(Router);
 
-  constructor() {
+  constructor(private themeSrv: ThemeService) {
     effect(() => {
       if (this._fbSrv.isLogged().error) {
         const e = this._fbSrv.isLogged().error;
@@ -95,7 +92,7 @@ export class LoginComponent {
         this.loginFG.controls.password.value as string
       )
       .then(() => {
-        void this._router.navigate(['/home']);
+        void this._router.navigate(['/main']);
       })
       .catch(() => {
         this.emailFC.enable()

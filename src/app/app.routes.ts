@@ -9,9 +9,16 @@ export const routes: Routes = [
     canActivate: [loginGuard]
   },
   {
-    path: 'home',
-    loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent),
-    canActivate: [authGuard]
+    path: 'main',
+    loadComponent: () => import('./pages/main/main.component').then(c => c.MainComponent),
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/lists/lists.component').then(c => c.ListsComponent),
+        canActivate: [authGuard],
+      }
+    ]
   },
   {
     path: 'forgot',
@@ -20,7 +27,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/home',
+    redirectTo: '/main',
     pathMatch: 'full',
   }
 ];

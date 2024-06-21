@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {CommonModule} from "@angular/common";
+import { CommonModule, NgOptimizedImage } from '@angular/common'
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
@@ -25,6 +25,7 @@ interface IForgotFG {
     MatError,
     LoaderComponent,
     MatButton,
+    NgOptimizedImage
   ],
   templateUrl: './forgot-psw.component.html',
   styleUrl: './forgot-psw.component.scss'

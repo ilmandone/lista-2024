@@ -1,22 +1,22 @@
-import {Injectable, signal} from '@angular/core';
-import {FirebaseApp, FirebaseOptions, initializeApp} from 'firebase/app';
+import { Injectable, signal } from '@angular/core';
+import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import {
   Auth,
   getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
-  UserCredential
+  UserCredential,
 } from 'firebase/auth';
 
-import {environment} from 'environments/environment.development';
+import { environment } from 'environments/environment.development';
 
 export interface IIsLogged {
   state: boolean | null;
   error?: string;
 }
 
-export type IResetPsw = IIsLogged
+export type IResetPsw = IIsLogged;
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,7 @@ export class FirebaseService {
   private _auth!: Auth;
   private _userData!: UserCredential;
 
-  public isLogged = signal<IIsLogged>({state: false});
+  public isLogged = signal<IIsLogged>({ state: false });
 
   get userData() {
     return this._userData;
@@ -46,17 +46,17 @@ export class FirebaseService {
   /**
    * Start the firebase connection
    */
-  public start():Promise<void> {
+  public start(): Promise<void> {
     return new Promise((resolve) => {
       this._app = initializeApp(this._fireBaseOptions);
       this._auth = getAuth(this._app);
 
       // Listen logout / login
       this._auth.onAuthStateChanged((event) => {
-        this.isLogged.set({state: event != null})
-        resolve()
-      })
-    })
+        this.isLogged.set({ state: event != null });
+        resolve();
+      });
+    });
   }
 
   /**
@@ -66,19 +66,16 @@ export class FirebaseService {
    * @return Promise<void>
    */
   login(email: string, password: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-
-      signInWithEmailAndPassword(this._auth, email, password)
-        .then((resp) => {
-          this._userData = resp;
-          this.isLogged.set({state: true});
-          resolve()
-        })
-        .catch(error => {
-          this.isLogged.set({state: false, error: error.code})
-          reject(error)
-        });
-    })
+    return signInWithEmailAndPassword(this._auth, email, password)
+      .then((resp) => {
+        this._userData = resp;
+        this.isLogged.set({ state: true });
+        return;
+      })
+      .catch((error) => {
+        this.isLogged.set({ state: false, error: error.code });
+        throw new Error(error);
+      });
   }
 
   /**
@@ -86,18 +83,22 @@ export class FirebaseService {
    * @return Promise<void>
    */
   logout(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      signOut(this._auth)
-        .then(() => {
-        this.isLogged.set({state: false});
-        resolve()
-        }).catch(error => {
-        reject(error)
+    return signOut(this._auth)
+      .then(() => {
+        this.isLogged.set({ state: false });
+        return;
       })
-    })
+      .catch((error) => {
+        throw new Error(error);
+      });    
   }
 
+  /**
+   * Reset account with email
+   * @param {string} email 
+   * @returns {Promise<void>}
+   */
   resetWithPassword(email: string): Promise<void> {
-    return sendPasswordResetEmail(this._auth, email)
+    return sendPasswordResetEmail(this._auth, email);
   }
 }
