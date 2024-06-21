@@ -5,7 +5,7 @@
   .hero {
     position: relative;
     width: 100vw;
-    height: utils.getRealVh(30);
+    height: utils.getRealVh(25);
 
     display: block;
 
@@ -17,7 +17,7 @@
   }
 
   main {
-    height: utils.getRealVh(70);
+    height: utils.getRealVh(75);
 
     display: flex;
     flex-direction: column;
