@@ -4,13 +4,14 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatAnchor, MatButton } from '@angular/material/button'
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input'
-import { FirebaseService } from 'app/shared/firebase.service'
-import { Nullable } from '../../shared/utils'
+
+import { Nullable } from '../../shared/common.interfaces'
 import { SnackBarService } from '../../shared/snack-bar.service'
 import { Router, RouterLink } from '@angular/router'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { ThemeService } from '../../shared/theme.service'
+import { FirebaseService } from 'app/data/firebase.service'
 
 interface ILoginFG {
   email: FormControl<Nullable<string>>;

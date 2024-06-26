@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {Router, RouterOutlet} from '@angular/router';
-import {FirebaseService} from '../../shared/firebase.service';
+import {FirebaseService} from '../../data/firebase.service';
 
 import {CommonModule} from '@angular/common';
 import {MatSidenavModule} from '@angular/material/sidenav';

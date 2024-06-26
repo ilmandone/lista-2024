@@ -1,7 +1,7 @@
 import {Component, HostListener, inject, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {MatButtonModule} from "@angular/material/button";
-import {FirebaseService} from "./shared/firebase.service";
+import {FirebaseService} from "./data/firebase.service";
 
 @Component({
   selector: 'app-root',

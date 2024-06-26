@@ -2,16 +2,17 @@ import { Injectable, signal } from '@angular/core'
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app'
 import {
   Auth,
+  UserCredential,
   getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signOut,
-  UserCredential
+  signOut
 } from 'firebase/auth'
 
-import { Firestore, getFirestore, getDoc, doc } from 'firebase/firestore'
+import { Firestore, collection, getDocs, getFirestore, orderBy, query } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
+import { ListData, ListsData } from './firebase.interfaces'
 
 export interface IIsLogged {
   state: boolean | null
@@ -111,20 +112,33 @@ export class FirebaseService {
 
   //#region DB
 
-  private async _getDoc() {
-    return await getDoc(doc(this._db, 'ListaDellaSpesaV2', 'ListaDellaSpesaV2'))
-  }
-
   startDB() {
     if (!this._app) throw new Error('App not initialized')
     this._db = getFirestore(this._app)
   }
 
-  async loadLists() {
+  /**
+   * Get lists from the database
+   * @returns Promise<ListsData>
+   */
+  async loadLists():Promise<ListsData> {
+
     try {
-      const doc = await this._getDoc()
-      if (doc.exists()) return doc.data()
-      else throw new Error('Doc not found')
+      const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+      const q = query(mainCollection, orderBy('position'))
+      const data = await getDocs(q)
+
+      if(!data) throw Error('Data not found')      
+      if(data.empty) return []
+
+      const lists: ListsData = []      
+
+      data.forEach(doc => {                
+        lists.push(doc.data() as ListData)
+      })
+
+      return lists
+      
     } catch (error) {
       throw new Error(error as string)
     }

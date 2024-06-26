@@ -1,6 +1,6 @@
 import {CanActivateFn, Router} from '@angular/router';
 import {inject} from "@angular/core";
-import {FirebaseService} from "../shared/firebase.service";
+import {FirebaseService} from "../data/firebase.service";
 
 export const loginGuard: CanActivateFn = (route, state) => {
   const fbSrv = inject(FirebaseService);

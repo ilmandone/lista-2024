@@ -3,10 +3,10 @@ import { CommonModule, NgOptimizedImage } from '@angular/common'
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
-import {Nullable} from "../../shared/utils";
+import {Nullable} from "../../shared/common.interfaces";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {MatButton} from "@angular/material/button";
-import {FirebaseService} from "../../shared/firebase.service";
+import {FirebaseService} from "../../data/firebase.service";
 import {SnackBarService} from "../../shared/snack-bar.service";
 
 interface IForgotFG {
