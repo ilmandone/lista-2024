@@ -1,11 +1,13 @@
-@use "~styles/utils.scss";
-@use "~styles/typo.scss";
+@use '~styles/utils.scss';
+@use '~styles/typo.scss';
 
 :host {
   .hero {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
-    height: utils.getRealVh(28);
+    height: utils.getRealVh(42);
 
     display: block;
 
@@ -17,7 +19,14 @@
   }
 
   main {
-    height: utils.getRealVh(72);
+    position: relative;
+    margin: utils.getRealVh(32) auto 0;
+    height: utils.getRealVh(65);
+    width: 85vw;
+
+    background-color: var(--mat-app-background-color);
+
+    border-radius: 1rem;
 
     display: flex;
     flex-direction: column;
@@ -30,7 +39,7 @@
     }
 
     .login-form {
-      margin-top: 0.5rem;
+      margin-top: 1rem;
 
       display: flex;
       flex-direction: column;

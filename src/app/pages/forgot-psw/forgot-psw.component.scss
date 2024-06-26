@@ -4,9 +4,11 @@
 
 :host {
   .hero {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
-    height: utils.getRealVh(28);
+    height: utils.getRealVh(42);
 
     display: block;
 
@@ -18,26 +20,35 @@
   }
 
   main{
-    height: utils.getRealVh(72);
-    margin: auto 0;
-    padding: 2rem;
+    position: relative;
+    margin: utils.getRealVh(32) auto 0;
+    height: utils.getRealVh(65);
+    width: 85vw;
+
+    background-color: var(--mat-app-background-color);
+
+    border-radius: 1rem;
 
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
 
+
     h1 {
-      font-size: typo.$text-4xl;
+      padding: 0 2.5rem;
+      font-size: typo.$text-3xl;
       font-weight: 200;
-      color: var(--mdc-filled-button-container-color);
+      color: var(--mdc-filled-button-container-color);      
     }
 
     p.sub-title {
+      padding: 0 2.5rem;
       margin-top: 1rem;
     }
 
     p.submitted {
+      padding: 0 2.5rem;
       margin-top: 2rem;
     }
 
