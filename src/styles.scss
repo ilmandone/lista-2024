@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use 'styles/vars.scss';
+@use 'styles/utils.scss';
+
 @import 'styles/typo.scss';
 
 @layer reset, custom;
@@ -53,6 +56,17 @@
 }
 
 @layer custom {
+
+  html {
+    --main-header-height: #{vars.$main-header-height};
+    --main-nav-width: #{vars.$main-nav-width};
+
+    @include utils.media-query('t') {
+      --main-header-height: #{vars.$main-header-big-height};
+      --main-nav-width: #{vars.$main-nav-big-width};
+    }
+  }
+
   html, body { height: 100%; }
   body {
     margin: 0;

@@ -3,6 +3,8 @@
 
 
 :host {
+  @include utils.customEl;  
+
   .hero {
     position: absolute;
     top: 0;
