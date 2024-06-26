@@ -1,3 +1,8 @@
+@mixin customEl {
+  position: relative;
+  display: block;
+}
+
 @function getRealVh($val) {
   @return calc(var(--vh) * $val);
 }
