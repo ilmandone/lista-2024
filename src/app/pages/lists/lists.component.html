@@ -9,3 +9,9 @@
     </div>    
 </header>
 
+@if(listsData()) {
+    <div>Abbiamo dati</div>
+} @else {
+    <app-empty-lists></app-empty-lists>
+}
+

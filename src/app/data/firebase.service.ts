@@ -130,7 +130,7 @@ export class FirebaseService {
       const data = await getDocs(q)
 
       if(!data) throw Error('Data not found')      
-      if(data.empty) return []
+      if(data.empty) return null
 
       const lists: ListsData = []      
 
@@ -138,7 +138,7 @@ export class FirebaseService {
         lists.push(doc.data() as ListData)
       })
 
-      return null //lists
+      return null// lists
       
     } catch (error) {
       throw new Error(error as string)
