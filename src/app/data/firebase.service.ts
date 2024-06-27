@@ -13,6 +13,7 @@ import { Firestore, collection, getDocs, getFirestore, orderBy, query } from 'fi
 
 import { environment } from 'environments/environment.development'
 import { ListData, ListsData } from './firebase.interfaces'
+import { Nullable } from 'app/shared/common.interfaces'
 
 export interface IIsLogged {
   state: boolean | null
@@ -121,7 +122,7 @@ export class FirebaseService {
    * Get lists from the database
    * @returns Promise<ListsData>
    */
-  async loadLists():Promise<ListsData> {
+  async loadLists():Promise<Nullable<ListsData>> {
 
     try {
       const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
@@ -137,7 +138,7 @@ export class FirebaseService {
         lists.push(doc.data() as ListData)
       })
 
-      return lists
+      return null //lists
       
     } catch (error) {
       throw new Error(error as string)
