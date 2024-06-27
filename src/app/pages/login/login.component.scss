@@ -8,16 +8,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: utils.getRealVh(42);
-
-    display: block;
-
-    &__img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-    }
+    width: 100%;
+    height: utils.getRealVh(42);    
   }
 
   main {
