@@ -3,21 +3,23 @@
 
 
 :host {
-  @include utils.customEl;  
+  @include utils.customEl;
 
   .hero {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: utils.getRealVh(42);    
+    height: utils.getRealVh(42);
   }
 
   main{
     position: relative;
-    margin: utils.getRealVh(32) auto 0;
     height: utils.getRealVh(65);
     width: 85vw;
+
+    margin: utils.getRealVh(30) auto 0;
+    padding-top: utils.getRealVh(5);
 
     background-color: var(--mat-app-background-color);
 
@@ -26,14 +28,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 
 
     h1 {
       padding: 0 2.5rem;
       font-size: typo.$text-2xl;
       font-weight: 300;
-      color: var(--mdc-filled-button-container-color);      
+      color: var(--mdc-filled-button-container-color);
     }
 
     p.sub-title {

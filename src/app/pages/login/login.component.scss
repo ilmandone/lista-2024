@@ -9,14 +9,16 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: utils.getRealVh(42);    
+    height: utils.getRealVh(42);
   }
 
   main {
     position: relative;
-    margin: utils.getRealVh(32) auto 0;
     height: utils.getRealVh(65);
     width: 85vw;
+
+    margin: utils.getRealVh(30) auto 0;
+    padding-top: utils.getRealVh(5);
 
     background-color: var(--mat-app-background-color);
 
@@ -25,11 +27,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 
     h1 {
-      font-size: typo.$text-4xl;
+      font-size: typo.$text-3xl;
       font-weight: 300;
+      text-transform: uppercase;
       color: var(--mdc-filled-button-container-color);
     }
 
@@ -44,7 +47,11 @@
     .form-field {
       width: 80vw;
       max-width: 16rem;
-      margin: 1.5rem 0 0;
+      margin: 1.25rem 0 0;
+
+      &:first-child {
+        margin-top: 2.5rem;
+      }
     }
 
     .submit-wrapper {
@@ -59,7 +66,7 @@
   }
 
   .forgot-password {
-    margin: 2.5rem 0 0;
+    margin: utils.getRealVh(5) 0 0;
 
     font-size: typo.$text-sm;
     text-decoration: underline;
