@@ -3,10 +3,13 @@
         <h1>Dashboard</h1>
     </div>
     <div class="header__controls">
+      @if (listsData()) {
         <button mat-icon-button [title]="'Open main menu'">
-            <mat-icon [fontIcon]="'add'"></mat-icon>
-          </button>
-    </div>    
+          <mat-icon [fontIcon]="'add'"></mat-icon>
+        </button>
+      }
+
+    </div>
 </header>
 
 @if(listsData()) {
