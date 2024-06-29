@@ -26,9 +26,18 @@ html {
   @include mat.slide-toggle-theme($light-theme);
   @include mat.dialog-theme($light-theme);
 
+  // Overrides
 
   --mdc-filled-button-container-height: 3rem;
   --mat-dialog-container-max-width: 640px;
+
+  // Custom colors
+
+  --snack-bar-error: #dd0808;
+  --snack-bar-warning: #d47d0a;
+  --snack-bar-info: #69dd64;
+
+  --lists-item-color-bg: #F3F3F3;
 
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);

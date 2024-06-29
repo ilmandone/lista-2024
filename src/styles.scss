@@ -79,17 +79,17 @@
 
   // Snack bars
   .snack-bar--error {
-    background-color: #dd0808;
+    background-color: var(--snack-bar-error);
     color: white;
   }
 
   .snack-bar--warning {
-    background-color: #d47d0a;
+    background-color: var(--snack-bar-warning);
     color: white
   }
 
   .snack-bar--info {
-    background-color: #69dd64;
+    background-color: var(--snack-bar-info);
     color: black
   }
 }
