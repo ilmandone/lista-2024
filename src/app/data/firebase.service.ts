@@ -2,18 +2,17 @@ import { Injectable, signal } from '@angular/core'
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app'
 import {
   Auth,
-  UserCredential,
   getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  UserCredential
 } from 'firebase/auth'
 
-import { Firestore, collection, getDocs, getFirestore, orderBy, query } from 'firebase/firestore'
+import { collection, Firestore, getDocs, getFirestore, orderBy, query } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
 import { ListData, ListsData } from './firebase.interfaces'
-import { Nullable } from 'app/shared/common.interfaces'
 
 export interface IIsLogged {
   state: boolean | null
@@ -122,7 +121,7 @@ export class FirebaseService {
    * Get lists from the database
    * @returns Promise<ListsData>
    */
-  async loadLists():Promise<Nullable<ListsData>> {
+  async loadLists():Promise<ListsData> {
 
     try {
       const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
@@ -130,7 +129,7 @@ export class FirebaseService {
       const data = await getDocs(q)
 
       if(!data) throw Error('Data not found')
-      if(data.empty) return null
+      if(data.empty) return []
 
       const lists: ListsData = []
 

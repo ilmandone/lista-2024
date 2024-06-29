@@ -11,9 +11,13 @@
     </div>
 </header>
 
-@if(listsData()) {
+@defer (when listsData() !== null) {
+  @if(listsData()!.length > 0) {
     <div>Abbiamo dati</div>
-} @else {
+  } @else {
     <app-empty-lists (newList)="openCreateNew()"  ></app-empty-lists>
+  }
+} @loading {
+  <div>Loading</div>
 }
 
