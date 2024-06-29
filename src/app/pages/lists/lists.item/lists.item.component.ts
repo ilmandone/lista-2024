@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core'
+import { ChangeDetectionStrategy, Component, input, OnInit } from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 
 @Component({
@@ -6,9 +6,18 @@ import { ListData } from '../../../data/firebase.interfaces'
   standalone: true,
   imports: [],
   templateUrl: './lists.item.component.html',
-  styleUrl: './lists.item.component.scss'
+  styleUrl: './lists.item.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListsItemComponent {
+export class ListsItemComponent implements OnInit{
   data = input.required<ListData>()
+
+
+  time!: Date
+
+  ngOnInit(): void {
+    this.time = new Date(this.data().updated.seconds)
+    console.log(this.time)
+  }
 
 }

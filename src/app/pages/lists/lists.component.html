@@ -13,13 +13,18 @@
 
 <main class="main">
   @defer (when listsData() !== null) {
+
     @if(listsData()!.length > 0) {
+      <!--Lists-->
       @for(data of listsData(); track data.UUID) {
         <app-lists-item [data]="data"></app-lists-item>
       }
-    } @else {
+    }
+    @else {
+      <!--No lists -> show placeholder-->
       <app-empty-lists (newList)="openCreateNew()"  ></app-empty-lists>
     }
+
   } @loading {
     <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
   }
