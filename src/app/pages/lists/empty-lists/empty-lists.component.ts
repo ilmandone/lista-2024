@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core'
 import { HeroImageComponent } from '../../../components/hero-image/hero-image.component'
 import { MatButton } from '@angular/material/button'
 
@@ -13,5 +13,5 @@ import { MatButton } from '@angular/material/button'
   styleUrl: './empty-lists.component.scss'
 })
 export class EmptyListsComponent {
-
+  newList = output()
 }
