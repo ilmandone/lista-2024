@@ -10,11 +10,11 @@
     width: 100%;
     height: utils.getRealVh(100);
 
-    .header {        
-        width: calc(100% - vars.$main-nav-width);        
-        height: vars.$main-header-height;
+    .header {
+        width: calc(100% - var(--main-header-height));
+        height: var(--main-header-height);
 
-        margin-left: vars.$main-nav-width;
+        margin-left: var(--main-nav-width);
 
         display: flex;
         justify-content: space-between;
@@ -25,10 +25,6 @@
         }
 
         @include utils.media-query('t') {
-            height: vars.$main-header-big-height;
-            width: calc(100% - vars.$main-nav-big-width);
-            margin-left: vars.$main-nav-big-width;
-
             &__controls {
                 padding-right: 2rem;
             }
