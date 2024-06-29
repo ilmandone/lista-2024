@@ -1,0 +1,16 @@
+@use "~styles/typo.scss";
+
+:host{
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+
+  padding: 0.75rem 1rem;
+
+  background-color: var(--lists-item-color-bg);
+
+  .time {
+    font-size: typo.$text-xs;
+    letter-spacing: 0;
+  }
+}
