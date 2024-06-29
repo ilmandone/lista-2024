@@ -129,17 +129,17 @@ export class FirebaseService {
       const q = query(mainCollection, orderBy('position'))
       const data = await getDocs(q)
 
-      if(!data) throw Error('Data not found')      
+      if(!data) throw Error('Data not found')
       if(data.empty) return null
 
-      const lists: ListsData = []      
+      const lists: ListsData = []
 
-      data.forEach(doc => {                
+      data.forEach(doc => {
         lists.push(doc.data() as ListData)
       })
 
-      return null// lists
-      
+      return lists
+
     } catch (error) {
       throw new Error(error as string)
     }

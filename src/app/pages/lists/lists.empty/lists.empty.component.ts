@@ -9,9 +9,9 @@ import { MatButton } from '@angular/material/button'
     HeroImageComponent,
     MatButton
   ],
-  templateUrl: './empty-lists.component.html',
-  styleUrl: './empty-lists.component.scss'
+  templateUrl: './lists.empty.component.html',
+  styleUrl: './lists.empty.component.scss'
 })
-export class EmptyListsComponent {
+export class ListsEmptyComponent {
   newList = output()
 }

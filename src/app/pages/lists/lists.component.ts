@@ -4,14 +4,14 @@ import { MatIconModule } from '@angular/material/icon'
 import { ListsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
-import { EmptyListsComponent } from './empty-lists/empty-lists.component'
+import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
 
 @Component({
   selector: 'app-lists',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, EmptyListsComponent, MatDialogModule],
+  imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule],
   templateUrl: './lists.component.html',
   styleUrl: './lists.component.scss'
 })
@@ -28,9 +28,7 @@ export class ListsComponent implements OnInit {
     dr.afterClosed().subscribe(result => {
       console.log('NEW LIST NAME: ',result)
     });
-
   }
-
 
   //#endregion
 
