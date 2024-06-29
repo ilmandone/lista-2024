@@ -1,4 +1,11 @@
-.contents {
-  width: 80vw;
-  max-width: var(--mat-dialog-container-max-width);
+:host {
+  .contents {
+    width: 80vw;
+    max-width: var(--mat-dialog-container-max-width);
+  }
+
+  .form-field {
+    margin-top: 1rem;
+    width: 100%;
+  }
 }

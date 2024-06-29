@@ -26,7 +26,7 @@ export class ListsComponent implements OnInit {
   openCreateNew() {
     const dr = this._dialog.open(NewListsDialogComponent)
     dr.afterClosed().subscribe(result => {
-      console.log(result)
+      console.log('NEW LIST NAME: ',result)
     });
 
   }
