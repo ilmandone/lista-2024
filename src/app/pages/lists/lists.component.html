@@ -11,13 +11,18 @@
     </div>
 </header>
 
-@defer (when listsData() !== null) {
-  @if(listsData()!.length > 0) {
-    <div>Abbiamo dati</div>
-  } @else {
-    <app-empty-lists (newList)="openCreateNew()"  ></app-empty-lists>
+<main class="main">
+  @defer (when listsData() !== null) {
+    @if(listsData()!.length > 0) {
+      @for(data of listsData(); track data.UUID) {
+        <app-lists-item [data]="data"></app-lists-item>
+      }
+    } @else {
+      <app-empty-lists (newList)="openCreateNew()"  ></app-empty-lists>
+    }
+  } @loading {
+    <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
   }
-} @loading {
-  <div>Loading</div>
-}
+</main>
+
 

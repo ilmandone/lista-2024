@@ -7,11 +7,13 @@ import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
+import { ListsItemComponent } from './lists.item/lists.item.component'
+import { LoaderComponent } from '../../components/loader/loader.component'
 
 @Component({
   selector: 'app-lists',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule],
+  imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent, LoaderComponent],
   templateUrl: './lists.component.html',
   styleUrl: './lists.component.scss'
 })

@@ -13,5 +13,5 @@ import { MatButton } from '@angular/material/button'
   styleUrl: './lists.empty.component.scss'
 })
 export class ListsEmptyComponent {
-  newList = output()
+  newList = output<void>()
 }

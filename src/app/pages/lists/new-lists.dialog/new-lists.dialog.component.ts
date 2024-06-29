@@ -37,6 +37,4 @@ export class NewListsDialogComponent {
   newListFG= new FormGroup<INewListFG>({
     name: this.nameFC
   })
-
-
 }
