@@ -1,2 +1,5 @@
-<p>{{data().label}}</p>
-<p class="time">{{time.toLocaleDateString()}} - {{time.toLocaleTimeString()}}</p>
+<button class="item-button" (pointerup)="clicked()">
+  <p>{{data().label}}</p>
+  <p class="time">{{time.toLocaleDateString()}} - {{time.toLocaleTimeString()}}</p>
+</button>
+

@@ -12,12 +12,13 @@ import { ListData } from '../../../data/firebase.interfaces'
 export class ListsItemComponent implements OnInit{
   data = input.required<ListData>()
 
-
   time!: Date
 
   ngOnInit(): void {
     this.time = new Date(this.data().updated.seconds)
-    console.log(this.time)
   }
 
+  clicked() {
+    console.log('clicked')
+  }
 }

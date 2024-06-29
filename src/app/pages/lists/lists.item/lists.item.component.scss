@@ -2,15 +2,19 @@
 
 :host{
   position: relative;
-  display: flex;
-  justify-content: space-between;
 
-  padding: 0.75rem 1rem;
+  .item-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 
-  background-color: var(--lists-item-color-bg);
+    padding: 1rem;
 
-  .time {
-    font-size: typo.$text-xs;
-    letter-spacing: 0;
+    background-color: var(--lists-item-color-bg);
+
+    .time {
+      font-size: typo.$text-xs;
+      letter-spacing: 0;
+    }
   }
 }
