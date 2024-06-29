@@ -23,8 +23,10 @@ import { Component } from '@angular/core'
     position: relative;
     display: block;
 
-    .hero {      
-      position: absolute;      
+    min-height: 200px;
+
+    .hero {
+      position: absolute;
       top:0;
       left: 0;
       width: 100%;
@@ -39,9 +41,9 @@ import { Component } from '@angular/core'
       }
     }
   }
-    
+
   `
 })
 export class HeroImageComponent {
-  
+
 }
