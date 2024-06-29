@@ -3,7 +3,7 @@
         <h1>Dashboard</h1>
     </div>
     <div class="header__controls">
-      @if (listsData()) {
+      @if(listsData()) {
         <button mat-icon-button [title]="'Open main menu'">
           <mat-icon [fontIcon]="'add'"></mat-icon>
         </button>
@@ -15,6 +15,6 @@
 @if(listsData()) {
     <div>Abbiamo dati</div>
 } @else {
-    <app-empty-lists></app-empty-lists>
+    <app-empty-lists (newList)="openCreateNew()"  ></app-empty-lists>
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core'
+import { Component, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ListsData } from 'app/data/firebase.interfaces'
@@ -15,8 +15,16 @@ import { EmptyListsComponent } from './empty-lists/empty-lists.component'
 })
 export class ListsComponent implements OnInit {
   private _firebaseSrv = inject(FirebaseService)
-
   public listsData = signal<Nullable<ListsData>>(null)
+
+  //#region Interactions
+
+  openCreateNew() {
+    console.log('create new')
+  }
+
+
+  //#endregion
 
   ngOnInit(): void {
     this._firebaseSrv.startDB()
