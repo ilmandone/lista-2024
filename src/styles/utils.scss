@@ -1,4 +1,4 @@
-@mixin customEl {  
+@mixin customEl {
   display: block;
 }
 
@@ -37,5 +37,11 @@ $media-map: (
     @media #{map-get($media-map, $key)} {
       @content;
     }
+  }
+}
+
+@mixin media-touch() {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
   }
 }
