@@ -1,5 +1,12 @@
-<button mat-ripple class="item-button" (pointerup)="tapped()">
-  <span class="label">{{ data().label }}</span>
-  <span class="time">{{ time.toLocaleDateString() }} - {{ time.getHours() }}:{{ time.getMinutes() }}</span>
-</button>
+<!--Overlay-->
+@if (isEditing) {
+  <div class="item-overlay" (pointerup)="overlayHit()"></div>
+}
+
+<!--Main component-->
+<div mat-ripple [matRippleDisabled]="isEditing" class="item-button" [class.editing]="isEditing" (pointerup)="tapped()" role="button"
+     aria-label="double tap to edit the list item">
+  <input #input matInput class="item-button__input" [disabled]="!isEditing" [value]="data().label" />
+  <span class="item-button__time">{{ time.toLocaleDateString() }} - {{ time.getHours() }}:{{ time.getMinutes() }}</span>
+</div>
 
