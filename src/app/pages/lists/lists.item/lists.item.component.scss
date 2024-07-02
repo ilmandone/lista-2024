@@ -1,4 +1,5 @@
 @use "~styles/typo.scss";
+@use "~styles/utils.scss";
 
 :host{
   position: relative;
@@ -8,9 +9,30 @@
     display: flex;
     justify-content: space-between;
 
-    padding: 1rem;
+    padding: 1.5rem 1.25rem;
+
+    border-width: 1px 0 1px;
+    border-style: solid;
+    border-color: var(--mat-app-background-color);
+
+    border-radius: 0.5rem;
 
     background-color: var(--lists-item-color-bg);
+    color: var(--mat-sidenav-content-text-color);
+
+    @include utils.media-pointer() {
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--lists-item-color-bg);
+        color: var(--mdc-text-button-label-text-color);
+        text-decoration: underline;
+      }
+    }
+
+    .label {
+      font-size: typo.$text;
+    }
 
     .time {
       font-size: typo.$text-xs;

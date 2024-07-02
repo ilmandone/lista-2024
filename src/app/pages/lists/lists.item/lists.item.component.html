@@ -1,5 +1,5 @@
-<button class="item-button" (pointerup)="clicked()">
-  <p>{{data().label}}</p>
-  <p class="time">{{time.toLocaleDateString()}} - {{time.toLocaleTimeString()}}</p>
+<button mat-ripple class="item-button" (pointerup)="tapped()">
+  <span class="label">{{ data().label }}</span>
+  <span class="time">{{ time.toLocaleDateString() }} - {{ time.getHours() }}:{{ time.getMinutes() }}</span>
 </button>
 
