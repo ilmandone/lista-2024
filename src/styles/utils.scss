@@ -45,3 +45,9 @@ $media-map: (
     @content;
   }
 }
+
+@mixin media-pointer() {
+  @media (hover: hover) and (pointer: fine){
+    @content
+  }
+}
