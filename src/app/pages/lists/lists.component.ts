@@ -11,35 +11,41 @@ import { ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 
 @Component({
-  selector: 'app-lists',
-  standalone: true,
-  imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent, LoaderComponent],
-  templateUrl: './lists.component.html',
-  styleUrl: './lists.component.scss'
+	selector: 'app-lists',
+	standalone: true,
+	imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent, LoaderComponent],
+	templateUrl: './lists.component.html',
+	styleUrl: './lists.component.scss'
 })
 export class ListsComponent implements OnInit {
-  private readonly _firebaseSrv = inject(FirebaseService)
-  private readonly _dialog = inject(MatDialog);
+	private readonly _firebaseSrv = inject(FirebaseService)
+	private readonly _dialog = inject(MatDialog)
 
-  public listsData = signal<Nullable<ListsData>>(null)
+	listsData = signal<Nullable<ListsData>>(null)
+  editModeOn = false
 
-  //#region Interactions
+	//#region Interactions
 
-  openCreateNew() {
-    const dr = this._dialog.open(NewListsDialogComponent)
-    dr.afterClosed().subscribe(result => {
-      console.log('NEW LIST NAME: ',result)
-    });
-  }
+	openCreateNew() {
+		const dr = this._dialog.open(NewListsDialogComponent)
+		dr.afterClosed().subscribe((result) => {
+			console.log('NEW LIST NAME: ', result)
+		})
+	}
 
-  //#endregion
+	clickTopButton() {
+		if(!this.editModeOn) this.editModeOn = true
+    else this.openCreateNew()
+	}
 
-  ngOnInit(): void {
-    this._firebaseSrv.startDB()
+	//#endregion
 
-    this._firebaseSrv.loadLists().then((r) => {
-      console.log('🚀 @@@ ~ file: lists.component.ts:24 ~ ListsComponent ~ this._firebaseSrv.loadLists ~ r:', r)
-      this.listsData.set(r)
-    })
-  }
+	ngOnInit(): void {
+		this._firebaseSrv.startDB()
+
+		this._firebaseSrv.loadLists().then((r) => {
+			console.log('🚀 @@@ ~ file: lists.component.ts:24 ~ ListsComponent ~ this._firebaseSrv.loadLists ~ r:', r)
+			this.listsData.set(r)
+		})
+	}
 }
