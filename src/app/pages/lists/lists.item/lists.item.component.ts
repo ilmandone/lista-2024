@@ -3,49 +3,52 @@ import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
 import { MatInputModule } from '@angular/material/input'
 import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
 
 @Component({
-  selector: 'app-lists-item',
-  standalone: true,
-  imports: [MatRippleModule, MatInputModule, MatFormFieldModule],
-  templateUrl: './lists.item.component.html',
-  styleUrl: './lists.item.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-lists-item',
+	standalone: true,
+	imports: [MatRippleModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule],
+	templateUrl: './lists.item.component.html',
+	styleUrl: './lists.item.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListsItemComponent implements OnInit{
-  data = input.required<ListData>()
-  @HostBinding('class.editing') isEditing = false
-  @ViewChild('input', {static: true}) inputEl!: ElementRef<HTMLInputElement>
+export class ListsItemComponent implements OnInit {
+	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
 
-  static readonly DOUBLE_TAP_TIME = 400
-  static readonly FOCUS_DELAY = 100
+	data = input.required<ListData>()
+	@HostBinding('class.editing') editModeOn = input.required<boolean>()
 
-  private lastTapTS = new Date().getTime()
+	static readonly DOUBLE_TAP_TIME = 400
+	static readonly FOCUS_DELAY = 100
 
-  time!: Date
+	private lastTapTS = new Date().getTime()
 
-  ngOnInit(): void {
-    this.time = new Date(this.data().updated.seconds)
-  }
+	time!: Date
 
-  tapped() {
-    if(this.isEditing) return
+	ngOnInit(): void {
+		this.time = new Date(this.data().updated.seconds)
+	}
 
-    const tapTime = new Date().getTime()
-    const tapLength = tapTime - this.lastTapTS
+	tapped() {
+		/* if (this.isEditing) return
 
-    if (tapLength < ListsItemComponent.DOUBLE_TAP_TIME && tapLength > 0) {
-      this.isEditing = true
+		const tapTime = new Date().getTime()
+		const tapLength = tapTime - this.lastTapTS
 
-      window.setTimeout(() => {
-        this.inputEl.nativeElement.focus()
-      },ListsItemComponent.FOCUS_DELAY)
-    }
+		if (tapLength < ListsItemComponent.DOUBLE_TAP_TIME && tapLength > 0) {
+			this.isEditing = true
 
-    this.lastTapTS = tapTime
-  }
+			window.setTimeout(() => {
+				this.inputEl.nativeElement.focus()
+			}, ListsItemComponent.FOCUS_DELAY)
+		}
 
-  overlayHit() {
-    this.isEditing = false
-  }
+		this.lastTapTS = tapTime */
+	}
+
+	overlayHit() {
+		// this.isEditing = false
+	}
 }

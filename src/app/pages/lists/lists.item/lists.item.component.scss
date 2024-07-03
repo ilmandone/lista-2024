@@ -20,7 +20,7 @@
     justify-content: space-between;
     align-items: center;
 
-    padding: 1.5rem 1.25rem;
+    padding: 0.75rem 1.25rem;
 
     border-width: 1px 0 1px;
     border-style: solid;
@@ -47,6 +47,7 @@
     }
 
     &__input {
+      height: 3rem; // Match the delete button icon size
       border: 0;
 
       font-size: typo.$text;

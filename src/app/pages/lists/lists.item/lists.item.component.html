@@ -1,12 +1,26 @@
 <!--Overlay-->
-@if (isEditing) {
-  <div class="item-overlay" (pointerup)="overlayHit()"></div>
-}
+<!-- @if (isEditing) {
+<div class="item-overlay" (pointerup)="overlayHit()"></div>
+} -->
 
 <!--Main component-->
-<div mat-ripple [matRippleDisabled]="isEditing" class="item-button" [class.editing]="isEditing" (pointerup)="tapped()" role="button"
-     aria-label="double tap to edit the list item">
-  <input #input matInput class="item-button__input" [disabled]="!isEditing" [value]="data().label" />
-  <span class="item-button__time">{{ time.toLocaleDateString() }} - {{ time.getHours() }}:{{ time.getMinutes() }}</span>
-</div>
+<div
+	mat-ripple
+	[matRippleDisabled]="editModeOn()"
+	class="item-button"
+	[class.editing]="editModeOn()"
+	role="button"
+	aria-label="double tap to edit the list item"
+>
+	<input #input matInput class="item-button__input" [disabled]="editModeOn()" [value]="data().label" />
 
+  @if(!editModeOn()){
+    <span class="item-button__time">{{ time.toLocaleDateString() }} - {{ time.getHours() }}:{{ time.getMinutes() }}</span>
+  }
+  @else {
+    <button mat-icon-button [title]="'delete' + data().label + 'list'">
+      <mat-icon [fontIcon]="'delete'"></mat-icon>
+    </button>
+  }
+	
+</div>
