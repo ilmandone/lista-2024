@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, input, OnInit, ViewChild } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, Input, input, OnInit, ViewChild } from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
 import { MatInputModule } from '@angular/material/input'
@@ -15,11 +15,12 @@ import { MatIconModule } from '@angular/material/icon'
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListsItemComponent implements OnInit {
+
 	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
+	@HostBinding('class.editing') @Input() editModeOn!: boolean
 
 	data = input.required<ListData>()
-	@HostBinding('class.editing') editModeOn = input.required<boolean>()
-
+  
 	static readonly DOUBLE_TAP_TIME = 400
 	static readonly FOCUS_DELAY = 100
 
