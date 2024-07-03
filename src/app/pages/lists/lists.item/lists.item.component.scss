@@ -20,7 +20,7 @@
     justify-content: space-between;
     align-items: center;
 
-    padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+    padding: 0.75rem 0.875rem 0.75rem 0.5rem;
 
     border-width: 1px 0 1px;
     border-style: solid;
@@ -47,24 +47,29 @@
     }
 
     &__input {
-      flex: 1;
-      margin-right: 1rem;
-
+      flex: 3;
       height: 3rem; // Match the delete button icon size
-      border: 0;
+      padding: 0.75rem;
 
+      border: 0;
       border-radius: 0.5rem;
 
-      color: var(--mat-sidenav-content-text-color);
-      font-size: typo.$text;
-      padding: 0.75rem;
       background-color: var(--lists-item-color-bg);
+      color: var(--mat-sidenav-content-text-color);
+
+      font-size: typo.$text-m;
       pointer-events: none;
     }
 
     &__time {
+      flex: 2;
+      padding-right: 1rem;
+
       font-size: typo.$text-xs;
+      line-height: typo.$text-lg;
       letter-spacing: 0;
+      text-align: right;
+      word-break: keep-all;
     }
   }
 
@@ -76,5 +81,4 @@
       background-color: var(--lists-item-input-color-bg);
     }
   }
-
 }
