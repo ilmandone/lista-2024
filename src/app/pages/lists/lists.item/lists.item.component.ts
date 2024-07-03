@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, input, OnInit, ViewChild } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, input, OnInit, ViewChild } from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
 import { MatInputModule } from '@angular/material/input'
@@ -23,7 +23,9 @@ export class ListsItemComponent implements OnInit {
   static readonly DOUBLE_TAP_TIME = 400
   static readonly FOCUS_DELAY = 100
 
-  private lastTapTS = new Date().getTime()
+  @HostBinding('class.edit-label') editLabel = false
+
+  // private lastTapTS = new Date().getTime()
 
   time!: Date
 

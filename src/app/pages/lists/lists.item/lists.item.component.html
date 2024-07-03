@@ -1,7 +1,7 @@
 <!--Overlay-->
-<!-- @if (isEditing) {
-<div class="item-overlay" (pointerup)="overlayHit()"></div>
-} -->
+@if (editLabel) {
+  <div class="item-overlay"></div>
+}
 
 <!--Main component-->
 <div
@@ -11,17 +11,19 @@
   class="item-button"
   mat-ripple
 >
-  @if(editModeOn()) {
-    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()">
+  @if (editModeOn()) {
+    <button mat-icon-button [title]="'Jolly button'" [disabled]="editLabel" (click)="deleteList()">
       <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
     </button>
   }
-  <input #input [disabled]="!editModeOn()" [value]="data().label" class="item-button__input" matInput />
+
+  <input #input (blur)="editLabel = false" (focus)="editLabel = true" [disabled]="!editModeOn()" [value]="data().label"
+         class="item-button__input" matInput />
 
   @if (!editModeOn()) {
     <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}:{{ time.getMinutes() }}</span>
   } @else {
-    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()">
+    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()" [disabled]="editLabel">
       <mat-icon [fontIcon]="'delete'"></mat-icon>
     </button>
   }
