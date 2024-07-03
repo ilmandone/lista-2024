@@ -5,19 +5,22 @@
 
 <!--Main component-->
 <div
-	mat-ripple
-	[matRippleDisabled]="editModeOn"
-	class="item-button"
-	[class.editing]="editModeOn"
-  role=""
-	[attr.role]="!editModeOn ? 'button' : 'none'"
+  [attr.role]="!editModeOn() ? 'button' : 'none'"
+  [class.editing]="editModeOn()"
+  [matRippleDisabled]="editModeOn()"
+  class="item-button"
+  mat-ripple
 >
-	<input #input matInput class="item-button__input" [disabled]="!editModeOn" [value]="data().label" />
-
-  @if(!editModeOn){
-    <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}:{{ time.getMinutes() }}</span>
+  @if(editModeOn()) {
+    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()">
+      <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+    </button>
   }
-  @else {
+  <input #input [disabled]="!editModeOn()" [value]="data().label" class="item-button__input" matInput />
+
+  @if (!editModeOn()) {
+    <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}:{{ time.getMinutes() }}</span>
+  } @else {
     <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()">
       <mat-icon [fontIcon]="'delete'"></mat-icon>
     </button>
