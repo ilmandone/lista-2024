@@ -8,17 +8,17 @@
 	mat-ripple
 	[matRippleDisabled]="editModeOn"
 	class="item-button"
-	[class.editing]="editModeOn"
-	role="button"
-	aria-label="double tap to edit the list item"
+	[class.editing]="editModeOn"  
+  role=""
+	[attr.role]="!editModeOn ? 'button' : 'none'"
 >
-	<input #input matInput class="item-button__input" [disabled]="editModeOn" [value]="data().label" />
+	<input #input matInput class="item-button__input" [disabled]="!editModeOn" [value]="data().label" />
 
   @if(!editModeOn){
     <span class="item-button__time">{{ time.toLocaleDateString() }} - {{ time.getHours() }}:{{ time.getMinutes() }}</span>
   }
   @else {
-    <button mat-icon-button [title]="'delete ' + data().label + 'list'">
+    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()">
       <mat-icon [fontIcon]="'delete'"></mat-icon>
     </button>
   }

@@ -15,25 +15,33 @@ import { MatIconModule } from '@angular/material/icon'
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListsItemComponent implements OnInit {
-
-	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
+  
+  @ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
 	@HostBinding('class.editing') @Input() editModeOn!: boolean
-
+  
 	data = input.required<ListData>()
   
 	static readonly DOUBLE_TAP_TIME = 400
 	static readonly FOCUS_DELAY = 100
-
+  
 	private lastTapTS = new Date().getTime()
-
+  
 	time!: Date
-
+  
 	ngOnInit(): void {
-		this.time = new Date(this.data().updated.seconds)
+    this.time = new Date(this.data().updated.seconds)
 	}
+  
+  //#region Interactions
 
-	tapped() {
-		/* if (this.isEditing) return
+  deleteList() {
+    console.log('DELETE THE LIST: ', this.data().label)
+  }
+
+  //#endregion
+  
+	/* tapped() {
+		if (this.isEditing) return
 
 		const tapTime = new Date().getTime()
 		const tapLength = tapTime - this.lastTapTS
@@ -46,10 +54,10 @@ export class ListsItemComponent implements OnInit {
 			}, ListsItemComponent.FOCUS_DELAY)
 		}
 
-		this.lastTapTS = tapTime */
-	}
+		this.lastTapTS = tapTime
+	} */
 
-	overlayHit() {
-		// this.isEditing = false
-	}
+	/* overlayHit() {
+		this.isEditing = false
+	} */
 }
