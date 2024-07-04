@@ -1,10 +1,10 @@
 <!--Main component-->
 <div
+  class="item-button"
+  mat-ripple
   [attr.role]="!editModeOn() ? 'button' : 'none'"
   [class.editing]="editModeOn()"
   [matRippleDisabled]="editModeOn()"
-  class="item-button"
-  mat-ripple
 >
   <!--  Jolly button-->
   @if (editModeOn()) {

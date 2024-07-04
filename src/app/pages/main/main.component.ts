@@ -1,15 +1,16 @@
-import {Component, inject} from '@angular/core';
-import {Router, RouterOutlet} from '@angular/router';
-import {FirebaseService} from '../../data/firebase.service';
+import { Component, effect, inject } from '@angular/core'
+import { Router, RouterOutlet } from '@angular/router'
+import { FirebaseService } from '../../data/firebase.service'
 
-import {CommonModule} from '@angular/common';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatSlideToggleChange, MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {ThemeService} from "../../shared/theme.service";
-import {MatDialog, MatDialogModule} from "@angular/material/dialog";
-import {LogoutDialogComponent} from "./logout.dialog/logout.dialog.component";
+import { CommonModule } from '@angular/common'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatIconModule } from '@angular/material/icon'
+import { MatButtonModule } from '@angular/material/button'
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle'
+import { ThemeService } from '../../shared/theme.service'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { LogoutDialogComponent } from './logout.dialog/logout.dialog.component'
+import { FocusInputService } from '../../shared/focus-input.service'
 
 @Component({
   selector: 'app-home',
@@ -29,8 +30,18 @@ import {LogoutDialogComponent} from "./logout.dialog/logout.dialog.component";
 export class MainComponent {
   private readonly _fbSrv = inject(FirebaseService);
   private readonly _router = inject(Router);
-  readonly themeSrv = inject(ThemeService);
   private readonly _dialog = inject(MatDialog);
+  private readonly _focusSrv = inject(FocusInputService)
+
+  readonly themeSrv = inject(ThemeService);
+
+  disabled = false
+
+  constructor() {
+    effect(() => {
+      this.disabled = this._focusSrv.uuid() !== null
+    })
+  }
 
   logOut() {
     const dr = this._dialog.open(LogoutDialogComponent)

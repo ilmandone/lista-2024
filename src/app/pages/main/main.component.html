@@ -41,7 +41,7 @@
   <mat-drawer-content class="main">
     <!-- Header -->
     <nav class="main__nav">
-      <button mat-icon-button (click)="drawer.toggle()" [title]="'Open main menu'">
+      <button mat-icon-button (click)="drawer.toggle()" [title]="'Open main menu'" [disabled]="disabled">
         <mat-icon [fontIcon]="'menu'"></mat-icon>
       </button>
     </nav>
