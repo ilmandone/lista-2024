@@ -1,0 +1,21 @@
+@use "~styles/typo.scss";
+
+input {
+	width: 100%;
+	height: 3rem; // Match the delete button icon size
+	padding: 0.75rem;
+
+	border: 0;
+	border-radius: 0.5rem;
+
+	font-size: typo.$text-m;
+
+    background-color: var(--lists-item-input-color-bg);
+    color: var(--mat-sidenav-content-text-color);
+
+    &[disabled] {
+        background-color: var(--lists-item-color-bg);
+	    
+        pointer-events: none;
+    }
+}
