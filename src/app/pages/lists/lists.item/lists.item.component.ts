@@ -1,47 +1,63 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, input, OnInit, ViewChild } from '@angular/core'
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	HostBinding,
+	input,
+	OnInit,
+	ViewChild
+} from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
 import { MatInputModule } from '@angular/material/input'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { FocusInputComponent } from 'app/components/focus-input/focus-input.component'
 
 @Component({
-  selector: 'app-lists-item',
-  standalone: true,
-  imports: [MatRippleModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule],
-  templateUrl: './lists.item.component.html',
-  styleUrl: './lists.item.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-lists-item',
+	standalone: true,
+	imports: [
+		MatRippleModule,
+		MatInputModule,
+		MatFormFieldModule,
+		MatButtonModule,
+		MatIconModule,
+		FocusInputComponent
+	],
+	templateUrl: './lists.item.component.html',
+	styleUrl: './lists.item.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListsItemComponent implements OnInit {
-  @ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
+	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
 
-  data = input.required<ListData>()
-  editModeOn = input.required<boolean>()
+	data = input.required<ListData>()
+	editModeOn = input.required<boolean>()
 
-  static readonly DOUBLE_TAP_TIME = 400
-  static readonly FOCUS_DELAY = 100
+	static readonly DOUBLE_TAP_TIME = 400
+	static readonly FOCUS_DELAY = 100
 
-  @HostBinding('class.edit-label') editLabel = false
+	@HostBinding('class.edit-label') editLabel = false
 
-  // private lastTapTS = new Date().getTime()
+	// private lastTapTS = new Date().getTime()
 
-  time!: Date
+	time!: Date
 
-  ngOnInit(): void {
-    this.time = new Date(this.data().updated.seconds)
-  }
+	ngOnInit(): void {
+		this.time = new Date(this.data().updated.seconds)
+	}
 
-  //#region Interactions
+	//#region Interactions
 
-  deleteList() {
-    console.log('DELETE THE LIST: ', this.data().label)
-  }
+	deleteList() {
+		console.log('DELETE THE LIST: ', this.data().label)
+	}
 
-  //#endregion
+	//#endregion
 
-  /* tapped() {
+	/* tapped() {
     if (this.isEditing) return
 
     const tapTime = new Date().getTime()
@@ -58,7 +74,7 @@ export class ListsItemComponent implements OnInit {
     this.lastTapTS = tapTime
   } */
 
-  /* overlayHit() {
+	/* overlayHit() {
     this.isEditing = false
   } */
 }

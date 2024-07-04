@@ -14,8 +14,7 @@ input {
     color: var(--mat-sidenav-content-text-color);
 
     &[disabled] {
-        background-color: var(--lists-item-color-bg);
-	    
+        background-color: var(--lists-item-color-bg);	    
         pointer-events: none;
     }
 }
