@@ -22,8 +22,6 @@
     background-color: var(--lists-item-color-bg);
     color: var(--mat-sidenav-content-text-color);
 
-    overflow: visible;
-
     @include utils.text-not-selectable;
 
     @include utils.media-pointer() {
