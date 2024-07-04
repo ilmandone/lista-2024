@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, effect,
-  ElementRef,
-  HostBinding, inject,
-  input,
-  OnInit,
-  ViewChild
-} from '@angular/core'
+import { Component, effect, ElementRef, inject, input, OnInit, ViewChild } from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
 import { MatInputModule } from '@angular/material/input'
