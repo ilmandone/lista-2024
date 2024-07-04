@@ -1,9 +1,3 @@
-<!--Overlay-->
-<!-- @if (editLabel) {
-  <div class="item-overlay"></div>
-}
- -->
-
 <!--Main component-->
 <div
   [attr.role]="!editModeOn() ? 'button' : 'none'"
@@ -20,9 +14,7 @@
   }
 
   <!--  Label-->
-  <app-focus-input [value]="data().label" [disabled]="!editModeOn()"/>
-  <!-- <input #input (blur)="editLabel = false" (focus)="editLabel = true" [disabled]="!editModeOn()" [value]="data().label"
-         class="item-button__input" matInput /> -->
+  <app-focus-input [value]="data().label" [disabled]="!editModeOn()" (focused)="editLabel = $event"/>
 
   <!--  Time or delete button-->
   @if (!editModeOn()) {
