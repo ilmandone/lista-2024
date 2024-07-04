@@ -1,8 +1,11 @@
+@if (editing) {
+	<div class="item-overlay"></div>
+}
+
 <input
-	(blur)="editing = false"
-	(focus)="editing = true"
+	(blur)="onBlur()"
+	(focus)="onFocus()"
 	[disabled]="disabled()"
 	[value]="value()"
-	class="item-button__input"
 	matInput
 />
