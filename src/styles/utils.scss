@@ -9,9 +9,8 @@
 // Z index
 
 $z-indexes: (
-  "item-editing": 9997,
-  "main-menu": 9998,
-  "loader": 9999
+  "main-menu": 2998,
+  "loader": 2999
 );
 
 @function getZ($key) {

@@ -8,19 +8,20 @@
 >
   <!--  Jolly button-->
   @if (editModeOn()) {
-    <button mat-icon-button [title]="'Jolly button'" [disabled]="editLabel" (click)="deleteList()">
+    <button mat-icon-button [title]="'Jolly button'" [disabled]="disabled" (click)="deleteList()">
       <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
     </button>
   }
 
   <!--  Label-->
-  <app-focus-input [value]="data().label" [disabled]="!editModeOn()" (focused)="editLabel = $event"/>
+  <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.uuid() )" [key]="data().UUID"
+                   [value]="data().label" />
 
   <!--  Time or delete button-->
   @if (!editModeOn()) {
     <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}:{{ time.getMinutes() }}</span>
   } @else {
-    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()" [disabled]="editLabel">
+    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()" [disabled]="disabled">
       <mat-icon [fontIcon]="'delete'"></mat-icon>
     </button>
   }

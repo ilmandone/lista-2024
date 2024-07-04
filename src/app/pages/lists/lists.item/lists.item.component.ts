@@ -1,11 +1,11 @@
 import {
-	ChangeDetectionStrategy,
-	Component,
-	ElementRef,
-	HostBinding,
-	input,
-	OnInit,
-	ViewChild
+  ChangeDetectionStrategy,
+  Component, effect,
+  ElementRef,
+  HostBinding, inject,
+  input,
+  OnInit,
+  ViewChild
 } from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { FocusInputComponent } from 'app/components/focus-input/focus-input.component'
+import { FocusInputService } from '../../../shared/focus-input.service'
 
 @Component({
 	selector: 'app-lists-item',
@@ -28,22 +29,27 @@ import { FocusInputComponent } from 'app/components/focus-input/focus-input.comp
 	],
 	templateUrl: './lists.item.component.html',
 	styleUrl: './lists.item.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListsItemComponent implements OnInit {
-	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
 
-	data = input.required<ListData>()
+  static readonly DOUBLE_TAP_TIME = 400
+  static readonly FOCUS_DELAY = 100
+
+  focusSrv = inject(FocusInputService)
+
+	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
+  data = input.required<ListData>()
+
 	editModeOn = input.required<boolean>()
 
-	static readonly DOUBLE_TAP_TIME = 400
-	static readonly FOCUS_DELAY = 100
-
-	@HostBinding('class.edit-label') editLabel = false
-
-	// private lastTapTS = new Date().getTime()
-
+  disabled = false
 	time!: Date
+
+  constructor() {
+    effect(() => {
+      this.disabled = this.focusSrv.uuid() !== null
+    })
+  }
 
 	ngOnInit(): void {
 		this.time = new Date(this.data().updated.seconds)
@@ -55,26 +61,5 @@ export class ListsItemComponent implements OnInit {
 		console.log('DELETE THE LIST: ', this.data().label)
 	}
 
-	//#endregion
 
-	/* tapped() {
-    if (this.isEditing) return
-
-    const tapTime = new Date().getTime()
-    const tapLength = tapTime - this.lastTapTS
-
-    if (tapLength < ListsItemComponent.DOUBLE_TAP_TIME && tapLength > 0) {
-      this.isEditing = true
-
-      window.setTimeout(() => {
-        this.inputEl.nativeElement.focus()
-      }, ListsItemComponent.FOCUS_DELAY)
-    }
-
-    this.lastTapTS = tapTime
-  } */
-
-	/* overlayHit() {
-    this.isEditing = false
-  } */
 }

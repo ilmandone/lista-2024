@@ -39,6 +39,10 @@
       }
     }
 
+    button[disabled] {
+      opacity: 0.2;
+    }
+
     &__time {
       padding-right: 1rem;
 
@@ -55,7 +59,7 @@
         background-color: var(--lists-item-input-color-bg);
       }
     }
-  }  
+  }
 
   &.edit-label {
     z-index: utils.getZ('item-editing');
