@@ -5,8 +5,14 @@
 :host {
   @include utils.customEl;
 
-  .main {
+  .mat-drawer {
+    max-width: 16rem;
+  }
+
+  .drawer-content {
     height: utils.getRealVh(100);
+
+    overflow: inherit;
 
     &__nav {
       position: absolute;
@@ -23,9 +29,7 @@
     }
   }
 
-  .mat-drawer {
-    max-width: 16rem;
-  }
+
 
   .main-menu {
     height: 100%;
