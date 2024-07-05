@@ -7,10 +7,12 @@ import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
-import { ListsItemComponent } from './lists.item/lists.item.component'
+import { IListsItemChanged, ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../shared/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
+
+import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'app-lists',
@@ -24,6 +26,7 @@ export class ListsComponent implements OnInit {
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
+  private _listDataCache!: Nullable<ListsData>
 
   listsData = signal<Nullable<ListsData>>(null)
   editModeOn = false
@@ -35,6 +38,22 @@ export class ListsComponent implements OnInit {
     })
   }
 
+  ngOnInit(): void {
+    this._firebaseSrv.startDB()
+
+    this._firebaseSrv.loadLists().then((r) => {
+      this.listsData.set(r)
+    })
+  }
+
+  //#region Privates
+
+  private _updateItem(info: IListsItemChanged) {
+
+  }
+
+  //#endregion
+
   //#region Interactions
 
   openCreateNew() {
@@ -45,18 +64,11 @@ export class ListsComponent implements OnInit {
   }
 
   clickTopButton() {
-    if (!this.editModeOn) this.editModeOn = true
+    if (!this.editModeOn) {
+      this._listDataCache = cloneDeep(this.listsData())
+      this.editModeOn = true
+    }
     else this.openCreateNew()
-  }
-
-  //#endregion
-
-  ngOnInit(): void {
-    this._firebaseSrv.startDB()
-
-    this._firebaseSrv.loadLists().then((r) => {
-      this.listsData.set(r)
-    })
   }
 
   onConfirm() {
@@ -66,7 +78,18 @@ export class ListsComponent implements OnInit {
   }
 
   onCancel() {
-    console.log('RESTORE LISTS DATA')
+    console.log(this._listDataCache)
+    this.listsData.set(this._listDataCache)
     this.editModeOn = false
   }
+
+  itemChanged($event: IListsItemChanged) {
+    console.log($event)
+    // TODO: Start from here
+    // Update the current listsData with the new values -
+  }
+
+  //#endregion
+
+
 }
