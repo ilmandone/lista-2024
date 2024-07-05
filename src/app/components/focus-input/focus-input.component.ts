@@ -20,7 +20,7 @@ export class FocusInputComponent {
   disabled = input<boolean>(false)
 
   focused = output<boolean>()
-  change = output<Nullable<string | number>>()
+  changed = output<Nullable<string | number>>()
 
   fC = new FormControl<Nullable<string | number>>({
     value: null,
@@ -55,7 +55,8 @@ export class FocusInputComponent {
     }
     // Valid value -> emit change
     else {
-      this.change.emit(this.fC.value)
+      console.log(this.fC.value)
+      this.changed.emit(this.fC.value)
     }
 
     this._focusSrv.setID = null
