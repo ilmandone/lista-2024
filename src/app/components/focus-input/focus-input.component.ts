@@ -13,16 +13,16 @@ import { Nullable } from '../../shared/common.interfaces'
 })
 export class FocusInputComponent {
   private _focusSrv = inject(FocusInputService)
-  private _cache!: Nullable<string | number>
+  private _cache!: Nullable<string>
 
   key = input.required<number | string>()
-  value = input<string | number>()
+  value = input<string>()
   disabled = input<boolean>(false)
 
   focused = output<boolean>()
-  changed = output<Nullable<string | number>>()
+  changed = output<Nullable<string>>()
 
-  fC = new FormControl<Nullable<string | number>>({
+  fC = new FormControl<Nullable<string>>({
     value: null,
     disabled: true
   }, {validators: [Validators.required]})
