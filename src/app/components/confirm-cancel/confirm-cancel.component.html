@@ -1,3 +1,2 @@
-<button mat-button="">cancel</button>
-<button mat-flat-button [color]="'accent'">confirm</button>
-
+<button mat-button (click)="cancel.emit()">cancel</button>
+<button mat-flat-button [color]="'accent'" (click)="confirm.emit()">confirm</button>
