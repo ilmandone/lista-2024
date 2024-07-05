@@ -27,3 +27,7 @@
     <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
   }
 </main>
+
+@if(editModeOn) {
+  <app-confirm-cancel></app-confirm-cancel>
+}

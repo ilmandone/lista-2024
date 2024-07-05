@@ -10,49 +10,51 @@ import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.com
 import { ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../shared/focus-input.service'
+import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 
 @Component({
-	selector: 'app-lists',
-	standalone: true,
-	imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent, LoaderComponent],
-	templateUrl: './lists.component.html',
-	styleUrl: './lists.component.scss'
+  selector: 'app-lists',
+  standalone: true,
+  imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent,
+    LoaderComponent, ConfirmCancelComponent],
+  templateUrl: './lists.component.html',
+  styleUrl: './lists.component.scss'
 })
 export class ListsComponent implements OnInit {
-	private readonly _firebaseSrv = inject(FirebaseService)
-	private readonly _dialog = inject(MatDialog)
-  private readonly _focusSrv = inject(FocusInputService)
-
-	listsData = signal<Nullable<ListsData>>(null)
+  listsData = signal<Nullable<ListsData>>(null)
   editModeOn = false
   disabled = false
+  private readonly _firebaseSrv = inject(FirebaseService)
+  private readonly _dialog = inject(MatDialog)
+  private readonly _focusSrv = inject(FocusInputService)
 
   constructor() {
     effect(() => {
       this.disabled = this._focusSrv.id() !== null
     })
   }
-	//#region Interactions
 
-	openCreateNew() {
-		const dr = this._dialog.open(NewListsDialogComponent)
-		dr.afterClosed().subscribe((result) => {
-			console.log('NEW LIST NAME: ', result)
-		})
-	}
+  //#region Interactions
 
-	clickTopButton() {
-		if(!this.editModeOn) this.editModeOn = true
+  openCreateNew() {
+    const dr = this._dialog.open(NewListsDialogComponent)
+    dr.afterClosed().subscribe((result) => {
+      console.log('NEW LIST NAME: ', result)
+    })
+  }
+
+  clickTopButton() {
+    if (!this.editModeOn) this.editModeOn = true
     else this.openCreateNew()
-	}
+  }
 
-	//#endregion
+  //#endregion
 
-	ngOnInit(): void {
-		this._firebaseSrv.startDB()
+  ngOnInit(): void {
+    this._firebaseSrv.startDB()
 
-		this._firebaseSrv.loadLists().then((r) => {
-			this.listsData.set(r)
-		})
-	}
+    this._firebaseSrv.loadLists().then((r) => {
+      this.listsData.set(r)
+    })
+  }
 }

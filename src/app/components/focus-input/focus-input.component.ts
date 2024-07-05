@@ -13,7 +13,6 @@ import { Nullable } from '../../shared/common.interfaces'
 })
 export class FocusInputComponent {
   private _focusSrv = inject(FocusInputService)
-
   private _cache!: Nullable<string | number>
 
   key = input.required<number | string>()
