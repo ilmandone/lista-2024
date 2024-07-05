@@ -15,7 +15,7 @@
 
   <!--  Label-->
   <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.id() )" [key]="data().UUID"
-                   [value]="data().label" />
+                   [value]="data().label" (changed)="itemLabelChanged($event)"/>
 
   <!--  Time or delete button-->
   @if (!editModeOn()) {

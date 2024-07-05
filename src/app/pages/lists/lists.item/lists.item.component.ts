@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, inject, input, OnInit, ViewChild } from '@angular/core'
+import { Component, effect, inject, input, OnInit, output } from '@angular/core'
 import { ListData } from '../../../data/firebase.interfaces'
 import { MatRippleModule } from '@angular/material/core'
 import { MatInputModule } from '@angular/material/input'
@@ -7,6 +7,9 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { FocusInputComponent } from 'app/components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../shared/focus-input.service'
+import { Nullable } from '../../../shared/common.interfaces'
+
+export type IListsItemChanged = Omit<ListData, 'items' | 'updated'>
 
 @Component({
 	selector: 'app-lists-item',
@@ -23,17 +26,12 @@ import { FocusInputService } from '../../../shared/focus-input.service'
 	styleUrl: './lists.item.component.scss',
 })
 export class ListsItemComponent implements OnInit {
-
-  static readonly DOUBLE_TAP_TIME = 400
-  static readonly FOCUS_DELAY = 100
-
-  focusSrv = inject(FocusInputService)
-
-	@ViewChild('input', { static: true }) inputEl!: ElementRef<HTMLInputElement>
   data = input.required<ListData>()
-
 	editModeOn = input.required<boolean>()
 
+  changed = output<IListsItemChanged>()
+
+  focusSrv = inject(FocusInputService)
   disabled = false
 	time!: Date
 
@@ -53,5 +51,14 @@ export class ListsItemComponent implements OnInit {
 		console.log('DELETE THE LIST: ', this.data().label)
 	}
 
+  itemLabelChanged($event: Nullable<string>) {
+    if ($event)
+    this.changed.emit({
+      label: $event,
+      UUID: this.data().UUID,
+      position: this.data().position,
+    })
+  }
 
+  //#endregion
 }
