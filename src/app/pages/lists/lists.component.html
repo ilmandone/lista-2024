@@ -29,5 +29,5 @@
 </main>
 
 @if(editModeOn) {
-  <app-confirm-cancel></app-confirm-cancel>
+  <app-confirm-cancel (cancel)="onCancel()" (confirm)="onConfirm()"></app-confirm-cancel>
 }

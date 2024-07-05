@@ -21,12 +21,13 @@ import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-
   styleUrl: './lists.component.scss'
 })
 export class ListsComponent implements OnInit {
-  listsData = signal<Nullable<ListsData>>(null)
-  editModeOn = false
-  disabled = false
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
+
+  listsData = signal<Nullable<ListsData>>(null)
+  editModeOn = false
+  disabled = false
 
   constructor() {
     effect(() => {
@@ -56,5 +57,16 @@ export class ListsComponent implements OnInit {
     this._firebaseSrv.loadLists().then((r) => {
       this.listsData.set(r)
     })
+  }
+
+  onConfirm() {
+    console.log('SAVE NEW LISTS')
+    this.editModeOn = false
+
+  }
+
+  onCancel() {
+    console.log('RESTORE LISTS DATA')
+    this.editModeOn = false
   }
 }
