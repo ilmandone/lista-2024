@@ -39,7 +39,7 @@ export class ListsItemComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      this.disabled = this.focusSrv.uuid() !== null
+      this.disabled = this.focusSrv.id() !== null
     })
   }
 

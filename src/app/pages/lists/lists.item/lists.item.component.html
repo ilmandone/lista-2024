@@ -14,7 +14,7 @@
   }
 
   <!--  Label-->
-  <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.uuid() )" [key]="data().UUID"
+  <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.id() )" [key]="data().UUID"
                    [value]="data().label" />
 
   <!--  Time or delete button-->

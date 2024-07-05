@@ -39,7 +39,7 @@ export class MainComponent {
 
   constructor() {
     effect(() => {
-      this.disabled = this._focusSrv.uuid() !== null
+      this.disabled = this._focusSrv.id() !== null
     })
   }
 

@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, output } from '@angular/core'
 import { MatInputModule } from '@angular/material/input'
 import { FocusInputService } from '../../shared/focus-input.service'
-import { FormControl, ReactiveFormsModule } from '@angular/forms'
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Nullable } from '../../shared/common.interfaces'
 
 @Component({
@@ -14,6 +14,8 @@ import { Nullable } from '../../shared/common.interfaces'
 export class FocusInputComponent {
   private _focusSrv = inject(FocusInputService)
 
+  private _cache!: Nullable<string | number>
+
   key = input.required<number | string>()
   value = input<string | number>()
   disabled = input<boolean>(false)
@@ -24,7 +26,7 @@ export class FocusInputComponent {
   fC = new FormControl<Nullable<string | number>>({
     value: null,
     disabled: true
-  }, {})
+  }, {validators: [Validators.required]})
 
   constructor() {
 
@@ -40,13 +42,24 @@ export class FocusInputComponent {
   }
 
   onFocus() {
-    this._focusSrv.setUUID = this.key()
+    this._focusSrv.setID = this.key()
     this.focused.emit(true)
+    this._cache = this.fC.value
   }
 
   onBlur() {
-    this._focusSrv.setUUID = null
+
+    // No value -> restore value in fc
+    if(this.fC.invalid) {
+      this.fC.patchValue(this._cache)
+      this.fC.updateValueAndValidity()
+    }
+    // Valid value -> emit change
+    else {
+      this.change.emit(this.fC.value)
+    }
+
+    this._focusSrv.setID = null
     this.focused.emit(false)
-    this.change.emit(this.fC.value)
   }
 }

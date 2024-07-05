@@ -6,9 +6,9 @@ import { Nullable } from './common.interfaces'
 })
 export class FocusInputService {
 
-  uuid = signal<Nullable<string | number>>(null)
+  id = signal<Nullable<string | number>>(null)
 
-  set setUUID(value: Nullable<string | number>) {
-    this.uuid.set(value)
+  set setID(value: Nullable<string | number>) {
+    this.id.set(value)
   }
 }
