@@ -46,14 +46,6 @@ export class ListsComponent implements OnInit {
     })
   }
 
-  //#region Privates
-
-  private _updateItem(info: IListsItemChanged) {
-
-  }
-
-  //#endregion
-
   //#region Interactions
 
   openCreateNew() {
