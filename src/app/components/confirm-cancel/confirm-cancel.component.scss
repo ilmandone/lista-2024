@@ -1,0 +1,23 @@
+@use "~styles/vars.scss";
+
+:host{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: vars.$confirm-cancel-height;
+
+  padding: 0 0.5rem;
+
+  display: flex;
+
+  transition: transform vars.$time-basic ease-in-out;
+
+  &.hidden {
+    transform: translateY(100%);
+  }
+
+  button {
+    flex: 1;
+  }
+}
