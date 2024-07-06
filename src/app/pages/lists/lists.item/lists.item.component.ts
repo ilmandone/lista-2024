@@ -9,7 +9,7 @@ import { FocusInputComponent } from 'app/components/focus-input/focus-input.comp
 import { FocusInputService } from '../../../shared/focus-input.service'
 import { Nullable } from '../../../shared/common.interfaces'
 
-export type IListsItemChanged = Omit<ListData, 'items' | 'updated'>
+export type IListsItemChanges = Omit<ListData, 'items' | 'updated'>
 
 @Component({
 	selector: 'app-lists-item',
@@ -29,7 +29,7 @@ export class ListsItemComponent implements OnInit {
   data = input.required<ListData>()
 	editModeOn = input.required<boolean>()
 
-  changed = output<IListsItemChanged>()
+  changed = output<IListsItemChanges>()
 
   focusSrv = inject(FocusInputService)
   disabled = false

@@ -7,7 +7,7 @@ import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
-import { IListsItemChanged, ListsItemComponent } from './lists.item/lists.item.component'
+import { IListsItemChanges, ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../shared/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
@@ -46,15 +46,28 @@ export class ListsComponent implements OnInit {
     })
   }
 
-  //#region Interactions
+  //#region Privates
 
-  openCreateNew() {
-    const dr = this._dialog.open(NewListsDialogComponent)
-    dr.afterClosed().subscribe((result) => {
-      console.log('NEW LIST NAME: ', result)
-    })
+  private _updateLists(updateData:IListsItemChanges, listsData: ListsData): ListsData {
+    const newListData = cloneDeep(listsData)
+    const item = newListData?.find(list => list.UUID === updateData.UUID)
+
+    if (item) {
+      item.position = updateData.position
+      item.label = updateData.label
+    }
+
+    return newListData
   }
 
+  //#endregion
+
+  //#region Interactions
+
+  /**
+   * Top button click
+   * @description Start edit mode | Open the create new dialog
+   */
   clickTopButton() {
     if (!this.editModeOn) {
       this._listDataCache = cloneDeep(this.listsData())
@@ -63,25 +76,49 @@ export class ListsComponent implements OnInit {
     else this.openCreateNew()
   }
 
+  /**
+   * Open dialog for new list
+   */
+  openCreateNew() {
+    const dr = this._dialog.open(NewListsDialogComponent)
+    dr.afterClosed().subscribe((result) => {
+      console.log('NEW LIST NAME: ', result)
+    })
+  }
+
+  /**
+   * Generic item update
+   * @param {IListsItemChanges} $event
+   */
+  itemChanged($event: IListsItemChanges) {
+    const d = this._updateLists($event, this.listsData() as ListsData)
+    this.listsData.set(d)
+    this._listDataCache = d
+  }
+
+  //#endregion
+
+  //#region Edit mode
+
+  /**
+   * Confirm editing
+   */
   onConfirm() {
     console.log('SAVE NEW LISTS')
     this.editModeOn = false
 
   }
 
+  /**
+   * Undo editing
+   * @description Restore data from cache
+   */
   onCancel() {
     console.log(this._listDataCache)
     this.listsData.set(this._listDataCache)
     this.editModeOn = false
   }
 
-  itemChanged($event: IListsItemChanged) {
-    console.log($event)
-    // TODO: Start from here
-    // Update the current listsData with the new values -
-  }
-
   //#endregion
-
 
 }
