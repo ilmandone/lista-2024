@@ -9,10 +9,23 @@ import {
   UserCredential
 } from 'firebase/auth'
 
-import { collection, Firestore, getDocs, getFirestore, orderBy, query } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  Firestore,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  serverTimestamp,
+  Timestamp,
+  writeBatch
+} from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
 import { ListData, ListsData } from './firebase.interfaces'
+import { IListsItemChanges } from '../pages/lists/lists.item/lists.item.component'
+
 
 export interface IIsLogged {
   state: boolean | null
@@ -25,6 +38,7 @@ export type IResetPsw = IIsLogged
   providedIn: 'root'
 })
 export class FirebaseService {
+  public isLogged = signal<IIsLogged>({ state: false })
   private _env = environment as Record<string, string>
   private _fireBaseOptions: FirebaseOptions = {
     authDomain: this._env['AUTH_DOMAIN'],
@@ -35,13 +49,11 @@ export class FirebaseService {
     messagingSenderId: this._env['MESSAGING_SENDER_ID'],
     appId: this._env['APP_ID']
   }
-
   private _app!: FirebaseApp
   private _auth!: Auth
   private _db!: Firestore
-  private _userData!: UserCredential
 
-  public isLogged = signal<IIsLogged>({ state: false })
+  private _userData!: UserCredential
 
   get userData() {
     return this._userData
@@ -112,6 +124,10 @@ export class FirebaseService {
 
   //#region DB
 
+  getDateFromTimeStamp(timeStamp: Timestamp): Date {
+    return timeStamp.toDate()
+  }
+
   startDB() {
     if (!this._app) throw new Error('App not initialized')
     this._db = getFirestore(this._app)
@@ -121,15 +137,15 @@ export class FirebaseService {
    * Get lists from the database
    * @returns Promise<ListsData>
    */
-  async loadLists():Promise<ListsData> {
+  async loadLists(): Promise<ListsData> {
 
     try {
       const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
       const q = query(mainCollection, orderBy('position'))
       const data = await getDocs(q)
 
-      if(!data) throw Error('Data not found')
-      if(data.empty) return []
+      if (!data) await Promise.reject('Data not found')
+      if (data.empty) return []
 
       const lists: ListsData = []
 
@@ -137,11 +153,45 @@ export class FirebaseService {
         lists.push(doc.data() as ListData)
       })
 
+      console.log(lists)
       return lists
 
     } catch (error) {
       throw new Error(error as string)
     }
+  }
+
+  /**
+   * Create, update or delete a list
+   * @description On batch commit return the loadList function
+   * @param {IListsItemChanges[]} changes
+   * @return {Promise<ListsData>}
+   */
+  async updateLists(changes: IListsItemChanges[]): Promise<ListsData> {
+
+    const batch = writeBatch(this._db)
+    const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+
+    for (const change of changes) {
+      const d = doc(mainCollection, change.UUID)
+      if (change.crud === 'delete')
+        // TODO DELETE
+        continue
+
+      if (change.crud === 'create') {
+        console.log('CREATE')
+      }
+
+      if (change.crud === 'update') {
+        batch.update(d, change)
+      }
+
+      // update the data for new or updated list
+      batch.update(d, { updated: serverTimestamp() })
+    }
+
+    await batch.commit()
+    return this.loadLists()
   }
 
   //#endregion

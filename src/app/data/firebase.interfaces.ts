@@ -1,16 +1,14 @@
 import { Nullable } from "app/shared/common.interfaces"
-
-export interface ListDataTimeStamp {
-  nanoseconds: number
-  seconds: number
-}
+import {
+  Timestamp,
+} from 'firebase/firestore'
 
 export interface ListData {
     UUID: string
     items: Nullable<unknown[]>
     label: string
     position: number
-    updated: ListDataTimeStamp
+    updated: Timestamp
 }
 
 export type ListsData = ListData[]
