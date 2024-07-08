@@ -13,7 +13,6 @@ import { FocusInputService } from '../../shared/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 
 import { cloneDeep } from 'lodash'
-import { LogoutDialogComponent } from '../main/logout.dialog/logout.dialog.component'
 import { ListsConfirmDialogComponent } from './lists.confirm.dialog/lists.confirm.dialog.component'
 
 @Component({
