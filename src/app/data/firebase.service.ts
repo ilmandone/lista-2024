@@ -174,9 +174,11 @@ export class FirebaseService {
 
     for (const change of changes) {
       const d = doc(mainCollection, change.UUID)
-      if (change.crud === 'delete')
-        // TODO DELETE
+
+      if (change.crud === 'delete') {
+        batch.delete(d)
         continue
+      }
 
       if (change.crud === 'create') {
         console.log('CREATE')

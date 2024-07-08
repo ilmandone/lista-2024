@@ -130,7 +130,6 @@ export class ListsComponent implements OnInit {
   }
 
   itemDeleted($event: IListsItemChanges) {
-    console.log($event)
     this.itemChanges.push($event)
 
     // Update the f/e list data
@@ -151,7 +150,8 @@ export class ListsComponent implements OnInit {
     if (hasDeleteActions) {
       const dr = this._dialog.open(ListsConfirmDialogComponent)
       dr.afterClosed().subscribe((result) => {
-        console.log(result)
+        if(result) this._saveLists()
+        this.editModeOn = false
       })
 
     } else {
