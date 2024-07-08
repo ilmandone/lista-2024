@@ -33,6 +33,7 @@ export class ListsItemComponent implements OnInit {
 	editModeOn = input.required<boolean>()
 
   changed = output<IListsItemChanges>()
+  deleted = output<IListsItemChanges>()
 
   focusSrv = inject(FocusInputService)
   disabled = false
@@ -51,7 +52,12 @@ export class ListsItemComponent implements OnInit {
 	//#region Interactions
 
 	deleteList() {
-		console.log('DELETE THE LIST: ', this.data().label)
+		this.deleted.emit({
+      label: this.data().label,
+      UUID: this.data().UUID,
+      position: this.data().position,
+      crud: 'delete'
+    })
 	}
 
   itemLabelChanged($event: Nullable<string>) {

@@ -59,7 +59,16 @@ export class ListsComponent implements OnInit {
 
   //#region Privates
 
+  private _deleteFromLists(updateData:IListsItemChanges, listsData: ListsData): ListsData {
+    const newListData = cloneDeep(listsData)
+    const index = newListData?.findIndex(list => list.UUID === updateData.UUID)
 
+    if (index >= 0) {
+      newListData.splice(index,  1)
+    }
+
+    return newListData
+  }
 
   /**
    * Update the item in listsData and return a new list
@@ -119,6 +128,15 @@ export class ListsComponent implements OnInit {
     this.listsData.set(d)
   }
 
+  itemDeleted($event: IListsItemChanges) {
+    console.log($event)
+    this.itemChanges.push($event)
+
+    // Update the f/e list data
+    const d = this._deleteFromLists($event, this.listsData() as ListsData)
+    this.listsData.set(d)
+  }
+
   //#endregion
 
   //#region Edit mode
@@ -127,9 +145,14 @@ export class ListsComponent implements OnInit {
    * Confirm editing
    */
   onConfirm() {
-    this._saveLists()
-    this.editModeOn = false
+    const hasDeleteActions = this.itemChanges.some(item => item.crud === 'delete')
 
+    if (hasDeleteActions) {
+      console.log('show delete dialog confirm')
+    } else {
+      this._saveLists()
+      this.editModeOn = false
+    }
   }
 
   /**
@@ -143,5 +166,4 @@ export class ListsComponent implements OnInit {
   }
 
   //#endregion
-
 }
