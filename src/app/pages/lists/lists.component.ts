@@ -29,6 +29,7 @@ export class ListsComponent implements OnInit {
   private _listDataCache!: Nullable<ListsData>
 
   listsData = signal<Nullable<ListsData>>(null)
+  itemChanges: IListsItemChanges[] = []
   editModeOn = false
   disabled = false
 
@@ -46,8 +47,27 @@ export class ListsComponent implements OnInit {
     })
   }
 
+  //#region Data
+
+  //#endregin
+
+  private _saveLists(): void {
+    this._firebaseSrv.updateLists(this.itemChanges).then(r => {
+      this.listsData.set(r)
+    })
+  }
+
   //#region Privates
 
+
+
+  /**
+   * Update the item in listsData and return a new list
+   * @param {IListsItemChanges} updateData
+   * @param {ListsData} listsData
+   * @return {ListsData}
+   * @private
+   */
   private _updateLists(updateData:IListsItemChanges, listsData: ListsData): ListsData {
     const newListData = cloneDeep(listsData)
     const item = newListData?.find(list => list.UUID === updateData.UUID)
@@ -87,13 +107,16 @@ export class ListsComponent implements OnInit {
   }
 
   /**
-   * Generic item update
+   * Generic update for front-end data
    * @param {IListsItemChanges} $event
    */
   itemChanged($event: IListsItemChanges) {
+    // Add the changes in the itemChanges list
+    this.itemChanges.push($event)
+
+    // Update the f/e list data
     const d = this._updateLists($event, this.listsData() as ListsData)
     this.listsData.set(d)
-    this._listDataCache = d
   }
 
   //#endregion
@@ -104,18 +127,18 @@ export class ListsComponent implements OnInit {
    * Confirm editing
    */
   onConfirm() {
-    console.log('SAVE NEW LISTS')
+    this._saveLists()
     this.editModeOn = false
 
   }
 
   /**
    * Undo editing
-   * @description Restore data from cache
+   * @description Restore data from cache and reset changes list
    */
   onCancel() {
-    console.log(this._listDataCache)
     this.listsData.set(this._listDataCache)
+    this.itemChanges = []
     this.editModeOn = false
   }
 

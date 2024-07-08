@@ -8,8 +8,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { FocusInputComponent } from 'app/components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../shared/focus-input.service'
 import { Nullable } from '../../../shared/common.interfaces'
+import { FirebaseService } from '../../../data/firebase.service'
 
-export type IListsItemChanges = Omit<ListData, 'items' | 'updated'>
+export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {crud: 'create' | 'update' | 'delete'}
 
 @Component({
 	selector: 'app-lists-item',
@@ -26,6 +27,8 @@ export type IListsItemChanges = Omit<ListData, 'items' | 'updated'>
 	styleUrl: './lists.item.component.scss',
 })
 export class ListsItemComponent implements OnInit {
+  private _firebaseSrv = inject(FirebaseService)
+
   data = input.required<ListData>()
 	editModeOn = input.required<boolean>()
 
@@ -42,7 +45,7 @@ export class ListsItemComponent implements OnInit {
   }
 
 	ngOnInit(): void {
-		this.time = new Date(this.data().updated.seconds)
+		this.time = this._firebaseSrv.getDateFromTimeStamp(this.data().updated)
 	}
 
 	//#region Interactions
@@ -57,6 +60,7 @@ export class ListsItemComponent implements OnInit {
       label: $event,
       UUID: this.data().UUID,
       position: this.data().position,
+      crud: 'update'
     })
   }
 
