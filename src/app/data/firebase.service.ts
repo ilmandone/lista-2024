@@ -128,6 +128,10 @@ export class FirebaseService {
     return timeStamp.toDate()
   }
 
+  gewNewTimeStamp(): Timestamp {
+    return Timestamp.now()
+  }
+
   startDB() {
     if (!this._app) throw new Error('App not initialized')
     this._db = getFirestore(this._app)
@@ -162,7 +166,7 @@ export class FirebaseService {
   }
 
   /**
-   * Create, update or delete a list
+   * update or delete a list
    * @description On batch commit return the loadList function
    * @param {IListsItemChanges[]} changes
    * @return {Promise<ListsData>}
@@ -173,15 +177,12 @@ export class FirebaseService {
     const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
     for (const change of changes) {
+
       const d = doc(mainCollection, change.UUID)
 
       if (change.crud === 'delete') {
         batch.delete(d)
         continue
-      }
-
-      if (change.crud === 'create') {
-        console.log('CREATE')
       }
 
       if (change.crud === 'update') {
