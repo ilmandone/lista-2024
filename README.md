@@ -1,5 +1,9 @@
 # Lista2024
 
+## TODO:
+1) Alla cancellazione di una lista vanno aggiornati i valori di position di tutte le altre - firebase service e f/e deta
+2) La crazione di una nuova lista non rientra nelle operazioni batch - vanno estratte dalle changes ed eseguite a parte
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
 
 ## Development server
