@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Nuova lista</h2>
+<form [formGroup]="newListFG">
+  <mat-dialog-content class="contents">
+    <!--Email-->
+    <mat-form-field class="form-field">
+      <mat-label>Inserisci un nome</mat-label>
+      <input
+        [formControl]="nameFC"
+        [required]="true"
+        cdkFocusInitial
+        matInput
+        placeholder="Nome"
+        type="text"
+      />
+      @if (nameFC.invalid) {
+        <mat-error>'Name required'</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="null">Annulla</button>
+    <button type="submit" [disabled]="nameFC.invalid" mat-button [mat-dialog-close]="nameFC.value">Conferma</button>
+  </mat-dialog-actions>
+</form>

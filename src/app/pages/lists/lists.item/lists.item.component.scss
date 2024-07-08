@@ -1,0 +1,65 @@
+@use "~styles/typo.scss";
+@use "~styles/utils.scss";
+
+:host{
+  position: relative;
+
+  .item-button {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.75rem 0.875rem 0.75rem 0.5rem;
+
+    border-width: 1px 0 1px;
+    border-style: solid;
+    border-color: var(--mat-app-background-color);
+
+    border-radius: 0.25rem;
+
+    background-color: var(--lists-item-color-bg);
+    color: var(--mat-sidenav-content-text-color);
+
+    @include utils.text-not-selectable;
+
+    @include utils.media-pointer() {
+
+      &:not(.editing) {
+        cursor: pointer;
+      }
+
+      &:not(.editing):hover {
+        background-color: var(--lists-item-color-bg);
+        color: var(--mdc-text-button-label-text-color);
+        text-decoration: underline;
+      }
+    }
+
+    button[disabled] {
+      opacity: 0.2;
+    }
+
+    &__time {
+      padding-right: 1rem;
+
+      font-size: typo.$text-2xs;
+      line-height: typo.$text-lg;
+      letter-spacing: 0;
+      text-align: right;
+      word-break: keep-all;
+    }
+
+    &.editing {
+      .item-button__input {
+        pointer-events: auto;
+        background-color: var(--lists-item-input-color-bg);
+      }
+    }
+  }
+
+  &.edit-label {
+    z-index: utils.getZ('item-editing');
+  }
+}

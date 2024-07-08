@@ -1,0 +1,9 @@
+<input #input
+  (blur)="onBlur()"
+  (focus)="onFocus()"
+  (keydown.enter)="input.blur()"
+  [formControl]="fC"
+  [value]="value()"
+  matInput
+/>
+

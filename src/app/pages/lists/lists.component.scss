@@ -3,45 +3,52 @@
 @use "~styles/typo.scss";
 
 :host {
-    position: relative;
+  position: relative;
 
-    display: block;
+  display: block;
 
-    width: 100%;
-    height: utils.getRealVh(100);
+  width: 100%;
+  height: utils.getRealVh(100);
 
-    .header {        
-        width: calc(100% - vars.$main-nav-width);        
-        height: vars.$main-header-height;
+  .header {
+    width: calc(100% - var(--main-header-height));
+    height: var(--main-header-height);
 
-        margin-left: vars.$main-nav-width;
+    margin-left: var(--main-nav-width);
 
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        &__controls {
-            padding-right: 1rem;
-        }
+    &__controls {
+      padding-right: 1rem;
+    }
 
-        @include utils.media-query('t') {
-            height: vars.$main-header-big-height;
-            width: calc(100% - vars.$main-nav-big-width);
-            margin-left: vars.$main-nav-big-width;
-
-            &__controls {
-                padding-right: 2rem;
-            }
-        }
+    @include utils.media-query('t') {
+      &__controls {
+        padding-right: 2rem;
+      }
     }
 
     h1 {
-        font-size: typo.$text-2xl;
-        font-weight: 300;
-        text-transform: uppercase;
+      font-size: typo.$text-2xl;
+      font-weight: 300;
+      text-transform: uppercase;
 
-        @include utils.media-query('t') {
-            font-size: typo.$text-3xl;
-        }
+      @include utils.media-query('t') {
+        font-size: typo.$text-3xl;
+      }
     }
+  }
+
+  .main {
+    position: relative;
+    width: 100%;
+    height: calc(utils.getRealVh(100) - var(--main-header-height));
+
+    padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }

@@ -5,8 +5,9 @@
 $dark-theme: mat.define-theme((
   color: (
     theme-type: dark,
-    primary: mat.$red-palette,
+    primary: mat.$chartreuse-palette,
   ),
+
   typography: (
     plain-family: 'Inter',
     brand-family: 'Inter',
@@ -19,13 +20,30 @@ $dark-theme: mat.define-theme((
 html {
   @include mat.core-theme($dark-theme);
   @include mat.button-theme($dark-theme);
+  @include mat.fab-theme($dark-theme);
   @include mat.input-theme($dark-theme);
   @include mat.form-field-theme($dark-theme);
   @include mat.sidenav-theme($dark-theme);
   @include mat.slide-toggle-theme($dark-theme);
   @include mat.dialog-theme($dark-theme);
 
+  // Overrides
+
   --mdc-filled-button-container-height: 3rem;
+  --mdc-protected-button-container-height: 3rem;
+  --mdc-text-button-container-height: 3rem;
+  --mat-dialog-container-max-width: 640px;
+
+  --mdc-fab-container-shape: 0.5rem;
+
+  // Custom colors
+
+  --snack-bar-error: #dd0808;
+  --snack-bar-warning: #d47d0a;
+  --snack-bar-info: #69dd64;
+
+  --lists-item-color-bg: #323232;
+  --lists-item-input-color-bg: #2b2b2b;
 
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);

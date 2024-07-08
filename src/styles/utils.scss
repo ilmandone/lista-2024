@@ -1,3 +1,7 @@
+@mixin customEl {
+  display: block;
+}
+
 @function getRealVh($val) {
   @return calc(var(--vh) * $val);
 }
@@ -5,8 +9,8 @@
 // Z index
 
 $z-indexes: (
-  "main-menu": 9998,
-  "loader": 9999
+  "main-menu": 2998,
+  "loader": 2999
 );
 
 @function getZ($key) {
@@ -34,4 +38,23 @@ $media-map: (
       @content;
     }
   }
+}
+
+@mixin media-touch() {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+@mixin media-pointer() {
+  @media (hover: hover) and (pointer: fine){
+    @content
+  }
+}
+
+@mixin text-not-selectable() {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Standard syntax */
 }

@@ -1,36 +1,43 @@
-@use "~styles/utils.scss";
-@use "~styles/typo.scss";
+@use '~styles/utils.scss';
+@use '~styles/typo.scss';
 
 :host {
+  @include utils.customEl;
+
   .hero {
-    position: relative;
-    width: 100vw;
-    height: utils.getRealVh(25);
-
-    display: block;
-
-    &__img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-    }
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: utils.getRealVh(42);
   }
 
   main {
-    height: utils.getRealVh(75);
+    position: relative;
+    height: utils.getRealVh(65);
+    width: 85vw;
+
+    margin: utils.getRealVh(30) auto 0;
+    padding-top: utils.getRealVh(5);
+
+    background-color: var(--mat-app-background-color);
+
+    border-radius: 1rem;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 
     h1 {
-      font-size: typo.$text-4xl;
-      font-weight: 200;
+      font-size: typo.$text-3xl;
+      font-weight: 300;
+      text-transform: uppercase;
+      color: var(--mdc-filled-button-container-color);
     }
 
     .login-form {
-      margin-top: 0.5rem;
+      margin-top: 1rem;
 
       display: flex;
       flex-direction: column;
@@ -40,7 +47,11 @@
     .form-field {
       width: 80vw;
       max-width: 16rem;
-      margin: 1.5rem 0 0;
+      margin: 1.25rem 0 0;
+
+      &:first-child {
+        margin-top: 2.5rem;
+      }
     }
 
     .submit-wrapper {
@@ -55,7 +66,7 @@
   }
 
   .forgot-password {
-    margin: 2.5rem 0 0;
+    margin: utils.getRealVh(5) 0 0;
 
     font-size: typo.$text-sm;
     text-decoration: underline;

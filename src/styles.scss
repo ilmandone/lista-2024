@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use 'styles/vars.scss';
+@use 'styles/utils.scss';
+
 @import 'styles/typo.scss';
 
 @layer reset, custom;
@@ -53,7 +56,17 @@
 }
 
 @layer custom {
-  html, body { height: 100%; }
+
+  html {
+    --main-header-height: #{vars.$main-header-height};
+    --main-nav-width: #{vars.$main-nav-width};
+
+    @include utils.media-query('t') {
+      --main-header-height: #{vars.$main-header-big-height};
+      --main-nav-width: #{vars.$main-nav-big-width};
+    }
+  }
+
   body {
     margin: 0;
     font-family: Inter, "Helvetica Neue", sans-serif;
@@ -66,17 +79,17 @@
 
   // Snack bars
   .snack-bar--error {
-    background-color: #dd0808;
+    background-color: var(--snack-bar-error);
     color: white;
   }
 
   .snack-bar--warning {
-    background-color: #d47d0a;
+    background-color: var(--snack-bar-warning);
     color: white
   }
 
   .snack-bar--info {
-    background-color: #69dd64;
+    background-color: var(--snack-bar-info);
     color: black
   }
 }

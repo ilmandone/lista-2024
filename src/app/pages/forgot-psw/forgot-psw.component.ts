@@ -1,13 +1,14 @@
-import {Component, inject} from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common'
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MatError, MatFormField, MatLabel} from "@angular/material/form-field";
-import {MatInput} from "@angular/material/input";
-import {Nullable} from "../../shared/utils";
-import {LoaderComponent} from "../../components/loader/loader.component";
-import {MatButton} from "@angular/material/button";
-import {FirebaseService} from "../../shared/firebase.service";
-import {SnackBarService} from "../../shared/snack-bar.service";
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { MatButton } from "@angular/material/button";
+import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatInput } from "@angular/material/input";
+import { HeroImageComponent } from 'app/components/hero-image/hero-image.component';
+import { LoaderComponent } from "../../components/loader/loader.component";
+import { FirebaseService } from "../../data/firebase.service";
+import { Nullable } from "../../shared/common.interfaces";
+import { SnackBarService } from "../../shared/snack-bar.service";
 
 interface IForgotFG {
   email: FormControl<Nullable<string>>
@@ -24,8 +25,8 @@ interface IForgotFG {
     MatLabel,
     MatError,
     LoaderComponent,
-    MatButton,
-    NgOptimizedImage
+    MatButton,    
+    HeroImageComponent
   ],
   templateUrl: './forgot-psw.component.html',
   styleUrl: './forgot-psw.component.scss'

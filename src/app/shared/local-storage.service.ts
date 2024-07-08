@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Nullable} from "./utils";
+import {Nullable} from "./common.interfaces";
 
 @Injectable({
   providedIn: 'root'

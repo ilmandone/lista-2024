@@ -3,41 +3,48 @@
 
 
 :host {
+  @include utils.customEl;
+
   .hero {
-    position: relative;
-    width: 100vw;
-    height: utils.getRealVh(25);
-
-    display: block;
-
-    &__img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-    }
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: utils.getRealVh(42);
   }
 
   main{
-    height: utils.getRealVh(75);
-    margin: auto 0;
-    padding: 2rem;
+    position: relative;
+    height: utils.getRealVh(65);
+    width: 85vw;
+
+    margin: utils.getRealVh(30) auto 0;
+    padding-top: utils.getRealVh(5);
+
+    background-color: var(--mat-app-background-color);
+
+    border-radius: 1rem;
 
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
+
 
     h1 {
-      font-size: typo.$text-4xl;
-      font-weight: 200;
+      padding: 0 2.5rem;
+      font-size: typo.$text-2xl;
+      font-weight: 300;
       color: var(--mdc-filled-button-container-color);
     }
 
     p.sub-title {
+      padding: 0 2.5rem;
       margin-top: 1rem;
     }
 
     p.submitted {
+      padding: 0 2.5rem;
       margin-top: 2rem;
     }
 
