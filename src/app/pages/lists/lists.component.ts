@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { ListsData } from 'app/data/firebase.interfaces'
+import { ListData, ListsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
@@ -24,15 +24,14 @@ import { ListsConfirmDialogComponent } from './lists.confirm.dialog/lists.confir
   styleUrl: './lists.component.scss'
 })
 export class ListsComponent implements OnInit {
+  listsData = signal<Nullable<ListsData>>(null)
+  itemsChanges: IListsItemChanges[] = []
+  editModeOn = false
+  disabled = false
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
   private _listDataCache!: Nullable<ListsData>
-
-  listsData = signal<Nullable<ListsData>>(null)
-  itemChanges: IListsItemChanges[] = []
-  editModeOn = false
-  disabled = false
 
   constructor() {
     effect(() => {
@@ -50,50 +49,6 @@ export class ListsComponent implements OnInit {
 
   //#region Data
 
-  private _saveLists(): void {
-    this._firebaseSrv.updateLists(this.itemChanges).then(r => {
-      this.listsData.set(r)
-    })
-  }
-
-  //#endregion
-
-  //#region Privates
-
-  private _deleteFromLists(updateData:IListsItemChanges, listsData: ListsData): ListsData {
-    const newListData = cloneDeep(listsData)
-    const index = newListData?.findIndex(list => list.UUID === updateData.UUID)
-
-    if (index >= 0) {
-      newListData.splice(index,  1)
-    }
-
-    return newListData
-  }
-
-  /**
-   * Update the item in listsData and return a new list
-   * @param {IListsItemChanges} updateData
-   * @param {ListsData} listsData
-   * @return {ListsData}
-   * @private
-   */
-  private _updateLists(updateData:IListsItemChanges, listsData: ListsData): ListsData {
-    const newListData = cloneDeep(listsData)
-    const item = newListData?.find(list => list.UUID === updateData.UUID)
-
-    if (item) {
-      item.position = updateData.position
-      item.label = updateData.label
-    }
-
-    return newListData
-  }
-
-  //#endregion
-
-  //#region Interactions
-
   /**
    * Top button click
    * @description Start edit mode | Open the create new dialog
@@ -102,17 +57,30 @@ export class ListsComponent implements OnInit {
     if (!this.editModeOn) {
       this._listDataCache = cloneDeep(this.listsData())
       this.editModeOn = true
-    }
-    else this.openCreateNew()
+    } else this.openCreateNew()
   }
+
+  //#endregion
+
+  //#region Privates
 
   /**
    * Open dialog for new list
+   * @description On confirm true add the new list in f/e data and update itemsChanges
    */
   openCreateNew() {
     const dr = this._dialog.open(NewListsDialogComponent)
+
     dr.afterClosed().subscribe((result) => {
-      console.log('NEW LIST NAME: ', result)
+      if (result) {
+        const {
+          itemChange,
+          newListsData
+        } = this._createNewList(result, this.listsData() as ListsData)
+
+        this.listsData.set(newListsData)
+        this.itemsChanges.push(itemChange)
+      }
     })
   }
 
@@ -121,8 +89,8 @@ export class ListsComponent implements OnInit {
    * @param {IListsItemChanges} $event
    */
   itemChanged($event: IListsItemChanges) {
-    // Add the changes in the itemChanges list
-    this.itemChanges.push($event)
+    // Add the changes in the itemsChanges list
+    this.itemsChanges.push($event)
 
     // Update the f/e list data
     const d = this._updateLists($event, this.listsData() as ListsData)
@@ -130,7 +98,7 @@ export class ListsComponent implements OnInit {
   }
 
   itemDeleted($event: IListsItemChanges) {
-    this.itemChanges.push($event)
+    this.itemsChanges.push($event)
 
     // Update the f/e list data
     const d = this._deleteFromLists($event, this.listsData() as ListsData)
@@ -139,18 +107,18 @@ export class ListsComponent implements OnInit {
 
   //#endregion
 
-  //#region Edit mode
+  //#region Interactions
 
   /**
    * Confirm editing
    */
   onConfirm() {
-    const hasDeleteActions = this.itemChanges.some(item => item.crud === 'delete')
+    const hasDeleteActions = this.itemsChanges.some(item => item.crud === 'delete')
 
     if (hasDeleteActions) {
       const dr = this._dialog.open(ListsConfirmDialogComponent)
       dr.afterClosed().subscribe((result) => {
-        if(result) this._saveLists()
+        if (result) this._saveLists()
         this.editModeOn = false
       })
 
@@ -166,8 +134,83 @@ export class ListsComponent implements OnInit {
    */
   onCancel() {
     this.listsData.set(this._listDataCache)
-    this.itemChanges = []
+    this.itemsChanges = []
     this.editModeOn = false
+  }
+
+  private _saveLists(): void {
+    this._firebaseSrv.updateLists(this.itemsChanges).then(r => {
+      this.listsData.set(r)
+    })
+  }
+
+  private _createNewList(name: string, listsData: ListsData): {
+    newListsData: ListsData,
+    itemChange: IListsItemChanges
+  } {
+    const newListsData = cloneDeep(listsData)
+    const position = newListsData.length
+    const basic = {
+      UUID: '--',
+      label: name,
+      position
+    }
+
+    const item: ListData = {
+      ...basic,
+      updated: this._firebaseSrv.gewNewTimeStamp(),
+      items: []
+    }
+    newListsData.push(item)
+
+    const itemChange: IListsItemChanges = {
+      ...basic,
+      crud: 'create'
+    }
+
+    return { newListsData, itemChange }
+
+  }
+
+  //#endregion
+
+  //#region Edit mode
+
+  /**
+   * Remove a list from listsData and return a new list
+   * @param {IListsItemChanges} updateData
+   * @param {ListsData} listsData
+   * @return ListsData
+   * @private
+   */
+  private _deleteFromLists(updateData: IListsItemChanges, listsData: ListsData): ListsData {
+    const newListData = cloneDeep(listsData)
+    const index = newListData?.findIndex(list => list.UUID === updateData.UUID)
+
+    if (index >= 0) {
+      newListData.splice(index, 1)
+    }
+
+    return newListData
+  }
+
+  /**
+   * Update the item in listsData and return a new list
+   * @param {IListsItemChanges} updateData
+   * @param {ListsData} listsData
+   * @return {ListsData}
+   * @private
+   */
+  private _updateLists(updateData: IListsItemChanges, listsData: ListsData): ListsData {
+    const newListData = cloneDeep(listsData)
+    const item = newListData?.find(list => list.UUID === updateData.UUID)
+
+    if (item) {
+      item.position = updateData.position
+      item.label = updateData.label
+    }
+
+    return newListData
   }
 
   //#endregion
