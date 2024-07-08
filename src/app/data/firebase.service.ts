@@ -193,6 +193,8 @@ export class FirebaseService {
       batch.update(d, { updated: serverTimestamp() })
     }
 
+    // TODO: sanitize all item positions
+
     await batch.commit()
     return this.loadLists()
   }

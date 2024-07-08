@@ -191,6 +191,8 @@ export class ListsComponent implements OnInit {
       newListData.splice(index, 1)
     }
 
+    // TODO: Update all the f/e position values
+
     return newListData
   }
 
