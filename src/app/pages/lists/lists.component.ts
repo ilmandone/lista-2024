@@ -13,6 +13,8 @@ import { FocusInputService } from '../../shared/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 
 import { cloneDeep } from 'lodash'
+import { LogoutDialogComponent } from '../main/logout.dialog/logout.dialog.component'
+import { ListsConfirmDialogComponent } from './lists.confirm.dialog/lists.confirm.dialog.component'
 
 @Component({
   selector: 'app-lists',
@@ -49,13 +51,13 @@ export class ListsComponent implements OnInit {
 
   //#region Data
 
-  //#endregin
-
   private _saveLists(): void {
     this._firebaseSrv.updateLists(this.itemChanges).then(r => {
       this.listsData.set(r)
     })
   }
+
+  //#endregion
 
   //#region Privates
 
@@ -148,7 +150,11 @@ export class ListsComponent implements OnInit {
     const hasDeleteActions = this.itemChanges.some(item => item.crud === 'delete')
 
     if (hasDeleteActions) {
-      console.log('show delete dialog confirm')
+      const dr = this._dialog.open(ListsConfirmDialogComponent)
+      dr.afterClosed().subscribe((result) => {
+        console.log(result)
+      })
+
     } else {
       this._saveLists()
       this.editModeOn = false
