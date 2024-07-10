@@ -19,7 +19,7 @@
       <!--Lists-->
       @for (data of listsData(); track data.UUID) {
         <app-lists-item [data]="data" [editModeOn]="editModeOn" (changed)="itemChanged($event)"
-                        (deleted)="itemDeleted($event)"></app-lists-item>
+                        (deleted)="itemChanged($event)"></app-lists-item>
       }
     } @else {
       <!--No lists -> show placeholder-->

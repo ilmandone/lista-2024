@@ -166,7 +166,9 @@ export class ListsComponent implements OnInit {
 
     dr.afterClosed().subscribe((result) => {
       if (result) {
-       this.itemNew(result)
+        const {changes, newListsData} = this._addInListData(result, this.listsData() as ListsData)
+        this.listsData.set(newListsData)
+        this.itemsChanges = this.itemsChanges.concat(changes)
       }
     })
   }
@@ -176,31 +178,14 @@ export class ListsComponent implements OnInit {
   //#region Editing
 
   /**
-   * Update listsData and add a change
+   * Update or delete list in listsData and add changes
    * @param {IListsItemChanges} $event
    */
   itemChanged($event: IListsItemChanges) {
-    const {changes, newListsData} = this._updateInListData($event, this.listsData() as ListsData)
-    this.listsData.set(newListsData)
-    this.itemsChanges = this.itemsChanges.concat(changes)
-  }
-
-  /**
-   * Delete a list in listsData and add a change
-   * @param {IListsItemChanges} $event
-   */
-  itemDeleted($event: IListsItemChanges) {
-    const {changes, newListsData} = this._deleteInListData($event, this.listsData() as ListsData)
-    this.listsData.set(newListsData)
-    this.itemsChanges = this.itemsChanges.concat(changes)
-  }
-
-  /**
-   * Add a list in listsData and add a change
-   * @param {string} label
-   */
-  itemNew(label: string) {
-    const {changes, newListsData} = this._addInListData(label, this.listsData() as ListsData)
+    const {changes, newListsData} =
+      $event.crud === 'update'
+        ? this._updateInListData($event, this.listsData() as ListsData)
+        : this._deleteInListData($event, this.listsData() as ListsData)
     this.listsData.set(newListsData)
     this.itemsChanges = this.itemsChanges.concat(changes)
   }
