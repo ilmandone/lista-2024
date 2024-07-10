@@ -9,6 +9,7 @@ import { FocusInputComponent } from 'app/components/focus-input/focus-input.comp
 import { FocusInputService } from '../../../shared/focus-input.service'
 import { Nullable } from '../../../shared/common.interfaces'
 import { FirebaseService } from '../../../data/firebase.service'
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 
 export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
   crud: 'create' | 'update' | 'delete',
@@ -25,20 +26,24 @@ export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
-    FocusInputComponent
+    FocusInputComponent,
+    CdkDragHandle
   ],
   templateUrl: './lists.item.component.html',
   styleUrl: './lists.item.component.scss'
 })
 export class ListsItemComponent implements OnInit {
+  private readonly _firebaseSrv = inject(FirebaseService)
+  readonly focusSrv = inject(FocusInputService)
+
   data = input.required<ListData>()
   editModeOn = input.required<boolean>()
+
   changed = output<IListsItemChanges>()
   deleted = output<IListsItemChanges>()
-  focusSrv = inject(FocusInputService)
+
   disabled = false
   time!: Date
-  private _firebaseSrv = inject(FirebaseService)
 
   constructor() {
     effect(() => {

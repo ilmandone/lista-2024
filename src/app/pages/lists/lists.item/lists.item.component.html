@@ -6,22 +6,26 @@
   [class.editing]="editModeOn()"
   [matRippleDisabled]="editModeOn()"
 >
-  <!--  Jolly button-->
+  <!--  Drag button -->
   @if (editModeOn()) {
-    <button mat-icon-button [title]="'Jolly button'" [disabled]="disabled" (click)="deleteList()">
+    <button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled"
+            (click)="deleteList()">
       <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
     </button>
   }
 
   <!--  Label-->
-  <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.id() )" [key]="data().UUID"
-                   [value]="data().label" (changed)="itemLabelChanged($event)"/>
+  <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.id() )"
+                   [key]="data().UUID"
+                   [value]="data().label" (changed)="itemLabelChanged($event)" />
 
   <!--  Time or delete button-->
   @if (!editModeOn()) {
-    <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}:{{ time.getMinutes() }}</span>
+    <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}
+      :{{ time.getMinutes() }}</span>
   } @else {
-    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()" [disabled]="disabled">
+    <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()"
+            [disabled]="disabled">
       <mat-icon [fontIcon]="'delete'"></mat-icon>
     </button>
   }

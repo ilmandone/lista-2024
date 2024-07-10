@@ -31,14 +31,17 @@ import {
   styleUrl: './lists.component.scss'
 })
 export class ListsComponent implements OnInit {
-  listsData = signal<Nullable<ListsData>>(null)
-  itemsChanges: IListsItemChanges[] = []
-  editModeOn = false
-  disabled = false
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
   private _listDataCache!: Nullable<ListsData>
+
+  listsData = signal<Nullable<ListsData>>(null)
+
+  disabled = false
+  dragEnable = false
+  editModeOn = false
+  itemsChanges: IListsItemChanges[] = []
 
   constructor() {
     effect(() => {
@@ -169,6 +172,18 @@ export class ListsComponent implements OnInit {
   //#region Interactions
 
   /**
+   * Drag and drop
+   * @param {CdkDragDrop<ListData[]>} $event
+   */
+  listsDrop($event: CdkDragDrop<ListData[]>) {
+    const ld = this.listsData()
+    if (ld)
+      moveItemInArray(ld,  $event.previousIndex, $event.currentIndex);
+    this.listsData.set(ld)
+    this.dragEnable = false
+  }
+
+  /**
    * Open dialog for new list
    * @description On confirm true add the new list in f/e data and update itemsChanges
    */
@@ -231,10 +246,4 @@ export class ListsComponent implements OnInit {
   }
 
   //#endregion
-  listsDrop($event: CdkDragDrop<ListData[]>) {
-    const ld = this.listsData()
-    if (ld)
-      moveItemInArray(ld,  $event.previousIndex, $event.currentIndex);
-    this.listsData.set(ld)
-  }
 }
