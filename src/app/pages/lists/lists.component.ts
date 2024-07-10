@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { ListData, ListsData } from 'app/data/firebase.interfaces'
+import { ListsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
@@ -50,35 +50,39 @@ export class ListsComponent implements OnInit {
   //#region Privates
 
   /**
+   * Update lists on db and refresh the view
+   * @private
+   */
+  private _saveLists(): void {
+    this._firebaseSrv.updateLists(this.itemsChanges).then(r => this.listsData.set(r))
+  }
+
+  /**
    * Update the list in f/e data
    * @param {string} label
    * @param {ListsData} data
    * @return New lists data and changes
    * @private
    */
-  private _addInListData(label:string, data: ListsData): {
+  private _addInListData(label: string, data: ListsData): {
     newListsData: ListsData,
     changes: IListsItemChanges[]
   } {
     const newListsData = cloneDeep(data)
-    const b = {
+    const newItem = {
       UUID: self.crypto.randomUUID(),
       label,
-      position: this.listsData()?.length || 1
-    }
-
-    newListsData.push({
-      ...b,
+      position: (this.listsData()?.length ?? 0) + 1,
       items: null,
       updated: this._firebaseSrv.gewNewTimeStamp()
-    })
-
-    const change: IListsItemChanges = {
-      ...b,
-      crud: 'create',
     }
 
-    return {newListsData, changes: [change]}
+    newListsData.push(newItem)
+
+    return {
+      newListsData,
+      changes: [{ UUID: newItem.UUID, label, position: newItem.position, crud: 'create' }]
+    }
   }
 
   /**
@@ -166,7 +170,7 @@ export class ListsComponent implements OnInit {
 
     dr.afterClosed().subscribe((result) => {
       if (result) {
-        const {changes, newListsData} = this._addInListData(result, this.listsData() as ListsData)
+        const { changes, newListsData } = this._addInListData(result, this.listsData() as ListsData)
         this.listsData.set(newListsData)
         this.itemsChanges = this.itemsChanges.concat(changes)
       }
@@ -182,7 +186,7 @@ export class ListsComponent implements OnInit {
    * @param {IListsItemChanges} $event
    */
   itemChanged($event: IListsItemChanges) {
-    const {changes, newListsData} =
+    const { changes, newListsData } =
       $event.crud === 'update'
         ? this._updateInListData($event, this.listsData() as ListsData)
         : this._deleteInListData($event, this.listsData() as ListsData)
@@ -199,12 +203,12 @@ export class ListsComponent implements OnInit {
     if (hasDeleteActions) {
       const dr = this._dialog.open(ListsConfirmDialogComponent)
       dr.afterClosed().subscribe((result) => {
-        // if (result) this._saveLists()
+        if (result) this._saveLists()
         this.editModeOn = false
       })
 
     } else {
-      // this._saveLists()
+      this._saveLists()
       this.editModeOn = false
     }
   }

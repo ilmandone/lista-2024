@@ -17,7 +17,6 @@ import {
   getFirestore,
   orderBy,
   query,
-  serverTimestamp,
   Timestamp,
   writeBatch
 } from 'firebase/firestore'
