@@ -188,10 +188,16 @@ export class ListsComponent implements OnInit {
     const index = newListData?.findIndex(list => list.UUID === updateData.UUID)
 
     if (index >= 0) {
+      const delItemPosition = newListData[index].position
       newListData.splice(index, 1)
-    }
 
-    // TODO: Update all the f/e position values
+      for (const i in newListData) {
+        if (newListData[i].position > delItemPosition) {
+          newListData[i].position = newListData[i].position - 1
+          // TODO: add to a itemChange list the new item -> for db update
+        }
+      }
+    }
 
     return newListData
   }
