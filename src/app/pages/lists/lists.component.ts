@@ -49,6 +49,45 @@ export class ListsComponent implements OnInit {
 
   //#region Privates
 
+  /**
+   * Update the list in f/e data
+   * @param {string} label
+   * @param {ListsData} data
+   * @return New lists data and changes
+   * @private
+   */
+  private _addInListData(label:string, data: ListsData): {
+    newListsData: ListsData,
+    changes: IListsItemChanges[]
+  } {
+    const newListsData = cloneDeep(data)
+    const b = {
+      UUID: self.crypto.randomUUID(),
+      label,
+      position: this.listsData()?.length || 1
+    }
+
+    newListsData.push({
+      ...b,
+      items: null,
+      updated: this._firebaseSrv.gewNewTimeStamp()
+    })
+
+    const change: IListsItemChanges = {
+      ...b,
+      crud: 'create',
+    }
+
+    return {newListsData, changes: [change]}
+  }
+
+  /**
+   * Update the list in f/e data
+   * @param {IListsItemChanges} change
+   * @param {ListsData} data
+   * @return New lists data and changes
+   * @private
+   */
   private _updateInListData(change: IListsItemChanges, data: ListsData): {
     newListsData: ListsData,
     changes: IListsItemChanges[]
@@ -64,6 +103,13 @@ export class ListsComponent implements OnInit {
     return { newListsData, changes: [change] }
   }
 
+  /**
+   * Delete the list from the f/e data
+   * @param {IListsItemChanges} change
+   * @param {ListsData} data
+   * @return New lists data and changes
+   * @private
+   */
   private _deleteInListData(change: IListsItemChanges, data: ListsData): {
     newListsData: ListsData,
     changes: IListsItemChanges[]
@@ -120,7 +166,7 @@ export class ListsComponent implements OnInit {
 
     dr.afterClosed().subscribe((result) => {
       if (result) {
-       // TODO: CREATE A NEW LIST
+       this.itemNew(result)
       }
     })
   }
@@ -130,24 +176,33 @@ export class ListsComponent implements OnInit {
   //#region Editing
 
   /**
-   * Generic update for front-end data
+   * Update listsData and add a change
    * @param {IListsItemChanges} $event
    */
   itemChanged($event: IListsItemChanges) {
     const {changes, newListsData} = this._updateInListData($event, this.listsData() as ListsData)
-
     this.listsData.set(newListsData)
     this.itemsChanges = this.itemsChanges.concat(changes)
-    console.log(newListsData)
-    console.log(this.itemsChanges)
   }
 
+  /**
+   * Delete a list in listsData and add a change
+   * @param {IListsItemChanges} $event
+   */
   itemDeleted($event: IListsItemChanges) {
     const {changes, newListsData} = this._deleteInListData($event, this.listsData() as ListsData)
-
     this.listsData.set(newListsData)
     this.itemsChanges = this.itemsChanges.concat(changes)
-    console.log(this.itemsChanges)
+  }
+
+  /**
+   * Add a list in listsData and add a change
+   * @param {string} label
+   */
+  itemNew(label: string) {
+    const {changes, newListsData} = this._addInListData(label, this.listsData() as ListsData)
+    this.listsData.set(newListsData)
+    this.itemsChanges = this.itemsChanges.concat(changes)
   }
 
   /**
