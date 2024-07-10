@@ -47,7 +47,54 @@ export class ListsComponent implements OnInit {
     })
   }
 
-  //#region Data
+  //#region Privates
+
+  private _updateInListData(change: IListsItemChanges, data: ListsData): {
+    newListsData: ListsData,
+    changes: IListsItemChanges[]
+  } {
+    const newListsData = cloneDeep(data)
+    const item = newListsData.find(list => list.UUID === change.UUID)
+
+    if (item) {
+      item.label = change.label
+      item.position = change.position
+    }
+
+    return { newListsData, changes: [change] }
+  }
+
+  private _deleteInListData(change: IListsItemChanges, data: ListsData): {
+    newListsData: ListsData,
+    changes: IListsItemChanges[]
+  } {
+    const newListsData = cloneDeep(data)
+    const changes: IListsItemChanges[] = [change]
+    const i = newListsData.findIndex(list => list.UUID === change.UUID)
+
+    if (i !== -1) {
+      newListsData.splice(i, 1)
+    }
+
+    // Update all the positions -> following position changes will use this information
+    newListsData.forEach(list => {
+      if (list.position > change.position) {
+        list.position -= 1
+        changes.push({
+          UUID: list.UUID,
+          label: list.label,
+          position: list.position,
+          crud: 'update'
+        })
+      }
+    })
+
+    return { newListsData, changes }
+  }
+
+  //#endregion
+
+  //#region Main
 
   /**
    * Top button click
@@ -62,7 +109,7 @@ export class ListsComponent implements OnInit {
 
   //#endregion
 
-  //#region Privates
+  //#region Interactions
 
   /**
    * Open dialog for new list
@@ -73,41 +120,35 @@ export class ListsComponent implements OnInit {
 
     dr.afterClosed().subscribe((result) => {
       if (result) {
-        const {
-          itemChange,
-          newListsData
-        } = this._createNewList(result, this.listsData() as ListsData)
-
-        this.listsData.set(newListsData)
-        this.itemsChanges.push(itemChange)
+       // TODO: CREATE A NEW LIST
       }
     })
   }
+
+  //#endregion
+
+  //#region Editing
 
   /**
    * Generic update for front-end data
    * @param {IListsItemChanges} $event
    */
   itemChanged($event: IListsItemChanges) {
-    // Add the changes in the itemsChanges list
-    this.itemsChanges.push($event)
+    const {changes, newListsData} = this._updateInListData($event, this.listsData() as ListsData)
 
-    // Update the f/e list data
-    const d = this._updateLists($event, this.listsData() as ListsData)
-    this.listsData.set(d)
+    this.listsData.set(newListsData)
+    this.itemsChanges = this.itemsChanges.concat(changes)
+    console.log(newListsData)
+    console.log(this.itemsChanges)
   }
 
   itemDeleted($event: IListsItemChanges) {
-    this.itemsChanges.push($event)
+    const {changes, newListsData} = this._deleteInListData($event, this.listsData() as ListsData)
 
-    // Update the f/e list data
-    const d = this._deleteFromLists($event, this.listsData() as ListsData)
-    this.listsData.set(d)
+    this.listsData.set(newListsData)
+    this.itemsChanges = this.itemsChanges.concat(changes)
+    console.log(this.itemsChanges)
   }
-
-  //#endregion
-
-  //#region Interactions
 
   /**
    * Confirm editing
@@ -118,12 +159,12 @@ export class ListsComponent implements OnInit {
     if (hasDeleteActions) {
       const dr = this._dialog.open(ListsConfirmDialogComponent)
       dr.afterClosed().subscribe((result) => {
-        if (result) this._saveLists()
+        // if (result) this._saveLists()
         this.editModeOn = false
       })
 
     } else {
-      this._saveLists()
+      // this._saveLists()
       this.editModeOn = false
     }
   }
@@ -136,89 +177,6 @@ export class ListsComponent implements OnInit {
     this.listsData.set(this._listDataCache)
     this.itemsChanges = []
     this.editModeOn = false
-  }
-
-  private _saveLists(): void {
-    this._firebaseSrv.updateLists(this.itemsChanges).then(r => {
-      this.listsData.set(r)
-    })
-  }
-
-  private _createNewList(name: string, listsData: ListsData): {
-    newListsData: ListsData,
-    itemChange: IListsItemChanges
-  } {
-    const newListsData = cloneDeep(listsData)
-    const position = newListsData.length
-    const basic = {
-      UUID: '--',
-      label: name,
-      position
-    }
-
-    const item: ListData = {
-      ...basic,
-      updated: this._firebaseSrv.gewNewTimeStamp(),
-      items: []
-    }
-    newListsData.push(item)
-
-    const itemChange: IListsItemChanges = {
-      ...basic,
-      crud: 'create'
-    }
-
-    return { newListsData, itemChange }
-
-  }
-
-  //#endregion
-
-  //#region Edit mode
-
-  /**
-   * Remove a list from listsData and return a new list
-   * @param {IListsItemChanges} updateData
-   * @param {ListsData} listsData
-   * @return ListsData
-   * @private
-   */
-  private _deleteFromLists(updateData: IListsItemChanges, listsData: ListsData): ListsData {
-    const newListData = cloneDeep(listsData)
-    const index = newListData?.findIndex(list => list.UUID === updateData.UUID)
-
-    if (index >= 0) {
-      const delItemPosition = newListData[index].position
-      newListData.splice(index, 1)
-
-      for (const i in newListData) {
-        if (newListData[i].position > delItemPosition) {
-          newListData[i].position = newListData[i].position - 1
-          // TODO: add to a itemChange list the new item -> for db update
-        }
-      }
-    }
-
-    return newListData
-  }
-
-  /**
-   * Update the item in listsData and return a new list
-   * @param {IListsItemChanges} updateData
-   * @param {ListsData} listsData
-   * @return {ListsData}
-   * @private
-   */
-  private _updateLists(updateData: IListsItemChanges, listsData: ListsData): ListsData {
-    const newListData = cloneDeep(listsData)
-    const item = newListData?.find(list => list.UUID === updateData.UUID)
-
-    if (item) {
-      item.position = updateData.position
-      item.label = updateData.label
-    }
-
-    return newListData
   }
 
   //#endregion

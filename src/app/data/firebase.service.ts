@@ -157,7 +157,6 @@ export class FirebaseService {
         lists.push(doc.data() as ListData)
       })
 
-      console.log(lists)
       return lists
 
     } catch (error) {
@@ -176,7 +175,12 @@ export class FirebaseService {
     const batch = writeBatch(this._db)
     const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
-    for (const change of changes) {
+    // Extract all the UUID of the deleted items to prevent useless updates
+    const deletedItems: string[] = changes.filter(c => c.crud === 'delete').map(c => c.UUID)
+
+    console.log(this._compactItemChanges(changes))
+
+    /*for (const change of changes) {
 
       const d = doc(mainCollection, change.UUID)
 
@@ -185,18 +189,35 @@ export class FirebaseService {
         continue
       }
 
-      if (change.crud === 'update') {
+      if (change.crud === 'update' && !deletedItems.includes(change.UUID)) {
         batch.update(d, change)
       }
 
       // update the data for new or updated list
       batch.update(d, { updated: serverTimestamp() })
-    }
+    }*/
 
     // TODO: sanitize all item positions
 
-    await batch.commit()
+    // await batch.commit()
     return this.loadLists()
+  }
+
+  private _compactItemChanges(itemChanges: IListsItemChanges[]): IListsItemChanges[] {
+    console.log('ORIGINAL ITEMS CHANGES:', itemChanges)
+    const finalItemChanges: IListsItemChanges[] = []
+
+    itemChanges.forEach(change => {
+      const existingIndex = finalItemChanges.findIndex(c => c.UUID === change.UUID && c.crud === change.crud)
+
+      if (existingIndex === -1) {
+        finalItemChanges.push(change)
+      } else {
+        itemChanges[existingIndex] = change
+      }
+    })
+
+    return finalItemChanges
   }
 
   //#endregion
