@@ -212,7 +212,7 @@ export class FirebaseService {
           label: change.label,
           position: change.position,
           UUID: change.UUID,
-          items: null,
+          items: [],
           updated: this.gewNewTimeStamp()
         })
       }
