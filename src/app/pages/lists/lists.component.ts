@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { ListsData } from 'app/data/firebase.interfaces'
+import { ListData, ListsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
@@ -14,12 +14,19 @@ import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-
 
 import { cloneDeep } from 'lodash'
 import { ListsConfirmDialogComponent } from './lists.confirm.dialog/lists.confirm.dialog.component'
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragPlaceholder,
+  CdkDropList,
+  moveItemInArray
+} from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'app-lists',
   standalone: true,
   imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent,
-    LoaderComponent, ConfirmCancelComponent],
+    LoaderComponent, ConfirmCancelComponent, CdkDrag, CdkDropList, CdkDragPlaceholder,],
   templateUrl: './lists.component.html',
   styleUrl: './lists.component.scss'
 })
@@ -224,4 +231,10 @@ export class ListsComponent implements OnInit {
   }
 
   //#endregion
+  listsDrop($event: CdkDragDrop<ListData[]>) {
+    const ld = this.listsData()
+    if (ld)
+      moveItemInArray(ld,  $event.previousIndex, $event.currentIndex);
+    this.listsData.set(ld)
+  }
 }
