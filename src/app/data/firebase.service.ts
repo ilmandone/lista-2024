@@ -124,6 +124,24 @@ export class FirebaseService {
 
   //#region DB
 
+  /**
+   * Keep only last changes for each list
+   * @param {IListsItemChanges} changes
+   * @private
+   */
+  private _optimizeChanges(changes: IListsItemChanges[]): IListsItemChanges[] {
+    const matchedUUID = new Set<string>()
+
+    return changes.reduceRight((acc, val) => {
+      if (!matchedUUID.has(val.UUID)) {
+        matchedUUID.add(val.UUID)
+        acc.push(val)
+      }
+
+      return acc
+    }, [] as IListsItemChanges[])
+  }
+
   getDateFromTimeStamp(timeStamp: Timestamp): Date {
     return timeStamp.toDate()
   }
@@ -176,11 +194,9 @@ export class FirebaseService {
     const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
     // Extract all the UUID of the deleted items to prevent useless updates
-    const deletedItems: string[] = changes.filter(c => c.crud === 'delete').map(c => c.UUID)
+    const finalChanges = this._optimizeChanges(changes)
 
-    console.log(this._compactItemChanges(changes))
-
-    /*for (const change of changes) {
+    for (const change of finalChanges) {
 
       const d = doc(mainCollection, change.UUID)
 
@@ -189,35 +205,22 @@ export class FirebaseService {
         continue
       }
 
-      if (change.crud === 'update' && !deletedItems.includes(change.UUID)) {
+      if (change.crud === 'update') {
         batch.update(d, change)
       }
-
-      // update the data for new or updated list
-      batch.update(d, { updated: serverTimestamp() })
-    }*/
-
-    // TODO: sanitize all item positions
-
-    // await batch.commit()
-    return this.loadLists()
-  }
-
-  private _compactItemChanges(itemChanges: IListsItemChanges[]): IListsItemChanges[] {
-    console.log('ORIGINAL ITEMS CHANGES:', itemChanges)
-    const finalItemChanges: IListsItemChanges[] = []
-
-    itemChanges.forEach(change => {
-      const existingIndex = finalItemChanges.findIndex(c => c.UUID === change.UUID && c.crud === change.crud)
-
-      if (existingIndex === -1) {
-        finalItemChanges.push(change)
-      } else {
-        itemChanges[existingIndex] = change
+      else {
+        batch.set(d,  {
+          label: change.label,
+          position: change.position,
+          UUID: change.UUID,
+          items: null,
+          updated: this.gewNewTimeStamp()
+        })
       }
-    })
+    }
 
-    return finalItemChanges
+    await batch.commit()
+    return this.loadLists()
   }
 
   //#endregion
