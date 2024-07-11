@@ -172,7 +172,8 @@ export class ListsComponent implements OnInit {
   //#region Interactions
 
   /**
-   * Drag and drop
+   * Drag and drop completed
+   * @description Update the data list order and save all the changes for the items position
    * @param {CdkDragDrop<ListData[]>} $event
    */
   listsDrop($event: CdkDragDrop<ListData[]>) {
