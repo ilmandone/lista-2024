@@ -13,8 +13,6 @@ import { CdkDragHandle } from '@angular/cdk/drag-drop'
 
 export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
   crud: 'create' | 'update' | 'delete',
-  isPassive?: boolean // Useful for a next undo behaviours -> all the passive change events will
-  // be reverted in an undo behaviour until a no passive one is found
 }
 
 @Component({

@@ -176,9 +176,26 @@ export class ListsComponent implements OnInit {
    * @param {CdkDragDrop<ListData[]>} $event
    */
   listsDrop($event: CdkDragDrop<ListData[]>) {
-    const ld = this.listsData()
-    if (ld)
-      moveItemInArray(ld,  $event.previousIndex, $event.currentIndex);
+    const ld = this.listsData() as ListsData
+    const cI = $event.currentIndex
+
+    // Update the list order
+    if (ld) {
+      moveItemInArray(ld, $event.previousIndex, cI)
+    }
+
+    // Update all position from start to current index
+    for (let i = 0; i <= cI; i ++) {
+      const list = ld[i]
+      list.position = i + 1
+      this.itemsChanges.push({
+        UUID: list.UUID,
+        label: list.label,
+        position: list.position,
+        crud: 'update',
+      })
+    }
+
     this.listsData.set(ld)
     this.dragEnable = false
   }
