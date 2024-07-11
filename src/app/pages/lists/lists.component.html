@@ -4,7 +4,8 @@
   </div>
   <div class="header__controls">
     @if (listsData()) {
-      <button mat-icon-button [title]="!editModeOn ? 'Edit lists': 'Create a new list'" [disabled]="disabled"
+      <button mat-icon-button [title]="!editModeOn ? 'Edit lists': 'Create a new list'"
+              [disabled]="disabled"
               (click)="clickTopButton()">
         <mat-icon [fontIcon]="!editModeOn ? 'edit' : 'add' "></mat-icon>
       </button>
@@ -12,13 +13,18 @@
   </div>
 </header>
 
-<main class="main">
+<main class="main" cdkDropList (cdkDropListDropped)="listsDrop($event)">
   @defer (when listsData() !== null) {
     @if (listsData()!.length > 0) {
       <!--Lists-->
       @for (data of listsData(); track data.UUID) {
-        <app-lists-item [data]="data" [editModeOn]="editModeOn"
-                        (changed)="itemChanged($event)"></app-lists-item>
+        <!--Drag box-->
+        <div cdkDrag class="drag-box" [cdkDragDisabled]="!editModeOn">
+          <app-lists-item [data]="data" [editModeOn]="editModeOn" (changed)="itemChanged($event)"
+                          (deleted)="itemChanged($event)"></app-lists-item>
+          <div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+        </div>
+
       }
     } @else {
       <!--No lists -> show placeholder-->
@@ -29,6 +35,6 @@
   }
 </main>
 
-@if(editModeOn) {
+@if (editModeOn) {
   <app-confirm-cancel (cancel)="onCancel()" (confirm)="onConfirm()"></app-confirm-cancel>
 }

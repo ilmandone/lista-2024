@@ -17,7 +17,6 @@ import {
   getFirestore,
   orderBy,
   query,
-  serverTimestamp,
   Timestamp,
   writeBatch
 } from 'firebase/firestore'
@@ -124,8 +123,30 @@ export class FirebaseService {
 
   //#region DB
 
+  /**
+   * Keep only last changes for each list
+   * @param {IListsItemChanges} changes
+   * @private
+   */
+  private _optimizeChanges(changes: IListsItemChanges[]): IListsItemChanges[] {
+    const matchedUUID = new Set<string>()
+
+    return changes.reduceRight((acc, val) => {
+      if (!matchedUUID.has(val.UUID)) {
+        matchedUUID.add(val.UUID)
+        acc.push(val)
+      }
+
+      return acc
+    }, [] as IListsItemChanges[])
+  }
+
   getDateFromTimeStamp(timeStamp: Timestamp): Date {
     return timeStamp.toDate()
+  }
+
+  gewNewTimeStamp(): Timestamp {
+    return Timestamp.now()
   }
 
   startDB() {
@@ -153,7 +174,6 @@ export class FirebaseService {
         lists.push(doc.data() as ListData)
       })
 
-      console.log(lists)
       return lists
 
     } catch (error) {
@@ -162,7 +182,7 @@ export class FirebaseService {
   }
 
   /**
-   * Create, update or delete a list
+   * update or delete a list
    * @description On batch commit return the loadList function
    * @param {IListsItemChanges[]} changes
    * @return {Promise<ListsData>}
@@ -172,22 +192,30 @@ export class FirebaseService {
     const batch = writeBatch(this._db)
     const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
-    for (const change of changes) {
-      const d = doc(mainCollection, change.UUID)
-      if (change.crud === 'delete')
-        // TODO DELETE
-        continue
+    // Extract all the UUID of the deleted items to prevent useless updates
+    const finalChanges = this._optimizeChanges(changes)
 
-      if (change.crud === 'create') {
-        console.log('CREATE')
+    for (const change of finalChanges) {
+
+      const d = doc(mainCollection, change.UUID)
+
+      if (change.crud === 'delete') {
+        batch.delete(d)
+        continue
       }
 
       if (change.crud === 'update') {
         batch.update(d, change)
       }
-
-      // update the data for new or updated list
-      batch.update(d, { updated: serverTimestamp() })
+      else {
+        batch.set(d,  {
+          label: change.label,
+          position: change.position,
+          UUID: change.UUID,
+          items: [],
+          updated: this.gewNewTimeStamp()
+        })
+      }
     }
 
     await batch.commit()

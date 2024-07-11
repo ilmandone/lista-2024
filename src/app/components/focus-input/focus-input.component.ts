@@ -55,7 +55,6 @@ export class FocusInputComponent {
     }
     // Valid value -> emit change
     else {
-      console.log(this.fC.value)
       this.changed.emit(this.fC.value)
     }
 

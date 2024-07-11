@@ -9,34 +9,39 @@ import { FocusInputComponent } from 'app/components/focus-input/focus-input.comp
 import { FocusInputService } from '../../../shared/focus-input.service'
 import { Nullable } from '../../../shared/common.interfaces'
 import { FirebaseService } from '../../../data/firebase.service'
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 
-export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {crud: 'create' | 'update' | 'delete'}
+export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
+  crud: 'create' | 'update' | 'delete',
+}
 
 @Component({
-	selector: 'app-lists-item',
-	standalone: true,
-	imports: [
-		MatRippleModule,
-		MatInputModule,
-		MatFormFieldModule,
-		MatButtonModule,
-		MatIconModule,
-		FocusInputComponent
-	],
-	templateUrl: './lists.item.component.html',
-	styleUrl: './lists.item.component.scss',
+  selector: 'app-lists-item',
+  standalone: true,
+  imports: [
+    MatRippleModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    FocusInputComponent,
+    CdkDragHandle
+  ],
+  templateUrl: './lists.item.component.html',
+  styleUrl: './lists.item.component.scss'
 })
 export class ListsItemComponent implements OnInit {
-  private _firebaseSrv = inject(FirebaseService)
+  private readonly _firebaseSrv = inject(FirebaseService)
+  readonly focusSrv = inject(FocusInputService)
 
   data = input.required<ListData>()
-	editModeOn = input.required<boolean>()
+  editModeOn = input.required<boolean>()
 
   changed = output<IListsItemChanges>()
+  deleted = output<IListsItemChanges>()
 
-  focusSrv = inject(FocusInputService)
   disabled = false
-	time!: Date
+  time!: Date
 
   constructor() {
     effect(() => {
@@ -44,24 +49,29 @@ export class ListsItemComponent implements OnInit {
     })
   }
 
-	ngOnInit(): void {
-		this.time = this._firebaseSrv.getDateFromTimeStamp(this.data().updated)
-	}
+  ngOnInit(): void {
+    this.time = this._firebaseSrv.getDateFromTimeStamp(this.data().updated)
+  }
 
-	//#region Interactions
+  //#region Interactions
 
-	deleteList() {
-		console.log('DELETE THE LIST: ', this.data().label)
-	}
+  deleteList() {
+    this.deleted.emit({
+      label: this.data().label,
+      UUID: this.data().UUID,
+      position: this.data().position,
+      crud: 'delete'
+    })
+  }
 
   itemLabelChanged($event: Nullable<string>) {
     if ($event)
-    this.changed.emit({
-      label: $event,
-      UUID: this.data().UUID,
-      position: this.data().position,
-      crud: 'update'
-    })
+      this.changed.emit({
+        label: $event,
+        UUID: this.data().UUID,
+        position: this.data().position,
+        crud: 'update'
+      })
   }
 
   //#endregion
