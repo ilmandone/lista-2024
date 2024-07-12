@@ -21,6 +21,7 @@ import {
   CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop'
+import { MainLoaderService } from '../../shared/main-loader.service'
 
 @Component({
   selector: 'app-lists',
@@ -34,6 +35,8 @@ export class ListsComponent implements OnInit {
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
+  private readonly _mainLoaderSrv = inject(MainLoaderService)
+
   private _listDataCache!: Nullable<ListsData>
 
   listsData = signal<Nullable<ListsData>>(null)
@@ -51,20 +54,33 @@ export class ListsComponent implements OnInit {
 
   ngOnInit(): void {
     this._firebaseSrv.startDB()
-
-    this._firebaseSrv.loadLists().then((r) => {
-      this.listsData.set(r)
-    })
+    this._loadLists()
   }
 
   //#region Privates
+
+  /**
+   * Load lists and show loading main element
+   * @private
+   */
+  private _loadLists(): void {
+    this._mainLoaderSrv.showLoader.set(true)
+    this._firebaseSrv.loadLists().then((r) => {
+      this.listsData.set(r)
+      this._mainLoaderSrv.showLoader.set(false)
+    })
+  }
 
   /**
    * Update lists on db and refresh the view
    * @private
    */
   private _saveLists(): void {
-    this._firebaseSrv.updateLists(this.itemsChanges).then(r => this.listsData.set(r))
+    this._mainLoaderSrv.showLoader.set(true)
+    this._firebaseSrv.updateLists(this.itemsChanges).then(r => {
+      this.listsData.set(r)
+      this._mainLoaderSrv.showLoader.set(false)
+    })
   }
 
   /**
