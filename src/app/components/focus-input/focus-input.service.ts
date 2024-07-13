@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core'
-import { Nullable } from './common.interfaces'
+import { Nullable } from '../../shared/common.interfaces'
 
 @Injectable({
   providedIn: 'root'

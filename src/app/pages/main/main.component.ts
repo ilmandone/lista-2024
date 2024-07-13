@@ -10,20 +10,23 @@ import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/sl
 import { ThemeService } from '../../shared/theme.service'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { LogoutDialogComponent } from './logout.dialog/logout.dialog.component'
-import { FocusInputService } from '../../shared/focus-input.service'
+import { FocusInputService } from '../../components/focus-input/focus-input.service'
+import { LoaderComponent } from '../../components/loader/loader.component'
+import { MainStateService } from '../../shared/main-state.service'
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    MatSidenavModule,
-    CommonModule,
-    RouterOutlet,
-    MatIconModule,
-    MatButtonModule,
-    MatSlideToggleModule,
-    MatDialogModule
-  ],
+	imports: [
+		MatSidenavModule,
+		CommonModule,
+		RouterOutlet,
+		MatIconModule,
+		MatButtonModule,
+		MatSlideToggleModule,
+		MatDialogModule,
+		LoaderComponent
+	],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
@@ -33,6 +36,7 @@ export class MainComponent {
   private readonly _dialog = inject(MatDialog);
   private readonly _focusSrv = inject(FocusInputService)
 
+  readonly mainStateService = inject(MainStateService)
   readonly themeSrv = inject(ThemeService);
 
   disabled = false

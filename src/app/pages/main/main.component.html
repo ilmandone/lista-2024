@@ -15,7 +15,7 @@
           Groups
         </button>
 
-        <button class="btn" mat-button>
+        <button class="btn" mat-button (click)="mainStateService.triggerReload(); drawer.toggle()">
           <mat-icon [fontIcon]="'cached'"></mat-icon>
           Reload
         </button>
@@ -49,3 +49,13 @@
     <router-outlet></router-outlet>
   </mat-drawer-content>
 </mat-drawer-container>
+
+<!--Main loader-->
+@if(mainStateService.showLoader()) {
+  <div class="main-loader">
+    <div class="main-loader__content">
+      <app-loader [loading]="mainStateService.showLoader()" [mode]="'indeterminate'"></app-loader>
+    </div>
+  </div>
+}
+

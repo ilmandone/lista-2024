@@ -1,5 +1,5 @@
 import { Component, effect, HostBinding, inject, output } from '@angular/core'
-import { FocusInputService } from '../../shared/focus-input.service'
+import { FocusInputService } from '../focus-input/focus-input.service'
 import { MatButtonModule } from '@angular/material/button'
 
 @Component({
