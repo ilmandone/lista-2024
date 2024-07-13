@@ -1,6 +1,6 @@
 import { Component, effect, inject, input, output } from '@angular/core'
 import { MatInputModule } from '@angular/material/input'
-import { FocusInputService } from '../../shared/focus-input.service'
+import { FocusInputService } from './focus-input.service'
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Nullable } from '../../shared/common.interfaces'
 

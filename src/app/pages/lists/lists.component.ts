@@ -9,7 +9,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
 import { IListsItemChanges, ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
-import { FocusInputService } from '../../shared/focus-input.service'
+import { FocusInputService } from '../../components/focus-input/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 
 import { cloneDeep } from 'lodash'
@@ -21,7 +21,7 @@ import {
   CdkDropList,
   moveItemInArray
 } from '@angular/cdk/drag-drop'
-import { MainLoaderService } from '../../shared/main-loader.service'
+import { MainStateService } from '../../shared/main-state.service'
 
 @Component({
   selector: 'app-lists',
@@ -35,7 +35,7 @@ export class ListsComponent implements OnInit {
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
-  private readonly _mainLoaderSrv = inject(MainLoaderService)
+  private readonly _mainStateSrv = inject(MainStateService)
 
   private _listDataCache!: Nullable<ListsData>
 
@@ -50,6 +50,12 @@ export class ListsComponent implements OnInit {
     effect(() => {
       this.disabled = this._focusSrv.id() !== null
     })
+
+    effect(() => {
+      if (this._mainStateSrv.reload()) {
+        this._loadLists()
+      }
+    }, {allowSignalWrites: true})
   }
 
   ngOnInit(): void {
@@ -64,10 +70,10 @@ export class ListsComponent implements OnInit {
    * @private
    */
   private _loadLists(): void {
-    this._mainLoaderSrv.showLoader.set(true)
+    this._mainStateSrv.showLoader.set(true)
     this._firebaseSrv.loadLists().then((r) => {
       this.listsData.set(r)
-      this._mainLoaderSrv.showLoader.set(false)
+      this._mainStateSrv.showLoader.set(false)
     })
   }
 
@@ -76,10 +82,10 @@ export class ListsComponent implements OnInit {
    * @private
    */
   private _saveLists(): void {
-    this._mainLoaderSrv.showLoader.set(true)
+    this._mainStateSrv.showLoader.set(true)
     this._firebaseSrv.updateLists(this.itemsChanges).then(r => {
       this.listsData.set(r)
-      this._mainLoaderSrv.showLoader.set(false)
+      this._mainStateSrv.showLoader.set(false)
     })
   }
 
