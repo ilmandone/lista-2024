@@ -1,11 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { FirebaseService } from '../../data/firebase.service'
+import { MatIcon } from '@angular/material/icon'
+import { MatIconButton } from '@angular/material/button'
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [],
+  imports: [
+    MatIcon,
+    MatIconButton
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })

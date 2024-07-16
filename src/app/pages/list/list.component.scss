@@ -1,0 +1,42 @@
+@use "~styles/utils.scss";
+@use "~styles/vars.scss";
+@use "~styles/typo.scss";
+
+:host {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: utils.getRealVh(100);
+
+  .header {
+    width: calc(100% - var(--main-header-height));
+    height: var(--main-header-height);
+
+    margin-left: var(--main-nav-width);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__controls {
+      padding-right: 1rem;
+    }
+
+    @include utils.media-query('t') {
+      &__controls {
+        padding-right: 2rem;
+      }
+    }
+
+    h1 {
+      font-size: typo.$text-2xl;
+      font-weight: 300;
+
+      @include utils.media-query('t') {
+        font-size: typo.$text-3xl;
+      }
+    }
+  }
+}
