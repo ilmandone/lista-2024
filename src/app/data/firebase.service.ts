@@ -24,6 +24,7 @@ import {
 import { environment } from 'environments/environment.development'
 import { ListData, ListsData } from './firebase.interfaces'
 import { IListsItemChanges } from '../pages/lists/lists.item/lists.item.component'
+import { Nullable } from '../shared/common.interfaces'
 
 
 export interface IIsLogged {
@@ -51,12 +52,9 @@ export class FirebaseService {
   private _app!: FirebaseApp
   private _auth!: Auth
   private _db!: Firestore
-
   private _userData!: UserCredential
 
-  get userData() {
-    return this._userData
-  }
+  private _cachedList!:ListsData | undefined
 
   /**
    * Start the firebase connection
@@ -141,6 +139,11 @@ export class FirebaseService {
     }, [] as IListsItemChanges[])
   }
 
+  private _startDB() {
+    if (!this._app) throw new Error('App not initialized')
+    this._db = getFirestore(this._app)
+  }
+
   getDateFromTimeStamp(timeStamp: Timestamp): Date {
     return timeStamp.toDate()
   }
@@ -149,18 +152,17 @@ export class FirebaseService {
     return Timestamp.now()
   }
 
-  startDB() {
-    if (!this._app) throw new Error('App not initialized')
-    this._db = getFirestore(this._app)
-  }
-
   /**
    * Get lists from the database
+   * @description Save the list in cache for list pages
    * @returns Promise<ListsData>
    */
   async loadLists(): Promise<ListsData> {
 
     try {
+
+      if (!this._db) this._startDB()
+
       const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
       const q = query(mainCollection, orderBy('position'))
       const data = await getDocs(q)
@@ -174,9 +176,13 @@ export class FirebaseService {
         lists.push(doc.data() as ListData)
       })
 
+      // Save cache
+      this._cachedList = lists
+
       return lists
 
     } catch (error) {
+      this._cachedList = undefined
       throw new Error(error as string)
     }
   }
@@ -188,6 +194,8 @@ export class FirebaseService {
    * @return {Promise<ListsData>}
    */
   async updateLists(changes: IListsItemChanges[]): Promise<ListsData> {
+
+    if (!this._db) this._startDB()
 
     const batch = writeBatch(this._db)
     const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
@@ -221,6 +229,18 @@ export class FirebaseService {
 
     await batch.commit()
     return this.loadLists()
+  }
+
+  //#endregion
+
+  //#region Utils
+
+  async getListLabelByUUID(UUID: string): Promise<Nullable<string>> {
+    if (this._cachedList === undefined) {
+      await this.loadLists()
+    }
+
+    return this._cachedList?.find(list => list.UUID === UUID)?.label ?? null
   }
 
   //#endregion

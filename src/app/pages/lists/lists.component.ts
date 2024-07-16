@@ -59,7 +59,6 @@ export class ListsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._firebaseSrv.startDB()
     this._loadLists()
   }
 
