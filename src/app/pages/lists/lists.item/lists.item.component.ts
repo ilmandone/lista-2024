@@ -37,6 +37,7 @@ export class ListsItemComponent implements OnInit {
   data = input.required<ListData>()
   editModeOn = input.required<boolean>()
 
+  clicked = output<ListData>()
   changed = output<IListsItemChanges>()
   deleted = output<IListsItemChanges>()
 

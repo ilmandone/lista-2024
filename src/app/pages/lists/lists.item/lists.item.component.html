@@ -5,6 +5,7 @@
   [attr.role]="!editModeOn() ? 'button' : 'none'"
   [class.editing]="editModeOn()"
   [matRippleDisabled]="editModeOn()"
+  (click)="clicked.emit(data())"
 >
   <!--  Drag button -->
   @if (editModeOn()) {

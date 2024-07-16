@@ -22,6 +22,7 @@ import {
   moveItemInArray
 } from '@angular/cdk/drag-drop'
 import { MainStateService } from '../../shared/main-state.service'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-lists',
@@ -36,6 +37,7 @@ export class ListsComponent implements OnInit {
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
   private readonly _mainStateSrv = inject(MainStateService)
+  private readonly _route = inject(Router)
 
   private _listDataCache!: Nullable<ListsData>
 
@@ -191,6 +193,18 @@ export class ListsComponent implements OnInit {
   //#endregion
 
   //#region Interactions
+
+  /**
+   * Item click and jump to list page
+   * @param $event
+   */
+  itemClicked($event: ListData) {
+    void this._route.navigate([`main`, 'list', $event.UUID], {
+      state: {
+        label: $event.label,
+      }
+    })
+  }
 
   /**
    * Drag and drop completed
