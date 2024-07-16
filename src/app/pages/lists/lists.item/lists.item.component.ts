@@ -76,4 +76,7 @@ export class ListsItemComponent implements OnInit {
   }
 
   //#endregion
+  itemClicked() {
+    if (!this.editModeOn()) this.clicked.emit(this.data())
+  }
 }

@@ -25,7 +25,7 @@
 
   <!--  Time or delete button-->
   @if (!editModeOn()) {
-    <span class="item-button__time">{{ time.toLocaleDateString() }} {{ time.getHours() }}
+    <span class="item-button__time">{{ time.toLocaleDateString() }} <br> {{ time.getHours() }}
       :{{ time.getMinutes() }}</span>
   } @else {
     <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()"
