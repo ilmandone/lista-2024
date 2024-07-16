@@ -12,7 +12,7 @@ import { FirebaseService } from '../../../data/firebase.service'
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
 
 export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
-  crud: 'create' | 'update' | 'delete',
+  crud?: 'create' | 'update' | 'delete',
 }
 
 @Component({

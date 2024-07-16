@@ -24,6 +24,7 @@ import {
 import { environment } from 'environments/environment.development'
 import { ListData, ListsData } from './firebase.interfaces'
 import { IListsItemChanges } from '../pages/lists/lists.item/lists.item.component'
+import { cloneDeep } from 'lodash'
 
 
 export interface IIsLogged {
@@ -205,6 +206,7 @@ export class FirebaseService {
       }
 
       if (change.crud === 'update') {
+        delete change.crud
         batch.update(d, change)
       }
       else {
