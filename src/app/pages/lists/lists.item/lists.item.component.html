@@ -2,10 +2,13 @@
 <div
   class="item-button"
   mat-ripple
+  [attr.tabindex]="!editModeOn() ? 0 : -1"
   [attr.role]="!editModeOn() ? 'button' : 'none'"
   [class.editing]="editModeOn()"
   [matRippleDisabled]="editModeOn()"
-  (click)="clicked.emit(data())"
+  (click)="itemClicked()"
+  (keyup.enter)="itemClicked()"
+  (keyup.space)="itemClicked()"
 >
   <!--  Drag button -->
   @if (editModeOn()) {
