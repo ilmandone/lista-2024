@@ -30,5 +30,7 @@ export class ListComponent implements OnInit {
 
     if (!l) void this._router.navigate(['/main'])
     else this.label = l
+
+    this._firebaseSrv.loadList(this._UUID)
   }
 }
