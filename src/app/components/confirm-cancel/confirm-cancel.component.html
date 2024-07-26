@@ -1,7 +1,7 @@
 <button mat-button
-        [ngStyle]="{flexBasis: confirmSize() ? (100 - confirmSize()) + '%' : null}"
+        [ngStyle]="{flexBasis: 100 - confirmSize() + '%'}"
         (click)="cancel.emit()">{{ cancelLabel() ?? 'cancel' }}</button>
 <button mat-flat-button [color]="'accent'"
-        [ngStyle]="{flexBasis: confirmSize() ? confirmSize() + '%' : null}"
+        [ngStyle]="{flexBasis: confirmSize() + '%'}"
         (click)="confirm.emit()">{{ confirmLabel() ?? 'confirm' }}
 </button>

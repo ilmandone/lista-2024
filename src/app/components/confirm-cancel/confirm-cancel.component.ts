@@ -15,7 +15,7 @@ export class ConfirmCancelComponent {
 
   cancelLabel = input<string>()
   confirmLabel = input<string>()
-  confirmSize = input<number>()
+  confirmSize = input<number>(50)
 
   cancel = output()
   confirm = output()
