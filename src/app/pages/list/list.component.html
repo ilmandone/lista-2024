@@ -3,12 +3,9 @@
     <h1>{{label}}</h1>
   </div>
   <div class="header__controls">
-    <button mat-icon-button title="Shopping mode ">
-      <mat-icon [fontIcon]="'shopping_cart'"></mat-icon>
-    </button>
-    <!--<button mat-icon-button title="Group view ">
-      <mat-icon [fontIcon]="'grid_view'"></mat-icon>
-    </button>-->
+    <app-button-toggle [fontIcon]="'shopping_cart'"
+                       (pressedChange)="startShopping($event)"></app-button-toggle>
+
     <button mat-icon-button title="more options" (click)="openButtonSheet()">
       <mat-icon [fontIcon]="'more_vert'"></mat-icon>
     </button>

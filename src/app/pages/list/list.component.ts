@@ -11,6 +11,7 @@ import {
   IListBottomSheetData,
   ListBottomSheetComponent
 } from './list.bottom-sheet/list.bottom-sheet.component'
+import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 
 @Component({
   selector: 'app-list',
@@ -20,6 +21,7 @@ import {
     MatIconButton,
     LoaderComponent,
     MatBottomSheetModule,
+    ButtonToggleComponent
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -37,6 +39,7 @@ export class ListComponent implements OnInit {
   label!: string
   viewModeGrid = false
   editing = false
+  shopping = false
 
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
@@ -52,6 +55,16 @@ export class ListComponent implements OnInit {
     })
   }
 
+  //#region Header
+
+  startShopping($event: boolean) {
+    if (!$event) return
+    this.shopping = true
+    console.log($event)
+  }
+
+  //#endregion
+
   //#region Bottom menu
 
   /**
@@ -65,9 +78,10 @@ export class ListComponent implements OnInit {
     })
 
     p.afterDismissed().subscribe((r: IListBottomSheetData) => {
-      Object.assign(this,  {...r})
+      Object.assign(this, { ...r })
     })
   }
 
   //#endregion
+
 }
