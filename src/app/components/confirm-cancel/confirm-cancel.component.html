@@ -1,2 +1,3 @@
-<button mat-button (click)="cancel.emit()">cancel</button>
-<button mat-flat-button [color]="'accent'" (click)="confirm.emit()">confirm</button>
+<button mat-button (click)="cancel.emit()">{{cancelLabel() ?? 'cancel'}}</button>
+<button mat-flat-button [color]="'accent'"
+        (click)="confirm.emit()">{{confirmLabel() ?? 'confirm'}}</button>

@@ -1,4 +1,4 @@
-import { Component, effect, HostBinding, inject, output } from '@angular/core'
+import { Component, effect, HostBinding, inject, input, output } from '@angular/core'
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { MatButtonModule } from '@angular/material/button'
 
@@ -11,6 +11,9 @@ import { MatButtonModule } from '@angular/material/button'
 })
 export class ConfirmCancelComponent {
   private _focusInput = inject(FocusInputService)
+
+  confirmLabel = input<string>()
+  cancelLabel = input<string>()
 
   cancel = output()
   confirm = output()
