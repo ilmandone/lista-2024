@@ -3,13 +3,16 @@
     <h1>{{label}}</h1>
   </div>
   <div class="header__controls">
-    <!--@if (listsData()) {
-      <button mat-icon-button [title]="!editModeOn ? 'Edit lists': 'Create a new list'"
-              [disabled]="disabled"
-              (click)="clickTopButton()">
-        <mat-icon [fontIcon]="!editModeOn ? 'edit' : 'add' "></mat-icon>
-      </button>
-    }-->
+    <button mat-icon-button title="Shopping mode ">
+      <mat-icon [fontIcon]="'shopping_cart'"></mat-icon>
+    </button>
+    <!--<button mat-icon-button title="Group view ">
+      <mat-icon [fontIcon]="'grid_view'"></mat-icon>
+    </button>-->
+    <button mat-icon-button title="more options">
+      <mat-icon [fontIcon]="'more_vert'"></mat-icon>
+    </button>
+
   </div>
 </header>
 <main class="main">
