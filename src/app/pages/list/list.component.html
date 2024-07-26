@@ -12,3 +12,13 @@
     }-->
   </div>
 </header>
+<main class="main">
+  @defer (when itemsData() !== null) {
+    @for(item of itemsData(); track itemsData()) {
+      {{item.label}}
+    }
+  }
+  @loading {
+    <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+  }
+</main>

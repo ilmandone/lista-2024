@@ -39,4 +39,17 @@
       }
     }
   }
+
+  .main {
+    position: relative;
+    width: 100%;
+    height: calc(utils.getRealVh(100) - var(--main-header-height));
+
+    padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background-color: yellow;
+  }
 }
