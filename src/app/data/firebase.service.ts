@@ -22,7 +22,7 @@ import {
 } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
-import { ListData, ListsData } from './firebase.interfaces'
+import { ItemData, ListData, ListsData } from './firebase.interfaces'
 import { IListsItemChanges } from '../pages/lists/lists.item/lists.item.component'
 import { Nullable } from '../shared/common.interfaces'
 
@@ -228,31 +228,25 @@ export class FirebaseService {
 
 	//#region DB List
 
-	async loadList(UUID: string): Promise<unknown> {
+	async loadList(UUID: string): Promise<ItemData[]> {
 		try {
 			if (!this._db) this._startDB()
 
 			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const list = await doc(mainCollection, UUID)
+			const list = doc(mainCollection, UUID)
 			const itemsData = collection(list, 'items')
 
 			const data = await getDocs(itemsData)
       if (!data) await Promise.reject('Data not found')
-        
-        return null
+      if (data.empty) return []
 
-        // TODO CONTINUARE DA QUI PER IL CARICAMENTO DEGLI ELEMENTI DELLA LISTA
-      
-			/* if (!data) await Promise.reject('Data not found')
-			if (data.empty) return []
+      const items: ItemData[] = []
 
-			const items: ListsData = []
+      data.forEach((doc) => {
+        items.push(doc.data() as ItemData)
+      })
 
-			data.forEach((doc) => {
-				items.push(doc.data() as ListData)
-			})
-
-			return items */
+      return items
 
 		} catch (error) {
 			this._cachedList = undefined

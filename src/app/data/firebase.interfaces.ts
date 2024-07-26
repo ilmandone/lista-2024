@@ -12,3 +12,11 @@ export interface ListData {
 }
 
 export type ListsData = ListData[]
+
+export interface ItemData {
+  UUID: string
+  inCart: boolean
+  label: string
+  qt: number
+  toBuy: boolean
+}
