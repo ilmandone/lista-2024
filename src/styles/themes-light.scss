@@ -26,6 +26,7 @@ html {
   @include mat.sidenav-theme($light-theme);
   @include mat.slide-toggle-theme($light-theme);
   @include mat.dialog-theme($light-theme);
+  @include mat.bottom-sheet-theme($light-theme);
 
   // Overrides
 

@@ -1,3 +1,28 @@
+@use "~styles/typo.scss";
+
 :host {
-  background-color: var(--mat-app-background-color);
+
+  padding: 0.5rem 1.5rem;
+
+  h2 {
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+
+    font-size: typo.$text-xl;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+  }
+
+  .btn {
+    height: 3rem;
+    width: 100%;
+
+    margin-top: 0.5rem;
+    padding: 0 1.5rem;
+
+    display: flex;
+    justify-content: flex-start;
+
+    font-size: typo.$text;
+  }
 }
