@@ -21,12 +21,12 @@
     align-items: center;
 
     &__controls {
-      padding-right: 1rem;
+      padding-right: 0.25rem;
     }
 
     @include utils.media-query('t') {
       &__controls {
-        padding-right: 2rem;
+        padding-right: 1rem;
       }
     }
 
