@@ -6,7 +6,6 @@ import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
-import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
 import { IListsItemChanges, ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../components/focus-input/focus-input.service'
@@ -23,6 +22,7 @@ import {
 } from '@angular/cdk/drag-drop'
 import { MainStateService } from '../../shared/main-state.service'
 import { Router } from '@angular/router'
+import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.component'
 
 @Component({
   selector: 'app-lists',
@@ -241,7 +241,7 @@ export class ListsComponent implements OnInit {
    * @description On confirm true add the new list in f/e data and update itemsChanges
    */
   openCreateNew() {
-    const dr = this._dialog.open(NewListsDialogComponent)
+    const dr = this._dialog.open(ListsNewDialogComponent)
 
     dr.afterClosed().subscribe((result) => {
       if (result) {
