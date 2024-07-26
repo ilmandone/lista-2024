@@ -12,6 +12,7 @@ import {
   ListBottomSheetComponent
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
+import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 
 @Component({
   selector: 'app-list',
@@ -21,7 +22,8 @@ import { ButtonToggleComponent } from '../../components/button-toggle/button-tog
     MatIconButton,
     LoaderComponent,
     MatBottomSheetModule,
-    ButtonToggleComponent
+    ButtonToggleComponent,
+    ConfirmCancelComponent
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -58,9 +60,7 @@ export class ListComponent implements OnInit {
   //#region Header
 
   startShopping($event: boolean) {
-    if (!$event) return
-    this.shopping = true
-    console.log($event)
+    this.shopping = $event
   }
 
   //#endregion

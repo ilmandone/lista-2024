@@ -23,4 +23,7 @@
   }
 </main>
 
-<!--ADD SHOPPING END / CANCEL WITH CONFIRM - CANCEL BUTTON-->
+@if (shopping) {
+  <app-confirm-cancel [confirmSize]="65" [confirmLabel]="'Concludi la spesa'"
+                      [cancelLabel]="'X'"></app-confirm-cancel>
+}
