@@ -25,5 +25,5 @@
 
 @if (shopping) {
   <app-confirm-cancel [confirmSize]="65" [confirmLabel]="'Concludi la spesa'"
-                      [cancelLabel]="'X'"></app-confirm-cancel>
+                      [cancelLabel]="'X'" (cancel)="shopping = false"></app-confirm-cancel>
 }
