@@ -1,10 +1,11 @@
 <header class="header">
   <div class="header__title">
-    <h1>{{label}}</h1>
+    <h1>{{ label }}</h1>
   </div>
   <div class="header__controls">
     <app-button-toggle [fontIcon]="'shopping_cart'"
-                       (pressedChange)="startShopping($event)"></app-button-toggle>
+                       [toggle]="shopping"
+                       (toggleChange)="shopping = $event"></app-button-toggle>
 
     <button mat-icon-button title="more options" (click)="openButtonSheet()">
       <mat-icon [fontIcon]="'more_vert'"></mat-icon>
@@ -14,11 +15,10 @@
 </header>
 <main class="main">
   @defer (when itemsData() !== null) {
-    @for(item of itemsData(); track itemsData()) {
-      {{item.label}}
+    @for (item of itemsData(); track itemsData()) {
+      {{ item.label }}
     }
-  }
-  @loading {
+  } @loading {
     <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
   }
 </main>

@@ -1,11 +1,11 @@
 @if (fontIcon() && !label()) {
-  <button class="btn-tgl--icon" [class.active]='active' [disabled]="disabled()" mat-icon-button
+  <button class="btn-tgl--icon" [class.active]='toggle()' [disabled]="disabled()" mat-icon-button
           title="more options"
           (click)="clicked()">
     <mat-icon [fontIcon]="fontIcon()"></mat-icon>
   </button>
 } @else {
-  <button class="btn-tgl" [class.active]='active' [disabled]="disabled()" mat-button
+  <button class="btn-tgl" [class.active]='toggle()' [disabled]="disabled()" mat-button
           (click)="clicked()">
     @if (fontIcon()) {
       <mat-icon [fontIcon]="fontIcon()"></mat-icon>

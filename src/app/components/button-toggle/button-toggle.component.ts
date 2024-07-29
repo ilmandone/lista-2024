@@ -16,18 +16,10 @@ import { MatIcon } from '@angular/material/icon'
 })
 export class ButtonToggleComponent implements OnInit
 {
-  active = false
-
   label = input<string>('')
   fontIcon = input<string>('')
-  pressed = model<boolean>(false)
   disabled = input<boolean>(false)
-
-  constructor() {
-    effect(() => {
-      this.active = this.pressed()
-    })
-  }
+  toggle = model<boolean>(false)
 
   ngOnInit() {
     if (!this.label() && !this.fontIcon()) {
@@ -36,7 +28,6 @@ export class ButtonToggleComponent implements OnInit
   }
 
   clicked() {
-    this.active = !this.active
-    this.pressed.set(this.active)
+    this.toggle.update(v => !v)
   }
 }

@@ -57,14 +57,6 @@ export class ListComponent implements OnInit {
     })
   }
 
-  //#region Header
-
-  startShopping($event: boolean) {
-    this.shopping = $event
-  }
-
-  //#endregion
-
   //#region Bottom menu
 
   /**
