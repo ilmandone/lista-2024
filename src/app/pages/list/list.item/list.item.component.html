@@ -1,1 +1,7 @@
-<p>{{data().label}}</p>
+
+<div class="item-button" mat-ripple>
+  <!--  Label-->
+  <app-focus-input [disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
+                   [key]="data().UUID"
+                   [value]="data().label" (changed)="itemLabelChanged($event)" />
+</div>
