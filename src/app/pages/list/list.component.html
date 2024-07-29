@@ -7,12 +7,15 @@
                        [toggle]="shopping"
                        (toggleChange)="shopping = $event"></app-button-toggle>
 
-    <button mat-icon-button title="more options" (click)="openButtonSheet()">
+    <button mat-icon-button title="more options" [class.disabled]="shopping"
+            [disabled]="shopping" type="button"
+            (click)="!shopping && openButtonSheet()">
       <mat-icon [fontIcon]="'more_vert'"></mat-icon>
     </button>
 
   </div>
 </header>
+
 <main class="main">
   @defer (when itemsData() !== null) {
     @for (item of itemsData(); track itemsData()) {
