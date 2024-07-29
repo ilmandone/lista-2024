@@ -25,5 +25,9 @@
 
 @if (shopping) {
   <app-confirm-cancel [confirmSize]="65" [confirmLabel]="'Concludi la spesa'"
-                      [cancelLabel]="'X'" (cancel)="shopping = false"></app-confirm-cancel>
+                      [cancelLabel]="'X'" (cancel)="shopping = false">
+    <ng-template #cancelTemplate>
+      <mat-icon [fontIcon]="'close'"></mat-icon>
+    </ng-template>
+  </app-confirm-cancel>
 }

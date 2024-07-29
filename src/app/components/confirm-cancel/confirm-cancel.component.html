@@ -1,7 +1,24 @@
 <button mat-button
         [ngStyle]="{flexBasis: 100 - confirmSize() + '%'}"
-        (click)="cancel.emit()">{{ cancelLabel() ?? 'cancel' }}</button>
+        (click)="cancel.emit()">
+
+  @if (cancelTemplate) {
+    <ng-container [ngTemplateOutlet]="cancelTemplate"></ng-container>
+  } @else {
+    {{ cancelLabel() ?? 'cancel' }}
+  }
+
+</button>
+
 <button mat-flat-button [color]="'accent'"
         [ngStyle]="{flexBasis: confirmSize() + '%'}"
-        (click)="confirm.emit()">{{ confirmLabel() ?? 'confirm' }}
+        (click)="confirm.emit()">
+
+  @if (confirmTemplate) {
+    <ng-container [ngTemplateOutlet]="confirmTemplate"></ng-container>
+  } @else {
+    {{ confirmLabel() ?? 'confirm' }}
+  }
+
 </button>
+
