@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, model, OnInit } from '@angular/core'
 import { MatButton, MatIconButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
+import { NgTemplateOutlet } from '@angular/common'
 
 @Component({
   selector: 'app-button-toggle',
@@ -8,7 +9,8 @@ import { MatIcon } from '@angular/material/icon'
   imports: [
     MatButton,
     MatIcon,
-    MatIconButton
+    MatIconButton,
+    NgTemplateOutlet
   ],
   templateUrl: './button-toggle.component.html',
   styleUrl: './button-toggle.component.scss',

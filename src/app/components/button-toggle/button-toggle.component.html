@@ -1,15 +1,21 @@
+<ng-template #iconTemplate>
+  <mat-icon [fontIcon]="fontIcon()"></mat-icon>
+</ng-template>
+
 @if (fontIcon() && !label()) {
   <button class="btn-tgl--icon" [class.active]='toggle()' [disabled]="disabled()" mat-icon-button
-          title="more options"
+          title="toggle button"
           (click)="clicked()">
-    <mat-icon [fontIcon]="fontIcon()"></mat-icon>
+    <ng-container *ngTemplateOutlet="iconTemplate"></ng-container>
   </button>
 } @else {
   <button class="btn-tgl" [class.active]='toggle()' [disabled]="disabled()" mat-button
           (click)="clicked()">
     @if (fontIcon()) {
-      <mat-icon [fontIcon]="fontIcon()"></mat-icon>
+      <ng-container *ngTemplateOutlet="iconTemplate"></ng-container>
     }
     {{ label() }}
   </button>
 }
+
+
