@@ -2,16 +2,16 @@
 <div
   class="item-button"
   mat-ripple
-  [attr.tabindex]="!editModeOn() ? 0 : -1"
-  [attr.role]="!editModeOn() ? 'button' : 'none'"
-  [class.editing]="editModeOn()"
-  [matRippleDisabled]="editModeOn()"
+  [attr.tabindex]="!editing() ? 0 : -1"
+  [attr.role]="!editing() ? 'button' : 'none'"
+  [class.editing]="editing()"
+  [matRippleDisabled]="editing()"
   (click)="itemClicked()"
   (keyup.enter)="itemClicked()"
   (keyup.space)="itemClicked()"
 >
   <!--  Drag button -->
-  @if (editModeOn()) {
+  @if (editing()) {
     <button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled"
             (click)="deleteList()">
       <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
@@ -19,12 +19,12 @@
   }
 
   <!--  Label-->
-  <app-focus-input [disabled]="!editModeOn() || (disabled && data().UUID !== focusSrv.id() )"
+  <app-focus-input [disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
                    [key]="data().UUID"
                    [value]="data().label" (changed)="itemLabelChanged($event)" />
 
   <!--  Time or delete button-->
-  @if (!editModeOn()) {
+  @if (!editing()) {
     <span class="item-button__time">{{ time.toLocaleDateString() }} <br> {{ time.getHours() }}
       :{{ time.getMinutes() }}</span>
   } @else {

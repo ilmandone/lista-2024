@@ -35,7 +35,7 @@ export class ListsItemComponent implements OnInit {
   readonly focusSrv = inject(FocusInputService)
 
   data = input.required<ListData>()
-  editModeOn = input.required<boolean>()
+  editing = input.required<boolean>()
 
   clicked = output<ListData>()
   changed = output<IListsItemChanges>()
@@ -77,6 +77,6 @@ export class ListsItemComponent implements OnInit {
 
   //#endregion
   itemClicked() {
-    if (!this.editModeOn()) this.clicked.emit(this.data())
+    if (!this.editing()) this.clicked.emit(this.data())
   }
 }
