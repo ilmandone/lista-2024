@@ -19,7 +19,7 @@
 <main class="main">
   @defer (when itemsData() !== null) {
     @for (item of itemsData(); track itemsData()) {
-      {{ item.label }}
+      <app-list-item [data]="item"></app-list-item>
     }
   } @loading {
     <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
