@@ -3,6 +3,8 @@
 		<h1>{{ label }}</h1>
 	</div>
 	<div class="header__controls">
+		@if(!editing) {
+
 		<app-button-toggle
 			[fontIcon]="'shopping_cart'"
 			[toggle]="shopping"
@@ -11,7 +13,7 @@
 
 		<button
 			mat-icon-button
-			title="more options"
+			title="options"
 			[class.disabled]="shopping"
 			[disabled]="shopping"
 			type="button"
@@ -19,6 +21,16 @@
 		>
 			<mat-icon [fontIcon]="'more_vert'"></mat-icon>
 		</button>
+		}
+    @else {
+      <button mat-icon-button title="add item" type="button">
+        <mat-icon [fontIcon]="'add'"></mat-icon>
+      </button>
+      
+      <button mat-icon-button title="add item" type="button">
+        <mat-icon [fontIcon]="'delete'"></mat-icon>
+      </button>
+    }
 	</div>
 </header>
 
@@ -35,13 +47,11 @@
 	[confirmSize]="shopping ? 65 : 50"
 	[confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
 	(cancel)="shopping ? shopping = false : editing = false"
-
-> 
+>
 	<ng-template #cancelTemplate>
 		@if(shopping) {
 		<mat-icon [fontIcon]="'close'"></mat-icon>
-		} 
-    @else { Cancel }
+		} @else { Cancel }
 	</ng-template>
 </app-confirm-cancel>
 }
