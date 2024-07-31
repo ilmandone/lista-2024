@@ -1,8 +1,19 @@
 # Lista2024
 
 ## TODO:
-1) Alla cancellazione di una lista vanno aggiornati i valori di position di tutte le altre - firebase service e f/e deta
-2) La crazione di una nuova lista non rientra nelle operazioni batch - vanno estratte dalle changes ed eseguite a parte
+
+1) Aggiungere la checkbox in modalità editing insieme alla logica di selezione - il pulsante delete si deve
+attivare solo quando un elemento è selezionato
+2) Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio
+Aggiunta di un elemento alla lista in f/e 
+3) Dialog per la cancellazione di un item - aggiornamento f/e
+4) Cancel e confirm dell'editing della lista
+5) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
+per l'aggiornamento del db
+6) Modalitò spesa - aggiornamento dello stato nel carrello con debounce per l'aggiornamento del db.
+7) Conferma del fine spesa - azzeramento dello stato nel carrello di tutti gli items 
+Cosa succede se più persone stanno facendo la spesa ? - Lo stato del item per il carrello potrebbe essere
+visibile nel momento in cui si attiva la modalità shopping 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
 
