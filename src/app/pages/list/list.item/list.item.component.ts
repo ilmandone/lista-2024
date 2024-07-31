@@ -1,8 +1,8 @@
-import { Component, inject, input, signal } from '@angular/core'
-import { ItemData } from '../../../data/firebase.interfaces'
+import { Component, inject, input } from '@angular/core'
 import { MatRippleModule } from '@angular/material/core'
 import { FocusInputComponent } from '../../../components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
+import { ItemData } from '../../../data/firebase.interfaces'
 import { Nullable } from '../../../shared/common.interfaces'
 
 @Component({
@@ -19,7 +19,7 @@ export class ListItemComponent {
   readonly focusSrv = inject(FocusInputService)
 
   data = input.required<ItemData>()
-  editing = signal<boolean>(false)
+  editing = input<boolean>(false)
 
   disabled = false
 

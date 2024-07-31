@@ -19,7 +19,7 @@
 <main class="main">
   @defer (when itemsData() !== null) {
     @for (item of itemsData(); track itemsData()) {
-      <app-list-item [data]="item"></app-list-item>
+      <app-list-item [data]="item" [editing]="editing"></app-list-item>
     }
   } @loading {
     <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>

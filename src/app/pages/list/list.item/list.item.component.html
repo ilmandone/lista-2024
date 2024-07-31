@@ -1,7 +1,16 @@
-
-<div class="item-button" mat-ripple>
-  <!--  Label-->
-  <app-focus-input [disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
-                   [key]="data().UUID"
-                   [value]="data().label" (changed)="itemLabelChanged($event)" />
+<div
+	class="item-button"
+	mat-ripple
+	[attr.tabindex]="editing() ? -1 : 0"
+	[attr.role]="!editing() ? 'button' : 'none'"
+  [class.editing]="editing()"
+  [matRippleDisabled]="editing()"
+>
+	<!--  Label-->
+	<app-focus-input
+		[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
+		[key]="data().UUID"
+		[value]="data().label"
+		(changed)="itemLabelChanged($event)"
+	/>
 </div>
