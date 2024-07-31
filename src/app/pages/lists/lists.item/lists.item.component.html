@@ -2,7 +2,7 @@
 <div
   class="item-button"
   mat-ripple
-  [attr.tabindex]="!editing() ? 0 : -1"
+  [attr.tabindex]="!editing() ? -1 : 0"
   [attr.role]="!editing() ? 'button' : 'none'"
   [class.editing]="editing()"
   [matRippleDisabled]="editing()"
