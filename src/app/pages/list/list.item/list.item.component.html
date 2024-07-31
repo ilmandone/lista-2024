@@ -3,14 +3,21 @@
 	mat-ripple
 	[attr.tabindex]="editing() ? -1 : 0"
 	[attr.role]="!editing() ? 'button' : 'none'"
-  [class.editing]="editing()"
-  [matRippleDisabled]="editing()"
+	[class.editing]="editing()"
+	[matRippleDisabled]="editing()"
 >
-	<!--  Label-->
-	<app-focus-input
-		[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
-		[key]="data().UUID"
-		[value]="data().label"
-		(changed)="itemLabelChanged($event)"
-	/>
+	<div class="item-button__left">
+		<!--  Label-->
+		<app-focus-input
+			[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
+			[key]="data().UUID"
+			[value]="data().label"
+			(changed)="itemLabelChanged($event)"
+		/>
+	</div>
+
+	<div class="item-button__right">
+		<!-- Da sostituire con il componente del gruppo -->
+     <div class="group-dot" [class.editing]="editing()"></div>
+	</div>
 </div>
