@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Aggiungi</h2>
+
+<form [formGroup]="newItemFG">
+  <mat-dialog-content class="contents">
+  <mat-form-field class="form-field">
+    <mat-label>Inserisci un nome</mat-label>
+    <input
+      [formControl]="labelFC"
+      [required]="true"
+      cdkFocusInitial
+      matInput
+      placeholder="Label"
+      type="text"
+    />
+    @if (labelFC.invalid) {
+      <mat-error>'Label required'</mat-error>
+    }
+  </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="null">Annulla</button>
+    <button type="submit" [disabled]="labelFC.invalid" mat-button
+            [mat-dialog-close]="labelFC.value">
+      Conferma</button>
+  </mat-dialog-actions>
+</form>
