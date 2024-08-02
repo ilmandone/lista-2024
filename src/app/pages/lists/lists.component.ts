@@ -100,15 +100,15 @@ class ListsComponent implements OnInit {
    * @return New lists data and changes
    * @private
    */
-  private _addInListData(label: string, data: ListsData): {
+  private _addInListData(label: string, data: Nullable<ListsData>): {
     newListsData: ListsData,
     changes: IListsItemChanges[]
   } {
-    const newListsData = cloneDeep(data)
+    const newListsData = data ? cloneDeep(data) : []
     const newItem = {
       UUID: uuidV4(),
       label,
-      position: (this.listsData()?.length ?? 0) + 1,
+      position: (data?.length ?? 0) + 1,
       items: null,
       updated: this._firebaseSrv.gewNewTimeStamp()
     }
@@ -248,7 +248,7 @@ class ListsComponent implements OnInit {
 
     dr.afterClosed().subscribe((result) => {
       if (result) {
-        const { changes, newListsData } = this._addInListData(result, this.listsData() as ListsData)
+        const { changes, newListsData } = this._addInListData(result, this.listsData())
         this.listsData.set(newListsData)
         this.itemsChanges = this.itemsChanges.concat(changes)
       }
