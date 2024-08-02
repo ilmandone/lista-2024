@@ -43,14 +43,15 @@ class ListComponent implements OnInit {
   private readonly _dialog = inject(MatDialog)
 
   private _UUID!: string
+  private _itemsDataCache!: Nullable<ItemData[]>
 
   itemsData = signal<Nullable<ItemData[]>>([])
 
-  label!: string
-  viewModeGrid = false
   editing = false
-  shopping = false
+  label!: string
   selectedItems = new Set<string>()
+  shopping = false
+  viewModeGrid = false
 
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
@@ -63,6 +64,12 @@ class ListComponent implements OnInit {
 
   //#region Editing
 
+  /**
+   * Add a new item to the itemData list and (add a change action for b/e update)
+   * @param {string} label
+   * @param {ItemData[]} data
+   * @private
+   */
   private _addInListItem(label: string,  data: ItemData[]): {itemsData: ItemData[]} {
     const itemsData = cloneDeep(data)
     const newItem: ItemData = {
@@ -82,7 +89,10 @@ class ListComponent implements OnInit {
     return {itemsData}
   }
 
-  openNewListDialog() {
+  /**
+   * Open the new item dialog
+   */
+  openNewItemDialog() {
     const d = this._dialog.open(ListNewDialogComponent)
 
     d.afterClosed().subscribe(r => {
@@ -91,12 +101,43 @@ class ListComponent implements OnInit {
     })
   }
 
+  /**
+   * Confirm shopping or editing mode
+   */
+  confirm() {
+    if (this.shopping) {
+      console.log('TODO: Remove the in cart value from all items and set toBuy to false')
+      this.shopping = false
+    } else {
+      console.log('TODO: update the db')
+      this.editing = false
+      this._itemsDataCache = []
+    }
+  }
+
+  /**
+   * Cancel pressed in shopping or editing mode
+   * @description Cancel shopping will remove all the in cart status from items. Cancel editing
+   * will restore the cached data
+   */
+  cancel() {
+    if (this.shopping) {
+      console.log('TODO: Remove the in cart value from all items')
+      this.shopping = false
+    } else {
+      this.editing = false
+      this.itemsData.set(this._itemsDataCache)
+      this._itemsDataCache = []
+    }
+  }
+
   //#endregion
 
   //#region Bottom menu
 
   /**
    * Open the button sheet and subscribe to the dismiss event
+   * @description If editing is enable save items to cache
    */
   openButtonSheet() {
     const p = this._bottomSheet.open(ListBottomSheetComponent, {
@@ -107,6 +148,7 @@ class ListComponent implements OnInit {
 
     p.afterDismissed().subscribe((r: IListBottomSheetData) => {
       Object.assign(this, { ...r })
+      if (this.editing) this._itemsDataCache = cloneDeep(this.itemsData())
     })
   }
 
@@ -114,6 +156,10 @@ class ListComponent implements OnInit {
 
   //#region Item
 
+  /**
+   * Add or remove and item from the selectedItems set
+   * @param {ListItemSelectedEvent} $event
+   */
   itemSelected($event: ListItemSelectedEvent) {
     if ($event.isSelected)
       this.selectedItems.add($event.UUID)
@@ -122,7 +168,6 @@ class ListComponent implements OnInit {
   }
 
   //#endregion
-
 
 }
 

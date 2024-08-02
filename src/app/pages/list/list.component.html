@@ -23,8 +23,9 @@
         <mat-icon [fontIcon]="'more_vert'"></mat-icon>
       </button>
     } @else {
+
       <!--Add new item-->
-      <button mat-icon-button title="add item" type="button" (click)="openNewListDialog()">
+      <button mat-icon-button title="add item" type="button" (click)="openNewItemDialog()">
         <mat-icon [fontIcon]="'add'"></mat-icon>
       </button>
 
@@ -52,7 +53,8 @@
   <app-confirm-cancel
     [confirmSize]="shopping ? 65 : 50"
     [confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
-    (cancel)="shopping ? shopping = false : editing = false"
+      (cancel)="cancel()" (confirm)="confirm()"
+
   >
     <ng-template #cancelTemplate>
       @if (shopping) {

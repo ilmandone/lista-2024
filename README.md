@@ -2,10 +2,10 @@
 
 ## TODO:
 
-1) Aggiungere la checkbox in modalità editing insieme alla logica di selezione - il pulsante delete si deve
-attivare solo quando un elemento è selezionato
-2) Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio
-Aggiunta di un elemento alla lista in f/e 
+1) ~~Aggiungere la checkbox in modalità editing insieme alla logica di selezione - il pulsante delete si deve
+attivare solo quando un elemento è selezionato~~
+2) ~~Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio
+Aggiunta di un elemento alla lista in f/e~~
 3) Dialog per la cancellazione di un item - aggiornamento f/e
 4) Cancel e confirm dell'editing della lista
 5) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
