@@ -12,7 +12,6 @@ import { FocusInputService } from '../../components/focus-input/focus-input.serv
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 
 import { cloneDeep } from 'lodash'
-import { ListsConfirmDialogComponent } from './lists.confirm.dialog/lists.confirm.dialog.component'
 import {
   CdkDrag,
   CdkDragDrop,
@@ -23,6 +22,9 @@ import {
 import { MainStateService } from '../../shared/main-state.service'
 import { Router } from '@angular/router'
 import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.component'
+import {
+  DeleteConfirmDialogComponent
+} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 
 @Component({
   selector: 'app-lists',
@@ -276,7 +278,7 @@ class ListsComponent implements OnInit {
     const hasDeleteActions = this.itemsChanges.some(item => item.crud === 'delete')
 
     if (hasDeleteActions) {
-      const dr = this._dialog.open(ListsConfirmDialogComponent)
+      const dr = this._dialog.open(DeleteConfirmDialogComponent)
       dr.afterClosed().subscribe((result) => {
         if (result) this._saveLists()
         this.editModeOn = false

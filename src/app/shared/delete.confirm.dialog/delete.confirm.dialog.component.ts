@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { MatDialogActions, MatDialogModule, MatDialogTitle } from '@angular/material/dialog'
 
 @Component({
-  selector: 'app-lists-confirm-dialog',
+  selector: 'app-delete-confirm-dialog',
   standalone: true,
   imports: [
     MatButtonModule,
@@ -11,7 +11,8 @@ import { MatDialogActions, MatDialogModule, MatDialogTitle } from '@angular/mate
     MatDialogModule,
     MatDialogTitle
   ],
-  templateUrl: './lists.confirm.dialog.component.html',
+  templateUrl: './delete.confirm.dialog.component.html',
   styles: ''
 })
-export class ListsConfirmDialogComponent {}
+
+export class DeleteConfirmDialogComponent {}
