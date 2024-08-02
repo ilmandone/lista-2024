@@ -1,57 +1,65 @@
 <header class="header">
-	<div class="header__title">
-		<h1>{{ label }}</h1>
-	</div>
-	<div class="header__controls">
-		@if(!editing) {
+  <div class="header__title">
+    <h1>{{ label }}</h1>
+  </div>
+  <div class="header__controls">
+    @if (!editing) {
 
-		<app-button-toggle
-			[fontIcon]="'shopping_cart'"
-			[toggle]="shopping"
-			(toggleChange)="shopping = $event"
-		></app-button-toggle>
+      <!--Shopping mode-->
+      <app-button-toggle
+        [fontIcon]="'shopping_cart'"
+        [toggle]="shopping"
+        (toggleChange)="shopping = $event"
+      ></app-button-toggle>
 
-		<button
-			mat-icon-button
-			title="options"
-			[class.disabled]="shopping"
-			[disabled]="shopping"
-			type="button"
-			(click)="!shopping && openButtonSheet()"
-		>
-			<mat-icon [fontIcon]="'more_vert'"></mat-icon>
-		</button>
-		}
-    @else {
+      <!--Open bottom sheet-->
+      <button
+        mat-icon-button
+        title="options"
+        [disabled]="shopping"
+        type="button"
+        (click)="!shopping && openButtonSheet()"
+      >
+        <mat-icon [fontIcon]="'more_vert'"></mat-icon>
+      </button>
+    } @else {
+      <!--Add new item-->
       <button mat-icon-button title="add item" type="button" (click)="openNewListDialog()">
         <mat-icon [fontIcon]="'add'"></mat-icon>
       </button>
 
-      <button mat-icon-button title="add item" type="button">
+      <!--Delete one or more items-->
+      <button mat-icon-button title="add item" type="button"
+              [disabled]="selectedItems.size === 0">
         <mat-icon [fontIcon]="'delete'"></mat-icon>
       </button>
     }
-	</div>
+  </div>
 </header>
 
 <main class="main">
-	@defer (when itemsData() !== null) { @for (item of itemsData(); track itemsData()) {
-	<app-list-item [data]="item" [editing]="editing"></app-list-item>
-	} } @loading {
-	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
-	}
+  @defer (when itemsData() !== null) {
+    @for (item of itemsData(); track itemsData()) {
+      <app-list-item [data]="item" [editing]="editing"
+                     (selected)="itemSelected($event)"></app-list-item>
+    }
+  } @loading {
+    <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+  }
 </main>
 
 @if (shopping || editing) {
-<app-confirm-cancel
-	[confirmSize]="shopping ? 65 : 50"
-	[confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
-	(cancel)="shopping ? shopping = false : editing = false"
->
-	<ng-template #cancelTemplate>
-		@if(shopping) {
-		<mat-icon [fontIcon]="'close'"></mat-icon>
-		} @else { Cancel }
-	</ng-template>
-</app-confirm-cancel>
+  <app-confirm-cancel
+    [confirmSize]="shopping ? 65 : 50"
+    [confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
+    (cancel)="shopping ? shopping = false : editing = false"
+  >
+    <ng-template #cancelTemplate>
+      @if (shopping) {
+        <mat-icon [fontIcon]="'close'"></mat-icon>
+      } @else {
+        Cancel
+      }
+    </ng-template>
+  </app-confirm-cancel>
 }

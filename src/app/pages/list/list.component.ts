@@ -16,6 +16,7 @@ import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-
 import { ListItemComponent } from './list.item/list.item.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
+import { ListItemSelectedEvent } from './list.item/list.item.interface'
 
 @Component({
   selector: 'app-list',
@@ -47,6 +48,7 @@ class ListComponent implements OnInit {
   viewModeGrid = false
   editing = false
   shopping = false
+  selectedItems = new Set<string>()
 
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
@@ -79,6 +81,18 @@ class ListComponent implements OnInit {
   }
 
   //#endregion
+
+  //#region Item
+
+  itemSelected($event: ListItemSelectedEvent) {
+    if ($event.isSelected)
+      this.selectedItems.add($event.UUID)
+    else
+      this.selectedItems.delete($event.UUID)
+  }
+
+  //#endregion
+
 
 }
 
