@@ -25,7 +25,8 @@
     } @else {
 
       <!--Add new item-->
-      <button mat-icon-button title="add item" type="button" (click)="openNewItemDialog()">
+      <button mat-icon-button title="add item" type="button" [disabled]="selectedItems.size > 1"
+              (click)="openNewItemDialog()">
         <mat-icon [fontIcon]="'add'"></mat-icon>
       </button>
 

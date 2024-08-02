@@ -6,7 +6,7 @@
 attivare solo quando un elemento è selezionato~~
 2) ~~Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio
 Aggiunta di un elemento alla lista in f/e~~
-3) Disabilitare il pulsante aggiungi se ci sono più di due items selezionati
+3) ~~Disabilitare il pulsante aggiungi se ci sono più di due items selezionati~~
 4) Cancellazione di uno o più items da i dati di f/e con dialog di conferma finale
 5) Modifica del label di un item con aggiornamento di dati di f/e
 6) ~~Cancel e confirm dell'editing della lista~~
