@@ -10,8 +10,6 @@ import { IListsItemChanges, ListsItemComponent } from './lists.item/lists.item.c
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../components/focus-input/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
-
-import { cloneDeep } from 'lodash'
 import {
   CdkDrag,
   CdkDragDrop,
@@ -25,6 +23,9 @@ import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.com
 import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+
+import { cloneDeep } from 'lodash'
+import { v4 as uuidV4 } from 'uuid';
 
 @Component({
   selector: 'app-lists',
@@ -105,7 +106,7 @@ class ListsComponent implements OnInit {
   } {
     const newListsData = cloneDeep(data)
     const newItem = {
-      UUID: self.crypto.randomUUID(),
+      UUID: uuidV4(),
       label,
       position: (this.listsData()?.length ?? 0) + 1,
       items: null,

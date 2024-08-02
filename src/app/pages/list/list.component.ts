@@ -18,6 +18,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
+import { v4 as uuidV4 } from 'uuid';
 
 @Component({
   selector: 'app-list',
@@ -65,7 +66,7 @@ class ListComponent implements OnInit {
   private _addInListItem(label: string,  data: ItemData[]): {itemsData: ItemData[]} {
     const itemsData = cloneDeep(data)
     const newItem: ItemData = {
-      UUID: self.crypto.randomUUID(),
+      UUID: uuidV4(),
       label,
       group: 'verdure',
       inCart: false,
@@ -85,8 +86,8 @@ class ListComponent implements OnInit {
     const d = this._dialog.open(ListNewDialogComponent)
 
     d.afterClosed().subscribe(r => {
-      console.log(r)
-      this._addInListItem(r, this.itemsData() as ItemData[])
+      const {itemsData} = this._addInListItem(r, this.itemsData() as ItemData[])
+      this.itemsData.set(itemsData)
     })
   }
 
