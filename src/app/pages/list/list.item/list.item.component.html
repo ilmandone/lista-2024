@@ -12,7 +12,8 @@
 
     <!--Checkbox-->
     @if (editing()) {
-      <mat-checkbox aria-label="Select this item"></mat-checkbox>
+      <mat-checkbox aria-label="Select this item"
+                    (change)="itemSelected($event)"></mat-checkbox>
     }
 
     <!--  Label-->

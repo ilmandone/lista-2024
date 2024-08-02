@@ -1,10 +1,11 @@
-import { Component, inject, input } from '@angular/core'
+import { Component, inject, input, output } from '@angular/core'
 import { MatRippleModule } from '@angular/material/core'
 import { FocusInputComponent } from '../../../components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
 import { ItemData } from '../../../data/firebase.interfaces'
 import { Nullable } from '../../../shared/common.interfaces'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
+import { ListItemSelectedEvent } from './list.item.interface'
 
 @Component({
   selector: 'app-list-item',
@@ -23,9 +24,18 @@ export class ListItemComponent {
   data = input.required<ItemData>()
   editing = input<boolean>(false)
 
+  selected = output<ListItemSelectedEvent>()
+
   disabled = false
 
   itemLabelChanged($event: Nullable<string>) {
     console.log($event)
+  }
+
+  itemSelected($event: MatCheckboxChange) {
+    this.selected.emit({
+      UUID: this.data().UUID,
+      isSelected: $event.checked
+    })
   }
 }
