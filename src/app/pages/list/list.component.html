@@ -23,10 +23,10 @@
 		</button>
 		}
     @else {
-      <button mat-icon-button title="add item" type="button">
+      <button mat-icon-button title="add item" type="button" (click)="openNewListDialog()">
         <mat-icon [fontIcon]="'add'"></mat-icon>
       </button>
-      
+
       <button mat-icon-button title="add item" type="button">
         <mat-icon [fontIcon]="'delete'"></mat-icon>
       </button>

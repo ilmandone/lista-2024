@@ -24,12 +24,6 @@
 
     @include utils.text-not-selectable;
 
-    &.editing {
-      app-focus-input {
-        padding-right: 1rem;
-      }
-    }
-
     &__left {
       flex: 1;
       padding-left: 0.5rem;
@@ -49,6 +43,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    &.editing {
+      app-focus-input {
+        padding-right: 1rem;
+      }
     }
   }
 

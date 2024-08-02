@@ -28,7 +28,7 @@ import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.com
   selector: 'app-lists',
   standalone: true,
   imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent,
-    LoaderComponent, ConfirmCancelComponent, CdkDrag, CdkDropList, CdkDragPlaceholder,],
+    LoaderComponent, ConfirmCancelComponent, CdkDrag, CdkDropList, CdkDragPlaceholder],
   templateUrl: './lists.component.html',
   styleUrl: './lists.component.scss'
 })
@@ -57,7 +57,7 @@ class ListsComponent implements OnInit {
       if (this._mainStateSrv.reload()) {
         this._loadLists()
       }
-    }, {allowSignalWrites: true})
+    }, { allowSignalWrites: true })
   }
 
   ngOnInit(): void {
@@ -201,7 +201,7 @@ class ListsComponent implements OnInit {
   itemClicked($event: ListData) {
     void this._route.navigate([`main`, 'list', $event.UUID], {
       state: {
-        label: $event.label,
+        label: $event.label
       }
     })
   }
@@ -221,14 +221,14 @@ class ListsComponent implements OnInit {
     }
 
     // Update all position from start to current index
-    for (let i = 0; i <= cI; i ++) {
+    for (let i = 0; i <= cI; i++) {
       const list = ld[i]
       list.position = i + 1
       this.itemsChanges.push({
         UUID: list.UUID,
         label: list.label,
         position: list.position,
-        crud: 'update',
+        crud: 'update'
       })
     }
 

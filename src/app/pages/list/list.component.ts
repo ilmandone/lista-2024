@@ -14,6 +14,8 @@ import {
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { ListItemComponent } from './list.item/list.item.component'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 
 @Component({
   selector: 'app-list',
@@ -25,7 +27,8 @@ import { ListItemComponent } from './list.item/list.item.component'
     MatBottomSheetModule,
     ButtonToggleComponent,
     ConfirmCancelComponent,
-    ListItemComponent
+    ListItemComponent,
+    MatDialogModule
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -34,6 +37,7 @@ class ListComponent implements OnInit {
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _bottomSheet = inject(MatBottomSheet)
+  private readonly _dialog = inject(MatDialog)
 
   private _UUID!: string
 
@@ -70,7 +74,12 @@ class ListComponent implements OnInit {
     })
   }
 
+  openNewListDialog() {
+    this._dialog.open(ListNewDialogComponent)
+  }
+
   //#endregion
+
 }
 
 export default ListComponent
