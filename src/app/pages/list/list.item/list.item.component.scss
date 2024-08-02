@@ -24,16 +24,25 @@
 
     @include utils.text-not-selectable;
 
+    &.editing {
+      app-focus-input {
+        padding-right: 1rem;
+      }
+    }
+
     &__left {
       flex: 1;
       padding-left: 0.5rem;
+
+      display: flex;
+      align-items: center;
     }
 
     &__right {
       position: relative;
       height: 3rem;
       width: 3rem;
-      padding-right: 0.5 rem;
+      padding-right: 0.5rem;
 
       overflow: hidden;
 

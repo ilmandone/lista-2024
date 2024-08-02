@@ -27,6 +27,7 @@ html {
   @include mat.slide-toggle-theme($dark-theme);
   @include mat.dialog-theme($dark-theme);
   @include mat.bottom-sheet-theme($dark-theme);
+  @include mat.checkbox-theme($dark-theme);
 
   // Overrides
 

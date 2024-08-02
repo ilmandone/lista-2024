@@ -4,13 +4,15 @@ import { FocusInputComponent } from '../../../components/focus-input/focus-input
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
 import { ItemData } from '../../../data/firebase.interfaces'
 import { Nullable } from '../../../shared/common.interfaces'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 
 @Component({
   selector: 'app-list-item',
   standalone: true,
   imports: [
     MatRippleModule,
-    FocusInputComponent
+    FocusInputComponent,
+    MatCheckboxModule
   ],
   templateUrl: './list.item.component.html',
   styleUrl: './list.item.component.scss'
