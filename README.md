@@ -6,12 +6,15 @@
 attivare solo quando un elemento è selezionato~~
 2) ~~Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio
 Aggiunta di un elemento alla lista in f/e~~
-3) Dialog per la cancellazione di un item - aggiornamento f/e
-4) Cancel e confirm dell'editing della lista
-5) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
+3) Disabilitare il pulsante aggiungi se ci sono più di due items selezionati
+3) Cancellazione di uno o più items da i dati di f/e con dialog di conferma finale
+4) Modifica del label di un item con aggiornamento di dati di f/e
+4) ~~Cancel e confirm dell'editing della lista~~
+5) Aggiornamento dati db su confirm dell'editing
+6) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
 per l'aggiornamento del db
-6) Modalitò spesa - aggiornamento dello stato nel carrello con debounce per l'aggiornamento del db.
-7) Conferma del fine spesa - azzeramento dello stato nel carrello di tutti gli items 
+7) Modalitò spesa - aggiornamento dello stato nel carrello con debounce per l'aggiornamento del db.
+8) Conferma del fine spesa - azzeramento dello stato nel carrello di tutti gli items 
 Cosa succede se più persone stanno facendo la spesa ? - Lo stato del item per il carrello potrebbe essere
 visibile nel momento in cui si attiva la modalità shopping 
 
