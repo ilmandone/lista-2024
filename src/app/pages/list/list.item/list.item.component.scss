@@ -1,4 +1,4 @@
-@use "~../../../../styles/shared";
+@use "~styles/shared.scss";
 @use "~styles/typo.scss";
 @use "~styles/utils.scss";
 
@@ -54,7 +54,7 @@
   }
 
   button {
-    @include commons.disabledOpacity;
+    @include shared.disabledOpacity;
   }
 }
 
