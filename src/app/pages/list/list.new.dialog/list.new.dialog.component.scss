@@ -1,7 +1,8 @@
+@use '~styles/shared.scss';
+
 :host {
   .contents {
-    width: 80vw;
-    max-width: var(--mat-dialog-container-max-width);
+    @include shared.dialogCommon;
   }
 
   .form-field {
