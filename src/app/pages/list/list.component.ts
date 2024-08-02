@@ -4,7 +4,6 @@ import { FirebaseService } from '../../data/firebase.service'
 import { MatIcon } from '@angular/material/icon'
 import { MatIconButton } from '@angular/material/button'
 import { ItemData } from '../../data/firebase.interfaces'
-import { Nullable } from '../../shared/common.interfaces'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet'
 import {
@@ -18,7 +17,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
-import { v4 as uuidV4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid'
 
 @Component({
   selector: 'app-list',
@@ -43,9 +42,9 @@ class ListComponent implements OnInit {
   private readonly _dialog = inject(MatDialog)
 
   private _UUID!: string
-  private _itemsDataCache!: Nullable<ItemData[]>
+  private _itemsDataCache: ItemData[] = []
 
-  itemsData = signal<Nullable<ItemData[]>>([])
+  itemsData = signal<ItemData[]>([])
 
   editing = false
   label!: string
@@ -68,9 +67,12 @@ class ListComponent implements OnInit {
    * Add a new item to the itemData list and (add a change action for b/e update)
    * @param {string} label
    * @param {ItemData[]} data
+   * @param insertAfter
    * @private
    */
-  private _addInListItem(label: string,  data: ItemData[]): {itemsData: ItemData[]} {
+  private _addInListItem(label: string, data: ItemData[], insertAfter: number): {
+    itemsData: ItemData[],
+  } {
     const itemsData = cloneDeep(data)
     const newItem: ItemData = {
       UUID: uuidV4(),
@@ -79,14 +81,18 @@ class ListComponent implements OnInit {
       inCart: false,
       qt: 1,
       toBuy: true,
-      position: data.length
+      position: insertAfter + 1
     }
 
-    itemsData.push(newItem)
+    if (insertAfter === data.length - 1)
+      itemsData.push(newItem)
+    else {
+      itemsData.splice(insertAfter, 0, newItem)
+    }
 
     //TODO: Add the changes
 
-    return {itemsData}
+    return { itemsData }
   }
 
   /**
@@ -96,7 +102,14 @@ class ListComponent implements OnInit {
     const d = this._dialog.open(ListNewDialogComponent)
 
     d.afterClosed().subscribe(r => {
-      const {itemsData} = this._addInListItem(r, this.itemsData() as ItemData[])
+      const selectedUUID = this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+
+      const insertAfter =
+        selectedUUID
+          ? this.itemsData().find(e => e.UUID === selectedUUID)?.position ?? this.itemsData().length - 1
+          : this.itemsData().length - 1
+
+      const { itemsData } = this._addInListItem(r, this.itemsData() as ItemData[], insertAfter)
       this.itemsData.set(itemsData)
     })
   }

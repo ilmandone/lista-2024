@@ -108,7 +108,7 @@ class ListsComponent implements OnInit {
     const newItem = {
       UUID: uuidV4(),
       label,
-      position: (data?.length ?? 0) + 1,
+      position: (data?.length ?? 0),
       items: null,
       updated: this._firebaseSrv.gewNewTimeStamp()
     }
@@ -122,7 +122,7 @@ class ListsComponent implements OnInit {
   }
 
   /**
-   * Update the list in f/e data
+   * Update list's position or / label in f/e data
    * @param {IListsItemChanges} change
    * @param {ListsData} data
    * @return New lists data and changes
@@ -137,7 +137,6 @@ class ListsComponent implements OnInit {
 
     if (item) {
       item.label = change.label
-      item.position = change.position
     }
 
     return { newListsData, changes: [change] }
@@ -224,9 +223,9 @@ class ListsComponent implements OnInit {
     }
 
     // Update all position from start to current index
-    for (let i = 0; i <= cI; i++) {
+    for (let i = cI; i < ld.length; i++) {
       const list = ld[i]
-      list.position = i + 1
+      list.position = i
       this.itemsChanges.push({
         UUID: list.UUID,
         label: list.label,

@@ -195,7 +195,7 @@ export class FirebaseService {
 		const batch = writeBatch(this._db)
 		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
-		// Extract all the UUID of the deleted items to prevent useless updates
+		// Keep only last change for each list
 		const finalChanges = this._optimizeChanges(changes)
 
 		for (const change of finalChanges) {
@@ -214,7 +214,6 @@ export class FirebaseService {
 					label: change.label,
 					position: change.position,
 					UUID: change.UUID,
-					items: [],
 					updated: this.gewNewTimeStamp()
 				})
 			}
