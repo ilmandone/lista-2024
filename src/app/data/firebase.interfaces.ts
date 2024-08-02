@@ -20,4 +20,5 @@ export interface ItemData {
   qt: number
   toBuy: boolean
   group: string
+  position: number
 }

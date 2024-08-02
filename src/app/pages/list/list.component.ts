@@ -17,6 +17,7 @@ import { ListItemComponent } from './list.item/list.item.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
+import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'app-list',
@@ -59,6 +60,38 @@ class ListComponent implements OnInit {
     })
   }
 
+  //#region Editing
+
+  private _addInListItem(label: string,  data: ItemData[]): {itemsData: ItemData[]} {
+    const itemsData = cloneDeep(data)
+    const newItem: ItemData = {
+      UUID: self.crypto.randomUUID(),
+      label,
+      group: 'verdure',
+      inCart: false,
+      qt: 1,
+      toBuy: true,
+      position: data.length
+    }
+
+    itemsData.push(newItem)
+
+    //TODO: Add the changes
+
+    return {itemsData}
+  }
+
+  openNewListDialog() {
+    const d = this._dialog.open(ListNewDialogComponent)
+
+    d.afterClosed().subscribe(r => {
+      console.log(r)
+      this._addInListItem(r, this.itemsData() as ItemData[])
+    })
+  }
+
+  //#endregion
+
   //#region Bottom menu
 
   /**
@@ -74,10 +107,6 @@ class ListComponent implements OnInit {
     p.afterDismissed().subscribe((r: IListBottomSheetData) => {
       Object.assign(this, { ...r })
     })
-  }
-
-  openNewListDialog() {
-    this._dialog.open(ListNewDialogComponent)
   }
 
   //#endregion
