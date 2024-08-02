@@ -5,29 +5,29 @@ import {loginGuard} from "./guards/login.guard";
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./pages/login/login.component').then(c => c.LoginComponent),
+    loadComponent: () => import('./pages/login/login.component'),
     canActivate: [loginGuard]
   },
   {
     path: 'main',
-    loadComponent: () => import('./pages/main/main.component').then(c => c.MainComponent),
+    loadComponent: () => import('./pages/main/main.component'),
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        loadComponent: () => import('./pages/lists/lists.component').then(c => c.ListsComponent),
+        loadComponent: () => import('./pages/lists/lists.component'),
         canActivate: [authGuard],
       },
       {
         path: 'list/:id',
-        loadComponent: () => import('./pages/list/list.component').then(c => c.ListComponent),
+        loadComponent: () => import('./pages/list/list.component'),
         canActivate: [authGuard],
       },
     ]
   },
   {
     path: 'forgot',
-    loadComponent: () => import('./pages/forgot-psw/forgot-psw.component').then(c => c.ForgotPswComponent),
+    loadComponent: () => import('./pages/forgot-psw/forgot-psw.component'),
     canActivate: [loginGuard]
   },
   {

@@ -23,7 +23,7 @@ interface ILoginFG {
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,    
+    CommonModule,
     MatButton,
     ReactiveFormsModule,
     MatFormField,
@@ -39,7 +39,7 @@ interface ILoginFG {
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+class LoginComponent {
   private _fbSrv = inject(FirebaseService)
   private _snackBarSrv = inject(SnackBarService)
   private _router = inject(Router)
@@ -100,3 +100,5 @@ export class LoginComponent {
 
   //#endregion
 }
+
+export default LoginComponent

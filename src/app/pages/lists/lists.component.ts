@@ -32,7 +32,7 @@ import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.com
   templateUrl: './lists.component.html',
   styleUrl: './lists.component.scss'
 })
-export class ListsComponent implements OnInit {
+class ListsComponent implements OnInit {
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
@@ -300,3 +300,5 @@ export class ListsComponent implements OnInit {
 
   //#endregion
 }
+
+export default ListsComponent

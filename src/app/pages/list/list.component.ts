@@ -30,7 +30,7 @@ import { ListItemComponent } from './list.item/list.item.component'
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
-export class ListComponent implements OnInit {
+class ListComponent implements OnInit {
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _router = inject(Router)
@@ -78,3 +78,5 @@ export class ListComponent implements OnInit {
 
   //#endregion
 }
+
+export default ListComponent
