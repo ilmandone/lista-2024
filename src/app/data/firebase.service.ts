@@ -125,7 +125,7 @@ export class FirebaseService {
 	 * @param {IListsItemChanges} changes
 	 * @private
 	 */
-	private _optimizeChanges(changes: IListsItemChanges[]): IListsItemChanges[] {
+	optimizeListsChanges(changes: IListsItemChanges[]): IListsItemChanges[] {
 		const matchedUUID = new Set<string>()
 
 		return changes.reduceRight((acc, val) => {
@@ -196,7 +196,7 @@ export class FirebaseService {
 		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
 		// Keep only last change for each list
-		const finalChanges = this._optimizeChanges(changes)
+		const finalChanges = this.optimizeListsChanges(changes)
 
 		for (const change of finalChanges) {
 			const d = doc(mainCollection, change.UUID)

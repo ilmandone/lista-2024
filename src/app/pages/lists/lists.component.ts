@@ -25,7 +25,7 @@ import {
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 
 import { cloneDeep } from 'lodash'
-import { v4 as uuidV4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid'
 
 @Component({
   selector: 'app-lists',
@@ -222,17 +222,22 @@ class ListsComponent implements OnInit {
       moveItemInArray(ld, $event.previousIndex, cI)
     }
 
-    // Update all position from start to current index
-    for (let i = cI; i < ld.length; i++) {
+    // Start depends on sort order and could be the original or the new position
+    const start = $event.currentIndex < $event.previousIndex ? $event.currentIndex : $event.previousIndex
+
+    // Register all the new position into the itemsChanges list
+    for (let i = start; i < ld.length; i++) {
       const list = ld[i]
-      list.position = i
       this.itemsChanges.push({
         UUID: list.UUID,
         label: list.label,
-        position: list.position,
+        position: i,
         crud: 'update'
       })
     }
+
+    // Optimize items Changes on each reorder
+    this.itemsChanges = this._firebaseSrv.optimizeListsChanges(this.itemsChanges)
 
     this.listsData.set(ld)
     this.dragEnable = false
