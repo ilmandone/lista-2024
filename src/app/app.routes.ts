@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import {loginGuard} from "./guards/login.guard";
+import { listResolver } from './pages/list/list.resolver'
 
 export const routes: Routes = [
   {
@@ -22,6 +23,9 @@ export const routes: Routes = [
         path: 'list/:id',
         loadComponent: () => import('./pages/list/list.component'),
         canActivate: [authGuard],
+        resolve: {
+          label: listResolver
+        }
       },
     ]
   },
