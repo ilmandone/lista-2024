@@ -7,13 +7,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
 import { FocusInputComponent } from 'app/components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
-import { ListData } from '../../../data/firebase.interfaces'
+import { IListsItemChanges, ListData } from '../../../data/firebase.interfaces'
 import { FirebaseService } from '../../../data/firebase.service'
 import { Nullable } from '../../../shared/common.interfaces'
 
-export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
-  crud?: 'create' | 'update' | 'delete',
-}
 
 @Component({
   selector: 'app-lists-item',

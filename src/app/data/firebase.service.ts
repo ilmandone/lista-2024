@@ -22,8 +22,8 @@ import {
 } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
-import { ItemData, ListData, ListsData } from './firebase.interfaces'
-import { IListsItemChanges } from '../pages/lists/lists.item/lists.item.component'
+import { IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
+
 import { Nullable } from '../shared/common.interfaces'
 
 export interface IIsLogged {
