@@ -24,6 +24,7 @@ import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog
 
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
+import { SetOfUniqueItemsChanged } from 'app/data/items.changes'
 
 @Component({
 	selector: 'app-lists',
@@ -57,8 +58,7 @@ class ListsComponent implements OnInit {
 	disabled = false
 	dragEnable = false
 	editModeOn = false
-	itemsChanges: IListsItemChanges[] = []
-
+	itemsChanges = new SetOfUniqueItemsChanged<IListsItemChanges>()
 	constructor() {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
@@ -98,7 +98,7 @@ class ListsComponent implements OnInit {
 	 */
 	private _saveLists(): void {
 		this._mainStateSrv.showLoader.set(true)
-		this._firebaseSrv.updateLists(this.itemsChanges).then((r) => {
+		this._firebaseSrv.updateLists(this.itemsChanges.values).then((r) => {
 			this.listsData.set(r)
 			this._mainStateSrv.showLoader.set(false)
 		})
@@ -249,7 +249,7 @@ class ListsComponent implements OnInit {
 		// Register all the new position into the itemsChanges list
 		for (let i = start; i < ld.length; i++) {
 			const list = ld[i]
-			this.itemsChanges.push({
+			this.itemsChanges.add({
 				UUID: list.UUID,
 				label: list.label,
 				position: i,
@@ -258,7 +258,7 @@ class ListsComponent implements OnInit {
 		}
 
 		// Optimize items Changes on each reorder
-		this.itemsChanges = this._firebaseSrv.optimizeListsChanges(this.itemsChanges)
+		// this.itemsChanges = this._firebaseSrv.optimizeListsChanges(this.itemsChanges)
 
 		this.listsData.set(ld)
 		this.dragEnable = false
@@ -275,7 +275,7 @@ class ListsComponent implements OnInit {
 			if (result) {
 				const { changes, newListsData } = this._addInListData(result, this.listsData())
 				this.listsData.set(newListsData)
-				this.itemsChanges = this.itemsChanges.concat(changes)
+				this.itemsChanges.addMultiple(changes)
 			}
 		})
 	}
@@ -294,14 +294,14 @@ class ListsComponent implements OnInit {
 				? this._updateInListData($event, this.listsData() as ListsData)
 				: this._deleteInListData($event, this.listsData() as ListsData)
 		this.listsData.set(newListsData)
-		this.itemsChanges = this.itemsChanges.concat(changes)
+		this.itemsChanges.addMultiple(changes)
 	}
 
 	/**
 	 * Confirm editing
 	 */
 	onConfirm() {
-		const hasDeleteActions = this.itemsChanges.some((item) => item.crud === 'delete')
+		const hasDeleteActions = this.itemsChanges.values.some((item) => item.crud === 'delete')
 
 		if (hasDeleteActions) {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)
@@ -321,7 +321,7 @@ class ListsComponent implements OnInit {
 	 */
 	onCancel() {
 		this.listsData.set(this._listDataCache)
-		this.itemsChanges = []
+		this.itemsChanges.values = []
 		this.editModeOn = false
 	}
 
