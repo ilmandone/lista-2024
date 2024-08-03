@@ -14,7 +14,7 @@ export class SetOfUniqueItemsChanged<T extends BasicItemChange> {
 
 	add(change: T) {
 		const index = this.itemsChanges.findIndex((item) => item.UUID === change.UUID)
-		const wasCreate = index !== -1 ? this.itemsChanges[index].crud === 'create' : false
+		const wasCreate = index !== -1 ? this.itemsChanges[index].crud === 'create' : undefined
         let c = cloneDeep(change)
 
 		// Remove the item if already exists
@@ -25,7 +25,7 @@ export class SetOfUniqueItemsChanged<T extends BasicItemChange> {
         if(wasCreate && c.crud !== 'delete') c = {...c, crud: 'create'}
 
         // A created and delete item will not affect the changes list
-        if(wasCreate && c.crud === 'delete') return
+        if(wasCreate === true && c.crud === 'delete') return
 		this.itemsChanges.push(c)
 	}
 
