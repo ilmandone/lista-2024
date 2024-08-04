@@ -212,31 +212,11 @@ export class FirebaseService {
       batch.delete(d)
     }
 
-
-
-		// Keep only last change for each list
-		// const finalChanges = this.optimizeListsChanges(changes)
-
-		/*for (const change of finalChanges) {
-			const d = doc(mainCollection, change.UUID)
-
-			if (change.crud === 'delete') {
-				batch.delete(d)
-				continue
-			}
-
-			if (change.crud === 'update') {
-				delete change.crud
-				batch.update(d, change)
-			} else {
-				batch.set(d, {
-					label: change.label,
-					position: change.position,
-					UUID: change.UUID,
-					updated: this.gewNewTimeStamp()
-				})
-			}
-		}*/
+    // Update
+    for (const up of changes.updated) {
+      const d = doc(mainCollection, up.UUID)
+      batch.update(d, up)
+    }
 
 		await batch.commit()
 		return this.loadLists()
