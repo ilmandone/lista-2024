@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { FirebaseService } from '../../data/firebase.service'
 import { MatIcon } from '@angular/material/icon'
 import { MatIconButton } from '@angular/material/button'
-import { ItemData } from '../../data/firebase.interfaces'
+import { ItemData, ItemsData } from '../../data/firebase.interfaces'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet'
 import {
@@ -70,7 +70,7 @@ class ListComponent implements OnInit {
    * @param insertAfter
    * @private
    */
-  private _addInListItem(label: string, data: ItemData[], insertAfter: number): {
+  private _addInListItem(label: string, data: ItemsData, insertAfter: number): {
     itemsData: ItemData[],
   } {
     const itemsData = cloneDeep(data)
@@ -90,9 +90,32 @@ class ListComponent implements OnInit {
       itemsData.splice(insertAfter, 0, newItem)
     }
 
-    //TODO: Add the changes
+    //TODO: Add the changes in edit bag
 
     return { itemsData }
+  }
+
+  private _deleteInListItem(UUIDs: string[], data: ItemsData): {
+    itemsData: ItemsData
+  } {
+    const itemsData = cloneDeep(data)
+
+    UUIDs.forEach(UUID => {
+      const deleteIndex = itemsData.findIndex(i => i.UUID === UUID)
+
+      if (deleteIndex !== -1) {
+        itemsData.splice(deleteIndex, 1)
+      }
+    })
+
+    //TODO: Set changes in edit bag
+
+    return { itemsData }
+  }
+
+  deleteItems() {
+    const { itemsData } = this._deleteInListItem([...this.selectedItems], this.itemsData())
+    this.itemsData.set(itemsData)
   }
 
   /**
@@ -113,6 +136,8 @@ class ListComponent implements OnInit {
       this.itemsData.set(itemsData)
     })
   }
+
+  //#region Confirm / Cancel
 
   /**
    * Confirm shopping or editing mode
@@ -143,6 +168,8 @@ class ListComponent implements OnInit {
       this._itemsDataCache = []
     }
   }
+
+  //#endregion
 
   //#endregion
 
@@ -181,7 +208,6 @@ class ListComponent implements OnInit {
   }
 
   //#endregion
-
 }
 
 export default ListComponent

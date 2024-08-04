@@ -32,7 +32,7 @@
 
       <!--Delete one or more items-->
       <button mat-icon-button title="add item" type="button"
-              [disabled]="selectedItems.size === 0">
+              [disabled]="selectedItems.size === 0" (click)="deleteItems()">
         <mat-icon [fontIcon]="'delete'"></mat-icon>
       </button>
     }

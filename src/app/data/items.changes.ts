@@ -12,7 +12,6 @@ export class SetOfUniqueItemsChanged<T extends BasicItemChange> {
     return cloneDeep(this._itemsChanges)
   }
 
-
   set(changes: T[]) {
     for (const change of changes) {
 
