@@ -22,7 +22,7 @@ import {
 } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
-import { IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
+import { EditBag, IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
 
 import { Nullable } from '../shared/common.interfaces'
 
@@ -189,16 +189,35 @@ export class FirebaseService {
 	 * @param {IListsItemChanges[]} changes
 	 * @return {Promise<ListsData>}
 	 */
-	async updateLists(changes: IListsItemChanges[]): Promise<ListsData> {
+	async updateLists(changes: EditBag<IListsItemChanges>): Promise<ListsData> {
 		if (!this._db) this._startDB()
 
 		const batch = writeBatch(this._db)
 		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
-		// Keep only last change for each list
-		const finalChanges = this.optimizeListsChanges(changes)
+    // Create
+    for (const create of changes.created) {
+      const d = doc(mainCollection, create.UUID)
+      batch.set(d,  {
+        label: create.label,
+        position: create.position,
+        UUID: create.UUID,
+        updated: this.gewNewTimeStamp()
+      })
+    }
 
-		for (const change of finalChanges) {
+    // Delete
+    for (const del of changes.deleted) {
+      const d = doc(mainCollection, del.UUID)
+      batch.delete(d)
+    }
+
+
+
+		// Keep only last change for each list
+		// const finalChanges = this.optimizeListsChanges(changes)
+
+		/*for (const change of finalChanges) {
 			const d = doc(mainCollection, change.UUID)
 
 			if (change.crud === 'delete') {
@@ -217,7 +236,7 @@ export class FirebaseService {
 					updated: this.gewNewTimeStamp()
 				})
 			}
-		}
+		}*/
 
 		await batch.commit()
 		return this.loadLists()

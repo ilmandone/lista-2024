@@ -236,29 +236,28 @@ class ListsComponent implements OnInit {
 	listsDrop($event: CdkDragDrop<ListData[]>) {
 		const ld = this.listsData() as ListsData
 		const cI = $event.currentIndex
+    const pI = $event.previousIndex
 
 		// Update the list order
 		if (ld) {
-			moveItemInArray(ld, $event.previousIndex, cI)
+			moveItemInArray(ld, pI, cI)
 		}
 
 		// Start depends on sort order and could be the original or the new position
 		const start =
-			$event.currentIndex < $event.previousIndex ? $event.currentIndex : $event.previousIndex
+      cI < pI ? cI : pI
 
 		// Register all the new position into the itemsChanges list
 		for (let i = start; i < ld.length; i++) {
 			const list = ld[i]
-			this.itemsChanges.add({
+      list.position = i
+			this.itemsChanges.set([{
 				UUID: list.UUID,
 				label: list.label,
 				position: i,
 				crud: 'update'
-			})
+			}])
 		}
-
-		// Optimize items Changes on each reorder
-		// this.itemsChanges = this._firebaseSrv.optimizeListsChanges(this.itemsChanges)
 
 		this.listsData.set(ld)
 		this.dragEnable = false
@@ -275,7 +274,7 @@ class ListsComponent implements OnInit {
 			if (result) {
 				const { changes, newListsData } = this._addInListData(result, this.listsData())
 				this.listsData.set(newListsData)
-				this.itemsChanges.addMultiple(changes)
+				this.itemsChanges.set(changes)
 			}
 		})
 	}
@@ -294,14 +293,15 @@ class ListsComponent implements OnInit {
 				? this._updateInListData($event, this.listsData() as ListsData)
 				: this._deleteInListData($event, this.listsData() as ListsData)
 		this.listsData.set(newListsData)
-		this.itemsChanges.addMultiple(changes)
+		this.itemsChanges.set(changes)
 	}
 
 	/**
 	 * Confirm editing
 	 */
 	onConfirm() {
-		const hasDeleteActions = this.itemsChanges.values.some((item) => item.crud === 'delete')
+		const hasDeleteActions = false // this.itemsChanges.values.some((item) => item.crud ===
+    // 'delete')
 
 		if (hasDeleteActions) {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)
@@ -321,7 +321,7 @@ class ListsComponent implements OnInit {
 	 */
 	onCancel() {
 		this.listsData.set(this._listDataCache)
-		this.itemsChanges.values = []
+		// this.itemsChanges.values = []
 		this.editModeOn = false
 	}
 

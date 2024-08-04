@@ -27,3 +27,9 @@ export interface ItemData extends Pick<BasicItemChange, 'UUID'> {
 
 export type ItemsData = ItemData[]
 export type IItemsItemChanges = ItemData & Pick<BasicItemChange, 'crud'>
+
+export interface EditBag<T> {
+  created: T[]
+  updated: T[]
+  deleted: T[]
+}
