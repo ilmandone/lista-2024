@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { FirebaseService } from '../../data/firebase.service'
 import { MatIcon } from '@angular/material/icon'
 import { MatIconButton } from '@angular/material/button'
-import { ItemData, ItemsData } from '../../data/firebase.interfaces'
+import { ItemsItemChanges, ItemData, ItemsData } from '../../data/firebase.interfaces'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet'
 import {
@@ -79,7 +79,6 @@ class ListComponent implements OnInit {
       label,
       group: 'verdure',
       inCart: false,
-      qt: 1,
       toBuy: true,
       position: insertAfter + 1
     }
@@ -95,6 +94,12 @@ class ListComponent implements OnInit {
     return { itemsData }
   }
 
+  /**
+   * Delete one or more items
+   * @param {string[]} UUIDs
+   * @param {ItemsData} data
+   * @private {itemsData: ItemsData}
+   */
   private _deleteInListItem(UUIDs: string[], data: ItemsData): {
     itemsData: ItemsData
   } {
@@ -113,8 +118,31 @@ class ListComponent implements OnInit {
     return { itemsData }
   }
 
+  private _updateItem(change: ItemsItemChanges, data: ItemsData ): {
+    itemsData: ItemsData
+  } {
+    const itemsData = cloneDeep(data)
+    const item = itemsData.find(i => i.UUID === change.UUID)
+
+    if(item) {
+      item.label = change.label
+    }
+
+    // TODO: Set changes in edit bag
+
+    return { itemsData }
+  }
+
+  /**
+   * Delete button click
+   */
   deleteItems() {
     const { itemsData } = this._deleteInListItem([...this.selectedItems], this.itemsData())
+    this.itemsData.set(itemsData)
+  }
+
+  itemChanged($event: ItemsItemChanges) {
+    const {itemsData} = this._updateItem($event, this.itemsData())
     this.itemsData.set(itemsData)
   }
 

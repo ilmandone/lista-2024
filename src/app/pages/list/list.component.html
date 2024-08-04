@@ -43,6 +43,7 @@
   @defer (when itemsData() !== null) {
     @for (item of itemsData(); track item.UUID) {
       <app-list-item [data]="item" [editing]="editing" [selected]="selectedItems.has(item.UUID)"
+                     (changed)="itemChanged($event)"
                      (selectedChange)="itemSelected($event)"></app-list-item>
     }
   } @loading {
@@ -54,7 +55,7 @@
   <app-confirm-cancel
     [confirmSize]="shopping ? 65 : 50"
     [confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
-      (cancel)="cancel()" (confirm)="confirm()"
+    (cancel)="cancel()" (confirm)="confirm()"
 
   >
     <ng-template #cancelTemplate>
