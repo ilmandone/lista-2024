@@ -1,14 +1,14 @@
 import { cloneDeep } from 'lodash'
-import { BasicItemChange, EditBag } from './firebase.interfaces'
+import { BasicItemChange, ItemsChangesEditBag } from './firebase.interfaces'
 
 export class SetOfUniqueItemsChanged<T extends BasicItemChange> {
-  private _itemsChanges: EditBag<T> = {
+  private _itemsChanges: ItemsChangesEditBag<T> = {
     created: [],
     updated: [],
     deleted: []
   }
 
-  get values(): EditBag<T> {
+  get values(): ItemsChangesEditBag<T> {
     return cloneDeep(this._itemsChanges)
   }
 
