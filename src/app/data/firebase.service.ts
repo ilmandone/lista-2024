@@ -23,8 +23,8 @@ import {
 
 import { environment } from 'environments/environment.development'
 import { ItemsChangesEditBag, IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
-
 import { Nullable } from '../shared/common.interfaces'
+import { v4 as uuidV4 } from 'uuid'
 
 export interface IIsLogged {
 	state: boolean | null
@@ -185,6 +185,19 @@ export class FirebaseService {
         position: create.position,
         UUID: create.UUID,
         updated: this.gewNewTimeStamp()
+      })
+
+      // Items
+      const itemCollection = collection(d, 'items')
+      const itemDoc = doc(itemCollection, uuidV4())
+
+      batch.set(itemDoc, {
+        inCart: false,
+        label: 'Hello',
+        qt: 1,
+        toBuy: true,
+        group: null, // TODO: set to default group
+        position: 0
       })
     }
 
