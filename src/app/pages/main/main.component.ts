@@ -30,7 +30,7 @@ import { MainStateService } from '../../shared/main-state.service'
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
-export class MainComponent {
+class MainComponent {
   private readonly _fbSrv = inject(FirebaseService);
   private readonly _router = inject(Router);
   private readonly _dialog = inject(MatDialog);
@@ -62,3 +62,5 @@ export class MainComponent {
     this.themeSrv.isDark.set($event.checked)
   }
 }
+
+export default MainComponent

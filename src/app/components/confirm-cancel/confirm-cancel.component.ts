@@ -1,16 +1,33 @@
-import { Component, effect, HostBinding, inject, output } from '@angular/core'
+import {
+  Component,
+  ContentChild,
+  effect,
+  HostBinding,
+  inject,
+  input,
+  output,
+  TemplateRef
+} from '@angular/core'
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { MatButtonModule } from '@angular/material/button'
+import { NgStyle, NgTemplateOutlet } from '@angular/common'
 
 @Component({
   selector: 'app-confirm-cancel',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, NgStyle, NgTemplateOutlet],
   templateUrl: './confirm-cancel.component.html',
   styleUrl: './confirm-cancel.component.scss'
 })
-export class ConfirmCancelComponent {
+export class ConfirmCancelComponent{
   private _focusInput = inject(FocusInputService)
+
+  cancelLabel = input<string>()
+  confirmLabel = input<string>()
+  confirmSize = input<number>(50)
+
+  @ContentChild('cancelTemplate') cancelTemplate!: TemplateRef<HTMLElement>
+  @ContentChild('confirmTemplate') confirmTemplate!: TemplateRef<HTMLElement>
 
   cancel = output()
   confirm = output()

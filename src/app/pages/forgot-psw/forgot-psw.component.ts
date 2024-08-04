@@ -25,13 +25,13 @@ interface IForgotFG {
     MatLabel,
     MatError,
     LoaderComponent,
-    MatButton,    
+    MatButton,
     HeroImageComponent
   ],
   templateUrl: './forgot-psw.component.html',
   styleUrl: './forgot-psw.component.scss'
 })
-export class ForgotPswComponent {
+class ForgotPswComponent {
 
   private _fbSrv = inject(FirebaseService);
   private _snackBarSrv = inject(SnackBarService);
@@ -64,3 +64,5 @@ export class ForgotPswComponent {
       })
   }
 }
+
+export default ForgotPswComponent

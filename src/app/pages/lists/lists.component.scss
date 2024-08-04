@@ -21,22 +21,22 @@
     align-items: center;
 
     &__controls {
-      padding-right: 1rem;
+      padding-right: 0.25rem;
     }
 
     @include utils.media-query('t') {
       &__controls {
-        padding-right: 2rem;
+        padding-right: 1rem;
       }
     }
 
     h1 {
-      font-size: typo.$text-2xl;
+      font-size: typo.$text-3xl;
       font-weight: 300;
       text-transform: uppercase;
 
       @include utils.media-query('t') {
-        font-size: typo.$text-3xl;
+        font-size: typo.$text-4xl;
       }
     }
   }

@@ -1,0 +1,9 @@
+<h2>Gestione lista</h2>
+<button class="btn" mat-button (click)="toggleViewMode($event)">
+  <mat-icon [fontIcon]="viewModeGrid ? 'list' : 'grid_view'"></mat-icon>
+  {{ viewModeGrid ? 'Visualizza come lista' : 'Visualizza per gruppi' }}
+</button>
+<button class="btn" mat-button (click)="starEdit($event)">
+  <mat-icon [fontIcon]="'edit'"></mat-icon>
+  Modifica
+</button>

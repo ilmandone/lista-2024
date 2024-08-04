@@ -1,19 +1,16 @@
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 import { Component, effect, inject, input, OnInit, output } from '@angular/core'
-import { ListData } from '../../../data/firebase.interfaces'
-import { MatRippleModule } from '@angular/material/core'
-import { MatInputModule } from '@angular/material/input'
-import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatButtonModule } from '@angular/material/button'
+import { MatRippleModule } from '@angular/material/core'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
 import { FocusInputComponent } from 'app/components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
-import { Nullable } from '../../../shared/common.interfaces'
+import { IListsItemChanges, ListData } from '../../../data/firebase.interfaces'
 import { FirebaseService } from '../../../data/firebase.service'
-import { CdkDragHandle } from '@angular/cdk/drag-drop'
+import { Nullable } from '../../../shared/common.interfaces'
 
-export type IListsItemChanges = Omit<ListData, 'items' | 'updated'> & {
-  crud: 'create' | 'update' | 'delete',
-}
 
 @Component({
   selector: 'app-lists-item',
@@ -35,8 +32,9 @@ export class ListsItemComponent implements OnInit {
   readonly focusSrv = inject(FocusInputService)
 
   data = input.required<ListData>()
-  editModeOn = input.required<boolean>()
+  editing = input.required<boolean>()
 
+  clicked = output<ListData>()
   changed = output<IListsItemChanges>()
   deleted = output<IListsItemChanges>()
 
@@ -75,4 +73,7 @@ export class ListsItemComponent implements OnInit {
   }
 
   //#endregion
+  itemClicked() {
+    if (!this.editing()) this.clicked.emit(this.data())
+  }
 }

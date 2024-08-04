@@ -27,10 +27,10 @@ interface INewListFG {
     MatInput,
     MatLabel
   ],
-  templateUrl: './new-lists.dialog.component.html',
-  styleUrl: './new-lists.dialog.component.scss'
+  templateUrl: './lists-new.dialog.component.html',
+  styleUrl: './lists-new.dialog.component.scss'
 })
-export class NewListsDialogComponent {
+export class ListsNewDialogComponent {
   readonly dialogRef = inject(MatDialogRef<LogoutDialogComponent>)
 
   nameFC = new FormControl('', Validators.required)

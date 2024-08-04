@@ -1,3 +1,4 @@
+@use "~styles/shared.scss";
 @use "~styles/typo.scss";
 @use "~styles/utils.scss";
 
@@ -37,8 +38,8 @@
       }
     }
 
-    button[disabled] {
-      opacity: 0.2;
+    button {
+      @include shared.disabledOpacity;
     }
 
     &__time {

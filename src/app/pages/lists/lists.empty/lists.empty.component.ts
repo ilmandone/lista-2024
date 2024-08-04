@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, output } from '@angular/core'
 import { HeroImageComponent } from '../../../components/hero-image/hero-image.component'
 import { MatButton } from '@angular/material/button'
 
@@ -10,7 +10,8 @@ import { MatButton } from '@angular/material/button'
     MatButton
   ],
   templateUrl: './lists.empty.component.html',
-  styleUrl: './lists.empty.component.scss'
+  styleUrl: './lists.empty.component.scss',
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class ListsEmptyComponent {
   newList = output<void>()

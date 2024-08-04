@@ -1,226 +1,263 @@
 import { Injectable, signal } from '@angular/core'
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app'
 import {
-  Auth,
-  getAuth,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-  signOut,
-  UserCredential
+	Auth,
+	getAuth,
+	sendPasswordResetEmail,
+	signInWithEmailAndPassword,
+	signOut,
+	UserCredential
 } from 'firebase/auth'
 
 import {
-  collection,
-  doc,
-  Firestore,
-  getDocs,
-  getFirestore,
-  orderBy,
-  query,
-  Timestamp,
-  writeBatch
+	collection,
+	doc,
+	Firestore,
+	getDocs,
+	getFirestore,
+	orderBy,
+	query,
+	Timestamp,
+	writeBatch
 } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
-import { ListData, ListsData } from './firebase.interfaces'
-import { IListsItemChanges } from '../pages/lists/lists.item/lists.item.component'
-
+import { ItemsChangesEditBag, IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
+import { Nullable } from '../shared/common.interfaces'
+import { v4 as uuidV4 } from 'uuid'
 
 export interface IIsLogged {
-  state: boolean | null
-  error?: string
+	state: boolean | null
+	error?: string
 }
 
 export type IResetPsw = IIsLogged
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class FirebaseService {
-  public isLogged = signal<IIsLogged>({ state: false })
-  private _env = environment as Record<string, string>
-  private _fireBaseOptions: FirebaseOptions = {
-    authDomain: this._env['AUTH_DOMAIN'],
-    apiKey: this._env['API_KEY'],
-    databaseURL: this._env['DATABASE_URL'],
-    projectId: this._env['PROJECT_ID'],
-    storageBucket: this._env['STORAGE_BUCKET'],
-    messagingSenderId: this._env['MESSAGING_SENDER_ID'],
-    appId: this._env['APP_ID']
-  }
-  private _app!: FirebaseApp
-  private _auth!: Auth
-  private _db!: Firestore
+	public isLogged = signal<IIsLogged>({ state: false })
+	private _env = environment as Record<string, string>
+	private _fireBaseOptions: FirebaseOptions = {
+		authDomain: this._env['AUTH_DOMAIN'],
+		apiKey: this._env['API_KEY'],
+		databaseURL: this._env['DATABASE_URL'],
+		projectId: this._env['PROJECT_ID'],
+		storageBucket: this._env['STORAGE_BUCKET'],
+		messagingSenderId: this._env['MESSAGING_SENDER_ID'],
+		appId: this._env['APP_ID']
+	}
+	private _app!: FirebaseApp
+	private _auth!: Auth
+	private _db!: Firestore
+	private _userData!: UserCredential
 
-  private _userData!: UserCredential
+	private _cachedList!: ListsData | undefined
 
-  get userData() {
-    return this._userData
-  }
+	/**
+	 * Start the firebase connection
+	 */
+	public start(): Promise<void> {
+		return new Promise((resolve) => {
+			this._app = initializeApp(this._fireBaseOptions)
+			this._auth = getAuth(this._app)
 
-  /**
-   * Start the firebase connection
-   */
-  public start(): Promise<void> {
-    return new Promise((resolve) => {
-      this._app = initializeApp(this._fireBaseOptions)
-      this._auth = getAuth(this._app)
+			// Listen logout / login
+			this._auth.onAuthStateChanged((event) => {
+				this.isLogged.set({ state: event != null })
+				resolve()
+			})
+		})
+	}
 
-      // Listen logout / login
-      this._auth.onAuthStateChanged((event) => {
-        this.isLogged.set({ state: event != null })
-        resolve()
+	//#region Authentication
+
+	/**
+	 * Login with email and password
+	 * @param {string} email
+	 * @param {string} password
+	 * @return Promise<void>
+	 */
+	login(email: string, password: string): Promise<void> {
+		return signInWithEmailAndPassword(this._auth, email, password)
+			.then((resp) => {
+				this._userData = resp
+				this.isLogged.set({ state: true })
+				return
+			})
+			.catch((error) => {
+				this.isLogged.set({ state: false, error: error.code })
+				throw new Error(error)
+			})
+	}
+
+	/**
+	 * Logout
+	 * @return Promise<void>
+	 */
+	logout(): Promise<void> {
+		return signOut(this._auth)
+			.then(() => {
+				this.isLogged.set({ state: false })
+				return
+			})
+			.catch((error) => {
+				throw new Error(error)
+			})
+	}
+
+	/**
+	 * Reset account with email
+	 * @param {string} email
+	 * @returns {Promise<void>}
+	 */
+	resetWithPassword(email: string): Promise<void> {
+		return sendPasswordResetEmail(this._auth, email)
+	}
+
+	//#endregion
+
+	//#region DB Lists
+
+	private _startDB() {
+		if (!this._app) throw new Error('App not initialized')
+		this._db = getFirestore(this._app)
+	}
+
+	getDateFromTimeStamp(timeStamp: Timestamp): Date {
+		return timeStamp.toDate()
+	}
+
+	gewNewTimeStamp(): Timestamp {
+		return Timestamp.now()
+	}
+
+	/**
+	 * Get lists from the database
+	 * @description Save the list in cache for list pages
+	 * @returns Promise<ListsData>
+	 */
+	async loadLists(): Promise<ListsData> {
+		try {
+			if (!this._db) this._startDB()
+
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const q = query(mainCollection, orderBy('position'))
+			const data = await getDocs(q)
+
+			if (!data) await Promise.reject('Data not found')
+			if (data.empty) return []
+
+			const lists: ListsData = []
+
+			data.forEach((doc) => {
+				lists.push(doc.data() as ListData)
+			})
+
+			// Save cache
+			this._cachedList = lists
+
+			return lists
+		} catch (error) {
+			this._cachedList = undefined
+			throw new Error(error as string)
+		}
+	}
+
+	/**
+	 * update or delete a list
+	 * @description On batch commit return the loadList function
+	 * @param {IListsItemChanges[]} changes
+	 * @return {Promise<ListsData>}
+	 */
+	async updateLists(changes: ItemsChangesEditBag<IListsItemChanges>): Promise<ListsData> {
+		if (!this._db) this._startDB()
+
+		const batch = writeBatch(this._db)
+		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+
+    // Create
+    for (const create of changes.created) {
+      const d = doc(mainCollection, create.UUID)
+      batch.set(d,  {
+        label: create.label,
+        position: create.position,
+        UUID: create.UUID,
+        updated: this.gewNewTimeStamp()
       })
-    })
-  }
 
-  //#region Authentication
+      // Items
+      const itemCollection = collection(d, 'items')
+      const itemDoc = doc(itemCollection, uuidV4())
 
-  /**
-   * Login with email and password
-   * @param {string} email
-   * @param {string} password
-   * @return Promise<void>
-   */
-  login(email: string, password: string): Promise<void> {
-    return signInWithEmailAndPassword(this._auth, email, password)
-      .then((resp) => {
-        this._userData = resp
-        this.isLogged.set({ state: true })
-        return
+      batch.set(itemDoc, {
+        inCart: false,
+        label: 'Hello',
+        qt: 1,
+        toBuy: true,
+        group: null, // TODO: set to default group
+        position: 0
       })
-      .catch((error) => {
-        this.isLogged.set({ state: false, error: error.code })
-        throw new Error(error)
-      })
-  }
+    }
 
-  /**
-   * Logout
-   * @return Promise<void>
-   */
-  logout(): Promise<void> {
-    return signOut(this._auth)
-      .then(() => {
-        this.isLogged.set({ state: false })
-        return
-      })
-      .catch((error) => {
-        throw new Error(error)
-      })
-  }
+    // Delete
+    for (const del of changes.deleted) {
+      const d = doc(mainCollection, del.UUID)
+      batch.delete(d)
+    }
 
-  /**
-   * Reset account with email
-   * @param {string} email
-   * @returns {Promise<void>}
-   */
-  resetWithPassword(email: string): Promise<void> {
-    return sendPasswordResetEmail(this._auth, email)
-  }
+    // Update
+    for (const up of changes.updated) {
+      const d = doc(mainCollection, up.UUID)
+      batch.update(d, up)
+    }
 
-  //#endregion
+		await batch.commit()
+		return this.loadLists()
+	}
 
-  //#region DB
+	//#endregion
 
-  /**
-   * Keep only last changes for each list
-   * @param {IListsItemChanges} changes
-   * @private
-   */
-  private _optimizeChanges(changes: IListsItemChanges[]): IListsItemChanges[] {
-    const matchedUUID = new Set<string>()
+	//#region DB List
 
-    return changes.reduceRight((acc, val) => {
-      if (!matchedUUID.has(val.UUID)) {
-        matchedUUID.add(val.UUID)
-        acc.push(val)
-      }
+	async loadList(UUID: string): Promise<ItemData[]> {
+		try {
+			if (!this._db) this._startDB()
 
-      return acc
-    }, [] as IListsItemChanges[])
-  }
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const list = doc(mainCollection, UUID)
+			const itemsData = collection(list, 'items')
 
-  getDateFromTimeStamp(timeStamp: Timestamp): Date {
-    return timeStamp.toDate()
-  }
-
-  gewNewTimeStamp(): Timestamp {
-    return Timestamp.now()
-  }
-
-  startDB() {
-    if (!this._app) throw new Error('App not initialized')
-    this._db = getFirestore(this._app)
-  }
-
-  /**
-   * Get lists from the database
-   * @returns Promise<ListsData>
-   */
-  async loadLists(): Promise<ListsData> {
-
-    try {
-      const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-      const q = query(mainCollection, orderBy('position'))
-      const data = await getDocs(q)
-
+			const data = await getDocs(itemsData)
       if (!data) await Promise.reject('Data not found')
       if (data.empty) return []
 
-      const lists: ListsData = []
+      const items: ItemData[] = []
 
-      data.forEach(doc => {
-        lists.push(doc.data() as ListData)
+      data.forEach((doc) => {
+        items.push(doc.data() as ItemData)
       })
 
-      return lists
+      return items
 
-    } catch (error) {
-      throw new Error(error as string)
-    }
-  }
+		} catch (error) {
+			this._cachedList = undefined
+			throw new Error(error as string)
+		}
+	}
 
-  /**
-   * update or delete a list
-   * @description On batch commit return the loadList function
-   * @param {IListsItemChanges[]} changes
-   * @return {Promise<ListsData>}
-   */
-  async updateLists(changes: IListsItemChanges[]): Promise<ListsData> {
+	//#endregion
 
-    const batch = writeBatch(this._db)
-    const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+	//#region Utils
 
-    // Extract all the UUID of the deleted items to prevent useless updates
-    const finalChanges = this._optimizeChanges(changes)
+	async getListLabelByUUID(UUID: string): Promise<Nullable<string>> {
+		if (this._cachedList === undefined) {
+			await this.loadLists()
+		}
 
-    for (const change of finalChanges) {
+		return this._cachedList?.find((list) => list.UUID === UUID)?.label ?? null
+	}
 
-      const d = doc(mainCollection, change.UUID)
-
-      if (change.crud === 'delete') {
-        batch.delete(d)
-        continue
-      }
-
-      if (change.crud === 'update') {
-        batch.update(d, change)
-      }
-      else {
-        batch.set(d,  {
-          label: change.label,
-          position: change.position,
-          UUID: change.UUID,
-          items: [],
-          updated: this.gewNewTimeStamp()
-        })
-      }
-    }
-
-    await batch.commit()
-    return this.loadLists()
-  }
-
-  //#endregion
+	//#endregion
 }

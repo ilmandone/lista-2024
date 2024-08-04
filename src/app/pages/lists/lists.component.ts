@@ -1,289 +1,331 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { ListData, ListsData } from 'app/data/firebase.interfaces'
+import { IListsItemChanges, ListData, ListsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
-import { NewListsDialogComponent } from './new-lists.dialog/new-lists.dialog.component'
-import { IListsItemChanges, ListsItemComponent } from './lists.item/lists.item.component'
+import { ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../components/focus-input/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
-
-import { cloneDeep } from 'lodash'
-import { ListsConfirmDialogComponent } from './lists.confirm.dialog/lists.confirm.dialog.component'
 import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDragPlaceholder,
-  CdkDropList,
-  moveItemInArray
+	CdkDrag,
+	CdkDragDrop,
+	CdkDragPlaceholder,
+	CdkDropList,
+	moveItemInArray
 } from '@angular/cdk/drag-drop'
 import { MainStateService } from '../../shared/main-state.service'
+import { Router } from '@angular/router'
+import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.component'
+import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+
+import { cloneDeep } from 'lodash'
+import { v4 as uuidV4 } from 'uuid'
+import { SetOfUniqueItemsChanged } from 'app/data/items.changes'
 
 @Component({
-  selector: 'app-lists',
-  standalone: true,
-  imports: [MatIconModule, MatButtonModule, ListsEmptyComponent, MatDialogModule, ListsItemComponent,
-    LoaderComponent, ConfirmCancelComponent, CdkDrag, CdkDropList, CdkDragPlaceholder,],
-  templateUrl: './lists.component.html',
-  styleUrl: './lists.component.scss'
+	selector: 'app-lists',
+	standalone: true,
+	imports: [
+		MatIconModule,
+		MatButtonModule,
+		ListsEmptyComponent,
+		MatDialogModule,
+		ListsItemComponent,
+		LoaderComponent,
+		ConfirmCancelComponent,
+		CdkDrag,
+		CdkDropList,
+		CdkDragPlaceholder
+	],
+	templateUrl: './lists.component.html',
+	styleUrl: './lists.component.scss'
 })
-export class ListsComponent implements OnInit {
-  private readonly _firebaseSrv = inject(FirebaseService)
-  private readonly _dialog = inject(MatDialog)
-  private readonly _focusSrv = inject(FocusInputService)
-  private readonly _mainStateSrv = inject(MainStateService)
+class ListsComponent implements OnInit {
+	private readonly _firebaseSrv = inject(FirebaseService)
+	private readonly _dialog = inject(MatDialog)
+	private readonly _focusSrv = inject(FocusInputService)
+	private readonly _mainStateSrv = inject(MainStateService)
+	private readonly _route = inject(Router)
 
-  private _listDataCache!: Nullable<ListsData>
+	private _listDataCache!: Nullable<ListsData>
 
-  listsData = signal<Nullable<ListsData>>(null)
+	listsData = signal<Nullable<ListsData>>(null)
 
-  disabled = false
-  dragEnable = false
-  editModeOn = false
-  itemsChanges: IListsItemChanges[] = []
+	disabled = false
+	dragEnable = false
+	editModeOn = false
+	itemsChanges = new SetOfUniqueItemsChanged<IListsItemChanges>()
+	constructor() {
+		effect(() => {
+			this.disabled = this._focusSrv.id() !== null
+		})
 
-  constructor() {
-    effect(() => {
-      this.disabled = this._focusSrv.id() !== null
-    })
+		effect(
+			() => {
+				if (this._mainStateSrv.reload()) {
+					this._loadLists()
+				}
+			},
+			{ allowSignalWrites: true }
+		)
+	}
 
-    effect(() => {
-      if (this._mainStateSrv.reload()) {
-        this._loadLists()
-      }
-    }, {allowSignalWrites: true})
-  }
+	ngOnInit(): void {
+		this._loadLists()
+	}
 
-  ngOnInit(): void {
-    this._firebaseSrv.startDB()
-    this._loadLists()
-  }
+	//#region Privates
 
-  //#region Privates
+	/**
+	 * Load lists and show loading main element
+	 * @private
+	 */
+	private _loadLists(): void {
+		this._mainStateSrv.showLoader.set(true)
+		this._firebaseSrv.loadLists().then((r) => {
+			this.listsData.set(r)
+			this._mainStateSrv.showLoader.set(false)
+		})
+	}
 
-  /**
-   * Load lists and show loading main element
-   * @private
-   */
-  private _loadLists(): void {
-    this._mainStateSrv.showLoader.set(true)
-    this._firebaseSrv.loadLists().then((r) => {
-      this.listsData.set(r)
-      this._mainStateSrv.showLoader.set(false)
-    })
-  }
+	/**
+	 * Update lists on db and refresh the view
+	 * @private
+	 */
+	private _saveLists(): void {
+		this._mainStateSrv.showLoader.set(true)
+		this._firebaseSrv.updateLists(this.itemsChanges.values).then((r) => {
+			this.listsData.set(r)
+			this._mainStateSrv.showLoader.set(false)
+		})
+	}
 
-  /**
-   * Update lists on db and refresh the view
-   * @private
-   */
-  private _saveLists(): void {
-    this._mainStateSrv.showLoader.set(true)
-    this._firebaseSrv.updateLists(this.itemsChanges).then(r => {
-      this.listsData.set(r)
-      this._mainStateSrv.showLoader.set(false)
-    })
-  }
+	/**
+	 * Update the list in f/e data
+	 * @param {string} label
+	 * @param {ListsData} data
+	 * @return New lists data and changes
+	 * @private
+	 */
+	private _addInListData(
+		label: string,
+		data: Nullable<ListsData>
+	): {
+		newListsData: ListsData
+		changes: IListsItemChanges[]
+	} {
+		const newListsData = data ? cloneDeep(data) : []
+		const newItem = {
+			UUID: uuidV4(),
+			label,
+			position: data?.length ?? 0,
+			items: null,
+			updated: this._firebaseSrv.gewNewTimeStamp()
+		}
 
-  /**
-   * Update the list in f/e data
-   * @param {string} label
-   * @param {ListsData} data
-   * @return New lists data and changes
-   * @private
-   */
-  private _addInListData(label: string, data: ListsData): {
-    newListsData: ListsData,
-    changes: IListsItemChanges[]
-  } {
-    const newListsData = cloneDeep(data)
-    const newItem = {
-      UUID: self.crypto.randomUUID(),
-      label,
-      position: (this.listsData()?.length ?? 0) + 1,
-      items: null,
-      updated: this._firebaseSrv.gewNewTimeStamp()
-    }
+		newListsData.push(newItem)
 
-    newListsData.push(newItem)
+		return {
+			newListsData,
+			changes: [{ UUID: newItem.UUID, label, position: newItem.position, crud: 'create' }]
+		}
+	}
 
-    return {
-      newListsData,
-      changes: [{ UUID: newItem.UUID, label, position: newItem.position, crud: 'create' }]
-    }
-  }
+	/**
+	 * Update list's position or / label in f/e data
+	 * @param {IListsItemChanges} change
+	 * @param {ListsData} data
+	 * @return New lists data and changes
+	 * @private
+	 */
+	private _updateInListData(
+		change: IListsItemChanges,
+		data: ListsData
+	): {
+		newListsData: ListsData
+		changes: IListsItemChanges[]
+	} {
+		const newListsData = cloneDeep(data)
+		const item = newListsData.find((list) => list.UUID === change.UUID)
 
-  /**
-   * Update the list in f/e data
-   * @param {IListsItemChanges} change
-   * @param {ListsData} data
-   * @return New lists data and changes
-   * @private
-   */
-  private _updateInListData(change: IListsItemChanges, data: ListsData): {
-    newListsData: ListsData,
-    changes: IListsItemChanges[]
-  } {
-    const newListsData = cloneDeep(data)
-    const item = newListsData.find(list => list.UUID === change.UUID)
+		if (item) {
+			item.label = change.label
+		}
 
-    if (item) {
-      item.label = change.label
-      item.position = change.position
-    }
+		return { newListsData, changes: [change] }
+	}
 
-    return { newListsData, changes: [change] }
-  }
+	/**
+	 * Delete the list from the f/e data
+	 * @param {IListsItemChanges} change
+	 * @param {ListsData} data
+	 * @return New lists data and changes
+	 * @private
+	 */
+	private _deleteInListData(
+		change: IListsItemChanges,
+		data: ListsData
+	): {
+		newListsData: ListsData
+		changes: IListsItemChanges[]
+	} {
+		const newListsData = cloneDeep(data)
+		const changes: IListsItemChanges[] = [change]
+		const i = newListsData.findIndex((list) => list.UUID === change.UUID)
 
-  /**
-   * Delete the list from the f/e data
-   * @param {IListsItemChanges} change
-   * @param {ListsData} data
-   * @return New lists data and changes
-   * @private
-   */
-  private _deleteInListData(change: IListsItemChanges, data: ListsData): {
-    newListsData: ListsData,
-    changes: IListsItemChanges[]
-  } {
-    const newListsData = cloneDeep(data)
-    const changes: IListsItemChanges[] = [change]
-    const i = newListsData.findIndex(list => list.UUID === change.UUID)
+		if (i !== -1) {
+			newListsData.splice(i, 1)
+		}
 
-    if (i !== -1) {
-      newListsData.splice(i, 1)
-    }
+		// Update all the positions -> following position changes will use this information
+		newListsData.forEach((list) => {
+			if (list.position > change.position) {
+				list.position -= 1
+				changes.push({
+					UUID: list.UUID,
+					label: list.label,
+					position: list.position,
+					crud: 'update'
+				})
+			}
+		})
 
-    // Update all the positions -> following position changes will use this information
-    newListsData.forEach(list => {
-      if (list.position > change.position) {
-        list.position -= 1
-        changes.push({
-          UUID: list.UUID,
-          label: list.label,
-          position: list.position,
-          crud: 'update'
-        })
-      }
-    })
+		return { newListsData, changes }
+	}
 
-    return { newListsData, changes }
-  }
+	//#endregion
 
-  //#endregion
+	//#region Main
 
-  //#region Main
+	/**
+	 * Top button click
+	 * @description Start edit mode | Open the create new dialog
+	 */
+	clickTopButton() {
+		if (!this.editModeOn) {
+			this._listDataCache = cloneDeep(this.listsData())
+			this.editModeOn = true
+		} else this.openCreateNew()
+	}
 
-  /**
-   * Top button click
-   * @description Start edit mode | Open the create new dialog
-   */
-  clickTopButton() {
-    if (!this.editModeOn) {
-      this._listDataCache = cloneDeep(this.listsData())
-      this.editModeOn = true
-    } else this.openCreateNew()
-  }
+	//#endregion
 
-  //#endregion
+	//#region Interactions
 
-  //#region Interactions
+	/**
+	 * Item click and jump to list page
+	 * @param $event
+	 */
+	itemClicked($event: ListData) {
+		void this._route.navigate([`main`, 'list', $event.UUID], {
+			state: {
+				label: $event.label
+			}
+		})
+	}
 
-  /**
-   * Drag and drop completed
-   * @description Update the data list order and save all the changes for the items position
-   * @param {CdkDragDrop<ListData[]>} $event
-   */
-  listsDrop($event: CdkDragDrop<ListData[]>) {
-    const ld = this.listsData() as ListsData
-    const cI = $event.currentIndex
+	/**
+	 * Drag and drop completed
+	 * @description Update the data list order and save all the changes for the items position
+	 * @param {CdkDragDrop<ListData[]>} $event
+	 */
+	listsDrop($event: CdkDragDrop<ListData[]>) {
+		const ld = this.listsData() as ListsData
+		const cI = $event.currentIndex
+    const pI = $event.previousIndex
 
-    // Update the list order
-    if (ld) {
-      moveItemInArray(ld, $event.previousIndex, cI)
-    }
+		// Update the list order
+		if (ld) {
+			moveItemInArray(ld, pI, cI)
+		}
 
-    // Update all position from start to current index
-    for (let i = 0; i <= cI; i ++) {
-      const list = ld[i]
-      list.position = i + 1
-      this.itemsChanges.push({
-        UUID: list.UUID,
-        label: list.label,
-        position: list.position,
-        crud: 'update',
-      })
-    }
+		// Start depends on sort order and could be the original or the new position
+		const start =
+      cI < pI ? cI : pI
 
-    this.listsData.set(ld)
-    this.dragEnable = false
-  }
+		// Register all the new position into the itemsChanges list
+		for (let i = start; i < ld.length; i++) {
+			const list = ld[i]
+      list.position = i
+			this.itemsChanges.set([{
+				UUID: list.UUID,
+				label: list.label,
+				position: i,
+				crud: 'update'
+			}])
+		}
 
-  /**
-   * Open dialog for new list
-   * @description On confirm true add the new list in f/e data and update itemsChanges
-   */
-  openCreateNew() {
-    const dr = this._dialog.open(NewListsDialogComponent)
+		this.listsData.set(ld)
+		this.dragEnable = false
+	}
 
-    dr.afterClosed().subscribe((result) => {
-      if (result) {
-        const { changes, newListsData } = this._addInListData(result, this.listsData() as ListsData)
-        this.listsData.set(newListsData)
-        this.itemsChanges = this.itemsChanges.concat(changes)
-      }
-    })
-  }
+	/**
+	 * Open dialog for new list
+	 * @description On confirm true add the new list in f/e data and update itemsChanges
+	 */
+	openCreateNew() {
+		const dr = this._dialog.open(ListsNewDialogComponent)
 
-  //#endregion
+		dr.afterClosed().subscribe((result) => {
+			if (result) {
+				const { changes, newListsData } = this._addInListData(result, this.listsData())
+				this.listsData.set(newListsData)
+				this.itemsChanges.set(changes)
+			}
+		})
+	}
 
-  //#region Editing
+	//#endregion
 
-  /**
-   * Update or delete list in listsData and add changes
-   * @param {IListsItemChanges} $event
-   */
-  itemChanged($event: IListsItemChanges) {
-    const { changes, newListsData } =
-      $event.crud === 'update'
-        ? this._updateInListData($event, this.listsData() as ListsData)
-        : this._deleteInListData($event, this.listsData() as ListsData)
-    this.listsData.set(newListsData)
-    this.itemsChanges = this.itemsChanges.concat(changes)
-  }
+	//#region Editing
 
-  /**
-   * Confirm editing
-   */
-  onConfirm() {
-    const hasDeleteActions = this.itemsChanges.some(item => item.crud === 'delete')
+	/**
+	 * Update or delete list in listsData and add changes
+	 * @param {IListsItemChanges} $event
+	 */
+	itemChanged($event: IListsItemChanges) {
+		const { changes, newListsData } =
+			$event.crud === 'update'
+				? this._updateInListData($event, this.listsData() as ListsData)
+				: this._deleteInListData($event, this.listsData() as ListsData)
+		this.listsData.set(newListsData)
+		this.itemsChanges.set(changes)
+	}
 
-    if (hasDeleteActions) {
-      const dr = this._dialog.open(ListsConfirmDialogComponent)
-      dr.afterClosed().subscribe((result) => {
-        if (result) this._saveLists()
-        this.editModeOn = false
-      })
+	/**
+	 * Confirm editing
+	 */
+	onConfirm() {
+		const hasDeleteActions = false // this.itemsChanges.values.some((item) => item.crud ===
+    // 'delete')
 
-    } else {
-      this._saveLists()
-      this.editModeOn = false
-    }
-  }
+		if (hasDeleteActions) {
+			const dr = this._dialog.open(DeleteConfirmDialogComponent)
+			dr.afterClosed().subscribe((result) => {
+				if (result) this._saveLists()
+				this.editModeOn = false
+			})
+		} else {
+			this._saveLists()
+			this.editModeOn = false
+		}
+	}
 
-  /**
-   * Undo editing
-   * @description Restore data from cache and reset changes list
-   */
-  onCancel() {
-    this.listsData.set(this._listDataCache)
-    this.itemsChanges = []
-    this.editModeOn = false
-  }
+	/**
+	 * Undo editing
+	 * @description Restore data from cache and reset changes list
+	 */
+	onCancel() {
+		this.listsData.set(this._listDataCache)
+		// this.itemsChanges.values = []
+		this.editModeOn = false
+	}
 
-  //#endregion
+	//#endregion
 }
+
+export default ListsComponent

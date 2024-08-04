@@ -1,0 +1,12 @@
+.btn-tgl {
+    height: 3rem;
+    min-height: 3rem;
+    padding: 0 1.5rem;
+
+    display: inline-flex;
+}
+
+.btn-tgl.active,
+.btn-tgl--icon.active {
+  color: var(--button-toggle-active-color-bg);
+}
