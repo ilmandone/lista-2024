@@ -23,8 +23,9 @@ export class ListItemComponent {
 
   data = input.required<ItemData>()
   editing = input<boolean>(false)
+  selected = input<boolean>(false)
 
-  selected = output<ListItemSelectedEvent>()
+  selectedChange = output<ListItemSelectedEvent>()
 
   disabled = false
 
@@ -33,7 +34,7 @@ export class ListItemComponent {
   }
 
   itemSelected($event: MatCheckboxChange) {
-    this.selected.emit({
+    this.selectedChange.emit({
       UUID: this.data().UUID,
       isSelected: $event.checked
     })

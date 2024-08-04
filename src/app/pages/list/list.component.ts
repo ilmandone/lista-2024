@@ -87,7 +87,7 @@ class ListComponent implements OnInit {
     if (insertAfter === data.length - 1)
       itemsData.push(newItem)
     else {
-      itemsData.splice(insertAfter, 0, newItem)
+      itemsData.splice(insertAfter + 1, 0, newItem)
     }
 
     //TODO: Add the changes in edit bag
@@ -125,15 +125,21 @@ class ListComponent implements OnInit {
     const d = this._dialog.open(ListNewDialogComponent)
 
     d.afterClosed().subscribe(r => {
-      const selectedUUID = this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+      console.log(r)
+      if (r) {
+        const selectedUUID = this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
 
-      const insertAfter =
-        selectedUUID
-          ? this.itemsData().find(e => e.UUID === selectedUUID)?.position ?? this.itemsData().length - 1
-          : this.itemsData().length - 1
+        const insertAfter =
+          selectedUUID
+            ? this.itemsData().find(e => e.UUID === selectedUUID)?.position ?? this.itemsData().length - 1
+            : this.itemsData().length - 1
 
-      const { itemsData } = this._addInListItem(r, this.itemsData() as ItemData[], insertAfter)
-      this.itemsData.set(itemsData)
+        const { itemsData } = this._addInListItem(r, this.itemsData() as ItemData[], insertAfter)
+        this.itemsData.set(itemsData)
+
+        this.selectedItems.clear()
+      }
+
     })
   }
 
