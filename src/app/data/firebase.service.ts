@@ -120,24 +120,6 @@ export class FirebaseService {
 
 	//#region DB Lists
 
-	/**
-	 * Keep only last changes for each list
-	 * @param {IListsItemChanges} changes
-	 * @private
-	 */
-	optimizeListsChanges(changes: IListsItemChanges[]): IListsItemChanges[] {
-		const matchedUUID = new Set<string>()
-
-		return changes.reduceRight((acc, val) => {
-			if (!matchedUUID.has(val.UUID)) {
-				matchedUUID.add(val.UUID)
-				acc.push(val)
-			}
-
-			return acc
-		}, [] as IListsItemChanges[])
-	}
-
 	private _startDB() {
 		if (!this._app) throw new Error('App not initialized')
 		this._db = getFirestore(this._app)
