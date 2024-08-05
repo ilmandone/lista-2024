@@ -1,7 +1,7 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { IListsItemChanges, ListData, ListsData } from 'app/data/firebase.interfaces'
+import { ListsItemChanges, ListData, ListsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { Nullable } from 'app/shared/common.interfaces'
 import { ListsEmptyComponent } from './lists.empty/lists.empty.component'
@@ -57,7 +57,7 @@ class ListsComponent implements OnInit {
 
 	disabled = false
 	editing = false
-	itemsChanges = new SetOfItemsChanges<IListsItemChanges>()
+	itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
 	constructor() {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
@@ -115,7 +115,7 @@ class ListsComponent implements OnInit {
 		data: Nullable<ListsData>
 	): {
 		newListsData: ListsData
-		changes: IListsItemChanges[]
+		changes: ListsItemChanges[]
 	} {
 		const newListsData = data ? cloneDeep(data) : []
 		const newItem = {
@@ -136,17 +136,17 @@ class ListsComponent implements OnInit {
 
 	/**
 	 * Update list's position or / label in f/e data
-	 * @param {IListsItemChanges} change
+	 * @param {ListsItemChanges} change
 	 * @param {ListsData} data
 	 * @return New lists data and changes
 	 * @private
 	 */
 	private _updateInListData(
-		change: IListsItemChanges,
+		change: ListsItemChanges,
 		data: ListsData
 	): {
 		newListsData: ListsData
-		changes: IListsItemChanges[]
+		changes: ListsItemChanges[]
 	} {
 		const newListsData = cloneDeep(data)
 		const item = newListsData.find((list) => list.UUID === change.UUID)
@@ -160,20 +160,20 @@ class ListsComponent implements OnInit {
 
 	/**
 	 * Delete the list from the f/e data
-	 * @param {IListsItemChanges} change
+	 * @param {ListsItemChanges} change
 	 * @param {ListsData} data
 	 * @return New lists data and changes
 	 * @private
 	 */
 	private _deleteInListData(
-		change: IListsItemChanges,
+		change: ListsItemChanges,
 		data: ListsData
 	): {
 		newListsData: ListsData
-		changes: IListsItemChanges[]
+		changes: ListsItemChanges[]
 	} {
 		const newListsData = cloneDeep(data)
-		const changes: IListsItemChanges[] = [change]
+		const changes: ListsItemChanges[] = [change]
 		const i = newListsData.findIndex((list) => list.UUID === change.UUID)
 
 		if (i !== -1) {
@@ -284,9 +284,9 @@ class ListsComponent implements OnInit {
 
 	/**
 	 * Update or delete list in listsData and add changes
-	 * @param {IListsItemChanges} $event
+	 * @param {ListsItemChanges} $event
 	 */
-	itemChanged($event: IListsItemChanges) {
+	itemChanged($event: ListsItemChanges) {
 		const { changes, newListsData } =
 			$event.crud === 'update'
 				? this._updateInListData($event, this.listsData() as ListsData)

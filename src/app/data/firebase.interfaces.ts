@@ -12,7 +12,7 @@ export interface ListData extends Pick<BasicItemChange, 'UUID'> {
 }
 
 export type ListsData = ListData[]
-export type IListsItemChanges = Omit<ListData, 'updated'> & Pick<BasicItemChange, 'crud'>
+export type ListsItemChanges = Omit<ListData, 'updated'> & Pick<BasicItemChange, 'crud'>
 
 export interface ItemData extends Pick<BasicItemChange, 'UUID'> {
 	inCart: boolean

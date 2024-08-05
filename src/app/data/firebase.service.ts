@@ -22,7 +22,7 @@ import {
 } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
-import { ItemsChangesEditBag, IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
+import { ItemsChangesEditBag, ListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
 
@@ -168,10 +168,10 @@ export class FirebaseService {
 	/**
 	 * update or delete a list
 	 * @description On batch commit return the loadList function
-	 * @param {IListsItemChanges[]} changes
+	 * @param {ListsItemChanges[]} changes
 	 * @return {Promise<ListsData>}
 	 */
-	async updateLists(changes: ItemsChangesEditBag<IListsItemChanges>): Promise<ListsData> {
+	async updateLists(changes: ItemsChangesEditBag<ListsItemChanges>): Promise<ListsData> {
 		if (!this._db) this._startDB()
 
 		const batch = writeBatch(this._db)
