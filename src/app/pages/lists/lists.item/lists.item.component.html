@@ -12,8 +12,7 @@
 >
   <!--  Drag button -->
   @if (editing()) {
-    <button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled"
-            (click)="deleteList()">
+    <button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled">
       <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
     </button>
   }
