@@ -137,6 +137,7 @@ class ListComponent implements OnInit {
 		change: ItemsChanges,
 		data: ItemsData
 	): {
+		changes: ItemsChanges[],
 		itemsData: ItemsData
 	} {
 		const itemsData = cloneDeep(data)
@@ -146,9 +147,7 @@ class ListComponent implements OnInit {
 			item.label = change.label
 		}
 
-		// TODO: Set changes in edit bag
-
-		return { itemsData }
+		return { itemsData, changes: [change] }
 	}
 
 	/**
@@ -160,8 +159,9 @@ class ListComponent implements OnInit {
 	}
 
 	itemChanged($event: ItemsChanges) {
-		const { itemsData } = this._updateItem($event, this.itemsData())
+		const { itemsData, changes } = this._updateItem($event, this.itemsData())
 		this.itemsData.set(itemsData)
+		this._itemsChanges.set(changes)
 	}
 
 	/**

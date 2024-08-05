@@ -135,30 +135,6 @@ class ListsComponent implements OnInit {
 	}
 
 	/**
-	 * Update list's position or / label in f/e data
-	 * @param {ListsItemChanges} change
-	 * @param {ListsData} data
-	 * @return New lists data and changes
-	 * @private
-	 */
-	private _updateInListData(
-		change: ListsItemChanges,
-		data: ListsData
-	): {
-		newListsData: ListsData
-		changes: ListsItemChanges[]
-	} {
-		const newListsData = cloneDeep(data)
-		const item = newListsData.find((list) => list.UUID === change.UUID)
-
-		if (item) {
-			item.label = change.label
-		}
-
-		return { newListsData, changes: [change] }
-	}
-
-	/**
 	 * Delete the list from the f/e data
 	 * @param {ListsItemChanges} change
 	 * @param {ListsData} data
@@ -194,6 +170,30 @@ class ListsComponent implements OnInit {
 		})
 
 		return { newListsData, changes }
+	}
+
+	/**
+	 * Update list's position or / label in f/e data
+	 * @param {ListsItemChanges} change
+	 * @param {ListsData} data
+	 * @return New lists data and changes
+	 * @private
+	 */
+	private _updateInListData(
+		change: ListsItemChanges,
+		data: ListsData
+	): {
+		newListsData: ListsData
+		changes: ListsItemChanges[]
+	} {
+		const newListsData = cloneDeep(data)
+		const item = newListsData.find((list) => list.UUID === change.UUID)
+
+		if (item) {
+			item.label = change.label
+		}
+
+		return { newListsData, changes: [change] }
 	}
 
 	//#endregion
