@@ -57,7 +57,7 @@ class ListsComponent implements OnInit {
 
 	disabled = false
 	dragEnable = false
-	editModeOn = false
+	editing = false
 	itemsChanges = new SetOfItemsChanges<IListsItemChanges>()
 	constructor() {
 		effect(() => {
@@ -206,9 +206,9 @@ class ListsComponent implements OnInit {
 	 * @description Start edit mode | Open the create new dialog
 	 */
 	clickTopButton() {
-		if (!this.editModeOn) {
+		if (!this.editing) {
 			this._listDataCache = cloneDeep(this.listsData())
-			this.editModeOn = true
+			this.editing = true
 		} else this.openCreateNew()
 	}
 
@@ -307,11 +307,11 @@ class ListsComponent implements OnInit {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)
 			dr.afterClosed().subscribe((result) => {
 				if (result) this._saveLists()
-				this.editModeOn = false
+				this.editing = false
 			})
 		} else {
 			this._saveLists()
-			this.editModeOn = false
+			this.editing = false
 		}
 	}
 
@@ -322,7 +322,7 @@ class ListsComponent implements OnInit {
 	onCancel() {
 		this.listsData.set(this._listDataCache)
 		// this.itemsChanges.values = []
-		this.editModeOn = false
+		this.editing = false
 	}
 
 	//#endregion
