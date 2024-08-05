@@ -228,8 +228,9 @@ export class FirebaseService {
 			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 			const list = doc(mainCollection, UUID)
 			const itemsData = collection(list, 'items')
+			const q = query(itemsData, orderBy('position'))
 
-			const data = await getDocs(itemsData)
+			const data = await getDocs(q)
       if (!data) await Promise.reject('Data not found')
       if (data.empty) return []
 
