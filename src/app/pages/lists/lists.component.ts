@@ -24,7 +24,7 @@ import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog
 
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
-import { SetOfUniqueItemsChanged } from 'app/data/items.changes'
+import { SetOfItemsChanges } from 'app/data/items.changes'
 
 @Component({
 	selector: 'app-lists',
@@ -58,7 +58,7 @@ class ListsComponent implements OnInit {
 	disabled = false
 	dragEnable = false
 	editModeOn = false
-	itemsChanges = new SetOfUniqueItemsChanged<IListsItemChanges>()
+	itemsChanges = new SetOfItemsChanges<IListsItemChanges>()
 	constructor() {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
