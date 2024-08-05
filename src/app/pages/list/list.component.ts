@@ -19,6 +19,7 @@ import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop'
+import { SetOfItemsChanges } from 'app/data/items.changes'
 
 @Component({
 	selector: 'app-list',
@@ -47,6 +48,7 @@ class ListComponent implements OnInit {
 
 	private _UUID!: string
 	private _itemsDataCache: ItemData[] = []
+	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
 
 	itemsData = signal<ItemData[]>([])
 
@@ -55,6 +57,8 @@ class ListComponent implements OnInit {
 	selectedItems = new Set<string>()
 	shopping = false
 	viewModeGrid = false
+
+	
 
 	async ngOnInit() {
 		this._UUID = this._activatedRoute.snapshot.params['id']
@@ -79,7 +83,8 @@ class ListComponent implements OnInit {
 		data: ItemsData,
 		insertAfter: number
 	): {
-		itemsData: ItemData[]
+		itemsData: ItemData[],
+		changes: ItemsChanges[]
 	} {
 		const itemsData = cloneDeep(data)
 		const newItem: ItemData = {
@@ -95,10 +100,10 @@ class ListComponent implements OnInit {
 		else {
 			itemsData.splice(insertAfter + 1, 0, newItem)
 		}
-
-		//TODO: Add the changes in edit bag
-
-		return { itemsData }
+		
+		return { itemsData, changes: [{
+			UUID: newItem.UUID, label, position: newItem.position, group: newItem.group, crud: 'create'
+		}] }
 	}
 
 	/**
@@ -176,8 +181,9 @@ class ListComponent implements OnInit {
 						this.itemsData().length - 1
 					: this.itemsData().length - 1
 
-				const { itemsData } = this._addInListItem(r, this.itemsData() as ItemData[], insertAfter)
+				const { itemsData, changes } = this._addInListItem(r, this.itemsData() as ItemData[], insertAfter)
 				this.itemsData.set(itemsData)
+				this._itemsChanges.set(changes)
 
 				this.selectedItems.clear()
 			}
@@ -211,7 +217,7 @@ class ListComponent implements OnInit {
 			console.log('TODO: Remove the in cart value from all items and set toBuy to false')
 			this.shopping = false
 		} else {
-			console.log('TODO: update the db')
+			console.log('TODO: update the db', this._itemsChanges.values)
 			this.editing = false
 			this._itemsDataCache = []
 		}
