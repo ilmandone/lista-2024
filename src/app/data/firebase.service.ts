@@ -189,9 +189,11 @@ export class FirebaseService {
 
       // Items
       const itemCollection = collection(d, 'items')
-      const itemDoc = doc(itemCollection, uuidV4())
+	  const UUIDItem = uuidV4()
+      const itemDoc = doc(itemCollection, UUIDItem)
 
       batch.set(itemDoc, {
+		UUID: UUIDItem,
         inCart: false,
         label: 'Hello',
         qt: 1,
