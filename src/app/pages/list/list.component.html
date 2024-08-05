@@ -54,7 +54,7 @@
 	<!--Items-->
 	@for (item of itemsData(); track item.UUID) {
 	<!-- Drag Box -->
-	<div cdkDrag>
+	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">
 		<app-list-item
 			[data]="item"
 			[editing]="editing"

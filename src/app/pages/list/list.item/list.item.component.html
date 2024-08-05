@@ -8,16 +8,21 @@
 >
 	<!--Left group-->
 	<div class="item-button__left">
-		<!--Checkbox-->
 		@if (editing()) {
+
+		<!-- Drag handler -->
+		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
+			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+		</button>
+
+		<!--Checkbox-->
 		<mat-checkbox
+			class="item-button__left__checkbox"
 			aria-label="Select this item"
 			[checked]="selected()"
 			(change)="itemSelected($event)"
 		></mat-checkbox>
-		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
-			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
-		</button>
+
 		}
 
 		<!--  Label-->

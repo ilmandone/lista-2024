@@ -31,6 +31,10 @@
 
       display: flex;
       align-items: center;
+
+      &__checkbox {
+        margin-right: 0.5rem;
+      }
     }
 
     &__right {
@@ -54,6 +58,7 @@
   }
 
   button {
+    border: 0;
     @include shared.disabledOpacity;
   }
 }
