@@ -6,6 +6,8 @@ import { ItemsItemChanges, ItemData } from '../../../data/firebase.interfaces'
 import { Nullable } from '../../../shared/common.interfaces'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { ListItemSelectedEvent } from './list.item.interface'
+import { MatIconModule } from '@angular/material/icon'
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'app-list-item',
@@ -13,7 +15,9 @@ import { ListItemSelectedEvent } from './list.item.interface'
   imports: [
     MatRippleModule,
     FocusInputComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatIconModule,
+    CdkDragHandle
   ],
   templateUrl: './list.item.component.html',
   styleUrl: './list.item.component.scss'

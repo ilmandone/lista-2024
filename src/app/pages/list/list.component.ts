@@ -18,6 +18,7 @@ import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.compon
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
+import { CdkDrag, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'app-list',
@@ -30,7 +31,10 @@ import { v4 as uuidV4 } from 'uuid'
     ButtonToggleComponent,
     ConfirmCancelComponent,
     ListItemComponent,
-    MatDialogModule
+    MatDialogModule,
+    CdkDrag,
+		CdkDropList,
+		CdkDragPlaceholder
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
