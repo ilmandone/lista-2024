@@ -2,7 +2,7 @@ import { Component, inject, input, output } from '@angular/core'
 import { MatRippleModule } from '@angular/material/core'
 import { FocusInputComponent } from '../../../components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
-import { ItemsItemChanges, ItemData } from '../../../data/firebase.interfaces'
+import { ItemsChanges, ItemData } from '../../../data/firebase.interfaces'
 import { Nullable } from '../../../shared/common.interfaces'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { ListItemSelectedEvent } from './list.item.interface'
@@ -30,7 +30,7 @@ export class ListItemComponent {
   selected = input<boolean>(false)
 
   selectedChange = output<ListItemSelectedEvent>()
-  changed = output<ItemsItemChanges>()
+  changed = output<ItemsChanges>()
 
   disabled = false
 

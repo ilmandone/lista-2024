@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { FirebaseService } from '../../data/firebase.service'
 import { MatIcon } from '@angular/material/icon'
 import { MatIconButton } from '@angular/material/button'
-import { ItemsItemChanges, ItemData, ItemsData } from '../../data/firebase.interfaces'
+import { ItemsChanges, ItemData, ItemsData } from '../../data/firebase.interfaces'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet'
 import {
@@ -129,7 +129,7 @@ class ListComponent implements OnInit {
 	}
 
 	private _updateItem(
-		change: ItemsItemChanges,
+		change: ItemsChanges,
 		data: ItemsData
 	): {
 		itemsData: ItemsData
@@ -154,7 +154,7 @@ class ListComponent implements OnInit {
 		this.itemsData.set(itemsData)
 	}
 
-	itemChanged($event: ItemsItemChanges) {
+	itemChanged($event: ItemsChanges) {
 		const { itemsData } = this._updateItem($event, this.itemsData())
 		this.itemsData.set(itemsData)
 	}
