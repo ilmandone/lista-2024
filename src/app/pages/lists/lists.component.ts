@@ -56,7 +56,6 @@ class ListsComponent implements OnInit {
 	listsData = signal<Nullable<ListsData>>(null)
 
 	disabled = false
-	dragEnable = false
 	editing = false
 	itemsChanges = new SetOfItemsChanges<IListsItemChanges>()
 	constructor() {
@@ -231,12 +230,12 @@ class ListsComponent implements OnInit {
 	/**
 	 * Drag and drop completed
 	 * @description Update the data list order and save all the changes for the items position
-	 * @param {CdkDragDrop<ListData[]>} $event
+	 * @param {CdkDragDrop<ListsData>} $event
 	 */
-	listsDrop($event: CdkDragDrop<ListData[]>) {
+	listsDrop($event: CdkDragDrop<ListsData>) {
 		const ld = this.listsData() as ListsData
 		const cI = $event.currentIndex
-    const pI = $event.previousIndex
+		const pI = $event.previousIndex
 
 		// Update the list order
 		if (ld) {
@@ -244,23 +243,23 @@ class ListsComponent implements OnInit {
 		}
 
 		// Start depends on sort order and could be the original or the new position
-		const start =
-      cI < pI ? cI : pI
+		const start = cI < pI ? cI : pI
 
 		// Register all the new position into the itemsChanges list
 		for (let i = start; i < ld.length; i++) {
 			const list = ld[i]
-      list.position = i
-			this.itemsChanges.set([{
-				UUID: list.UUID,
-				label: list.label,
-				position: i,
-				crud: 'update'
-			}])
+			list.position = i
+			this.itemsChanges.set([
+				{
+					UUID: list.UUID,
+					label: list.label,
+					position: i,
+					crud: 'update'
+				}
+			])
 		}
 
 		this.listsData.set(ld)
-		this.dragEnable = false
 	}
 
 	/**
@@ -301,7 +300,7 @@ class ListsComponent implements OnInit {
 	 */
 	onConfirm() {
 		const hasDeleteActions = false // this.itemsChanges.values.some((item) => item.crud ===
-    // 'delete')
+		// 'delete')
 
 		if (hasDeleteActions) {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)

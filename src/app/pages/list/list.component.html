@@ -49,7 +49,7 @@
 	</div>
 </header>
 
-<main class="main" cdkDropList>
+<main class="main" cdkDropList (cdkDropListDropped)="listsDrop($event)">
 	@defer (when itemsData() !== null) {
 	<!--Items-->
 	@for (item of itemsData(); track item.UUID) {

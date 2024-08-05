@@ -10,19 +10,18 @@
 	<div class="item-button__left">
 		@if (editing()) {
 
-		<!-- Drag handler -->
-		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
-			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
-		</button>
+			<!-- Drag handler -->
+			<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
+				<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+			</button>
 
-		<!--Checkbox-->
-		<mat-checkbox
-			class="item-button__left__checkbox"
-			aria-label="Select this item"
-			[checked]="selected()"
-			(change)="itemSelected($event)"
-		></mat-checkbox>
-
+			<!--Checkbox-->
+			<mat-checkbox
+				class="item-button__left__checkbox"
+				aria-label="Select this item"
+				[checked]="selected()"
+				(change)="itemSelected($event)"
+			></mat-checkbox>
 		}
 
 		<!--  Label-->
