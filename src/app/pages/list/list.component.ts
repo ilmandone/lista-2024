@@ -116,21 +116,52 @@ class ListComponent implements OnInit {
 		UUIDs: string[],
 		data: ItemsData
 	): {
-		itemsData: ItemsData
+		itemsData: ItemsData,
+		changes: ItemsChanges[]
 	} {
 		const itemsData = cloneDeep(data)
+		const dPositions: number[] = []
+		const changes: ItemsChanges[] = []
 
 		UUIDs.forEach((UUID) => {
 			const deleteIndex = itemsData.findIndex((i) => i.UUID === UUID)
 
 			if (deleteIndex !== -1) {
+				const d = itemsData[deleteIndex]
+				dPositions.push(d.position)
+
+				changes.push({
+					UUID: d.UUID,
+					label: d.label,
+					group: d.group,
+					position: d.position,
+					crud: 'delete'
+				})
+
 				itemsData.splice(deleteIndex, 1)
 			}
 		})
 
-		//TODO: Set changes in edit bag
+		const startPosition = dPositions[0] + 1 // > 0 ? dPositions[0] : 0
+		const startLoop = itemsData.findIndex((i) => i.position === startPosition)
+		for(let i = startLoop; i < itemsData.length; i++) {
 
-		return { itemsData }
+			const item = itemsData[i]
+
+			dPositions.forEach((p) => {
+				if(item.position >= p) item.position -= 1
+			})
+
+			changes.push({
+				UUID: item.UUID,
+				label: item.label,
+				group: item.group,
+				position: item.position,
+				crud: 'update'
+			})
+		}
+
+		return { itemsData, changes }
 	}
 
 	private _updateItem(
@@ -154,8 +185,9 @@ class ListComponent implements OnInit {
 	 * Delete button click
 	 */
 	deleteItems() {
-		const { itemsData } = this._deleteInListItem([...this.selectedItems], this.itemsData())
+		const { itemsData, changes } = this._deleteInListItem([...this.selectedItems], this.itemsData())
 		this.itemsData.set(itemsData)
+		this._itemsChanges.set(changes)
 	}
 
 	itemChanged($event: ItemsChanges) {
@@ -271,6 +303,7 @@ class ListComponent implements OnInit {
 	 * @param {ListItemSelectedEvent} $event
 	 */
 	itemSelected($event: ListItemSelectedEvent) {
+		console.log('🚀 @@@ ~ file: list.component.ts:298 ~ ListComponent ~ itemSelected ~ $event:', $event)
 		if ($event.isSelected) this.selectedItems.add($event.UUID)
 		else this.selectedItems.delete($event.UUID)
 	}
