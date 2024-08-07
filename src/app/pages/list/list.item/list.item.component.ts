@@ -2,10 +2,12 @@ import { Component, inject, input, output } from '@angular/core'
 import { MatRippleModule } from '@angular/material/core'
 import { FocusInputComponent } from '../../../components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
-import { ItemData } from '../../../data/firebase.interfaces'
+import { ItemsChanges, ItemData } from '../../../data/firebase.interfaces'
 import { Nullable } from '../../../shared/common.interfaces'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { ListItemSelectedEvent } from './list.item.interface'
+import { MatIconModule } from '@angular/material/icon'
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 
 @Component({
   selector: 'app-list-item',
@@ -13,7 +15,9 @@ import { ListItemSelectedEvent } from './list.item.interface'
   imports: [
     MatRippleModule,
     FocusInputComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatIconModule,
+    CdkDragHandle
   ],
   templateUrl: './list.item.component.html',
   styleUrl: './list.item.component.scss'
@@ -23,17 +27,27 @@ export class ListItemComponent {
 
   data = input.required<ItemData>()
   editing = input<boolean>(false)
+  selected = input<boolean>(false)
 
-  selected = output<ListItemSelectedEvent>()
+  selectedChange = output<ListItemSelectedEvent>()
+  changed = output<ItemsChanges>()
 
   disabled = false
 
   itemLabelChanged($event: Nullable<string>) {
-    console.log($event)
+    if ($event) {
+      this.changed.emit({
+        UUID: this.data().UUID,
+        label: $event,
+        position: this.data().position,
+        group: this.data().group,
+        crud: 'update'
+      })
+    }
   }
 
   itemSelected($event: MatCheckboxChange) {
-    this.selected.emit({
+    this.selectedChange.emit({
       UUID: this.data().UUID,
       isSelected: $event.checked
     })

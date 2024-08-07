@@ -22,7 +22,15 @@ import {
 } from 'firebase/firestore'
 
 import { environment } from 'environments/environment.development'
-import { ItemsChangesEditBag, IListsItemChanges, ItemData, ListData, ListsData } from './firebase.interfaces'
+import {
+	ItemsChangesEditBag,
+	ListsItemChanges,
+	ItemData,
+	ListData,
+	ListsData,
+	ItemsChanges,
+	ItemsData
+} from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
 
@@ -168,81 +176,128 @@ export class FirebaseService {
 	/**
 	 * update or delete a list
 	 * @description On batch commit return the loadList function
-	 * @param {IListsItemChanges[]} changes
+	 * @param {ListsItemChanges[]} changes
 	 * @return {Promise<ListsData>}
 	 */
-	async updateLists(changes: ItemsChangesEditBag<IListsItemChanges>): Promise<ListsData> {
-		if (!this._db) this._startDB()
+	async updateLists(changes: ItemsChangesEditBag<ListsItemChanges>): Promise<ListsData> {
+		try {
+			if (!this._db) this._startDB()
 
-		const batch = writeBatch(this._db)
-		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const batch = writeBatch(this._db)
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
-    // Create
-    for (const create of changes.created) {
-      const d = doc(mainCollection, create.UUID)
-      batch.set(d,  {
-        label: create.label,
-        position: create.position,
-        UUID: create.UUID,
-        updated: this.gewNewTimeStamp()
-      })
+			// Create
+			for (const create of changes.created) {
+				const d = doc(mainCollection, create.UUID)
+				batch.set(d, {
+					label: create.label,
+					position: create.position,
+					UUID: create.UUID,
+					updated: this.gewNewTimeStamp()
+				})
 
-      // Items
-      const itemCollection = collection(d, 'items')
-      const itemDoc = doc(itemCollection, uuidV4())
+				// Items
+				const itemCollection = collection(d, 'items')
+				const UUIDItem = uuidV4()
+				const itemDoc = doc(itemCollection, UUIDItem)
 
-      batch.set(itemDoc, {
-        inCart: false,
-        label: 'Hello',
-        qt: 1,
-        toBuy: true,
-        group: null, // TODO: set to default group
-        position: 0
-      })
-    }
+				batch.set(itemDoc, {
+					UUID: UUIDItem,
+					inCart: false,
+					label: 'Hello',
+					qt: 1,
+					toBuy: true,
+					group: null, // TODO: set to default group
+					position: 0
+				})
+			}
 
-    // Delete
-    for (const del of changes.deleted) {
-      const d = doc(mainCollection, del.UUID)
-      batch.delete(d)
-    }
+			// Delete
+			for (const del of changes.deleted) {
+				const d = doc(mainCollection, del.UUID)
+				batch.delete(d)
+			}
 
-    // Update
-    for (const up of changes.updated) {
-      const d = doc(mainCollection, up.UUID)
-      batch.update(d, up)
-    }
+			// Update
+			for (const up of changes.updated) {
+				const d = doc(mainCollection, up.UUID)
+				batch.update(d, up)
+			}
 
-		await batch.commit()
-		return this.loadLists()
+			await batch.commit()
+			return this.loadLists()
+		} catch (error) {
+			throw new Error(error as string)
+		}
 	}
 
 	//#endregion
 
 	//#region DB List
 
-	async loadList(UUID: string): Promise<ItemData[]> {
+	async loadList(UUID: string): Promise<ItemsData> {
 		try {
 			if (!this._db) this._startDB()
 
 			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 			const list = doc(mainCollection, UUID)
-			const itemsData = collection(list, 'items')
+			const itemsCollection = collection(list, 'items')
+			const q = query(itemsCollection, orderBy('position'))
 
-			const data = await getDocs(itemsData)
-      if (!data) await Promise.reject('Data not found')
-      if (data.empty) return []
+			const data = await getDocs(q)
+			if (!data) await Promise.reject('Data not found')
+			if (data.empty) return []
 
-      const items: ItemData[] = []
+			const items: ItemData[] = []
 
-      data.forEach((doc) => {
-        items.push(doc.data() as ItemData)
-      })
+			data.forEach((doc) => {
+				items.push(doc.data() as ItemData)
+			})
 
-      return items
-
+			return items
 		} catch (error) {
-			this._cachedList = undefined
+			throw new Error(error as string)
+		}
+	}
+
+	async updateList(changes: ItemsChangesEditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
+		try {
+			if (!this._db) this._startDB()
+
+			const batch = writeBatch(this._db)
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const list = doc(mainCollection, UUID)
+			const itemsCollection = collection(list, 'items')
+
+			// Create
+			for (const create of changes.created) {
+				const d = doc(itemsCollection, create.UUID)
+				batch.set(d, {
+					UUID: create.UUID,
+					inCart: false,
+					label: create.label,
+					qt: 1,
+					toBuy: true,
+					group: create.group,
+					position: create.position
+				})
+			}
+
+			// Delete
+			for (const del of changes.deleted) {
+				const d = doc(itemsCollection, del.UUID)
+				batch.delete(d)
+			}
+
+			// Update
+			for (const up of changes.updated) {
+				const d = doc(itemsCollection, up.UUID)
+				batch.update(d, up)
+			}
+
+			await batch.commit()
+			return this.loadList(UUID)
+		} catch (error) {
 			throw new Error(error as string)
 		}
 	}

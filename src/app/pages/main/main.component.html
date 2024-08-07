@@ -51,10 +51,10 @@
 </mat-drawer-container>
 
 <!--Main loader-->
-@if(mainStateService.showLoader()) {
+@if(mainStateService.loader()) {
   <div class="main-loader">
     <div class="main-loader__content">
-      <app-loader [loading]="mainStateService.showLoader()" [mode]="'indeterminate'"></app-loader>
+      <app-loader [loading]="mainStateService.loader()" [mode]="'indeterminate'"></app-loader>
     </div>
   </div>
 }
