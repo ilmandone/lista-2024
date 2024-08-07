@@ -16,6 +16,10 @@ export class SetOfItemsChanges<T extends BasicItemChange> {
     return cloneDeep(this._itemsChanges)
   }
 
+  get hasDeletedItems(): boolean {
+    return this._itemsChanges.deleted.length > 0
+  }
+
   set(changes: T[]) {
     for (const change of changes) {
 
@@ -56,6 +60,14 @@ export class SetOfItemsChanges<T extends BasicItemChange> {
 
         this._itemsChanges.updated.push(change)
       }
+    }
+  }
+
+  clear() {
+    this._itemsChanges = {
+      created: [],
+      updated: [],
+      deleted: []
     }
   }
 }
