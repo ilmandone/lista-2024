@@ -100,11 +100,12 @@ class ListsComponent implements OnInit {
 		this._firebaseSrv.updateLists(this.itemsChanges.values).then((r) => {
 			this.listsData.set(r)
 			this._mainStateSrv.showLoader.set(false)
+			this.editing = false
 		})
 	}
 
 	/**
-	 * Update the list in f/e data
+	 * Update the lists in f/e data
 	 * @param {string} label
 	 * @param {ListsData} data
 	 * @return New lists data and changes
@@ -157,6 +158,7 @@ class ListsComponent implements OnInit {
 		}
 
 		// Update all the positions -> following position changes will use this information
+		// TODO: Perf start from i and not from the beginning
 		newListsData.forEach((list) => {
 			if (list.position > change.position) {
 				list.position -= 1
@@ -306,11 +308,9 @@ class ListsComponent implements OnInit {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)
 			dr.afterClosed().subscribe((result) => {
 				if (result) this._saveLists()
-				this.editing = false
 			})
 		} else {
 			this._saveLists()
-			this.editing = false
 		}
 	}
 
