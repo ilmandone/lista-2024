@@ -17,7 +17,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
-import { v4 as uuidV4 } from 'uuid'
 import {
   CdkDrag,
   CdkDragDrop,
@@ -30,23 +29,12 @@ import { MainStateService } from '../../shared/main-state.service'
 import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import { addInListItem, deleteInListItem, updateItem } from './list.cud'
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [
-    MatIcon,
-    MatIconButton,
-    LoaderComponent,
-    MatBottomSheetModule,
-    ButtonToggleComponent,
-    ConfirmCancelComponent,
-    ListItemComponent,
-    MatDialogModule,
-    CdkDrag,
-    CdkDropList,
-    CdkDragPlaceholder
-  ],
+  imports: [MatIcon, MatIconButton, LoaderComponent, MatBottomSheetModule, ButtonToggleComponent, ConfirmCancelComponent, ListItemComponent, MatDialogModule, CdkDrag, CdkDropList, CdkDragPlaceholder],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -96,16 +84,42 @@ class ListComponent implements OnInit {
   }
 
   /**
+   * Add an item
+   * @description If another item is selected the new one is added after it
+   * @param {string} label
+   */
+  addItem(label: string) {
+    const selectedUUID = this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+    const insertAfter = selectedUUID
+      ? this.itemsData().find((e) => e.UUID === selectedUUID)?.position ?? this.itemsData().length - 1
+      : this.itemsData().length - 1
+
+    const {
+      itemsData,
+      changes
+    } = addInListItem(label, this.itemsData() as ItemsData, insertAfter)
+
+    this.itemsData.set(itemsData)
+    this._itemsChanges.set(changes)
+
+    this.selectedItems.clear()
+  }
+
+  /**
    * Delete button click
    */
   deleteItems() {
-    const { itemsData, changes } = this._deleteInListItem([...this.selectedItems], this.itemsData())
+    const { itemsData, changes } = deleteInListItem([...this.selectedItems], this.itemsData())
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
   }
 
+  /**
+   * Item attribute changed
+   * @param $event
+   */
   itemChanged($event: ItemsChanges) {
-    const { itemsData, changes } = this._updateItem($event, this.itemsData())
+    const { itemsData, changes } = updateItem($event, this.itemsData())
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
   }
@@ -127,87 +141,40 @@ class ListComponent implements OnInit {
     for (let i = start; i < ld.length; i++) {
       const list = ld[i]
       list.position = i
-      this._itemsChanges.set([
-        {
-          UUID: list.UUID,
-          label: list.label,
-          position: i,
-          crud: 'update',
-          group: list.group
-        }
-      ])
+      this._itemsChanges.set([{
+        UUID: list.UUID, label: list.label, position: i, crud: 'update', group: list.group
+      }])
     }
 
     this.itemsData.set(ld)
   }
 
   /**
+   * Add or remove and item from the selectedItems set
+   * @param {ListItemSelectedEvent} $event
+   */
+  itemSelected($event: ListItemSelectedEvent) {
+    if ($event.isSelected) this.selectedItems.add($event.UUID)
+    else this.selectedItems.delete($event.UUID)
+  }
+
+  /**
    * Open the new item dialog
+   * @description On confirm the item is added to f/e data
    */
   openNewItemDialog() {
     const d = this._dialog.open(ListNewDialogComponent)
 
-    d.afterClosed().subscribe((r) => {
-      console.log(r)
+    d.afterClosed().subscribe((r: string) => {
       if (r) {
-        const selectedUUID =
-          this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
-
-        const insertAfter = selectedUUID
-          ? this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
-          this.itemsData().length - 1
-          : this.itemsData().length - 1
-
-        const { itemsData, changes } = this._addInListItem(
-          r,
-          this.itemsData() as ItemData[],
-          insertAfter
-        )
-        this.itemsData.set(itemsData)
-        this._itemsChanges.set(changes)
-
-        this.selectedItems.clear()
+        this.addItem(r)
       }
     })
   }
 
-  /**
-   * Confirm shopping or editing mode
-   */
-  confirm() {
-    if (this.shopping) {
-      console.log('TODO: Remove the in cart value from all items and set toBuy to false')
+  //#endregion
 
-      this.shopping = false
-    } else {
-      if (this._itemsChanges.hasDeletedItems) {
-        const dr = this._dialog.open(DeleteConfirmDialogComponent)
-        dr.afterClosed().subscribe((result) => {
-          if (result) this._saveItems()
-        })
-      } else
-        this._saveItems()
-    }
-  }
-
-  /**
-   * Cancel pressed in shopping or editing mode
-   * @description Cancel shopping will remove all the in cart status from items. Cancel editing
-   * will restore the cached data
-   */
-  cancel() {
-    if (this.shopping) {
-      this.shopping = false
-    } else {
-      this.itemsData.set(this._itemsDataCache)
-
-      this.selectedItems.clear()
-      this._itemsChanges.clear()
-      this._itemsDataCache = []
-
-      this.editing = false
-    }
-  }
+  //#region Bottom sheet
 
   /**
    * Open the button sheet and subscribe to the dismiss event
@@ -228,154 +195,44 @@ class ListComponent implements OnInit {
 
   //#endregion
 
+
   //#region Confirm / Cancel
 
   /**
-   * Add or remove and item from the selectedItems set
-   * @param {ListItemSelectedEvent} $event
+   * Confirm shopping or editing mode
    */
-  itemSelected($event: ListItemSelectedEvent) {
-    if ($event.isSelected) this.selectedItems.add($event.UUID)
-    else this.selectedItems.delete($event.UUID)
-  }
+  confirm() {
+    if (this.shopping) {
+      console.log('TODO: Remove the in cart value from all items and set toBuy to false')
 
-  /**
-   * Add a new item to the itemData list and (add a change action for b/e update)
-   * @param {string} label
-   * @param {ItemData[]} data
-   * @param insertAfter
-   * @private
-   */
-  private _addInListItem(
-    label: string,
-    data: ItemsData,
-    insertAfter: number
-  ): {
-    itemsData: ItemData[]
-    changes: ItemsChanges[]
-  } {
-    const itemsData = cloneDeep(data)
-    const newItem: ItemData = {
-      UUID: uuidV4(),
-      label,
-      group: 'verdure',
-      inCart: false,
-      toBuy: true,
-      position: insertAfter + 1
-    }
-
-    if (insertAfter === data.length - 1) itemsData.push(newItem)
-    else {
-      itemsData.splice(insertAfter + 1, 0, newItem)
-    }
-
-    return {
-      itemsData,
-      changes: [
-        {
-          UUID: newItem.UUID,
-          label,
-          position: newItem.position,
-          group: newItem.group,
-          crud: 'create'
-        }
-      ]
-    }
-  }
-
-  //#endregion
-
-  //#region Bottom menu
-
-  /**
-   * Delete one or more items
-   * @param {string[]} UUIDs
-   * @param {ItemsData} data
-   * @private {itemsData: ItemsData}
-   */
-  private _deleteInListItem(
-    UUIDs: string[],
-    data: ItemsData
-  ): {
-    itemsData: ItemsData
-    changes: ItemsChanges[]
-  } {
-    const itemsData = cloneDeep(data)
-    const dPositions: number[] = []
-    const changes: ItemsChanges[] = []
-
-    UUIDs.forEach((UUID) => {
-      const deleteIndex = itemsData.findIndex((i) => i.UUID === UUID)
-
-      if (deleteIndex !== -1) {
-        const d = itemsData[deleteIndex]
-        dPositions.push(d.position)
-
-        changes.push({
-          UUID: d.UUID,
-          label: d.label,
-          group: d.group,
-          position: d.position,
-          crud: 'delete'
+      this.shopping = false
+    } else {
+      if (this._itemsChanges.hasDeletedItems) {
+        const dr = this._dialog.open(DeleteConfirmDialogComponent)
+        dr.afterClosed().subscribe((result) => {
+          if (result) this._saveItems()
         })
-
-        itemsData.splice(deleteIndex, 1)
-      }
-    })
-
-    const sortedPosition = dPositions.sort()
-
-    for (let i = sortedPosition[0]; i < itemsData.length; i++) {
-      const item = itemsData[i]
-
-      let j = sortedPosition.length - 1
-
-      while (j >= 0) {
-        const p = sortedPosition[j]
-        if (item.position >= p) {
-          item.position -= j + 1
-          changes.push({
-            UUID: item.UUID,
-            label: item.label,
-            group: item.group,
-            position: item.position,
-            crud: 'update'
-          })
-          break
-        }
-        j--
-      }
+      } else this._saveItems()
     }
-
-    return { itemsData, changes }
   }
 
-  //#endregion
-
-  //#region Item
-
   /**
-   * Update one item
-   * @description Return an update itemsData list and the changes for b/e
-   * @param {ItemsChanges} change
-   * @param {ItemsData} data
-   * @return {{changes: ItemsChanges[], itemsData: ItemsData}} - An object containing the updated itemsData array and the change object.
+   * Cancel pressed in shopping or editing mode
+   * @description Cancel shopping will remove all the in cart status from items. Cancel editing
+   * will restore the cached data
    */
-  private _updateItem(
-    change: ItemsChanges,
-    data: ItemsData
-  ): {
-    changes: ItemsChanges[]
-    itemsData: ItemsData
-  } {
-    const itemsData = cloneDeep(data)
-    const item = itemsData.find((i) => i.UUID === change.UUID)
+  cancel() {
+    if (this.shopping) {
+      this.shopping = false
+    } else {
+      this.itemsData.set(this._itemsDataCache)
 
-    if (item) {
-      item.label = change.label
+      this.selectedItems.clear()
+      this._itemsChanges.clear()
+      this._itemsDataCache = []
+
+      this.editing = false
     }
-
-    return { itemsData, changes: [change] }
   }
 
   //#endregion
