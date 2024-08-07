@@ -180,51 +180,55 @@ export class FirebaseService {
 	 * @return {Promise<ListsData>}
 	 */
 	async updateLists(changes: ItemsChangesEditBag<ListsItemChanges>): Promise<ListsData> {
-		if (!this._db) this._startDB()
+		try {
+			if (!this._db) this._startDB()
 
-		const batch = writeBatch(this._db)
-		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const batch = writeBatch(this._db)
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 
-		// Create
-		for (const create of changes.created) {
-			const d = doc(mainCollection, create.UUID)
-			batch.set(d, {
-				label: create.label,
-				position: create.position,
-				UUID: create.UUID,
-				updated: this.gewNewTimeStamp()
-			})
+			// Create
+			for (const create of changes.created) {
+				const d = doc(mainCollection, create.UUID)
+				batch.set(d, {
+					label: create.label,
+					position: create.position,
+					UUID: create.UUID,
+					updated: this.gewNewTimeStamp()
+				})
 
-			// Items
-			const itemCollection = collection(d, 'items')
-			const UUIDItem = uuidV4()
-			const itemDoc = doc(itemCollection, UUIDItem)
+				// Items
+				const itemCollection = collection(d, 'items')
+				const UUIDItem = uuidV4()
+				const itemDoc = doc(itemCollection, UUIDItem)
 
-			batch.set(itemDoc, {
-				UUID: UUIDItem,
-				inCart: false,
-				label: 'Hello',
-				qt: 1,
-				toBuy: true,
-				group: null, // TODO: set to default group
-				position: 0
-			})
+				batch.set(itemDoc, {
+					UUID: UUIDItem,
+					inCart: false,
+					label: 'Hello',
+					qt: 1,
+					toBuy: true,
+					group: null, // TODO: set to default group
+					position: 0
+				})
+			}
+
+			// Delete
+			for (const del of changes.deleted) {
+				const d = doc(mainCollection, del.UUID)
+				batch.delete(d)
+			}
+
+			// Update
+			for (const up of changes.updated) {
+				const d = doc(mainCollection, up.UUID)
+				batch.update(d, up)
+			}
+
+			await batch.commit()
+			return this.loadLists()
+		} catch (error) {
+			throw new Error(error as string)
 		}
-
-		// Delete
-		for (const del of changes.deleted) {
-			const d = doc(mainCollection, del.UUID)
-			batch.delete(d)
-		}
-
-		// Update
-		for (const up of changes.updated) {
-			const d = doc(mainCollection, up.UUID)
-			batch.update(d, up)
-		}
-
-		await batch.commit()
-		return this.loadLists()
 	}
 
 	//#endregion
@@ -257,14 +261,13 @@ export class FirebaseService {
 	}
 
 	async updateList(changes: ItemsChangesEditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
-		
+		try {
 			if (!this._db) this._startDB()
 
 			const batch = writeBatch(this._db)
 			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
 			const list = doc(mainCollection, UUID)
 			const itemsCollection = collection(list, 'items')
-			
 
 			// Create
 			for (const create of changes.created) {
@@ -281,9 +284,10 @@ export class FirebaseService {
 			}
 
 			await batch.commit()
-
 			return this.loadList(UUID)
-		
+		} catch (error) {
+			throw new Error(error as string)
+		}
 	}
 
 	//#endregion
