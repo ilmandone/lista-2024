@@ -4,12 +4,24 @@ import { Injectable, signal } from '@angular/core'
   providedIn: 'root'
 })
 export class MainStateService {
-
-  showLoader = signal<boolean>(false)
   private _reload = signal<number>(0)
+
+  private _loader = signal<boolean>(false)
+
+  get loader() {
+    return this._loader.asReadonly()
+  }
 
   get reload() {
     return this._reload.asReadonly()
+  }
+
+  showLoader() {
+    this._loader.set(true)
+  }
+
+  hideLoader() {
+    this._loader.set(false)
   }
 
   triggerReload() {
