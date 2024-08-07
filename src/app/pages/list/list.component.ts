@@ -211,14 +211,21 @@ class ListComponent implements OnInit {
 		return { itemsData, changes: [change] }
 	}
 
+  /**
+   * Update items
+   * @description Save items in db and reset all the edit information
+   */
 	_saveItems() {
 		this._mainStateSrv.showLoader()
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
 			this.itemsData.set(r)
+
 			this.selectedItems.clear()
-			this.editing = false
+      this._itemsChanges.clear()
 			this._itemsDataCache = []
-			this._mainStateSrv.hideLoader()
+
+      this._mainStateSrv.hideLoader()
+      this.editing = false
 		})
 	}
 
