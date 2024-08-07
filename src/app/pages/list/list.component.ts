@@ -26,6 +26,7 @@ import {
 	moveItemInArray
 } from '@angular/cdk/drag-drop'
 import { SetOfItemsChanges } from 'app/data/items.changes'
+import { MainStateService } from '../../shared/main-state.service'
 
 @Component({
 	selector: 'app-list',
@@ -48,9 +49,10 @@ import { SetOfItemsChanges } from 'app/data/items.changes'
 })
 class ListComponent implements OnInit {
 	private readonly _activatedRoute = inject(ActivatedRoute)
-	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _bottomSheet = inject(MatBottomSheet)
 	private readonly _dialog = inject(MatDialog)
+	private readonly _firebaseSrv = inject(FirebaseService)
+  private readonly _mainStateSrv = inject(MainStateService)
 
 	private _UUID!: string
 	private _itemsDataCache: ItemData[] = []
@@ -207,13 +209,13 @@ class ListComponent implements OnInit {
 	}
 
 	_saveItems() {
-		// TODO: Start loader
+		this._mainStateSrv.showLoader()
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
 			this.itemsData.set(r)
 			this.selectedItems.clear()
 			this.editing = false
 			this._itemsDataCache = []
-			// TODO: Stop loader
+			this._mainStateSrv.hideLoader()
 		})
 	}
 

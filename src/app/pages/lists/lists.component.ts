@@ -58,7 +58,7 @@ class ListsComponent implements OnInit {
 
 	disabled = false
 	editing = false
-	
+
 	constructor() {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
@@ -85,10 +85,10 @@ class ListsComponent implements OnInit {
 	 * @private
 	 */
 	private _loadLists(): void {
-		this._mainStateSrv.showLoader.set(true)
+		this._mainStateSrv.showLoader()
 		this._firebaseSrv.loadLists().then((r) => {
 			this.listsData.set(r)
-			this._mainStateSrv.showLoader.set(false)
+			this._mainStateSrv.hideLoader()
 		})
 	}
 
@@ -97,10 +97,10 @@ class ListsComponent implements OnInit {
 	 * @private
 	 */
 	private _saveLists(): void {
-		this._mainStateSrv.showLoader.set(true)
+		this._mainStateSrv.showLoader()
 		this._firebaseSrv.updateLists(this._itemsChanges.values).then((r) => {
 			this.listsData.set(r)
-			this._mainStateSrv.showLoader.set(false)
+			this._mainStateSrv.hideLoader()
 			this.editing = false
 		})
 	}
