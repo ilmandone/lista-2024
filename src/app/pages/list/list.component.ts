@@ -335,7 +335,6 @@ class ListComponent implements OnInit {
 	 */
 	cancel() {
 		if (this.shopping) {
-			console.log('TODO: Remove the in cart value from all items')
 			this.shopping = false
 		} else {
 			this.itemsData.set(this._itemsDataCache)
@@ -347,8 +346,6 @@ class ListComponent implements OnInit {
 			this.editing = false
 		}
 	}
-
-	//#endregion
 
 	//#endregion
 

@@ -10,11 +10,6 @@
 	<div class="item-button__left">
 		@if (editing()) {
 
-			<!-- Drag handler -->
-			<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
-				<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
-			</button>
-
 			<!--Checkbox-->
 			<mat-checkbox
 				class="item-button__left__checkbox"
@@ -37,5 +32,15 @@
 	<div class="item-button__right">
 		<!-- Da sostituire con il componente del gruppo -->
 		<div class="group-dot" [class.editing]="editing()"></div>
+
+    @if (editing()) {
+      <!-- Drag handler -->
+      <button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
+        <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+      </button>
+    }
 	</div>
+
+
+
 </div>
