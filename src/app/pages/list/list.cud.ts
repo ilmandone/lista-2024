@@ -1,5 +1,5 @@
 /**
- * CREATE, UPDATE AND DELETE LIST FUNCTIONS
+ * CREATE, UPDATE AND DELETE ITEMS IN A LIST
  */
 import { ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { cloneDeep } from 'lodash'
@@ -119,6 +119,11 @@ export const updateItem = (change: ItemsChanges, data: ItemsData): {
   return { itemsData, changes: [change] }
 }
 
+/**
+ * Update item position after drop
+ * @param {CdkDragDrop<ItemsData>} $event
+ * @param {ItemsData} data
+ */
 export const updateItemPosition = ($event: CdkDragDrop<ItemsData>, data: ItemsData): {
   itemsData: ItemsData,
   changes: ItemsChanges[]

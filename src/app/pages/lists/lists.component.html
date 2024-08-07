@@ -21,7 +21,7 @@
         <!--Drag box-->
         <div cdkDrag class="drag-box" [cdkDragDisabled]="!editing">
           <app-lists-item [data]="data" [editing]="editing" (changed)="itemChanged($event)"
-                          (clicked)="itemClicked($event)"
+                          (clicked)="listClicked($event)"
                           (deleted)="itemChanged($event)"></app-lists-item>
           <div class="list-drag-placeholder" *cdkDragPlaceholder></div>
         </div>
