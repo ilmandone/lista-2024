@@ -182,6 +182,13 @@ class ListComponent implements OnInit {
 		return { itemsData, changes }
 	}
 
+	/**
+	 * Update one item
+	 * @description Return an update itemsData list and the changes for b/e
+	 * @param {ItemsChanges} change
+	 * @param {ItemsData} data
+	 * @return {{changes: ItemsChanges[], itemsData: ItemsData}} - An object containing the updated itemsData array and the change object.
+	 */
 	private _updateItem(
 		change: ItemsChanges,
 		data: ItemsData
@@ -199,6 +206,17 @@ class ListComponent implements OnInit {
 		return { itemsData, changes: [change] }
 	}
 
+	_saveItems() {
+		// TODO: Start loader
+		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
+			this.itemsData.set(r)
+			this.selectedItems.clear()
+			this.editing = false
+			this._itemsDataCache = []
+			// TODO: Stop loader
+		})
+	}
+
 	/**
 	 * Delete button click
 	 */
@@ -212,6 +230,37 @@ class ListComponent implements OnInit {
 		const { itemsData, changes } = this._updateItem($event, this.itemsData())
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
+	}
+
+	listsDrop($event: CdkDragDrop<ItemsData>) {
+		const ld = this.itemsData()
+		const cI = $event.currentIndex
+		const pI = $event.previousIndex
+
+		// Update the list order
+		if (ld) {
+			moveItemInArray(ld, pI, cI)
+		}
+
+		// Start depends on sort order and could be the original or the new position
+		const start = cI < pI ? cI : pI
+
+		// Register all the new position into the itemsChanges list
+		for (let i = start; i < ld.length; i++) {
+			const list = ld[i]
+			list.position = i
+			this._itemsChanges.set([
+				{
+					UUID: list.UUID,
+					label: list.label,
+					position: i,
+					crud: 'update',
+					group: list.group
+				}
+			])
+		}
+
+		this.itemsData.set(ld)
 	}
 
 	/**
@@ -244,21 +293,6 @@ class ListComponent implements OnInit {
 		})
 	}
 
-	listsDrop($event: CdkDragDrop<ItemsData>) {
-		const ld = this.itemsData()
-		const cI = $event.currentIndex
-		const pI = $event.previousIndex
-
-		// Update the list order
-		if (ld) {
-			moveItemInArray(ld, pI, cI)
-		}
-
-		// TODO: Update all the position as changes
-
-		this.itemsData.set(ld)
-	}
-
 	//#endregion
 
 	//#region Confirm / Cancel
@@ -269,11 +303,11 @@ class ListComponent implements OnInit {
 	confirm() {
 		if (this.shopping) {
 			console.log('TODO: Remove the in cart value from all items and set toBuy to false')
+
 			this.shopping = false
 		} else {
 			console.log('TODO: update the db', this._itemsChanges.values)
-			this.editing = false
-			this._itemsDataCache = []
+			this._saveItems()
 		}
 	}
 
@@ -288,6 +322,7 @@ class ListComponent implements OnInit {
 			this.shopping = false
 		} else {
 			this.editing = false
+			this.selectedItems.clear()
 			this.itemsData.set(this._itemsDataCache)
 			this._itemsDataCache = []
 		}
