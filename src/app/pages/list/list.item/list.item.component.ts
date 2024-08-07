@@ -8,6 +8,7 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
 import { ListItemSelectedEvent } from './list.item.interface'
 import { MatIconModule } from '@angular/material/icon'
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
+import { MatIconButton } from '@angular/material/button'
 
 @Component({
   selector: 'app-list-item',
@@ -17,7 +18,8 @@ import { CdkDragHandle } from '@angular/cdk/drag-drop'
     FocusInputComponent,
     MatCheckboxModule,
     MatIconModule,
-    CdkDragHandle
+    CdkDragHandle,
+    MatIconButton
   ],
   templateUrl: './list.item.component.html',
   styleUrl: './list.item.component.scss'
