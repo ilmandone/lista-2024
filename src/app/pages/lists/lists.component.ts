@@ -10,13 +10,7 @@ import { ListsItemComponent } from './lists.item/lists.item.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { FocusInputService } from '../../components/focus-input/focus-input.service'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDragPlaceholder,
-  CdkDropList,
-  moveItemInArray
-} from '@angular/cdk/drag-drop'
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { MainStateService } from '../../shared/main-state.service'
 import { Router } from '@angular/router'
 import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.component'
@@ -25,9 +19,8 @@ import {
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 
 import { cloneDeep } from 'lodash'
-import { v4 as uuidV4 } from 'uuid'
 import { SetOfItemsChanges } from 'app/data/items.changes'
-import { addInListData, deleteInListData, updateInListData } from './lists.cud'
+import { addInListData, deleteInListData, updateInListData, updateListPosition } from './lists.cud'
 
 @Component({
   selector: 'app-lists',
@@ -176,39 +169,18 @@ class ListsComponent implements OnInit {
   }
 
   /**
-   * Drag and drop completed
-   * @description Update the data list order and save all the changes for the items position
+   * On list drop update positions
    * @param {CdkDragDrop<ListsData>} $event
    */
   listsDrop($event: CdkDragDrop<ListsData>) {
-    const ld = this.listsData() as ListsData
-    const cI = $event.currentIndex
-    const pI = $event.previousIndex
-
-    // Update the list order
-    if (ld) {
-      moveItemInArray(ld, pI, cI)
-    }
-
-    // Start depends on sort order and could be the original or the new position
-    const start = cI < pI ? cI : pI
-
-    // Register all the new position into the _itemsChanges list
-    for (let i = start; i < ld.length; i++) {
-      const list = ld[i]
-      list.position = i
-      this._itemsChanges.set([
-        {
-          UUID: list.UUID,
-          label: list.label,
-          position: i,
-          crud: 'update'
-        }
-      ])
-    }
-
-    this.listsData.set(ld)
+    const {changes, newListData} = updateListPosition($event, this.listsData() as ListsData)
+    this.listsData.set(newListData)
+    this._itemsChanges.set(changes)
   }
+
+  //#endregion
+
+  //#region Confirm / Cancel
 
   /**
    * Confirm editing
