@@ -306,8 +306,11 @@ class ListComponent implements OnInit {
 
 			this.shopping = false
 		} else {
-			
-			this._saveItems()
+			if (this._itemsChanges.hasDeletedItems) {
+				// TODO: Show dialog for confirmation
+			}
+			else
+				this._saveItems()
 		}
 	}
 

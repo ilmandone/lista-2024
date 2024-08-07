@@ -5,14 +5,13 @@
 1) ~~Aggiungere il sotto documento ogni volta che si crea una nuova lista~~
 2) ~~Aggiungere la checkbox in modalità editing insieme alla logica di selezione - il pulsante delete si deve
 attivare solo quando un elemento è selezionato~~
-2) ~~Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio
-Aggiunta di un elemento alla lista in f/e~~
+2) ~~Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio. Aggiunta di un elemento alla lista in f/e~~
 3) ~~Disabilitare il pulsante aggiungi se ci sono più di due items selezionati~~
 4) ~~Aggiugere l'inserimento dopo un elemento selezionato - come per le lists non aggiorniamo le position a f/e ma registreremo solo le itemChanges per il b/e.~~
 4) ~~Cancellazione di uno o più items da i dati di f/e~~
 5) ~~Modifica del label di un item con aggiornamento di dati di f/e~~
 6) ~~Cancel e confirm dell'editing della lista~~
-7) Allineare la lista con l'edit bag per gli items
+7) ~~Allineare la lista con l'edit bag per gli items~~
 7) Aggiornamento dati db su confirm dell'editing e dialog in caso di cancellazione
 8) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
 per l'aggiornamento del db
