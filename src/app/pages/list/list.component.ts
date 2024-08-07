@@ -33,12 +33,7 @@ import { addInListItem, deleteInListItem, updateItem, updateItemPosition } from 
   styleUrl: './list.component.scss'
 })
 class ListComponent implements OnInit {
-  itemsData = signal<ItemData[]>([])
-  editing = false
-  label!: string
-  selectedItems = new Set<string>()
-  shopping = false
-  viewModeGrid = false
+
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _bottomSheet = inject(MatBottomSheet)
   private readonly _dialog = inject(MatDialog)
@@ -47,6 +42,13 @@ class ListComponent implements OnInit {
   private _UUID!: string
   private _itemsDataCache: ItemData[] = []
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
+
+  itemsData = signal<ItemData[]>([])
+  editing = false
+  label!: string
+  selectedItems = new Set<string>()
+  shopping = false
+  viewModeGrid = false
 
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
