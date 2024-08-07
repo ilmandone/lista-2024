@@ -27,6 +27,9 @@ import {
 } from '@angular/cdk/drag-drop'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from '../../shared/main-state.service'
+import {
+  DeleteConfirmDialogComponent
+} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 
 @Component({
 	selector: 'app-list',
@@ -309,9 +312,11 @@ class ListComponent implements OnInit {
 			this.shopping = false
 		} else {
 			if (this._itemsChanges.hasDeletedItems) {
-				// TODO: Show dialog for confirmation
-			}
-			else
+        const dr = this._dialog.open(DeleteConfirmDialogComponent)
+        dr.afterClosed().subscribe((result) => {
+          if (result) this._saveItems()
+        })
+			} else
 				this._saveItems()
 		}
 	}
