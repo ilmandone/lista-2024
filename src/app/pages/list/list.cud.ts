@@ -4,6 +4,7 @@
 import { ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 
 /**
  * Add a new item to the itemData list and (add a change action for b/e update)
@@ -116,4 +117,34 @@ export const updateItem = (change: ItemsChanges, data: ItemsData): {
   }
 
   return { itemsData, changes: [change] }
+}
+
+export const updateItemPosition = ($event: CdkDragDrop<ItemsData>, data: ItemsData): {
+  itemsData: ItemsData,
+  changes: ItemsChanges[]
+} => {
+  const ld = cloneDeep(data)
+  const changes: ItemsChanges[] = []
+  const cI = $event.currentIndex
+  const pI = $event.previousIndex
+
+  // Update the list order
+  if (ld) {
+    moveItemInArray(ld, pI, cI)
+  }
+
+  // Start depends on sort order and could be the original or the new position
+  const start = cI < pI ? cI : pI
+
+  // Register all the new position into the itemsChanges list
+  for (let i = start; i < ld.length; i++) {
+    const list = ld[i]
+    list.position = i
+    changes.push({
+      UUID: list.UUID, label: list.label, position: i, crud: 'update', group: list.group
+    })
+
+  }
+
+  return {itemsData: ld, changes}
 }

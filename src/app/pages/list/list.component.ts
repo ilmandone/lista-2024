@@ -29,7 +29,7 @@ import { MainStateService } from '../../shared/main-state.service'
 import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
-import { addInListItem, deleteInListItem, updateItem } from './list.cud'
+import { addInListItem, deleteInListItem, updateItem, updateItemPosition } from './list.cud'
 
 @Component({
   selector: 'app-list',
@@ -108,7 +108,7 @@ class ListComponent implements OnInit {
   /**
    * Delete button click
    */
-  deleteItems() {
+  itemsDeleted() {
     const { itemsData, changes } = deleteInListItem([...this.selectedItems], this.itemsData())
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
@@ -124,29 +124,15 @@ class ListComponent implements OnInit {
     this._itemsChanges.set(changes)
   }
 
-  listsDrop($event: CdkDragDrop<ItemsData>) {
-    const ld = this.itemsData()
-    const cI = $event.currentIndex
-    const pI = $event.previousIndex
+  /**
+   * On item drop update the order
+   * @param $event
+   */
+  itemDrop($event: CdkDragDrop<ItemsData>) {
+    const {itemsData, changes} = updateItemPosition($event, this.itemsData())
 
-    // Update the list order
-    if (ld) {
-      moveItemInArray(ld, pI, cI)
-    }
-
-    // Start depends on sort order and could be the original or the new position
-    const start = cI < pI ? cI : pI
-
-    // Register all the new position into the itemsChanges list
-    for (let i = start; i < ld.length; i++) {
-      const list = ld[i]
-      list.position = i
-      this._itemsChanges.set([{
-        UUID: list.UUID, label: list.label, position: i, crud: 'update', group: list.group
-      }])
-    }
-
-    this.itemsData.set(ld)
+    this.itemsData.set(itemsData)
+    this._itemsChanges.set(changes)
   }
 
   /**
@@ -194,7 +180,6 @@ class ListComponent implements OnInit {
   }
 
   //#endregion
-
 
   //#region Confirm / Cancel
 
