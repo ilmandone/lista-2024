@@ -306,7 +306,7 @@ class ListComponent implements OnInit {
 
 			this.shopping = false
 		} else {
-			console.log('TODO: update the db', this._itemsChanges.values)
+			
 			this._saveItems()
 		}
 	}
@@ -321,10 +321,13 @@ class ListComponent implements OnInit {
 			console.log('TODO: Remove the in cart value from all items')
 			this.shopping = false
 		} else {
-			this.editing = false
-			this.selectedItems.clear()
 			this.itemsData.set(this._itemsDataCache)
+
+			this.selectedItems.clear()
+			this._itemsChanges.clear()
 			this._itemsDataCache = []
+
+			this.editing = false
 		}
 	}
 
@@ -360,10 +363,6 @@ class ListComponent implements OnInit {
 	 * @param {ListItemSelectedEvent} $event
 	 */
 	itemSelected($event: ListItemSelectedEvent) {
-		console.log(
-			'🚀 @@@ ~ file: list.component.ts:298 ~ ListComponent ~ itemSelected ~ $event:',
-			$event
-		)
 		if ($event.isSelected) this.selectedItems.add($event.UUID)
 		else this.selectedItems.delete($event.UUID)
 	}
