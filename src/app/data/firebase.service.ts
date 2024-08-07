@@ -283,6 +283,18 @@ export class FirebaseService {
 				})
 			}
 
+			// Delete
+			for (const del of changes.deleted) {
+				const d = doc(itemsCollection, del.UUID)
+				batch.delete(d)
+			}
+
+			// Update
+			for (const up of changes.updated) {
+				const d = doc(itemsCollection, up.UUID)
+				batch.update(d, up)
+			}
+
 			await batch.commit()
 			return this.loadList(UUID)
 		} catch (error) {
