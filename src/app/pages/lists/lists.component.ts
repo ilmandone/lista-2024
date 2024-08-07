@@ -52,12 +52,13 @@ class ListsComponent implements OnInit {
 	private readonly _route = inject(Router)
 
 	private _listDataCache!: Nullable<ListsData>
+	private _itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
 
 	listsData = signal<Nullable<ListsData>>(null)
 
 	disabled = false
 	editing = false
-	itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
+	
 	constructor() {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
@@ -97,7 +98,7 @@ class ListsComponent implements OnInit {
 	 */
 	private _saveLists(): void {
 		this._mainStateSrv.showLoader.set(true)
-		this._firebaseSrv.updateLists(this.itemsChanges.values).then((r) => {
+		this._firebaseSrv.updateLists(this._itemsChanges.values).then((r) => {
 			this.listsData.set(r)
 			this._mainStateSrv.showLoader.set(false)
 			this.editing = false
@@ -247,11 +248,11 @@ class ListsComponent implements OnInit {
 		// Start depends on sort order and could be the original or the new position
 		const start = cI < pI ? cI : pI
 
-		// Register all the new position into the itemsChanges list
+		// Register all the new position into the _itemsChanges list
 		for (let i = start; i < ld.length; i++) {
 			const list = ld[i]
 			list.position = i
-			this.itemsChanges.set([
+			this._itemsChanges.set([
 				{
 					UUID: list.UUID,
 					label: list.label,
@@ -266,7 +267,7 @@ class ListsComponent implements OnInit {
 
 	/**
 	 * Open dialog for new list
-	 * @description On confirm true add the new list in f/e data and update itemsChanges
+	 * @description On confirm true add the new list in f/e data and update _itemsChanges
 	 */
 	openCreateNew() {
 		const dr = this._dialog.open(ListsNewDialogComponent)
@@ -275,7 +276,7 @@ class ListsComponent implements OnInit {
 			if (result) {
 				const { changes, newListsData } = this._addInListData(result, this.listsData())
 				this.listsData.set(newListsData)
-				this.itemsChanges.set(changes)
+				this._itemsChanges.set(changes)
 			}
 		})
 	}
@@ -294,17 +295,14 @@ class ListsComponent implements OnInit {
 				? this._updateInListData($event, this.listsData() as ListsData)
 				: this._deleteInListData($event, this.listsData() as ListsData)
 		this.listsData.set(newListsData)
-		this.itemsChanges.set(changes)
+		this._itemsChanges.set(changes)
 	}
 
 	/**
 	 * Confirm editing
 	 */
 	onConfirm() {
-		const hasDeleteActions = false // this.itemsChanges.values.some((item) => item.crud ===
-		// 'delete')
-
-		if (hasDeleteActions) {
+		if (this._itemsChanges.hasDeletedItems) {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)
 			dr.afterClosed().subscribe((result) => {
 				if (result) this._saveLists()
@@ -320,7 +318,7 @@ class ListsComponent implements OnInit {
 	 */
 	onCancel() {
 		this.listsData.set(this._listDataCache)
-		// this.itemsChanges.values = []
+		this._itemsChanges.clear()
 		this.editing = false
 	}
 
