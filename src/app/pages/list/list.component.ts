@@ -17,13 +17,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDragPlaceholder,
-  CdkDropList,
-  moveItemInArray
-} from '@angular/cdk/drag-drop'
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from '../../shared/main-state.service'
 import {
