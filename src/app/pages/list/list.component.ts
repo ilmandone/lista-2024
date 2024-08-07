@@ -18,7 +18,13 @@ import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.compon
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
-import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop'
+import {
+	CdkDrag,
+	CdkDragDrop,
+	CdkDragPlaceholder,
+	CdkDropList,
+	moveItemInArray
+} from '@angular/cdk/drag-drop'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 
 @Component({
@@ -58,8 +64,6 @@ class ListComponent implements OnInit {
 	shopping = false
 	viewModeGrid = false
 
-	
-
 	async ngOnInit() {
 		this._UUID = this._activatedRoute.snapshot.params['id']
 		this.label = this._activatedRoute.snapshot.params['label']
@@ -83,7 +87,7 @@ class ListComponent implements OnInit {
 		data: ItemsData,
 		insertAfter: number
 	): {
-		itemsData: ItemData[],
+		itemsData: ItemData[]
 		changes: ItemsChanges[]
 	} {
 		const itemsData = cloneDeep(data)
@@ -100,10 +104,19 @@ class ListComponent implements OnInit {
 		else {
 			itemsData.splice(insertAfter + 1, 0, newItem)
 		}
-		
-		return { itemsData, changes: [{
-			UUID: newItem.UUID, label, position: newItem.position, group: newItem.group, crud: 'create'
-		}] }
+
+		return {
+			itemsData,
+			changes: [
+				{
+					UUID: newItem.UUID,
+					label,
+					position: newItem.position,
+					group: newItem.group,
+					crud: 'create'
+				}
+			]
+		}
 	}
 
 	/**
@@ -116,7 +129,7 @@ class ListComponent implements OnInit {
 		UUIDs: string[],
 		data: ItemsData
 	): {
-		itemsData: ItemsData,
+		itemsData: ItemsData
 		changes: ItemsChanges[]
 	} {
 		const itemsData = cloneDeep(data)
@@ -142,23 +155,28 @@ class ListComponent implements OnInit {
 			}
 		})
 
-		const startPosition = dPositions[0] + 1 // > 0 ? dPositions[0] : 0
-		const startLoop = itemsData.findIndex((i) => i.position === startPosition)
-		for(let i = startLoop; i < itemsData.length; i++) {
+		const sortedDPostion = dPositions.sort()
 
+		for (let i = sortedDPostion[0]; i < itemsData.length; i++) {
 			const item = itemsData[i]
 
-			dPositions.forEach((p) => {
-				if(item.position >= p) item.position -= 1
-			})
+			let j = sortedDPostion.length - 1
 
-			changes.push({
-				UUID: item.UUID,
-				label: item.label,
-				group: item.group,
-				position: item.position,
-				crud: 'update'
-			})
+			while (j >= 0) {
+				const p = sortedDPostion[j]
+				if (item.position >= p) {
+					item.position -= j + 1
+					changes.push({
+						UUID: item.UUID,
+						label: item.label,
+						group: item.group,
+						position: item.position,
+						crud: 'update'
+					})
+					break
+				}
+				j--
+			}
 		}
 
 		return { itemsData, changes }
@@ -168,7 +186,7 @@ class ListComponent implements OnInit {
 		change: ItemsChanges,
 		data: ItemsData
 	): {
-		changes: ItemsChanges[],
+		changes: ItemsChanges[]
 		itemsData: ItemsData
 	} {
 		const itemsData = cloneDeep(data)
@@ -213,7 +231,11 @@ class ListComponent implements OnInit {
 						this.itemsData().length - 1
 					: this.itemsData().length - 1
 
-				const { itemsData, changes } = this._addInListItem(r, this.itemsData() as ItemData[], insertAfter)
+				const { itemsData, changes } = this._addInListItem(
+					r,
+					this.itemsData() as ItemData[],
+					insertAfter
+				)
 				this.itemsData.set(itemsData)
 				this._itemsChanges.set(changes)
 
@@ -223,19 +245,19 @@ class ListComponent implements OnInit {
 	}
 
 	listsDrop($event: CdkDragDrop<ItemsData>) {
-    const ld = this.itemsData() 
+		const ld = this.itemsData()
 		const cI = $event.currentIndex
- 		const pI = $event.previousIndex
+		const pI = $event.previousIndex
 
 		// Update the list order
 		if (ld) {
 			moveItemInArray(ld, pI, cI)
 		}
 
-    // TODO: Update all the position as changes
+		// TODO: Update all the position as changes
 
-    this.itemsData.set(ld)
-  }
+		this.itemsData.set(ld)
+	}
 
 	//#endregion
 
@@ -303,7 +325,10 @@ class ListComponent implements OnInit {
 	 * @param {ListItemSelectedEvent} $event
 	 */
 	itemSelected($event: ListItemSelectedEvent) {
-		console.log('🚀 @@@ ~ file: list.component.ts:298 ~ ListComponent ~ itemSelected ~ $event:', $event)
+		console.log(
+			'🚀 @@@ ~ file: list.component.ts:298 ~ ListComponent ~ itemSelected ~ $event:',
+			$event
+		)
 		if ($event.isSelected) this.selectedItems.add($event.UUID)
 		else this.selectedItems.delete($event.UUID)
 	}
