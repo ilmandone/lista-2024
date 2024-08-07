@@ -10,12 +10,7 @@
   (keyup.enter)="itemClicked()"
   (keyup.space)="itemClicked()"
 >
-  <!--  Drag button -->
-  @if (editing()) {
-    <button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled">
-      <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
-    </button>
-  }
+
 
   <!--  Label-->
   <app-focus-input [disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
@@ -30,6 +25,13 @@
     <button mat-icon-button [title]="'delete ' + data().label + 'list'" (click)="deleteList()"
             [disabled]="disabled">
       <mat-icon [fontIcon]="'delete'"></mat-icon>
+    </button>
+  }
+
+  <!--  Drag button -->
+  @if (editing()) {
+    <button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled">
+      <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
     </button>
   }
 
