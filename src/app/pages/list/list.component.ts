@@ -23,7 +23,7 @@ import { MainStateService } from '../../shared/main-state.service'
 import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
-import { addInListItem, deleteInListItem, updateItem, updateItemPosition } from './list.cud'
+import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 
 @Component({
   selector: 'app-list',
@@ -93,7 +93,7 @@ class ListComponent implements OnInit {
     const {
       itemsData,
       changes
-    } = addInListItem(label, this.itemsData() as ItemsData, insertAfter)
+    } = addItem(label, this.itemsData() as ItemsData, insertAfter)
 
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
@@ -105,7 +105,7 @@ class ListComponent implements OnInit {
    * Delete button click
    */
   itemsDeleted() {
-    const { itemsData, changes } = deleteInListItem([...this.selectedItems], this.itemsData())
+    const { itemsData, changes } = deleteItem([...this.selectedItems], this.itemsData())
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
   }
@@ -115,7 +115,7 @@ class ListComponent implements OnInit {
    * @param $event
    */
   itemChanged($event: ItemsChanges) {
-    const { itemsData, changes } = updateItem($event, this.itemsData())
+    const { itemsData, changes } = updateItemAttr($event, this.itemsData())
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
   }

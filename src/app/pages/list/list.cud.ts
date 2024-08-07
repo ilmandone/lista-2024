@@ -13,7 +13,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
  * @param insertAfter
  * @private
  */
-export const addInListItem = (label: string, data: ItemsData, insertAfter: number): {
+export const addItem = (label: string, data: ItemsData, insertAfter: number): {
   itemsData: ItemData[]
   changes: ItemsChanges[]
 } => {
@@ -40,7 +40,7 @@ export const addInListItem = (label: string, data: ItemsData, insertAfter: numbe
  * @param {ItemsData} data
  * @private {itemsData: ItemsData}
  */
-export const deleteInListItem =
+export const deleteItem =
   (
     UUIDs: string[],
     data: ItemsData
@@ -105,7 +105,7 @@ export const deleteInListItem =
  * @param {ItemsData} data
  * @return {{changes: ItemsChanges[], itemsData: ItemsData}} - An object containing the updated itemsData array and the change object.
  */
-export const updateItem = (change: ItemsChanges, data: ItemsData): {
+export const updateItemAttr = (change: ItemsChanges, data: ItemsData): {
   changes: ItemsChanges[]
   itemsData: ItemsData
 } => {
