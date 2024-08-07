@@ -20,7 +20,7 @@ import {
 
 import { cloneDeep } from 'lodash'
 import { SetOfItemsChanges } from 'app/data/items.changes'
-import { addInListData, deleteInListData, updateInListData, updateListPosition } from './lists.cud'
+import { addList, deleteList, updateListAttr, updateListPosition } from './lists.cud'
 
 @Component({
   selector: 'app-lists',
@@ -144,7 +144,7 @@ class ListsComponent implements OnInit {
         const {
           changes,
           newListsData
-        } = addInListData(result, this.listsData(), this._firebaseSrv.gewNewTimeStamp())
+        } = addList(result, this.listsData(), this._firebaseSrv.gewNewTimeStamp())
         this.listsData.set(newListsData)
         this._itemsChanges.set(changes)
       }
@@ -162,8 +162,8 @@ class ListsComponent implements OnInit {
   itemChanged($event: ListsItemChanges) {
     const { changes, newListsData } =
       $event.crud === 'update'
-        ? updateInListData($event, this.listsData() as ListsData)
-        : deleteInListData($event, this.listsData() as ListsData)
+        ? updateListAttr($event, this.listsData() as ListsData)
+        : deleteList($event, this.listsData() as ListsData)
     this.listsData.set(newListsData)
     this._itemsChanges.set(changes)
   }

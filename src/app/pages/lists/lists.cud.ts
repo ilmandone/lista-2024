@@ -16,7 +16,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
  * @return New lists data and changes
  * @private
  */
-export const addInListData = (
+export const addList = (
   label: string,
   data: Nullable<ListsData>,
   newTimeStamp: Timestamp
@@ -48,7 +48,7 @@ export const addInListData = (
  * @return New lists data and changes
  * @private
  */
-export const deleteInListData = (
+export const deleteList = (
   change: ListsItemChanges,
   data: ListsData
 ): {
@@ -87,7 +87,7 @@ export const deleteInListData = (
  * @return New lists data and changes
  * @private
  */
-export const updateInListData =(
+export const updateListAttr =(
   change: ListsItemChanges,
   data: ListsData
 ): {
