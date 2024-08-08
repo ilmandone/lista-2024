@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core'
+import { Component, HostListener, inject, input, output } from '@angular/core'
 import { MatRippleModule } from '@angular/material/core'
 import { FocusInputComponent } from '../../../components/focus-input/focus-input.component'
 import { FocusInputService } from '../../../components/focus-input/focus-input.service'
@@ -9,6 +9,11 @@ import { ListItemSelectedEvent } from './list.item.interface'
 import { MatIconModule } from '@angular/material/icon'
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
 import { MatIconButton } from '@angular/material/button'
+
+export interface NotToBuyChange {
+  UUID: string
+  notToBuy: boolean
+}
 
 @Component({
   selector: 'app-list-item',
@@ -27,14 +32,21 @@ import { MatIconButton } from '@angular/material/button'
 export class ListItemComponent {
   readonly focusSrv = inject(FocusInputService)
 
+  notToBuy = input<boolean>(false)
   data = input.required<ItemData>()
   editing = input<boolean>(false)
   selected = input<boolean>(false)
 
-  selectedChange = output<ListItemSelectedEvent>()
   changed = output<ItemsChanges>()
+  notToBuyChange = output<NotToBuyChange>()
+  selectedChange = output<ListItemSelectedEvent>()
 
   disabled = false
+
+  @HostListener('click')
+  hostClick() {
+    this.notToBuyChange.emit({notToBuy: !this.notToBuy(), UUID: this.data().UUID})
+  }
 
   itemLabelChanged($event: Nullable<string>) {
     if ($event) {

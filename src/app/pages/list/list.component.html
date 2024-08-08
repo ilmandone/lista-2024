@@ -59,7 +59,9 @@
 			[data]="item"
 			[editing]="editing"
 			[selected]="selectedItems.has(item.UUID)"
+			[notToBuy]="notToBuyItems.has(item.UUID)"
 			(changed)="itemChanged($event)"
+			(notToBuyChange)="itemNotToBuyChanged($event)"
 			(selectedChange)="itemSelected($event)"
 		></app-list-item>
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>

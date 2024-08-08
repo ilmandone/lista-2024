@@ -4,6 +4,7 @@
 	[attr.tabindex]="editing() ? -1 : 0"
 	[attr.role]="!editing() ? 'button' : 'none'"
 	[class.editing]="editing()"
+	[class.not-to-buy]="notToBuy()"
 	[matRippleDisabled]="editing()"
 >
 	<!--Left group-->
@@ -24,6 +25,7 @@
 			[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
 			[key]="data().UUID"
 			[value]="data().label"
+			[stroked]="notToBuy()"
 			(changed)="itemLabelChanged($event)"
 		/>
 	</div>

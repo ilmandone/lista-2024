@@ -59,6 +59,12 @@
         width: 6rem;
       }
     }
+
+    &.not-to-buy {
+      app-focus-input {
+        opacity: 0.6;
+      }
+    }
   }
 
   button {
