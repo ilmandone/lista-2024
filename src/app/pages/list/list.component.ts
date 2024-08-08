@@ -188,6 +188,8 @@ class ListComponent implements OnInit {
 
 	//#region Interaction
 	itemNotToBuyChanged($event: NotToBuyChange) {
+		if(this.editing) return
+		
 		if ($event.notToBuy) this.notToBuyItems.add($event.UUID)
 		else this.notToBuyItems.delete($event.UUID)
 		console.log(

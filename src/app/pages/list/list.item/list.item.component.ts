@@ -55,6 +55,8 @@ export class ListItemComponent {
         label: $event,
         position: this.data().position,
         group: this.data().group,
+        inCart: this.data().inCart,
+        toBuy: this.data().toBuy,
         crud: 'update'
       })
     }
