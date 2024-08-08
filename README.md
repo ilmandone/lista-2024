@@ -12,8 +12,10 @@ attivare solo quando un elemento è selezionato~~
 5) ~~Modifica del label di un item con aggiornamento di dati di f/e~~
 6) ~~Cancel e confirm dell'editing della lista~~
 7) ~~Allineare la lista con l'edit bag per gli items~~
-7) Aggiornamento dati db su confirm dell'editing e dialog in caso di cancellazione
-8) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
+7) ~~Aggiornamento dati db su confirm dell'editing e dialog in caso di cancellazione~~
+8) ~~Disabiliatare il pulsante delete di un item se c'è solo un item in lista~~
+9) Fixare l'handler nella item della lista - usare il branche per il delete
+9) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
 per l'aggiornamento del db
 9) Modalitò spesa - aggiornamento dello stato nel carrello con debounce per l'aggiornamento del db.
 10) Conferma del fine spesa - azzeramento dello stato nel carrello di tutti gli items 

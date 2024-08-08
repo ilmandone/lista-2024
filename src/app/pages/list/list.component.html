@@ -40,7 +40,7 @@
 			mat-icon-button
 			title="add item"
 			type="button"
-			[disabled]="selectedItems.size === 0"
+			[disabled]="selectedItems.size === 0 || itemsData().length <= 1"
 			(click)="itemsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
