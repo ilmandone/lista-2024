@@ -27,4 +27,8 @@ input {
     background-color: var(--lists-item-color-bg);
     pointer-events: none;
   }
+
+  &.stroked {
+    text-decoration: line-through;
+  }
 }

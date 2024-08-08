@@ -2,6 +2,7 @@
   (blur)="onBlur()"
   (focus)="onFocus()"
   (keydown.enter)="input.blur()"
+  [class.stroked]="stroked()"
   [formControl]="fC"
   [value]="value()"
   matInput
