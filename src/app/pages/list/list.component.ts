@@ -12,7 +12,7 @@ import {
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
-import { ListItemComponent, NotToBuyChange } from './list.item/list.item.component'
+import { ListItemComponent } from './list.item/list.item.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
@@ -55,7 +55,6 @@ class ListComponent implements OnInit {
 	editing = false
 	itemsData = signal<ItemData[]>([])
 	label!: string
-	notToBuyItems = new Set<string>()
 	selectedItems = new Set<string>()
 	shopping = false
 	viewModeGrid = false
@@ -187,15 +186,10 @@ class ListComponent implements OnInit {
 	//#endregion
 
 	//#region Interaction
-	itemNotToBuyChanged($event: NotToBuyChange) {
-		if(this.editing) return
-		
-		if ($event.notToBuy) this.notToBuyItems.add($event.UUID)
-		else this.notToBuyItems.delete($event.UUID)
-		console.log(
-			'🚀 @@@ ~ file: list.component.ts:195 ~ ListComponent ~ itemNotToBuyChanged ~ this.notToBuyItems:',
-			this.notToBuyItems
-		)
+	itemNotToBuyChanged($event: ItemsChanges) {
+		if (this.editing) return
+
+		this.itemChanged($event)
 	}
 
 	//#endregion

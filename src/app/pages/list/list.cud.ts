@@ -120,7 +120,7 @@ export const deleteItem = (
 }
 
 /**
- * Update one item
+ * Update item attributes
  * @description Return an update itemsData list and the changes for b/e
  * @param {ItemsChanges} change
  * @param {ItemsData} data
@@ -138,6 +138,7 @@ export const updateItemAttr = (
 
 	if (item) {
 		item.label = change.label
+		item.toBuy = change.toBuy
 	}
 
 	return { itemsData, changes: [change] }

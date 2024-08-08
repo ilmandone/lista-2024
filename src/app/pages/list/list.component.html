@@ -59,7 +59,7 @@
 			[data]="item"
 			[editing]="editing"
 			[selected]="selectedItems.has(item.UUID)"
-			[notToBuy]="notToBuyItems.has(item.UUID)"
+			[notToBuy]="!item.toBuy"
 			(changed)="itemChanged($event)"
 			(notToBuyChange)="itemNotToBuyChanged($event)"
 			(selectedChange)="itemSelected($event)"
