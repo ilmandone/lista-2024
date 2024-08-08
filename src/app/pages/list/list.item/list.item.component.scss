@@ -54,6 +54,10 @@
       app-focus-input {
         padding-right: 1rem;
       }
+
+      .item-button__right {
+        width: 6rem;
+      }
     }
   }
 
@@ -65,7 +69,7 @@
 
 // TO BE REPLACED BY GROUP DOT COMPONENT
 .group-dot {
-  position: absolute;
+  position: relative;
   width: 2.5rem;
   height: 2.5rem;
   background-color: darkred;
