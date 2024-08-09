@@ -27,7 +27,7 @@ export const addItem = (
 		label,
 		group: 'verdure',
 		inCart: false,
-		toBuy: true,
+		notToBuy: true,
 		position: insertAfter + 1
 	}
 
@@ -45,7 +45,7 @@ export const addItem = (
 				position: newItem.position,
 				group: newItem.group,
         inCart: newItem.inCart,
-        toBuy: newItem.toBuy,
+        notToBuy: newItem.notToBuy,
 				crud: 'create'
 			}
 		]
@@ -82,7 +82,7 @@ export const deleteItem = (
 				group: d.group,
 				position: d.position,
 				inCart: d.inCart,
-				toBuy: d.toBuy,
+				notToBuy: d.notToBuy,
 				crud: 'delete'
 			})
 
@@ -107,7 +107,7 @@ export const deleteItem = (
 					group: item.group,
 					position: item.position,
 					inCart: item.inCart,
-					toBuy: item.toBuy,
+					notToBuy: item.notToBuy,
 					crud: 'update'
 				})
 				break
@@ -138,7 +138,7 @@ export const updateItemAttr = (
 
 	if (item) {
 		item.label = change.label
-		item.toBuy = change.toBuy
+		item.notToBuy = change.notToBuy
 	}
 
 	return { itemsData, changes: [change] }
@@ -178,7 +178,7 @@ export const updateItemPosition = (
 			label: list.label,
 			position: i,
 			inCart: list.inCart,
-      toBuy: list.toBuy,
+      notToBuy: list.notToBuy,
 			group: list.group,
       crud: 'update'
 		})

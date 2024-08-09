@@ -17,11 +17,11 @@ export type ListsItemChanges = Omit<ListData, 'updated'> & Pick<BasicItemChange,
 export interface ItemsChanges extends BasicItemChange {
 	inCart: boolean
 	label: string
-	toBuy: boolean
+  notToBuy: boolean
 	group: string
 	position: number
 	[key:string]: unknown // ???
-} 
+}
 
 export type ItemData = Exclude<ItemsChanges, 'crud'>
 export type ItemsData = ItemData[]

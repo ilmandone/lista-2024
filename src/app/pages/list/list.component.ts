@@ -188,8 +188,7 @@ class ListComponent implements OnInit {
 	//#region Interaction
 	itemNotToBuyChanged($event: ItemsChanges) {
 		if (this.editing) return
-
-		this.itemChanged($event)
+    this.itemChanged($event)
 	}
 
 	//#endregion

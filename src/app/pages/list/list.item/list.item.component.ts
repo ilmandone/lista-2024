@@ -28,7 +28,7 @@ import { MatIconButton } from '@angular/material/button'
 export class ListItemComponent {
 	readonly focusSrv = inject(FocusInputService)
 
-	notToBuy = input<boolean>(false)
+	notToBuy = input<boolean>(true)
 	data = input.required<ItemData>()
 	editing = input<boolean>(false)
 	selected = input<boolean>(false)
@@ -41,13 +41,13 @@ export class ListItemComponent {
 
 	@HostListener('click')
 	hostClick() {
-		this.notToBuyChange.emit({
+    this.notToBuyChange.emit({
 			UUID: this.data().UUID,
 			label: this.data().label,
 			position: this.data().position,
 			group: this.data().group,
 			inCart: this.data().inCart,
-			toBuy: this.notToBuy(),
+			notToBuy: !this.notToBuy(),
 			crud: 'update'
 		})
 	}
@@ -60,7 +60,7 @@ export class ListItemComponent {
 				position: this.data().position,
 				group: this.data().group,
 				inCart: this.data().inCart,
-				toBuy: true,
+				notToBuy: false,
 				crud: 'update'
 			})
 		}
