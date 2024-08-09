@@ -36,17 +36,17 @@ export class ListItemComponent {
   shopping = input<boolean>(false)
 
   changed = output<ItemsChanges>()
-  click = output<ItemsChanges>()
+  clicked = output<ItemsChanges>()
   selectedChange = output<ListItemSelectedEvent>()
 
   disabled = false
 
   @HostListener('click')
   hostClick() {
-    if (!this.editing)
-      this.click.emit({
+    if (!this.editing())
+      this.clicked.emit({
         ...this.data(),
-        inCart: this.shopping() ? !this.inCart : false,
+        inCart: this.shopping() ? !this.inCart() : false,
         notToBuy: this.shopping() ? this.data().notToBuy : !this.notToBuy(),
         crud: 'update'
       })

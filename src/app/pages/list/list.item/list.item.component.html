@@ -5,6 +5,7 @@
 	[attr.role]="!editing() ? 'button' : 'none'"
 	[class.editing]="editing()"
 	[class.not-to-buy]="notToBuy()"
+  [class.in-cart]="shopping() && inCart()"
 	[matRippleDisabled]="editing()"
 >
 	<!--Left group-->

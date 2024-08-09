@@ -44,7 +44,7 @@ import { cloneDeep } from 'lodash'
 })
 class ListComponent implements OnInit {
 
-  private readonly AUTOSAVE_TIME_OUT = 600
+  private readonly AUTOSAVE_TIME_OUT = 1200
 
 	private readonly _activatedRoute = inject(ActivatedRoute)
 	private readonly _bottomSheet = inject(MatBottomSheet)
@@ -52,14 +52,15 @@ class ListComponent implements OnInit {
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _mainStateSrv = inject(MainStateService)
 	private _UUID!: string
-	private _itemsDataCache: ItemData[] = []
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
+	private _itemsDataCache: ItemData[] = []
   private _autoSaveTimeOutID!:  number
+  private _inCartItems = new Set<number>()
 
 	editing = false
 	itemsData = signal<ItemData[]>([])
 	label!: string
-	selectedItems = new Set<string>()
+  selectedItems = new Set<string>()
 	shopping = false
 	viewModeGrid = false
 
@@ -87,18 +88,17 @@ class ListComponent implements OnInit {
 	 * @description Save items in db and reset all the edit information
 	 */
 	_saveItems() {
-    console.log('SAVE ITEMS')
-		this._mainStateSrv.showLoader()
-		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-			this.itemsData.set(r)
+    this._mainStateSrv.showLoader()
+    this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
+      this.itemsData.set(r)
 
-			this.selectedItems.clear()
-			this._itemsChanges.clear()
-			this._itemsDataCache = []
+      this.selectedItems.clear()
+      this._itemsChanges.clear()
+      this._itemsDataCache = []
 
-			this._mainStateSrv.hideLoader()
-			this.editing = false
-		})
+      this._mainStateSrv.hideLoader()
+      this.editing = false
+    })
 	}
 
 	/**
@@ -137,7 +137,8 @@ class ListComponent implements OnInit {
 	 */
 	itemChanged($event: ItemsChanges) {
 		const { itemsData, changes } = updateItemAttr($event, this.itemsData())
-		this.itemsData.set(itemsData)
+    console.log(itemsData)
+    this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 	}
 
@@ -200,8 +201,48 @@ class ListComponent implements OnInit {
 
 	//#region Interaction
 
+  private _resetInCart(data: ItemsData): {newItemsData: ItemsData, changes: ItemsChanges[]} {
+    const newItemsData = cloneDeep(data)
+    const changes: ItemsChanges[] =[]
+
+    newItemsData.forEach(i=> {
+      if (i.inCart) {
+        i.inCart = false
+        changes.push({
+          ...i,
+          crud: 'update'
+        })
+      }
+    })
+
+    return { newItemsData, changes }
+  }
+
+  private _fromInCartToNotToBuy(data: ItemsData): {newItemsData: ItemsData, changes: ItemsChanges[]} {
+    const newItemsData = cloneDeep(data)
+    const changes: ItemsChanges[] =[]
+
+    newItemsData.forEach(i=> {
+      if (i.inCart) {
+        i.notToBuy = true
+        i.inCart = false
+        changes.push({
+          ...i,
+          crud: 'update'
+        })
+      }
+    })
+
+    return { newItemsData, changes }
+  }
+
+  /**
+   * Click on an item
+   * @description Update the item with the $event data for notToBuy and inCart properties
+   * @param {ItemsChanges} $event
+   */
 	itemClicked($event: ItemsChanges) {
-		if (!this.editing) {
+    if (!this.editing) {
       this.itemChanged($event)
       this._engageSaveItems()
     }
@@ -216,10 +257,16 @@ class ListComponent implements OnInit {
 	 */
 	confirm() {
 		if (this.shopping) {
-			console.log('TODO: Remove the in cart value from all items and set toBuy to false')
+
+      const {newItemsData, changes} = this._fromInCartToNotToBuy(this.itemsData())
+      this._itemsChanges.set(changes)
+      this.itemsData.set(newItemsData)
 
 			this.shopping = false
+      this._engageSaveItems()
+
 		} else {
+
 			if (this._itemsChanges.hasDeletedItems) {
 				const dr = this._dialog.open(DeleteConfirmDialogComponent)
 				dr.afterClosed().subscribe((result) => {
@@ -236,13 +283,20 @@ class ListComponent implements OnInit {
 	 */
 	cancel() {
 		if (this.shopping) {
-			this.shopping = false
-		} else {
-			this.itemsData.set(this._itemsDataCache)
 
-			this.selectedItems.clear()
-			this._itemsChanges.clear()
-			this._itemsDataCache = []
+      const {newItemsData, changes} = this._resetInCart(this.itemsData())
+      this._itemsChanges.set(changes)
+      this.itemsData.set(newItemsData)
+
+			this.shopping = false
+      this._engageSaveItems()
+
+		} else {
+
+      this.itemsData.set(this._itemsDataCache)
+      this._itemsDataCache = []
+      this.selectedItems.clear()
+      this._itemsChanges.clear()
 
 			this.editing = false
 		}
