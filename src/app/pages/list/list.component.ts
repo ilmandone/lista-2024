@@ -77,7 +77,7 @@ class ListComponent implements OnInit {
   /**
    * Handle autosave for not to buy data update
    */
-  _armSaveItems() {
+  _engageSaveItems() {
     if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
     this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
   }
@@ -199,10 +199,12 @@ class ListComponent implements OnInit {
 	//#endregion
 
 	//#region Interaction
-	itemNotToBuyChanged($event: ItemsChanges) {
-		if (this.editing) return
-    this.itemChanged($event)
-    this._armSaveItems()
+
+	itemClicked($event: ItemsChanges) {
+		if (!this.editing) {
+      this.itemChanged($event)
+      this._engageSaveItems()
+    }
 	}
 
 	//#endregion
