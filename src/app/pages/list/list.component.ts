@@ -16,7 +16,6 @@ import { ListItemComponent } from './list.item/list.item.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
-import { cloneDeep } from 'lodash'
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from '../../shared/main-state.service'
@@ -43,6 +42,9 @@ import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.
 	styleUrl: './list.component.scss'
 })
 class ListComponent implements OnInit {
+
+  private readonly AUTOSAVE_TIME_OUT = 600
+
 	private readonly _activatedRoute = inject(ActivatedRoute)
 	private readonly _bottomSheet = inject(MatBottomSheet)
 	private readonly _dialog = inject(MatDialog)
@@ -51,6 +53,7 @@ class ListComponent implements OnInit {
 	private _UUID!: string
 	private _itemsDataCache: ItemData[] = []
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
+  private _autoSaveTimeOutID!:  number
 
 	editing = false
 	itemsData = signal<ItemData[]>([])
@@ -70,11 +73,20 @@ class ListComponent implements OnInit {
 
 	//#region Editing
 
+  /**
+   * Handle autosave for not to buy data update
+   */
+  _armSaveItems() {
+    if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
+    this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
+  }
+
 	/**
 	 * Update items
 	 * @description Save items in db and reset all the edit information
 	 */
 	_saveItems() {
+    console.log('SAVE ITEMS')
 		this._mainStateSrv.showLoader()
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
 			this.itemsData.set(r)
@@ -189,6 +201,7 @@ class ListComponent implements OnInit {
 	itemNotToBuyChanged($event: ItemsChanges) {
 		if (this.editing) return
     this.itemChanged($event)
+    this._armSaveItems()
 	}
 
 	//#endregion
