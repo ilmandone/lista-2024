@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { FirebaseService } from '../../data/firebase.service'
 import { MatIcon } from '@angular/material/icon'
@@ -66,13 +66,22 @@ class ListComponent implements OnInit {
   shopping = false
   viewModeGrid = false
 
+  constructor() {
+    effect(
+      () => {
+        if (this._mainStateSrv.reload()) {
+          this._loadItems()
+        }
+      },
+      { allowSignalWrites: true }
+    )
+  }
+
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
     this.label = this._activatedRoute.snapshot.params['label']
 
-    this._firebaseSrv.loadList(this._UUID).then((r) => {
-      this.itemsData.set(r)
-    })
+    this._loadItems()
   }
 
   //#region Editing
@@ -83,6 +92,14 @@ class ListComponent implements OnInit {
   _engageSaveItems() {
     if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
     this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
+  }
+
+  _loadItems() {
+    this._mainStateSrv.showLoader()
+    this._firebaseSrv.loadList(this._UUID).then((r) => {
+      this.itemsData.set(r)
+      this._mainStateSrv.hideLoader()
+    })
   }
 
   /**
