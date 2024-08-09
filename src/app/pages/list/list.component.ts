@@ -16,7 +16,6 @@ import { ListItemComponent } from './list.item/list.item.component'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListItemSelectedEvent } from './list.item/list.item.interface'
-import { cloneDeep } from 'lodash'
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from '../../shared/main-state.service'
@@ -24,15 +23,30 @@ import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
+import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [MatIcon, MatIconButton, LoaderComponent, MatBottomSheetModule, ButtonToggleComponent, ConfirmCancelComponent, ListItemComponent, MatDialogModule, CdkDrag, CdkDropList, CdkDragPlaceholder],
+  imports: [
+    MatIcon,
+    MatIconButton,
+    LoaderComponent,
+    MatBottomSheetModule,
+    ButtonToggleComponent,
+    ConfirmCancelComponent,
+    ListItemComponent,
+    MatDialogModule,
+    CdkDrag,
+    CdkDropList,
+    CdkDragPlaceholder
+  ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
 class ListComponent implements OnInit {
+
+  private readonly AUTOSAVE_TIME_OUT = 1200
 
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _bottomSheet = inject(MatBottomSheet)
@@ -40,11 +54,13 @@ class ListComponent implements OnInit {
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _mainStateSrv = inject(MainStateService)
   private _UUID!: string
-  private _itemsDataCache: ItemData[] = []
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
+  private _itemsDataCache: ItemData[] = []
+  private _autoSaveTimeOutID!: number
+  private _inCartItems = new Set<number>()
 
-  itemsData = signal<ItemData[]>([])
   editing = false
+  itemsData = signal<ItemData[]>([])
   label!: string
   selectedItems = new Set<string>()
   shopping = false
@@ -60,6 +76,14 @@ class ListComponent implements OnInit {
   }
 
   //#region Editing
+
+  /**
+   * Handle autosave for not to buy data update
+   */
+  _engageSaveItems() {
+    if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
+    this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
+  }
 
   /**
    * Update items
@@ -85,15 +109,14 @@ class ListComponent implements OnInit {
    * @param {string} label
    */
   addItem(label: string) {
-    const selectedUUID = this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+    const selectedUUID =
+      this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
     const insertAfter = selectedUUID
-      ? this.itemsData().find((e) => e.UUID === selectedUUID)?.position ?? this.itemsData().length - 1
+      ? this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
+      this.itemsData().length - 1
       : this.itemsData().length - 1
 
-    const {
-      itemsData,
-      changes
-    } = addItem(label, this.itemsData() as ItemsData, insertAfter)
+    const { itemsData, changes } = addItem(label, this.itemsData() as ItemsData, insertAfter)
 
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
@@ -116,6 +139,7 @@ class ListComponent implements OnInit {
    */
   itemChanged($event: ItemsChanges) {
     const { itemsData, changes } = updateItemAttr($event, this.itemsData())
+
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
   }
@@ -125,7 +149,7 @@ class ListComponent implements OnInit {
    * @param $event
    */
   itemDrop($event: CdkDragDrop<ItemsData>) {
-    const {itemsData, changes} = updateItemPosition($event, this.itemsData())
+    const { itemsData, changes } = updateItemPosition($event, this.itemsData())
 
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
@@ -177,6 +201,90 @@ class ListComponent implements OnInit {
 
   //#endregion
 
+  //#region Interaction
+
+  /**
+   * Reset in cart state for all in cart items
+   * @description return changes with new items data
+   * @param {ItemsData} data
+   * @param {Set<number>} inCartItems
+   * @private
+   */
+  private _resetInCart(data: ItemsData, inCartItems: Set<number>): {
+    newItemsData: ItemsData,
+    changes: ItemsChanges[]
+  } {
+    const newItemsData = cloneDeep(data)
+    const changes: ItemsChanges[] = []
+
+    inCartItems.forEach(index => {
+      const d = newItemsData[index]
+      if (d.inCart) {
+        d.inCart = false
+        changes.push({
+          ...d,
+          crud: 'update'
+        })
+      }
+    })
+
+    return { newItemsData, changes }
+  }
+
+  /**
+   * Set items from inCart to notToBuy
+   * @description return changes with new items data
+   * @param {itemsData} data
+   * @param {Set<number>} inCartItems
+   * @private
+   */
+  private _fromInCartToNotToBuy(data: ItemsData, inCartItems: Set<number>): {
+    newItemsData: ItemsData,
+    changes: ItemsChanges[]
+  } {
+    const newItemsData = cloneDeep(data)
+    const changes: ItemsChanges[] = []
+
+    inCartItems.forEach(index => {
+      const d = newItemsData[index]
+      if (d.inCart) {
+        d.notToBuy = true
+        d.inCart = false
+        changes.push({
+          ...d,
+          crud: 'update'
+        })
+      }
+    })
+
+    return { newItemsData, changes }
+  }
+
+  /**
+   * Click on an item
+   * @description Update the item with the $event data for notToBuy and inCart properties
+   * @param {ItemsChanges} $event
+   */
+  itemClicked($event: ItemsChanges) {
+    if (!this.editing) {
+
+      if (this.shopping) {
+        const index = this.itemsData().findIndex(i => i.UUID === $event.UUID)
+
+        if ($event.inCart) {
+          this._inCartItems.add(index)
+        } else if (this._inCartItems.has(index)) {
+          this._inCartItems.delete(index)
+        }
+      }
+
+      this.itemChanged($event)
+      this._engageSaveItems()
+    }
+  }
+
+  //#endregion
+
   //#region Confirm / Cancel
 
   /**
@@ -184,10 +292,22 @@ class ListComponent implements OnInit {
    */
   confirm() {
     if (this.shopping) {
-      console.log('TODO: Remove the in cart value from all items and set toBuy to false')
+
+      const {
+        newItemsData,
+        changes
+      } = this._fromInCartToNotToBuy(this.itemsData(), this._inCartItems)
+      this._inCartItems.clear()
+      this._itemsChanges.set(changes)
+      this.itemsData.set(newItemsData)
 
       this.shopping = false
+
+
+      this._engageSaveItems()
+
     } else {
+
       if (this._itemsChanges.hasDeletedItems) {
         const dr = this._dialog.open(DeleteConfirmDialogComponent)
         dr.afterClosed().subscribe((result) => {
@@ -204,13 +324,21 @@ class ListComponent implements OnInit {
    */
   cancel() {
     if (this.shopping) {
-      this.shopping = false
-    } else {
-      this.itemsData.set(this._itemsDataCache)
 
+      const { newItemsData, changes } = this._resetInCart(this.itemsData(), this._inCartItems)
+      this._inCartItems.clear()
+      this._itemsChanges.set(changes)
+      this.itemsData.set(newItemsData)
+
+      this.shopping = false
+      this._engageSaveItems()
+
+    } else {
+
+      this.itemsData.set(this._itemsDataCache)
+      this._itemsDataCache = []
       this.selectedItems.clear()
       this._itemsChanges.clear()
-      this._itemsDataCache = []
 
       this.editing = false
     }

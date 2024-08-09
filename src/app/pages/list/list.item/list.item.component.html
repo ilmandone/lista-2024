@@ -8,6 +8,11 @@
 >
 	<!--Left group-->
 	<div class="item-button__left">
+
+    @if(shopping() && inCart()) {
+      <mat-icon class="shopping-icon" [fontIcon]="'shopping_cart'"></mat-icon>
+    }
+
 		@if (editing()) {
 
 			<!--Checkbox-->
@@ -24,6 +29,7 @@
 			[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
 			[key]="data().UUID"
 			[value]="data().label"
+			[stroked]="notToBuy()"
 			(changed)="itemLabelChanged($event)"
 		/>
 	</div>

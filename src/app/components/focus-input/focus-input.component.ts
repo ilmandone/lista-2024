@@ -18,6 +18,7 @@ export class FocusInputComponent {
   key = input.required<number | string>()
   value = input<string>()
   disabled = input<boolean>(false)
+  stroked = input<boolean>(false)
 
   focused = output<boolean>()
   changed = output<Nullable<string>>()
