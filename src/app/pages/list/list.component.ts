@@ -137,7 +137,7 @@ class ListComponent implements OnInit {
 	 */
 	itemChanged($event: ItemsChanges) {
 		const { itemsData, changes } = updateItemAttr($event, this.itemsData())
-    console.log(itemsData)
+
     this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 	}
@@ -201,15 +201,16 @@ class ListComponent implements OnInit {
 
 	//#region Interaction
 
-  private _resetInCart(data: ItemsData): {newItemsData: ItemsData, changes: ItemsChanges[]} {
+  private _resetInCart(data: ItemsData, inCartItems:Set<number>): {newItemsData: ItemsData, changes: ItemsChanges[]} {
     const newItemsData = cloneDeep(data)
     const changes: ItemsChanges[] =[]
 
-    newItemsData.forEach(i=> {
-      if (i.inCart) {
-        i.inCart = false
+    inCartItems.forEach(index => {
+      const d = data[index]
+      if (d.inCart) {
+        d.inCart = false
         changes.push({
-          ...i,
+          ...d,
           crud: 'update'
         })
       }
@@ -218,16 +219,17 @@ class ListComponent implements OnInit {
     return { newItemsData, changes }
   }
 
-  private _fromInCartToNotToBuy(data: ItemsData): {newItemsData: ItemsData, changes: ItemsChanges[]} {
+  private _fromInCartToNotToBuy(data: ItemsData, inCartItems:Set<number>): {newItemsData: ItemsData, changes: ItemsChanges[]} {
     const newItemsData = cloneDeep(data)
     const changes: ItemsChanges[] =[]
 
-    newItemsData.forEach(i=> {
-      if (i.inCart) {
-        i.notToBuy = true
-        i.inCart = false
+    inCartItems.forEach(index => {
+      const d = newItemsData[index]
+      if (d.inCart) {
+        d.notToBuy = true
+        d.inCart = false
         changes.push({
-          ...i,
+          ...d,
           crud: 'update'
         })
       }
@@ -243,6 +245,17 @@ class ListComponent implements OnInit {
    */
 	itemClicked($event: ItemsChanges) {
     if (!this.editing) {
+
+      if (this.shopping) {
+        const index = this.itemsData().findIndex(i => i.UUID === $event.UUID)
+
+        if ($event.inCart) {
+          this._inCartItems.add(index)
+        } else if (this._inCartItems.has(index)) {
+          this._inCartItems.delete(index)
+        }
+      }
+
       this.itemChanged($event)
       this._engageSaveItems()
     }
@@ -258,11 +271,15 @@ class ListComponent implements OnInit {
 	confirm() {
 		if (this.shopping) {
 
-      const {newItemsData, changes} = this._fromInCartToNotToBuy(this.itemsData())
+      const {newItemsData, changes} = this._fromInCartToNotToBuy(this.itemsData(), this._inCartItems)
+      this._inCartItems.clear()
       this._itemsChanges.set(changes)
       this.itemsData.set(newItemsData)
 
 			this.shopping = false
+
+
+
       this._engageSaveItems()
 
 		} else {
@@ -284,7 +301,8 @@ class ListComponent implements OnInit {
 	cancel() {
 		if (this.shopping) {
 
-      const {newItemsData, changes} = this._resetInCart(this.itemsData())
+      const {newItemsData, changes} = this._resetInCart(this.itemsData(), this._inCartItems)
+      this._inCartItems.clear()
       this._itemsChanges.set(changes)
       this.itemsData.set(newItemsData)
 
