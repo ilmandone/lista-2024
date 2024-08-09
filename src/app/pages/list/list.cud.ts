@@ -139,6 +139,7 @@ export const updateItemAttr = (
 	if (item) {
 		item.label = change.label
 		item.notToBuy = change.notToBuy
+    item.inCart = change.inCart
 	}
 
 	return { itemsData, changes: [change] }
