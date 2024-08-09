@@ -21,6 +21,7 @@ import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from '../../shared/main-state.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
+import { cloneDeep } from 'lodash'
 
 @Component({
 	selector: 'app-list',
