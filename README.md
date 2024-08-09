@@ -2,25 +2,13 @@
 
 ## TODO:
 
-1) ~~Aggiungere il sotto documento ogni volta che si crea una nuova lista~~
-2) ~~Aggiungere la checkbox in modalità editing insieme alla logica di selezione - il pulsante delete si deve
-attivare solo quando un elemento è selezionato~~
-2) ~~Dialog per la creazione di un nuovo item - tralasciamo il group che verrà gestito nell'apposito dominio. Aggiunta di un elemento alla lista in f/e~~
-3) ~~Disabilitare il pulsante aggiungi se ci sono più di due items selezionati~~
-4) ~~Aggiugere l'inserimento dopo un elemento selezionato - come per le lists non aggiorniamo le position a f/e ma registreremo solo le itemChanges per il b/e.~~
-4) ~~Cancellazione di uno o più items da i dati di f/e~~
-5) ~~Modifica del label di un item con aggiornamento di dati di f/e~~
-6) ~~Cancel e confirm dell'editing della lista~~
-7) ~~Allineare la lista con l'edit bag per gli items~~
-7) ~~Aggiornamento dati db su confirm dell'editing e dialog in caso di cancellazione~~
-8) ~~Disabiliatare il pulsante delete di un item se c'è solo un item in lista~~
-9) Fixare l'handler nella item della lista - usare il branche per il delete
-9) Aggiornamento dello stato della lista di un item - acquistabile e non acquistabile - con debounce
-per l'aggiornamento del db
-9) Modalitò spesa - aggiornamento dello stato nel carrello con debounce per l'aggiornamento del db.
-10) Conferma del fine spesa - azzeramento dello stato nel carrello di tutti gli items 
-Cosa succede se più persone stanno facendo la spesa ? - Lo stato del item per il carrello potrebbe essere
-visibile nel momento in cui si attiva la modalità shopping 
+1) Reload items from side menu
+2) Groups
+   1) Page with all group listed and default group
+   2) Group item render
+   3) Create new group with related color
+   4) Delete group
+   5) On list items view check if the group exist and reset all the items to default if needed
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
 
