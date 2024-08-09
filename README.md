@@ -2,7 +2,7 @@
 
 ## TODO:
 
-1) Reload items from side menu
+1) ~~Reload items from side menu~~
 2) Groups
    1) Page with all group listed and default group
    2) Group item render
