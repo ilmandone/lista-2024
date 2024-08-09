@@ -60,8 +60,9 @@
       }
     }
 
-    &.in-cart {
-      background: red;
+    .shopping-icon {
+      margin: 0 1rem;
+      color: var(--button-toggle-active-color-bg);
     }
   }
 

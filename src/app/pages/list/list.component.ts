@@ -218,7 +218,7 @@ class ListComponent implements OnInit {
     const changes: ItemsChanges[] = []
 
     inCartItems.forEach(index => {
-      const d = data[index]
+      const d = newItemsData[index]
       if (d.inCart) {
         d.inCart = false
         changes.push({

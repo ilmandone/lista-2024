@@ -4,12 +4,15 @@
 	[attr.tabindex]="editing() ? -1 : 0"
 	[attr.role]="!editing() ? 'button' : 'none'"
 	[class.editing]="editing()"
-	[class.not-to-buy]="notToBuy()"
-  [class.in-cart]="shopping() && inCart()"
 	[matRippleDisabled]="editing()"
 >
 	<!--Left group-->
 	<div class="item-button__left">
+
+    @if(shopping() && inCart()) {
+      <mat-icon class="shopping-icon" [fontIcon]="'shopping_cart'"></mat-icon>
+    }
+
 		@if (editing()) {
 
 			<!--Checkbox-->
