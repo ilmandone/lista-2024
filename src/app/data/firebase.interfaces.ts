@@ -5,6 +5,8 @@ export interface BasicItemChange {
   	crud?: 'create' | 'update' | 'delete',
 }
 
+// Lists
+
 export interface ListData extends Pick<BasicItemChange, 'UUID'> {
 	label: string
 	position: number
@@ -13,6 +15,8 @@ export interface ListData extends Pick<BasicItemChange, 'UUID'> {
 
 export type ListsData = ListData[]
 export type ListsItemChanges = Omit<ListData, 'updated'> & Pick<BasicItemChange, 'crud'>
+
+// Items
 
 export interface ItemsChanges extends BasicItemChange {
 	inCart: boolean
@@ -25,10 +29,9 @@ export interface ItemsChanges extends BasicItemChange {
 
 export type ItemData = Exclude<ItemsChanges, 'crud'>
 export type ItemsData = ItemData[]
-// export type ItemsChanges = Omit<ItemData, 'toBuy' | 'inCart'> & Pick<BasicItemChange, 'crud'>
 
-export interface ItemsChangesEditBag<T> {
-  created: T[]
-  updated: T[]
-  deleted: T[]
-}
+export interface EditBag<T> {
+	created: T[]
+	updated: T[]
+	deleted: T[]
+  }

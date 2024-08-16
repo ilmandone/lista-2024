@@ -23,7 +23,7 @@ import {
 
 import { environment } from 'environments/environment.development'
 import {
-	ItemsChangesEditBag,
+	EditBag,
 	ListsItemChanges,
 	ItemData,
 	ListData,
@@ -62,6 +62,7 @@ export class FirebaseService {
 	private _userData!: UserCredential
 
 	private _cachedList!: ListsData | undefined
+	private _cachedGroups!: ItemsData | undefined
 
 	/**
 	 * Start the firebase connection
@@ -179,7 +180,7 @@ export class FirebaseService {
 	 * @param {ListsItemChanges[]} changes
 	 * @return {Promise<ListsData>}
 	 */
-	async updateLists(changes: ItemsChangesEditBag<ListsItemChanges>): Promise<ListsData> {
+	async updateLists(changes: EditBag<ListsItemChanges>): Promise<ListsData> {
 		try {
 			if (!this._db) this._startDB()
 
@@ -260,7 +261,7 @@ export class FirebaseService {
 		}
 	}
 
-	async updateList(changes: ItemsChangesEditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
+	async updateList(changes: EditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
 		try {
 			if (!this._db) this._startDB()
 
