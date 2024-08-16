@@ -79,7 +79,7 @@ class ListComponent implements OnInit {
 
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
-    this.label = this._activatedRoute.snapshot.params['label']
+    this.label = this._activatedRoute.snapshot.data['label']
 
     this._loadItems()
   }
