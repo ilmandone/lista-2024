@@ -7,8 +7,8 @@ import { MatIconButton } from '@angular/material/button'
 import { FocusInputComponent } from '../focus-input/focus-input.component'
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { ItemData, ItemsChanges } from 'app/data/firebase.interfaces'
-import { ListItemSelectedEvent } from 'app/pages/list/list.item/list.item.interface'
 import { Nullable } from 'app/shared/common.interfaces'
+import { ItemSelectedEvent } from './item.interface'
 
 
 @Component({
@@ -37,7 +37,7 @@ export class ItemComponent {
 
   changed = output<ItemsChanges>()
   clicked = output<ItemsChanges>()
-  selectedChange = output<ListItemSelectedEvent>()
+  selectedChange = output<ItemSelectedEvent>()
 
   disabled = false
 
