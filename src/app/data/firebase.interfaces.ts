@@ -30,6 +30,17 @@ export interface ItemsChanges extends BasicItemChange {
 export type ItemData = Exclude<ItemsChanges, 'crud'>
 export type ItemsData = ItemData[]
 
+// Groups
+
+export interface GroupChanges extends BasicItemChange {
+	color: string
+	label: string
+	position: number
+}
+
+export type GroupData = Exclude<GroupChanges, 'crud'>
+export type GroupsData = GroupData[]
+
 export interface EditBag<T> {
 	created: T[]
 	updated: T[]
