@@ -4,7 +4,7 @@
 
 1) ~~Reload items from side menu~~
 2) ~~Lists: Move back the drag button to the left~~
-3) Extract the list-item component and make it common - it will be used also for groups 
+3) ~~Extract the list-item component and make it common - it will be used also for groups ~~
 3) Groups
    1) Page with all group listed and default group
    2) Group item render
