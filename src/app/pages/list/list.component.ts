@@ -12,7 +12,7 @@ import { cloneDeep } from 'lodash'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
-import { ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import { GroupsData, ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import {
   DeleteConfirmDialogComponent
@@ -60,7 +60,8 @@ class ListComponent implements OnInit {
   private _inCartItems = new Set<number>()
 
   editing = false
-  itemsData = signal<ItemData[]>([])
+  groups = signal<GroupsData>([])
+  itemsData = signal<ItemsData>([])
   label!: string
   selectedItems = new Set<string>()
   shopping = false
@@ -68,8 +69,9 @@ class ListComponent implements OnInit {
 
   constructor() {
     effect(
-      () => {
+      async () => {
         if (this._mainStateSrv.reload()) {
+          this.groups.set(await this._firebaseSrv.loadGroups())
           this._loadItems()
         }
       },
@@ -80,6 +82,8 @@ class ListComponent implements OnInit {
   async ngOnInit() {
     this._UUID = this._activatedRoute.snapshot.params['id']
     this.label = this._activatedRoute.snapshot.data['label']
+
+    this.groups.set(await this._firebaseSrv.loadGroups(true))
 
     this._loadItems()
   }
