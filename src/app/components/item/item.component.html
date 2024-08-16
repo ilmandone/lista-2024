@@ -1,0 +1,52 @@
+<div
+	class="item-button"
+	mat-ripple
+	[attr.tabindex]="editing() ? -1 : 0"
+	[attr.role]="!editing() ? 'button' : 'none'"
+	[class.editing]="editing()"
+	[matRippleDisabled]="editing()"
+>
+	<!--Left group-->
+	<div class="item-button__left">
+
+    @if(shopping() && extra() ) {
+      <mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
+    }
+
+		@if (editing()) {
+
+			<!--Checkbox-->
+			<mat-checkbox
+				class="item-button__left__checkbox"
+				aria-label="Select this item"
+				[checked]="selected()"
+				(change)="itemSelected($event)"
+			></mat-checkbox>
+		}
+
+		<!--  Label-->
+		<app-focus-input
+			[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
+			[key]="data().UUID"
+			[value]="data().label"
+			[stroked]="stroked()"
+			(changed)="itemLabelChanged($event)"
+		/>
+	</div>
+
+	<!--Right controls-->
+	<div class="item-button__right">
+		<!-- Da sostituire con il componente del gruppo -->
+		<div class="group-dot" [class.editing]="editing()"></div>
+
+    @if (editing()) {
+      <!-- Drag handler -->
+      <button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
+        <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+      </button>
+    }
+	</div>
+
+
+
+</div>

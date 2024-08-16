@@ -1,0 +1,87 @@
+@use "~styles/shared.scss";
+@use "~styles/typo.scss";
+@use "~styles/utils.scss";
+
+:host {
+  position: relative;
+
+  .item-button {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0.75rem 0;
+
+    border-width: 1px 0 1px;
+    border-style: solid;
+    border-color: var(--mat-app-background-color);
+
+    border-radius: 0.25rem;
+
+    background-color: var(--lists-item-color-bg);
+    color: var(--mat-sidenav-content-text-color);
+
+    @include utils.text-not-selectable;
+
+    &__left {
+      flex: 1;
+      padding-left: 0.5rem;
+
+      display: flex;
+      align-items: center;
+
+      &__checkbox {
+        margin-right: 0.5rem;
+      }
+    }
+
+    &__right {
+      position: relative;
+      height: 3rem;
+      width: 3rem;
+      padding-right: 0.5rem;
+
+      overflow: hidden;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &.editing {
+      app-focus-input {
+        padding-right: 1rem;
+      }
+
+      .item-button__right {
+        width: 6rem;
+      }
+    }
+
+    .shopping-icon {
+      margin: 0 1rem;
+      color: var(--button-toggle-active-color-bg);
+    }
+  }
+
+  button {
+    border: 0;
+    @include shared.disabledOpacity;
+  }
+}
+
+// TO BE REPLACED BY GROUP DOT COMPONENT
+.group-dot {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: darkred;
+
+  border-radius: 50%;
+
+  &:not(.editing) {
+    transform: translateX(65%);
+  }
+}
