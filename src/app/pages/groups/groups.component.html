@@ -11,8 +11,19 @@
 		<button mat-icon-button [title]="'Back'" [disabled]="disabled" (click)="goBack()">
 			<mat-icon [fontIcon]="'add'"></mat-icon>
 		</button>
-		<button mat-icon-button [title]="'Back'" [disabled]="selectedGroups.size === 0" (click)="goBack()">
+		<button
+			mat-icon-button
+			[title]="'Back'"
+			[disabled]="selectedGroups.size === 0"
+			(click)="goBack()"
+		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
 		</button>
 	</div>
 </header>
+
+@defer (when groups() !== null) {
+<div>CARICATO</div>
+}@loading {
+<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+}
