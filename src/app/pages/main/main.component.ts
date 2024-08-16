@@ -1,5 +1,5 @@
 import { Component, effect, inject } from '@angular/core'
-import { Router, RouterOutlet } from '@angular/router'
+import { Router, RouterModule, RouterOutlet } from '@angular/router'
 import { FirebaseService } from '../../data/firebase.service'
 
 import { CommonModule } from '@angular/common'
@@ -21,6 +21,7 @@ import { MainStateService } from '../../shared/main-state.service'
 		MatSidenavModule,
 		CommonModule,
 		RouterOutlet,
+    RouterModule,
 		MatIconModule,
 		MatButtonModule,
 		MatSlideToggleModule,
