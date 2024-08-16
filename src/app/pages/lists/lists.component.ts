@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core'
+import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ListData, ListsData, ListsItemChanges } from 'app/data/firebase.interfaces'
@@ -14,199 +14,201 @@ import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/
 import { MainStateService } from '../../shared/main-state.service'
 import { Router } from '@angular/router'
 import { ListsNewDialogComponent } from './lists-new.dialog/lists-new.dialog.component'
-import {
-  DeleteConfirmDialogComponent
-} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 
 import { cloneDeep } from 'lodash'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { addList, deleteList, updateListAttr, updateListPosition } from './lists.cud'
+import { Subject, takeUntil } from 'rxjs'
 
 @Component({
-  selector: 'app-lists',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    MatButtonModule,
-    ListsEmptyComponent,
-    MatDialogModule,
-    ListsItemComponent,
-    LoaderComponent,
-    ConfirmCancelComponent,
-    CdkDrag,
-    CdkDropList,
-    CdkDragPlaceholder
-  ],
-  templateUrl: './lists.component.html',
-  styleUrl: './lists.component.scss'
+	selector: 'app-lists',
+	standalone: true,
+	imports: [
+		MatIconModule,
+		MatButtonModule,
+		ListsEmptyComponent,
+		MatDialogModule,
+		ListsItemComponent,
+		LoaderComponent,
+		ConfirmCancelComponent,
+		CdkDrag,
+		CdkDropList,
+		CdkDragPlaceholder
+	],
+	templateUrl: './lists.component.html',
+	styleUrl: './lists.component.scss'
 })
-class ListsComponent implements OnInit {
-  private readonly _firebaseSrv = inject(FirebaseService)
-  private readonly _dialog = inject(MatDialog)
-  private readonly _focusSrv = inject(FocusInputService)
-  private readonly _mainStateSrv = inject(MainStateService)
-  private readonly _route = inject(Router)
+class ListsComponent implements OnInit, OnDestroy {
+	private readonly _firebaseSrv = inject(FirebaseService)
+	private readonly _dialog = inject(MatDialog)
+	private readonly _focusSrv = inject(FocusInputService)
+	private readonly _mainStateSrv = inject(MainStateService)
+	private readonly _route = inject(Router)
 
-  private _listDataCache!: Nullable<ListsData>
-  private _itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
+	private _destroyed$ = new Subject<boolean>()
 
-  listsData = signal<Nullable<ListsData>>(null)
+	private _listDataCache!: Nullable<ListsData>
+	private _itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
 
-  disabled = false
-  editing = false
+	listsData = signal<Nullable<ListsData>>(null)
 
-  constructor() {
-    effect(() => {
-      this.disabled = this._focusSrv.id() !== null
-    })
+	disabled = false
+	editing = false
 
-    effect(
-      () => {
-        if (this._mainStateSrv.reload()) {
-          this._loadLists()
-        }
-      },
-      { allowSignalWrites: true }
-    )
-  }
+	constructor() {
+		effect(() => {
+			this.disabled = this._focusSrv.id() !== null
+		})
+	}
 
-  ngOnInit(): void {
-    this._loadLists()
-  }
+	ngOnInit(): void {
+		this._loadLists()
 
-  //#region Privates
+		this._mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
+			this._loadLists()
+		})
+	}
 
-  /**
-   * Load lists and show loading main element
-   * @private
-   */
-  private _loadLists(): void {
-    this._mainStateSrv.showLoader()
-    this._firebaseSrv.loadLists().then((r) => {
-      this.listsData.set(r)
-      this._mainStateSrv.hideLoader()
-    })
-  }
+	ngOnDestroy(): void {
+		this._destroyed$.next(true)
+		this._destroyed$.complete()
+	}
 
-  /**
-   * Update lists on db and refresh the view
-   * @private
-   */
-  private _saveLists(): void {
-    this._mainStateSrv.showLoader()
-    this._firebaseSrv.updateLists(this._itemsChanges.values).then((r) => {
-      this.listsData.set(r)
-      this._mainStateSrv.hideLoader()
-      this.editing = false
-    })
-  }
+	//#region Privates
 
-  //#endregion
+	/**
+	 * Load lists and show loading main element
+	 * @private
+	 */
+	private _loadLists(): void {
+		this._mainStateSrv.showLoader()
+		this._firebaseSrv.loadLists().then((r) => {
+			this.listsData.set(r)
+			this._mainStateSrv.hideLoader()
+		})
+	}
 
-  //#region Main
+	/**
+	 * Update lists on db and refresh the view
+	 * @private
+	 */
+	private _saveLists(): void {
+		this._mainStateSrv.showLoader()
+		this._firebaseSrv.updateLists(this._itemsChanges.values).then((r) => {
+			this.listsData.set(r)
+			this._mainStateSrv.hideLoader()
+			this.editing = false
+		})
+	}
 
-  /**
-   * Top button click
-   * @description Start edit mode | Open the create new dialog
-   */
-  clickTopButton() {
-    if (!this.editing) {
-      this._listDataCache = cloneDeep(this.listsData())
-      this.editing = true
-    } else this.openCreateNew()
-  }
+	//#endregion
 
-  //#endregion
+	//#region Main
 
-  //#region Interactions
+	/**
+	 * Top button click
+	 * @description Start edit mode | Open the create new dialog
+	 */
+	clickTopButton() {
+		if (!this.editing) {
+			this._listDataCache = cloneDeep(this.listsData())
+			this.editing = true
+		} else this.openCreateNew()
+	}
 
-  /**
-   * Item click and jump to list page
-   * @param $event
-   */
-  listClicked($event: ListData) {
-    void this._route.navigate([`main`, 'list', $event.UUID], {
-      state: {
-        label: $event.label
-      }
-    })
-  }
+	//#endregion
 
-  /**
-   * Open dialog for new list
-   * @description On confirm add the new list in f/e data and update _itemsChanges
-   */
-  openCreateNew() {
-    const dr = this._dialog.open(ListsNewDialogComponent)
+	//#region Interactions
 
-    dr.afterClosed().subscribe((result) => {
-      if (result) {
-        const {
-          changes,
-          newListsData
-        } = addList(result, this.listsData(), this._firebaseSrv.gewNewTimeStamp())
-        this.listsData.set(newListsData)
-        this._itemsChanges.set(changes)
-      }
-    })
-  }
+	/**
+	 * Item click and jump to list page
+	 * @param $event
+	 */
+	listClicked($event: ListData) {
+		void this._route.navigate([`main`, 'list', $event.UUID], {
+			state: {
+				label: $event.label
+			}
+		})
+	}
 
-  //#endregion
+	/**
+	 * Open dialog for new list
+	 * @description On confirm add the new list in f/e data and update _itemsChanges
+	 */
+	openCreateNew() {
+		const dr = this._dialog.open(ListsNewDialogComponent)
 
-  //#region Editing
+		dr.afterClosed().subscribe((result) => {
+			if (result) {
+				const { changes, newListsData } = addList(
+					result,
+					this.listsData(),
+					this._firebaseSrv.gewNewTimeStamp()
+				)
+				this.listsData.set(newListsData)
+				this._itemsChanges.set(changes)
+			}
+		})
+	}
 
-  /**
-   * Update or delete list in listsData and add changes
-   * @param {ListsItemChanges} $event
-   */
-  itemChanged($event: ListsItemChanges) {
-    const { changes, newListsData } =
-      $event.crud === 'update'
-        ? updateListAttr($event, this.listsData() as ListsData)
-        : deleteList($event, this.listsData() as ListsData)
-    this.listsData.set(newListsData)
-    this._itemsChanges.set(changes)
-  }
+	//#endregion
 
-  /**
-   * On list drop update positions
-   * @param {CdkDragDrop<ListsData>} $event
-   */
-  listsDrop($event: CdkDragDrop<ListsData>) {
-    const {changes, newListData} = updateListPosition($event, this.listsData() as ListsData)
-    this.listsData.set(newListData)
-    this._itemsChanges.set(changes)
-  }
+	//#region Editing
 
-  //#endregion
+	/**
+	 * Update or delete list in listsData and add changes
+	 * @param {ListsItemChanges} $event
+	 */
+	itemChanged($event: ListsItemChanges) {
+		const { changes, newListsData } =
+			$event.crud === 'update'
+				? updateListAttr($event, this.listsData() as ListsData)
+				: deleteList($event, this.listsData() as ListsData)
+		this.listsData.set(newListsData)
+		this._itemsChanges.set(changes)
+	}
 
-  //#region Confirm / Cancel
+	/**
+	 * On list drop update positions
+	 * @param {CdkDragDrop<ListsData>} $event
+	 */
+	listsDrop($event: CdkDragDrop<ListsData>) {
+		const { changes, newListData } = updateListPosition($event, this.listsData() as ListsData)
+		this.listsData.set(newListData)
+		this._itemsChanges.set(changes)
+	}
 
-  /**
-   * Confirm editing
-   */
-  onConfirm() {
-    if (this._itemsChanges.hasDeletedItems) {
-      const dr = this._dialog.open(DeleteConfirmDialogComponent)
-      dr.afterClosed().subscribe((result) => {
-        if (result) this._saveLists()
-      })
-    } else {
-      this._saveLists()
-    }
-  }
+	//#endregion
 
-  /**
-   * Undo editing
-   * @description Restore data from cache and reset changes list
-   */
-  onCancel() {
-    this.listsData.set(this._listDataCache)
-    this._itemsChanges.clear()
-    this.editing = false
-  }
+	//#region Confirm / Cancel
 
-  //#endregion
+	/**
+	 * Confirm editing
+	 */
+	onConfirm() {
+		if (this._itemsChanges.hasDeletedItems) {
+			const dr = this._dialog.open(DeleteConfirmDialogComponent)
+			dr.afterClosed().subscribe((result) => {
+				if (result) this._saveLists()
+			})
+		} else {
+			this._saveLists()
+		}
+	}
+
+	/**
+	 * Undo editing
+	 * @description Restore data from cache and reset changes list
+	 */
+	onCancel() {
+		this.listsData.set(this._listDataCache)
+		this._itemsChanges.clear()
+		this.editing = false
+	}
+
+	//#endregion
 }
 
 export default ListsComponent

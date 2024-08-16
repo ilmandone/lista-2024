@@ -19,7 +19,7 @@ class GroupsComponent implements OnInit {
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _focusSrv = inject(FocusInputService)
 	private readonly _location = inject(Location)
-  private readonly _mainStateSrv = inject(MainStateService)
+	private readonly _mainStateSrv = inject(MainStateService)
 
 	selectedGroups = new Set<string>()
 	disabled = false
@@ -30,15 +30,6 @@ class GroupsComponent implements OnInit {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
 		})
-
-    effect(
-      async () => {
-        if (this._mainStateSrv.reload()) {
-          this.groups.set(await this._firebaseSrv.loadGroups())
-        }
-      },
-      { allowSignalWrites: true }
-    )
 	}
 
 	async ngOnInit() {

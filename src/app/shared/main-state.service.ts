@@ -1,19 +1,16 @@
 import { Injectable, signal } from '@angular/core'
+import { Subject } from 'rxjs'
 
 @Injectable({
   providedIn: 'root'
 })
 export class MainStateService {
-  private _reload = signal<number>(0)
+  reload$ = new Subject<void>()
 
   private _loader = signal<boolean>(false)
 
   get loader() {
     return this._loader.asReadonly()
-  }
-
-  get reload() {
-    return this._reload.asReadonly()
   }
 
   showLoader() {
@@ -25,6 +22,6 @@ export class MainStateService {
   }
 
   triggerReload() {
-    this._reload.update(value => value + 1)
+    this.reload$.next()
   }
 }
