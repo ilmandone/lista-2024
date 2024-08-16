@@ -27,7 +27,12 @@ export const routes: Routes = [
           label: listResolver
         }
       },
-    ]
+    ] 
+  },
+  {
+    path: 'groups',
+    loadComponent: () => import('./pages/groups/groups.component'),
+    canActivate: [authGuard]
   },
   {
     path: 'forgot',
