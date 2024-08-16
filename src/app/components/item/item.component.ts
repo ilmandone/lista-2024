@@ -1,18 +1,18 @@
-import { Component, HostListener, inject, input, output } from '@angular/core'
+import { Component, computed, HostListener, inject, input, output } from '@angular/core'
 import { MatRippleModule } from '@angular/material/core'
-import { FocusInputComponent } from '../../../components/focus-input/focus-input.component'
-import { FocusInputService } from '../../../components/focus-input/focus-input.service'
-import { ItemData, ItemsChanges } from '../../../data/firebase.interfaces'
-import { Nullable } from '../../../shared/common.interfaces'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
-import { ListItemSelectedEvent } from './list.item.interface'
 import { MatIconModule } from '@angular/material/icon'
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
 import { MatIconButton } from '@angular/material/button'
+import { FocusInputComponent } from '../focus-input/focus-input.component'
+import { FocusInputService } from '../focus-input/focus-input.service'
+import { ItemData, ItemsChanges } from 'app/data/firebase.interfaces'
+import { Nullable } from 'app/shared/common.interfaces'
+import { ItemSelectedEvent } from './item.interface'
 
 
 @Component({
-  selector: 'app-list-item',
+  selector: 'app-item',
   standalone: true,
   imports: [
     MatRippleModule,
@@ -22,32 +22,34 @@ import { MatIconButton } from '@angular/material/button'
     CdkDragHandle,
     MatIconButton
   ],
-  templateUrl: './list.item.component.html',
-  styleUrl: './list.item.component.scss'
+  templateUrl: './item.component.html',
+  styleUrl: './item.component.scss'
 })
-export class ListItemComponent {
+export class ItemComponent {
   readonly focusSrv = inject(FocusInputService)
 
-  notToBuy = input<boolean>(true)
+  stroked = input<boolean>(true)
   data = input.required<ItemData>()
   editing = input<boolean>(false)
   selected = input<boolean>(false)
-  inCart = input<boolean>(false)
+  extra = input<Nullable<string>>(null)
   shopping = input<boolean>(false)
 
   changed = output<ItemsChanges>()
   clicked = output<ItemsChanges>()
-  selectedChange = output<ListItemSelectedEvent>()
+  selectedChange = output<ItemSelectedEvent>()
 
   disabled = false
+
+  extraString = computed(() => this.extra() || '')
 
   @HostListener('click')
   hostClick() {
     if (!this.editing())
       this.clicked.emit({
         ...this.data(),
-        inCart: this.shopping() ? !this.inCart() : false,
-        notToBuy: this.shopping() ? this.data().notToBuy : !this.notToBuy(),
+        inCart: this.shopping() ? !this.extra() : false,
+        notToBuy: this.shopping() ? this.data().notToBuy : !this.stroked(),
         crud: 'update'
       })
   }

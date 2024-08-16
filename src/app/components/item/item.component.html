@@ -9,8 +9,8 @@
 	<!--Left group-->
 	<div class="item-button__left">
 
-    @if(shopping() && inCart()) {
-      <mat-icon class="shopping-icon" [fontIcon]="'shopping_cart'"></mat-icon>
+    @if(shopping() && extra() ) {
+      <mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
     }
 
 		@if (editing()) {
@@ -29,7 +29,7 @@
 			[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
 			[key]="data().UUID"
 			[value]="data().label"
-			[stroked]="notToBuy()"
+			[stroked]="stroked()"
 			(changed)="itemLabelChanged($event)"
 		/>
 	</div>

@@ -57,17 +57,17 @@
 	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">
 
     @if(!shopping || (shopping && !item.notToBuy)){
-      <app-list-item
+      <app-item
         [data]="item"
         [editing]="editing"
         [shopping]="shopping"
         [selected]="selectedItems.has(item.UUID)"
-        [notToBuy]="item.notToBuy"
-        [inCart]="item.inCart"
+        [stroked]="item.notToBuy"
+        [extra]="item.inCart ? 'shopping_cart' : ''"
         (changed)="itemChanged($event)"
         (clicked)="itemClicked($event)"
         (selectedChange)="itemSelected($event)"
-      ></app-list-item>
+      ></app-item>
     }
 
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>

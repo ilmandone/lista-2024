@@ -1,29 +1,29 @@
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
-import { FirebaseService } from '../../data/firebase.service'
-import { MatIcon } from '@angular/material/icon'
-import { MatIconButton } from '@angular/material/button'
-import { ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
-import { LoaderComponent } from '../../components/loader/loader.component'
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet'
+import { MatIconButton } from '@angular/material/button'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { MatIcon } from '@angular/material/icon'
+import { ActivatedRoute } from '@angular/router'
+import { ItemComponent } from 'app/components/item/item.component'
+import { ItemSelectedEvent } from 'app/components/item/item.interface'
+import { SetOfItemsChanges } from 'app/data/items.changes'
+import { cloneDeep } from 'lodash'
+import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
+import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
+import { LoaderComponent } from '../../components/loader/loader.component'
+import { ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import { FirebaseService } from '../../data/firebase.service'
+import {
+  DeleteConfirmDialogComponent
+} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import { MainStateService } from '../../shared/main-state.service'
 import {
   IListBottomSheetData,
   ListBottomSheetComponent
 } from './list.bottom-sheet/list.bottom-sheet.component'
-import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
-import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
-import { ListItemComponent } from './list.item/list.item.component'
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'
-import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
-import { ListItemSelectedEvent } from './list.item/list.item.interface'
-import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
-import { SetOfItemsChanges } from 'app/data/items.changes'
-import { MainStateService } from '../../shared/main-state.service'
-import {
-  DeleteConfirmDialogComponent
-} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
-import { cloneDeep } from 'lodash'
+import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 
 @Component({
   selector: 'app-list',
@@ -35,7 +35,7 @@ import { cloneDeep } from 'lodash'
     MatBottomSheetModule,
     ButtonToggleComponent,
     ConfirmCancelComponent,
-    ListItemComponent,
+    ItemComponent,
     MatDialogModule,
     CdkDrag,
     CdkDropList,
@@ -174,9 +174,9 @@ class ListComponent implements OnInit {
 
   /**
    * Add or remove and item from the selectedItems set
-   * @param {ListItemSelectedEvent} $event
+   * @param {ItemSelectedEvent} $event
    */
-  itemSelected($event: ListItemSelectedEvent) {
+  itemSelected($event: ItemSelectedEvent) {
     if ($event.isSelected) this.selectedItems.add($event.UUID)
     else this.selectedItems.delete($event.UUID)
   }
