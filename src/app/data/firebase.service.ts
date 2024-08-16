@@ -29,7 +29,9 @@ import {
 	ListData,
 	ListsData,
 	ItemsChanges,
-	ItemsData
+	ItemsData,
+	GroupsData,
+	GroupData
 } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
@@ -62,7 +64,7 @@ export class FirebaseService {
 	private _userData!: UserCredential
 
 	private _cachedList!: ListsData | undefined
-	private _cachedGroups!: ItemsData | undefined
+	private _cachedGroups!: GroupsData | undefined
 
 	/**
 	 * Start the firebase connection
@@ -127,7 +129,8 @@ export class FirebaseService {
 
 	//#endregion
 
-	//#region DB Lists
+
+	//#region DB Commons 
 
 	private _startDB() {
 		if (!this._app) throw new Error('App not initialized')
@@ -141,6 +144,10 @@ export class FirebaseService {
 	gewNewTimeStamp(): Timestamp {
 		return Timestamp.now()
 	}
+	
+	//#endregion
+
+	//#region Lists
 
 	/**
 	 * Get lists from the database
@@ -302,6 +309,40 @@ export class FirebaseService {
 			throw new Error(error as string)
 		}
 	}
+
+	//#endregion
+
+	//#region Groups
+
+	public async loadGroups(useCache= false): Promise<GroupsData> {
+		try {
+			if (!this._db) this._startDB()
+
+			if(useCache && this._cachedGroups) return this._cachedGroups
+
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
+			const q = query(mainCollection, orderBy('position'))
+			const data = await getDocs(q)
+
+			if (!data) await Promise.reject('Data not found')
+			if (data.empty) return []
+
+			const groups: GroupsData = []
+
+			data.forEach((doc) => {
+				groups.push(doc.data() as GroupData)
+			})
+
+			// Save cache
+			this._cachedGroups = groups
+
+			return groups
+		} catch (error) {
+			this._cachedGroups = undefined
+			throw new Error(error as string)
+		}
+	}
+
 
 	//#endregion
 
