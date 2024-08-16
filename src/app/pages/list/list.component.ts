@@ -6,6 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIcon } from '@angular/material/icon'
 import { ActivatedRoute } from '@angular/router'
 import { ItemComponent } from 'app/components/item/item.component'
+import { ItemSelectedEvent } from 'app/components/item/item.interface'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { cloneDeep } from 'lodash'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
@@ -22,7 +23,6 @@ import {
   ListBottomSheetComponent
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
-import { ListItemSelectedEvent } from './list.item/list.item.interface'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 
 @Component({
@@ -174,9 +174,9 @@ class ListComponent implements OnInit {
 
   /**
    * Add or remove and item from the selectedItems set
-   * @param {ListItemSelectedEvent} $event
+   * @param {ItemSelectedEvent} $event
    */
-  itemSelected($event: ListItemSelectedEvent) {
+  itemSelected($event: ItemSelectedEvent) {
     if ($event.isSelected) this.selectedItems.add($event.UUID)
     else this.selectedItems.delete($event.UUID)
   }
