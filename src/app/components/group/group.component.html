@@ -11,7 +11,8 @@
     ></mat-checkbox>
 
     <!--Label-->
-    <app-focus-input [key]="data().UUID" [value]="data().label"></app-focus-input>
+    <app-focus-input [key]="data().UUID" [value]="data().label"
+                     (changed)="groupLabelChanged($event)"></app-focus-input>
   </div>
 
   <!--  Right group-->
