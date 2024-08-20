@@ -7,12 +7,13 @@ import { GroupSelected } from './group.interface'
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
 import { MatIconButton } from '@angular/material/button'
 import { Nullable } from '../../shared/common.interfaces'
+import { GroupColorPickerComponent } from './group-color-picker/group-color-picker.component'
 
 @Component({
   selector: 'app-group',
   standalone: true,
   imports: [FocusInputComponent, MatCheckboxModule,
-    MatIconModule, FocusInputComponent, CdkDragHandle, MatIconButton],
+    MatIconModule, FocusInputComponent, CdkDragHandle, MatIconButton, GroupColorPickerComponent],
   templateUrl: './group.component.html',
   styleUrl: './group.component.scss'
 })
