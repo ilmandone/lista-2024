@@ -22,8 +22,12 @@
 	</div>
 </header>
 
-@defer (when groups() !== null) {
-<div>CARICATO</div>
-}@loading {
-<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
-}
+<main class="main">
+	@defer (when groups() !== null) {
+	<!-- Groups -->
+	@for(group of groups(); track group.UUID) {
+	<div>{{group.UUID}}</div>
+	} } @loading {
+	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+	}
+</main>
