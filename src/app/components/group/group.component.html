@@ -1,3 +1,26 @@
 <div class="group-item">
-    prova
+  <!--  Left group-->
+  <div class="group-item__left">
+
+    <!--Checkbox-->
+    <mat-checkbox
+      class="item-button__left__checkbox"
+      aria-label="Select this item"
+      [checked]="selected()"
+      (change)="groupSelected($event)"
+    ></mat-checkbox>
+
+    <!--Label-->
+    <app-focus-input [key]="data().UUID" [value]="data().label"></app-focus-input>
+  </div>
+
+  <!--  Right group-->
+  <div class="group-item__right">
+
+    <!--Drag handler-->
+    <button cdkDragHandle mat-icon-button [title]="'Drag handler'">
+      <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+    </button>
+
+  </div>
 </div>

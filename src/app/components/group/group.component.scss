@@ -2,27 +2,38 @@
 @use "~styles/typo.scss";
 @use "~styles/utils.scss";
 
+@use "../_commons/item-group";
+
 :host {
   position: relative;
 
-  .group-button {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .group-item {
+    @include item-group.common;
 
-    padding: 0.75rem 0;
+    &__left {
+      flex: 1;
+      padding-left: 0.5rem;
 
-    border-width: 1px 0 1px;
-    border-style: solid;
-    border-color: var(--mat-app-background-color);
+      display: flex;
+      align-items: center;
 
-    border-radius: 0.25rem;
+      &__checkbox {
+        margin-right: 0.5rem;
+      }
+    }
 
-    background-color: var(--lists-item-color-bg);
-    color: var(--mat-sidenav-content-text-color);
 
-    @include utils.text-not-selectable;
+    &__right {
+      position: relative;
+      height: 3rem;
+      width: 3rem;
+      padding-right: 0.5rem;
+
+      overflow: hidden;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 }

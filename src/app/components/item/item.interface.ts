@@ -1,5 +1,5 @@
 export interface ItemSelectedEvent {
-    UUID: string
-    isSelected: boolean
-  }
+  UUID: string
+  isSelected: boolean
+}
   

@@ -2,28 +2,13 @@
 @use "~styles/typo.scss";
 @use "~styles/utils.scss";
 
+@use "../_commons/item-group";
+
 :host {
   position: relative;
 
   .item-button {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 0.75rem 0;
-
-    border-width: 1px 0 1px;
-    border-style: solid;
-    border-color: var(--mat-app-background-color);
-
-    border-radius: 0.25rem;
-
-    background-color: var(--lists-item-color-bg);
-    color: var(--mat-sidenav-content-text-color);
-
-    @include utils.text-not-selectable;
+    @include item-group.common;
 
     &__left {
       flex: 1;
