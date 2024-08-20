@@ -19,4 +19,29 @@
   color: var(--mat-sidenav-content-text-color);
 
   @include utils.text-not-selectable;
+
+  &__left {
+    flex: 1;
+    padding-left: 0.5rem;
+
+    display: flex;
+    align-items: center;
+
+    &__checkbox {
+      margin-right: 0.5rem;
+    }
+  }
+
+  &__right {
+    position: relative;
+    height: 3rem;
+    width: 3rem;
+    padding-right: 0.5rem;
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

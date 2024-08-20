@@ -23,13 +23,6 @@ export class GroupComponent {
   changed = output<GroupChanges>()
   selectedChange = output<GroupSelected>()
 
-  groupSelected($event:MatCheckboxChange) {
-    this.selectedChange.emit({
-      UUID: this.data().UUID,
-      isSelected: $event.checked
-    })
-  }
-
   groupLabelChanged($event: Nullable<string>) {
     if($event) {
       this.changed.emit({
@@ -38,5 +31,12 @@ export class GroupComponent {
         crud: 'update'
       })
     }
+  }
+
+  groupSelected($event:MatCheckboxChange) {
+    this.selectedChange.emit({
+      UUID: this.data().UUID,
+      isSelected: $event.checked
+    })
   }
 }
