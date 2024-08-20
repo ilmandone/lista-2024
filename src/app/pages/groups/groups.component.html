@@ -26,7 +26,7 @@
 	@defer (when groups() !== null) {
 	<!-- Groups -->
 	@for(group of groups(); track group.UUID) {
-	<div>{{group.UUID}}</div>
+	<app-group [data]="group"></app-group>
 	} } @loading {
 	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
 	}

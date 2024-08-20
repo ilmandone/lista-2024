@@ -3,6 +3,7 @@ import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { FocusInputService } from 'app/components/focus-input/focus-input.service'
+import { GroupComponent } from 'app/components/group/group.component'
 import { LoaderComponent } from 'app/components/loader/loader.component'
 import { GroupsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
@@ -11,7 +12,7 @@ import { MainStateService } from 'app/shared/main-state.service'
 @Component({
 	selector: 'app-groups',
 	standalone: true,
-	imports: [MatIconModule, MatButtonModule, LoaderComponent],
+	imports: [MatIconModule, MatButtonModule, LoaderComponent, GroupComponent],
 	templateUrl: './groups.component.html',
 	styleUrl: './groups.component.scss'
 })
