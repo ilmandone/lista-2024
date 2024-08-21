@@ -11,7 +11,8 @@ import { GroupChanges, GroupData, GroupsData } from 'app/data/firebase.interface
 import { FirebaseService } from 'app/data/firebase.service'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from 'app/shared/main-state.service'
-import { updateGroupAttr, updateGroupPosition } from './groups.cud'
+import { deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
+import { GroupSelected } from 'app/components/group/group.interface'
 
 @Component({
 	selector: 'app-groups',
@@ -30,6 +31,7 @@ import { updateGroupAttr, updateGroupPosition } from './groups.cud'
 	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
+
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _focusSrv = inject(FocusInputService)
 	private readonly _location = inject(Location)
@@ -57,11 +59,11 @@ class GroupsComponent implements OnInit {
 	//#region Privates
 
 	/**
-	 * Start edit mode 
+	 * Start edit mode
 	 * @description set cache data and start edit mode
 	 */
 	private _startEditing(): void {
-		if(this.editing) return
+		if (this.editing) return
 
 		this._groupsDataChache = this.groups()
 		this.editing = true
@@ -80,7 +82,7 @@ class GroupsComponent implements OnInit {
 
 	/**
 	 * Update group attributes
-	 * @param {GroupChanges} $event 
+	 * @param {GroupChanges} $event
 	 */
 	groupChanged($event: GroupChanges) {
 		this._startEditing()
@@ -91,8 +93,19 @@ class GroupsComponent implements OnInit {
 	}
 
 	/**
+	 * Delete group(s) and update items positions
+	 */
+	groupsDeleted() {
+		this._startEditing()	
+		const { groupsData, changes } = deleteGroup([...this.selectedGroups], this.groups())
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
+		this.selectedGroups.clear()
+	}
+
+	/**
 	 * Upate group position
-	 * @param {CdkDragDrop<GroupData>} $event 
+	 * @param {CdkDragDrop<GroupData>} $event
 	 */
 	groupDrop($event: CdkDragDrop<GroupData>) {
 		this._startEditing()
@@ -102,13 +115,18 @@ class GroupsComponent implements OnInit {
 		this._groupChanges.set(changes)
 	}
 
+	groupSelected($event: GroupSelected) {
+		if($event.isSelected) this.selectedGroups.add($event.UUID)
+		else this.selectedGroups.delete($event.UUID)
+	}
+
 	//#endregion
 
 	//#region Confirm / Cancel
 
 	confirm() {
-		console.log('SAVE MODS TO DB');
-		
+		console.log('SAVE MODS TO DB')
+
 		this._groupsDataChache = []
 
 		this.editing = false

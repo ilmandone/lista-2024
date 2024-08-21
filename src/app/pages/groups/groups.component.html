@@ -8,14 +8,14 @@
 		</div>
 	</div>
 	<div class="header__controls">
-		<button mat-icon-button [title]="'Back'" [disabled]="disabled" (click)="goBack()">
+		<button mat-icon-button [title]="'Add group'" [disabled]="disabled" (click)="goBack()">
 			<mat-icon [fontIcon]="'add'"></mat-icon>
 		</button>
 		<button
 			mat-icon-button
-			[title]="'Back'"
+			[title]="'Delete group'"
 			[disabled]="selectedGroups.size === 0"
-			(click)="goBack()"
+			(click)="groupsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
 		</button>
@@ -28,7 +28,12 @@
 	@for(group of groups(); track group.UUID) {
 	<!-- Drag box -->
 	<div cdkDrag>
-		<app-group [data]="group" (changed)="groupChanged($event)"></app-group>
+		<app-group
+			[data]="group"
+			[selected]="selectedGroups.has(group.UUID)"
+			(changed)="groupChanged($event)"
+			(selectedChange)="groupSelected($event)"
+		></app-group>
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
 	</div>
 	} } @loading {

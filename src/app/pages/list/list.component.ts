@@ -153,6 +153,7 @@ class ListComponent implements OnInit, OnDestroy {
 		const { itemsData, changes } = deleteItem([...this.selectedItems], this.itemsData())
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
+		this.selectedItems.clear()
 	}
 
 	/**

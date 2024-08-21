@@ -3,6 +3,63 @@ import { GroupChanges, GroupData, GroupsData } from "app/data/firebase.interface
 import { cloneDeep } from "lodash"
 
 
+export const deleteGroup = (
+	UUIDs: string[],
+	data: GroupsData
+): {
+	groupsData: GroupsData
+	changes: GroupChanges[]
+} => {
+	const groupsData = cloneDeep(data)
+	const dPositions: number[] = []
+	const changes: GroupChanges[] = []
+
+	UUIDs.forEach((UUID) => {
+		const deleteIndex = groupsData.findIndex((i) => i.UUID === UUID)
+
+		if (deleteIndex !== -1) {
+			const d = groupsData[deleteIndex]
+			dPositions.push(d.position)
+
+			changes.push({
+				UUID: d.UUID,
+				label: d.label,
+				position: d.position,
+				color: d.color,
+				crud: 'delete'
+			})
+
+			groupsData.splice(deleteIndex, 1)
+		}
+	})
+
+	const sortedPosition = dPositions.sort()
+
+	for (let i = sortedPosition[0]; i < groupsData.length; i++) {
+		const item = groupsData[i]
+
+		let j = sortedPosition.length - 1
+
+		while (j >= 0) {
+			const p = sortedPosition[j]
+			if (item.position >= p) {
+				item.position -= j + 1
+				changes.push({
+					UUID: item.UUID,
+					label: item.label,
+					position: item.position,
+					color: item.color,
+					crud: 'update'
+				})
+				break
+			}
+			j--
+		}
+	}
+
+	return { groupsData, changes }
+}
+
 export const updateGroupAttr  = (
 	change: GroupChanges,
 	data: GroupsData
