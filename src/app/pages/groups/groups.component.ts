@@ -15,130 +15,137 @@ import { deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
 import { GroupSelected } from 'app/components/group/group.interface'
 
 @Component({
-	selector: 'app-groups',
-	standalone: true,
-	imports: [
-		CdkDrag,
-		CdkDragPlaceholder,
-		CdkDropList,
-		ConfirmCancelComponent,
-		GroupComponent,
-		LoaderComponent,
-		MatButtonModule,
-		MatIconModule
-	],
-	templateUrl: './groups.component.html',
-	styleUrl: './groups.component.scss'
+  selector: 'app-groups',
+  standalone: true,
+  imports: [
+    CdkDrag,
+    CdkDragPlaceholder,
+    CdkDropList,
+    ConfirmCancelComponent,
+    GroupComponent,
+    LoaderComponent,
+    MatButtonModule,
+    MatIconModule
+  ],
+  templateUrl: './groups.component.html',
+  styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
 
-	private readonly _firebaseSrv = inject(FirebaseService)
-	private readonly _focusSrv = inject(FocusInputService)
-	private readonly _location = inject(Location)
-	private readonly _mainStateSrv = inject(MainStateService)
+  private readonly _firebaseSrv = inject(FirebaseService)
+  private readonly _focusSrv = inject(FocusInputService)
+  private readonly _location = inject(Location)
+  private readonly _mainStateSrv = inject(MainStateService)
 
-	private _groupsDataChache: GroupsData = []
-	private _groupChanges = new SetOfItemsChanges<GroupData>()
+  private _groupsDataChache: GroupsData = []
+  private _groupChanges = new SetOfItemsChanges<GroupData>()
 
-	selectedGroups = new Set<string>()
-	disabled = false
-	editing = false
+  selectedGroups = new Set<string>()
+  disabled = false
+  editing = false
 
-	groups = signal<GroupsData>([])
+  groups = signal<GroupsData>([])
 
-	constructor() {
-		effect(() => {
-			this.disabled = this._focusSrv.id() !== null
-		})
-	}
+  constructor() {
+    effect(() => {
+      this.disabled = this._focusSrv.id() !== null
+    })
+  }
 
-	async ngOnInit() {
-		this.groups.set(await this._firebaseSrv.loadGroups())
-	}
+  async ngOnInit() {
+    this.groups.set(await this._firebaseSrv.loadGroups())
+  }
 
-	//#region Privates
+  //#region Privates
 
-	/**
-	 * Start edit mode
-	 * @description set cache data and start edit mode
-	 */
-	private _startEditing(): void {
-		if (this.editing) return
+  /**
+   * Start edit mode
+   * @description set cache data and start edit mode
+   */
+  private _startEditing(): void {
+    if (this.editing) return
 
-		this._groupsDataChache = this.groups()
-		this.editing = true
-	}
+    this._groupsDataChache = this.groups()
+    this.editing = true
+  }
 
-	//#endregion
+  private _endEditing(): void {
+    if (!this.editing) return
 
-	//#region Interaction
+    this._groupsDataChache = []
+    this.selectedGroups.clear()
 
-	/**
-	 * Go back
-	 */
-	goBack() {
-		this._location.back()
-	}
+    this.editing = false
+  }
 
-	/**
-	 * Update group attributes
-	 * @param {GroupChanges} $event
-	 */
-	groupChanged($event: GroupChanges) {
-		this._startEditing()
-		const { groupsData, changes } = updateGroupAttr($event, this.groups())
+  //#endregion
 
-		this.groups.set(groupsData)
-		this._groupChanges.set(changes)
-	}
+  //#region Interaction
 
-	/**
-	 * Delete group(s) and update items positions
-	 */
-	groupsDeleted() {
-		this._startEditing()	
-		const { groupsData, changes } = deleteGroup([...this.selectedGroups], this.groups())
-		this.groups.set(groupsData)
-		this._groupChanges.set(changes)
-		this.selectedGroups.clear()
-	}
+  /**
+   * Go back
+   */
+  goBack() {
+    this._location.back()
+  }
 
-	/**
-	 * Upate group position
-	 * @param {CdkDragDrop<GroupData>} $event
-	 */
-	groupDrop($event: CdkDragDrop<GroupData>) {
-		this._startEditing()
-		const { changes, groupsData } = updateGroupPosition($event, this.groups())
+  /**
+   * Update group attributes
+   * @param {GroupChanges} $event
+   */
+  groupChanged($event: GroupChanges) {
+    this._startEditing()
+    const { groupsData, changes } = updateGroupAttr($event, this.groups())
 
-		this.groups.set(groupsData)
-		this._groupChanges.set(changes)
-	}
+    this.groups.set(groupsData)
+    this._groupChanges.set(changes)
+  }
 
-	groupSelected($event: GroupSelected) {
-		if($event.isSelected) this.selectedGroups.add($event.UUID)
-		else this.selectedGroups.delete($event.UUID)
-	}
+  /**
+   * Delete group(s) and update items positions
+   */
+  groupsDeleted() {
+    this._startEditing()
+    const { changes, groupsData } = deleteGroup([...this.selectedGroups], this.groups())
 
-	//#endregion
+    this.groups.set(groupsData)
+    this._groupChanges.set(changes)
+    this.selectedGroups.clear()
+  }
 
-	//#region Confirm / Cancel
+  /**
+   * Update group position
+   * @param {CdkDragDrop<GroupData>} $event
+   */
+  groupDrop($event: CdkDragDrop<GroupData>) {
+    this._startEditing()
+    const { changes, groupsData } = updateGroupPosition($event, this.groups())
 
-	confirm() {
-		console.log('SAVE MODS TO DB')
+    this.groups.set(groupsData)
+    this._groupChanges.set(changes)
+    this.selectedGroups.clear()
+  }
 
-		this._groupsDataChache = []
+  groupSelected($event: GroupSelected) {
+    if ($event.isSelected) this.selectedGroups.add($event.UUID)
+    else this.selectedGroups.delete($event.UUID)
+  }
 
-		this.editing = false
-	}
-	cancel() {
-		this.groups.set(this._groupsDataChache)
-		this._groupsDataChache = []
+  //#endregion
 
-		this.editing = false
-	}
+  //#region Confirm / Cancel
 
-	//#endregion
+  confirm() {
+    console.log('SAVE MODS TO DB')
+    this._endEditing()
+  }
+
+  cancel() {
+    this.groups.set(this._groupsDataChache)
+    this._endEditing()
+  }
+
+  //#endregion
 }
 
 export default GroupsComponent
