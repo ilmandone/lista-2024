@@ -22,13 +22,13 @@
 	</div>
 </header>
 
-<main class="main" cdkDropList (cdkDropListDropped)="itemDrop($event)">
+<main class="main" cdkDropList (cdkDropListDropped)="groupDrop($event)">
 	@defer (when groups() !== null) {
 	<!-- Groups -->
 	@for(group of groups(); track group.UUID) {
 	<!-- Drag box -->
 	<div cdkDrag>
-		<app-group [data]="group"></app-group>
+		<app-group [data]="group" (changed)="groupChanged($event)"></app-group>
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
 	</div>
 	} } @loading {

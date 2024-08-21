@@ -7,11 +7,11 @@ import { ConfirmCancelComponent } from 'app/components/confirm-cancel/confirm-ca
 import { FocusInputService } from 'app/components/focus-input/focus-input.service'
 import { GroupComponent } from 'app/components/group/group.component'
 import { LoaderComponent } from 'app/components/loader/loader.component'
-import { GroupData, GroupsData } from 'app/data/firebase.interfaces'
+import { GroupChanges, GroupData, GroupsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from 'app/shared/main-state.service'
-import { updateGroupPosition } from './groups.cud'
+import { updateGroupAttr, updateGroupPosition } from './groups.cud'
 
 @Component({
 	selector: 'app-groups',
@@ -56,18 +56,45 @@ class GroupsComponent implements OnInit {
 
 	//#region Privates
 
-	private _startEditing() {
+	/**
+	 * Start edit mode 
+	 * @description set cache data and start edit mode
+	 */
+	private _startEditing(): void {
+		if(this.editing) return
+
 		this._groupsDataChache = this.groups()
-		this.editing = true;
+		this.editing = true
 	}
 
 	//#endregion
 
+	//#region Interaction
+
+	/**
+	 * Go back
+	 */
 	goBack() {
 		this._location.back()
 	}
 
-	itemDrop($event: CdkDragDrop<GroupData>) {
+	/**
+	 * Update group attributes
+	 * @param {GroupChanges} $event 
+	 */
+	groupChanged($event: GroupChanges) {
+		this._startEditing()
+		const { groupsData, changes } = updateGroupAttr($event, this.groups())
+
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
+	}
+
+	/**
+	 * Upate group position
+	 * @param {CdkDragDrop<GroupData>} $event 
+	 */
+	groupDrop($event: CdkDragDrop<GroupData>) {
 		this._startEditing()
 		const { changes, groupsData } = updateGroupPosition($event, this.groups())
 
@@ -75,18 +102,22 @@ class GroupsComponent implements OnInit {
 		this._groupChanges.set(changes)
 	}
 
+	//#endregion
+
 	//#region Confirm / Cancel
 
 	confirm() {
-		console.log('confirm');
+		console.log('SAVE MODS TO DB');
 		
+		this._groupsDataChache = []
+
+		this.editing = false
 	}
 	cancel() {
 		this.groups.set(this._groupsDataChache)
 		this._groupsDataChache = []
-		
+
 		this.editing = false
-		
 	}
 
 	//#endregion

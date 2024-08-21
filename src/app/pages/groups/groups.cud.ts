@@ -2,6 +2,31 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop"
 import { GroupChanges, GroupData, GroupsData } from "app/data/firebase.interfaces"
 import { cloneDeep } from "lodash"
 
+
+export const updateGroupAttr  = (
+	change: GroupChanges,
+	data: GroupsData
+): {
+	changes: GroupChanges[]
+	groupsData: GroupsData
+} => {
+	const groupsData = cloneDeep(data)
+	const item = groupsData.find((i) => i.UUID === change.UUID)
+
+	if (item) {
+		item.label = change.label
+		item.color = change.color
+	}
+
+	return { groupsData, changes: [change] }
+}
+
+/**
+ * 
+ * @param $event 
+ * @param data 
+ * @returns 
+ */
 export const updateGroupPosition = (
 	$event: CdkDragDrop<GroupData>,
 	data: GroupsData
