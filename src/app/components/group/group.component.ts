@@ -1,19 +1,19 @@
+import { CdkDragHandle } from '@angular/cdk/drag-drop'
 import { Component, input, output } from '@angular/core'
-import { GroupChanges, GroupData } from 'app/data/firebase.interfaces'
+import { MatIconButton } from '@angular/material/button'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { MatIconModule } from '@angular/material/icon'
+import { GroupChanges, GroupData } from 'app/data/firebase.interfaces'
+import { Nullable } from '../../shared/common.interfaces'
+import { ColorPickerComponent } from '../color-picker/color-picker.component'
 import { FocusInputComponent } from '../focus-input/focus-input.component'
 import { GroupSelected } from './group.interface'
-import { CdkDragHandle } from '@angular/cdk/drag-drop'
-import { MatIconButton } from '@angular/material/button'
-import { Nullable } from '../../shared/common.interfaces'
-import { GroupColorPickerComponent } from './group-color-picker/group-color-picker.component'
 
 @Component({
   selector: 'app-group',
   standalone: true,
   imports: [FocusInputComponent, MatCheckboxModule,
-    MatIconModule, FocusInputComponent, CdkDragHandle, MatIconButton, GroupColorPickerComponent],
+    MatIconModule, FocusInputComponent, CdkDragHandle, MatIconButton, ColorPickerComponent],
   templateUrl: './group.component.html',
   styleUrl: './group.component.scss'
 })
