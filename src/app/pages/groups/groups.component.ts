@@ -145,7 +145,7 @@ class GroupsComponent implements OnInit {
     const d = this._dialog.open(GroupsNewDialogComponent)
     d.afterClosed().subscribe(r => {
       if (r) {
-        console.log('Aggiungo un group')
+        console.log('Aggiungo un group',r)
       }
     })
   }

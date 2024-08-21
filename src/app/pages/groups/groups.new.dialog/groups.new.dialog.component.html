@@ -1,9 +1,10 @@
+
 <h2 mat-dialog-title>Aggiungi</h2>
 
 <form [formGroup]="newGroupFG">
   <mat-dialog-content class="contents">
     <mat-form-field class="form-field">
-      <mat-label>Inserisci un nome</mat-label>
+      <mat-label>Nuovo gruppo</mat-label>
       <input
         [formControl]="labelFC"
         [required]="true"
@@ -13,14 +14,20 @@
         type="text"
       />
       @if (labelFC.invalid) {
-        <mat-error>'Label required'</mat-error>
+        <mat-error>'Label richiesto'</mat-error>
       }
     </mat-form-field>
+    <div class="color-wrapper">
+      <div class="color-input-container">
+        <input type="color" [formControl]="colorFC" />
+      </div>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button [mat-dialog-close]="null">Annulla</button>
     <button type="submit" [disabled]="labelFC.invalid" mat-button
-            [mat-dialog-close]="labelFC.value">
-      Conferma</button>
+            [mat-dialog-close]="newGroupFG.value">
+      Conferma
+    </button>
   </mat-dialog-actions>
 </form>

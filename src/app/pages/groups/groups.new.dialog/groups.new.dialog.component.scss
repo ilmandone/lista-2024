@@ -1,4 +1,6 @@
 @use '~styles/shared.scss';
+@use '~styles/typo.scss';
+@use '~styles/color-picker.scss';
 
 :host {
   .contents {
@@ -8,5 +10,25 @@
   .form-field {
     margin-top: 1rem;
     width: 100%;
+  }
+
+  .color-wrapper {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    padding: 0.5rem 0;
+
+    display: flex;
+    align-items: center;
+
+    .color-input-container {
+      @include color-picker.common;
+      width: 4rem;
+      height: 2.5rem;
+    }
+
+    span {
+      font-size: typo.$text-m;
+    }
   }
 }

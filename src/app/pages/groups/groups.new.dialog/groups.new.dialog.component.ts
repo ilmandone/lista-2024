@@ -13,6 +13,7 @@ import { Nullable } from '../../../shared/common.interfaces'
 
 interface INewGroupFG {
   label: FormControl<Nullable<string>>
+  color: FormControl<Nullable<string>>
 }
 
 @Component({
@@ -35,7 +36,9 @@ interface INewGroupFG {
 })
 export class GroupsNewDialogComponent {
   readonly labelFC = new FormControl('', Validators.required)
+  readonly colorFC = new FormControl('#ff0000')
   readonly newGroupFG= new FormGroup<INewGroupFG>({
-    label: this.labelFC
+    label: this.labelFC,
+    color: this.colorFC
   })
 }
