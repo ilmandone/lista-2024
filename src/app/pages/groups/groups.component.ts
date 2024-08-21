@@ -37,7 +37,7 @@ class GroupsComponent implements OnInit {
   private readonly _location = inject(Location)
   private readonly _mainStateSrv = inject(MainStateService)
 
-  private _groupsDataChache: GroupsData = []
+  private _groupsDataCache: GroupsData = []
   private _groupChanges = new SetOfItemsChanges<GroupData>()
 
   selectedGroups = new Set<string>()
@@ -65,14 +65,14 @@ class GroupsComponent implements OnInit {
   private _startEditing(): void {
     if (this.editing) return
 
-    this._groupsDataChache = this.groups()
+    this._groupsDataCache = this.groups()
     this.editing = true
   }
 
   private _endEditing(): void {
     if (!this.editing) return
 
-    this._groupsDataChache = []
+    this._groupsDataCache = []
     this.selectedGroups.clear()
 
     this.editing = false
@@ -141,7 +141,7 @@ class GroupsComponent implements OnInit {
   }
 
   cancel() {
-    this.groups.set(this._groupsDataChache)
+    this.groups.set(this._groupsDataCache)
     this._endEditing()
   }
 
