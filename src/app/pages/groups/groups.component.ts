@@ -1,7 +1,9 @@
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { Location } from '@angular/common'
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { ConfirmCancelComponent } from 'app/components/confirm-cancel/confirm-cancel.component'
 import { FocusInputService } from 'app/components/focus-input/focus-input.service'
 import { GroupComponent } from 'app/components/group/group.component'
 import { LoaderComponent } from 'app/components/loader/loader.component'
@@ -12,7 +14,16 @@ import { MainStateService } from 'app/shared/main-state.service'
 @Component({
 	selector: 'app-groups',
 	standalone: true,
-	imports: [MatIconModule, MatButtonModule, LoaderComponent, GroupComponent],
+	imports: [
+		CdkDrag,
+		CdkDragPlaceholder,
+		CdkDropList,
+		ConfirmCancelComponent,
+		GroupComponent,
+		LoaderComponent,
+		MatButtonModule,
+		MatIconModule,
+	],
 	templateUrl: './groups.component.html',
 	styleUrl: './groups.component.scss'
 })
@@ -27,6 +38,8 @@ class GroupsComponent implements OnInit {
 
 	groups = signal<GroupsData>([])
 
+	isEditing = false
+
 	constructor() {
 		effect(() => {
 			this.disabled = this._focusSrv.id() !== null
@@ -39,6 +52,11 @@ class GroupsComponent implements OnInit {
 
 	goBack() {
 		this._location.back()
+	}
+
+	itemDrop($event: CdkDragDrop<GroupsData>) {
+		console.log($event);
+		
 	}
 }
 

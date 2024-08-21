@@ -4,7 +4,7 @@
 
     <!--Checkbox-->
     <mat-checkbox
-      class="item-button__left__checkbox"
+      class="group-item__checkbox"
       aria-label="Select this item"
       [checked]="selected()"
       (change)="groupSelected($event)"
@@ -12,13 +12,13 @@
 
     <!--Label-->
     <app-focus-input [key]="data().UUID" [value]="data().label"
-                     (changed)="groupLabelChanged($event)"></app-focus-input>
+                     (changed)="labelChanged($event)" ></app-focus-input>
   </div>
 
   <!--  Right group-->
   <div class="group-item__right">
     <!--Color picker-->
-    <app-color-picker [value]="data().color"></app-color-picker>
+    <app-color-picker class="color-picker" [value]="data().color" (valueChanged)="colorChanged($event)"></app-color-picker>
 
     <!--Drag handler-->
     <button cdkDragHandle mat-icon-button [title]="'Drag handler'">

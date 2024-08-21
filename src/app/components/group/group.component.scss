@@ -9,5 +9,13 @@
 
   .group-item {
     @include item-group.common;
+
+    &__checkbox {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .color-picker {
+    margin-left: 1rem;
   }
 }

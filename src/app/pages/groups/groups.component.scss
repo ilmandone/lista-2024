@@ -3,7 +3,16 @@
 @use '~styles/typo.scss';
 @use '~styles/vars.scss';
 
+@use '~styles/drag-and-drop.scss';
+
 :host {
+	position: relative;
+
+	display: block;
+
+	width: 100%;
+	height: utils.getRealVh(100);
+	
 	.header {
 		position: fixed;
 		top: 0;
@@ -55,11 +64,16 @@
 		position: relative;
 		width: 100%;
 		height: calc(utils.getRealVh(100) - var(--main-header-height));
-	
+
 		margin-top: var(--main-header-height);
 		padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
-	
+
 		overflow-y: auto;
 		overflow-x: hidden;
+
+		// Drag and drop
+		@include drag-and-drop.main;
 	}
+
+	@include drag-and-drop.common;
 }
