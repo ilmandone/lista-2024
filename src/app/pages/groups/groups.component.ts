@@ -13,6 +13,8 @@ import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from 'app/shared/main-state.service'
 import { deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
 import { GroupSelected } from 'app/components/group/group.interface'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
+import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.component'
 
 @Component({
   selector: 'app-groups',
@@ -25,13 +27,15 @@ import { GroupSelected } from 'app/components/group/group.interface'
     GroupComponent,
     LoaderComponent,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule
   ],
   templateUrl: './groups.component.html',
   styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
 
+  private readonly _dialog = inject(MatDialog)
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _focusSrv = inject(FocusInputService)
   private readonly _location = inject(Location)
@@ -61,6 +65,7 @@ class GroupsComponent implements OnInit {
   /**
    * Start edit mode
    * @description set cache data and start edit mode
+   * @private
    */
   private _startEditing(): void {
     if (this.editing) return
@@ -69,6 +74,11 @@ class GroupsComponent implements OnInit {
     this.editing = true
   }
 
+  /**
+   * End editing
+   * @description Clear selected and cached data
+   * @private
+   */
   private _endEditing(): void {
     if (!this.editing) return
 
@@ -131,6 +141,15 @@ class GroupsComponent implements OnInit {
     else this.selectedGroups.delete($event.UUID)
   }
 
+  openNewGroupDialog() {
+    const d = this._dialog.open(GroupsNewDialogComponent)
+    d.afterClosed().subscribe(r => {
+      if (r) {
+        console.log('Aggiungo un group')
+      }
+    })
+  }
+
   //#endregion
 
   //#region Confirm / Cancel
@@ -146,6 +165,7 @@ class GroupsComponent implements OnInit {
   }
 
   //#endregion
+
 }
 
 export default GroupsComponent

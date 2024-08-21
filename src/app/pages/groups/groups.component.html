@@ -8,7 +8,8 @@
 		</div>
 	</div>
 	<div class="header__controls">
-		<button mat-icon-button [title]="'Add group'" [disabled]="disabled" (click)="goBack()">
+		<button mat-icon-button [title]="'Add group'" [disabled]="disabled"
+            (click)="openNewGroupDialog()">
 			<mat-icon [fontIcon]="'add'"></mat-icon>
 		</button>
 		<button

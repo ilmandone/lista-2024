@@ -1,0 +1,12 @@
+@use '~styles/shared.scss';
+
+:host {
+  .contents {
+    @include shared.dialogCommon;
+  }
+
+  .form-field {
+    margin-top: 1rem;
+    width: 100%;
+  }
+}
