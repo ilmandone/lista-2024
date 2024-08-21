@@ -9,10 +9,11 @@ import { ItemComponent } from 'app/components/item/item.component'
 import { ItemSelectedEvent } from 'app/components/item/item.interface'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { cloneDeep } from 'lodash'
+import { Subject, takeUntil } from 'rxjs'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
-import { GroupsData, ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import { GroupsData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
@@ -22,7 +23,6 @@ import {
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
-import { Subject, takeUntil } from 'rxjs'
 
 @Component({
 	selector: 'app-list',
@@ -53,7 +53,7 @@ class ListComponent implements OnInit, OnDestroy {
 	private readonly _mainStateSrv = inject(MainStateService)
 	private _UUID!: string
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
-	private _itemsDataCache: ItemData[] = []
+	private _itemsDataCache: ItemsData = []
 	private _autoSaveTimeOutID!: number
 	private _inCartItems = new Set<number>()
 

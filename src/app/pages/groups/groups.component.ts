@@ -24,7 +24,7 @@ import { updateGroupPosition } from './groups.cud'
 		GroupComponent,
 		LoaderComponent,
 		MatButtonModule,
-		MatIconModule,
+		MatIconModule
 	],
 	templateUrl: './groups.component.html',
 	styleUrl: './groups.component.scss'
@@ -35,14 +35,14 @@ class GroupsComponent implements OnInit {
 	private readonly _location = inject(Location)
 	private readonly _mainStateSrv = inject(MainStateService)
 
+	private _groupsDataChache: GroupsData = []
 	private _groupChanges = new SetOfItemsChanges<GroupData>()
 
 	selectedGroups = new Set<string>()
 	disabled = false
+	editing = false
 
 	groups = signal<GroupsData>([])
-
-	isEditing = false
 
 	constructor() {
 		effect(() => {
@@ -54,16 +54,42 @@ class GroupsComponent implements OnInit {
 		this.groups.set(await this._firebaseSrv.loadGroups())
 	}
 
+	//#region Privates
+
+	private _startEditing() {
+		this._groupsDataChache = this.groups()
+		this.editing = true;
+	}
+
+	//#endregion
+
 	goBack() {
 		this._location.back()
 	}
 
 	itemDrop($event: CdkDragDrop<GroupData>) {
-		const {changes, groupsData} = updateGroupPosition($event, this.groups())
+		this._startEditing()
+		const { changes, groupsData } = updateGroupPosition($event, this.groups())
 
 		this.groups.set(groupsData)
 		this._groupChanges.set(changes)
 	}
+
+	//#region Confirm / Cancel
+
+	confirm() {
+		console.log('confirm');
+		
+	}
+	cancel() {
+		this.groups.set(this._groupsDataChache)
+		this._groupsDataChache = []
+		
+		this.editing = false
+		
+	}
+
+	//#endregion
 }
 
 export default GroupsComponent

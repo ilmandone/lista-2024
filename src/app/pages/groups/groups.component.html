@@ -1,6 +1,6 @@
 <header class="header">
 	<div class="header__left">
-		<button mat-icon-button [title]="'Back'" [disabled]="disabled" (click)="goBack()">
+		<button mat-icon-button [title]="'Back'" [disabled]="disabled || editing" (click)="goBack()">
 			<mat-icon [fontIcon]="'arrow_back'"></mat-icon>
 		</button>
 		<div class="header__title">
@@ -35,3 +35,7 @@
 	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
 	}
 </main>
+
+@if (editing) {
+<app-confirm-cancel (cancel)="cancel()" (confirm)="confirm()"> </app-confirm-cancel>
+}
