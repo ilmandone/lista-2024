@@ -7,9 +7,11 @@ import { ConfirmCancelComponent } from 'app/components/confirm-cancel/confirm-ca
 import { FocusInputService } from 'app/components/focus-input/focus-input.service'
 import { GroupComponent } from 'app/components/group/group.component'
 import { LoaderComponent } from 'app/components/loader/loader.component'
-import { GroupsData } from 'app/data/firebase.interfaces'
+import { GroupData, GroupsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
+import { SetOfItemsChanges } from 'app/data/items.changes'
 import { MainStateService } from 'app/shared/main-state.service'
+import { updateGroupPosition } from './groups.cud'
 
 @Component({
 	selector: 'app-groups',
@@ -33,6 +35,8 @@ class GroupsComponent implements OnInit {
 	private readonly _location = inject(Location)
 	private readonly _mainStateSrv = inject(MainStateService)
 
+	private _groupChanges = new SetOfItemsChanges<GroupData>()
+
 	selectedGroups = new Set<string>()
 	disabled = false
 
@@ -54,9 +58,11 @@ class GroupsComponent implements OnInit {
 		this._location.back()
 	}
 
-	itemDrop($event: CdkDragDrop<GroupsData>) {
-		console.log($event);
-		
+	itemDrop($event: CdkDragDrop<GroupData>) {
+		const {changes, groupsData} = updateGroupPosition($event, this.groups())
+
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
 	}
 }
 

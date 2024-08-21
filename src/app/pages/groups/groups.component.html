@@ -29,6 +29,7 @@
 	<!-- Drag box -->
 	<div cdkDrag>
 		<app-group [data]="group"></app-group>
+		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
 	</div>
 	} } @loading {
 	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
