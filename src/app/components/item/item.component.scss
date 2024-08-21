@@ -2,7 +2,7 @@
 @use "~styles/typo.scss";
 @use "~styles/utils.scss";
 
-@use "../_commons/item-group";
+@use "~styles/item-group.scss";
 
 :host {
   position: relative;
