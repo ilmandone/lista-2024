@@ -1,8 +1,56 @@
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop"
-import { GroupChanges, GroupData, GroupsData } from "app/data/firebase.interfaces"
+import { GroupChanges, GroupData, GroupNew, GroupsData } from "app/data/firebase.interfaces"
 import { cloneDeep } from "lodash"
+import { v4 as uuidV4 } from 'uuid'
 
+/**
+ * 
+ * @param {GroupNew} value 
+ * @param {GroupsData} data 
+ * @param {number} insertAfter 
+ * @returns {{
+ * 		groupsData: GroupsData 
+ * 		changes: GroupChanges[]
+ * }}
+ */
+export const addGroup = (
+	value: GroupNew,
+	data: GroupsData,
+	insertAfter: number
+): {
+	groupsData: GroupsData
+	changes: GroupChanges[]
+} => {
+	const groupsData = cloneDeep(data)
+	const newGroup: GroupData = {
+		UUID: uuidV4(),
+		label: value.label,
+		color: value.color,
+		position: insertAfter + 1,
+	}
 
+	if (insertAfter === data.length - 1) groupsData.push(newGroup)
+	else {
+		groupsData.splice(insertAfter + 1, 0, newGroup)
+	}
+
+	return {
+		groupsData,
+		changes: [
+			{
+				...newGroup,
+				crud: 'create'
+			}
+		]
+	}
+}
+
+/**
+ * Delete a group and update the others group positions
+ * @param {string[]} UUIDs 
+ * @param {GroupsData} data 
+ * @returns 
+ */
 export const deleteGroup = (
 	UUIDs: string[],
 	data: GroupsData
@@ -60,6 +108,12 @@ export const deleteGroup = (
 	return { groupsData, changes }
 }
 
+/**
+ * Uptade a group attribute
+ * @param {GroupChanges} change 
+ * @param {GroupsData} data 
+ * @returns 
+ */
 export const updateGroupAttr  = (
 	change: GroupChanges,
 	data: GroupsData
@@ -79,7 +133,7 @@ export const updateGroupAttr  = (
 }
 
 /**
- * 
+ * Update a group position
  * @param $event 
  * @param data 
  * @returns 

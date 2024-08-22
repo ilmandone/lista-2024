@@ -1,8 +1,8 @@
 import { Timestamp } from 'firebase/firestore'
 
 export interface BasicItemChange {
-	UUID: string,
-  	crud?: 'create' | 'update' | 'delete',
+	UUID: string
+	crud?: 'create' | 'update' | 'delete'
 }
 
 // Lists
@@ -21,10 +21,10 @@ export type ListsItemChanges = Omit<ListData, 'updated'> & Pick<BasicItemChange,
 export interface ItemsChanges extends BasicItemChange {
 	inCart: boolean
 	label: string
-  notToBuy: boolean
+	notToBuy: boolean
 	group: string
 	position: number
-	[key:string]: unknown // ???
+	[key: string]: unknown // ???
 }
 
 export type ItemData = Exclude<ItemsChanges, 'crud'>
@@ -45,4 +45,9 @@ export interface EditBag<T> {
 	created: T[]
 	updated: T[]
 	deleted: T[]
-  }
+}
+
+export interface GroupNew {
+	label: string
+	color: string
+}
