@@ -10,9 +10,9 @@
 3) Groups
    1) ~~Page with all group listed and default group~~
    2) ~~Group item render~~
-   3) Update group label, color and position
-   4) Create new group with related color
-   5) Delete group
+   3) ~~Update group label, color and position~~
+   4) ~~Create new group with related color~~
+   5) ~~Delete group~~
    6) On list items view check if the group exist and reset all the items to default if needed
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
