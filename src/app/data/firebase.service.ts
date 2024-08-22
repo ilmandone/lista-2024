@@ -136,16 +136,23 @@ export class FirebaseService {
 
 	//#region DB Commons
 
-	private _startDB() {
+	/**
+	 * Initializes the Firestore database connection.
+	 * @throws {Error} If the Firebase app is not initialized.
+	 * @return {void}
+	 */
+	private _startDB(): void {
 		if (!this._app) throw new Error('App not initialized')
 		this._db = getFirestore(this._app)
 	}
 
+	
 	/**
-	 *
+	 * Batch deletes and updates documents in the specified collection.
 	 * @param {WriteBatch} batch
 	 * @param {EditBag<T>} changes
 	 * @param {CollectionReference<DocumentData, DocumentData>} collection
+	 * @return {void}
 	 */
 	private _batchDeleteUpdate<T extends BasicItemChange>(
 		batch: WriteBatch,
@@ -255,6 +262,11 @@ export class FirebaseService {
 
 	//#region DB List
 
+	/**
+	 * Loads a list of items from the database.
+	 * @param {string} UUID
+	 * @return {Promise<ItemsData>}
+	 */
 	async loadList(UUID: string): Promise<ItemsData> {
 		if (!this._db) this._startDB()
 
@@ -271,6 +283,12 @@ export class FirebaseService {
 		}
 	}
 
+	/**
+	 * Updates a list of items in the database.
+	 * @param {EditBag<ItemsChanges>} changes
+	 * @param {string} UUID
+	 * @return {Promise<ItemsData>}
+	 */
 	async updateList(changes: EditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
 		try {
 			if (!this._db) this._startDB()
@@ -308,6 +326,11 @@ export class FirebaseService {
 
 	//#region Groups
 
+	/**
+	 * Loads groups from the database.
+	 * @param {boolean} useCache
+	 * @return {Promise<GroupsData>}
+	 */
 	public async loadGroups(useCache = false): Promise<GroupsData> {
 		if (!this._db) this._startDB()
 		if (useCache && this._cachedGroups) return this._cachedGroups
@@ -320,15 +343,19 @@ export class FirebaseService {
 			if (data.empty) return []
 
 			// Save cache
-			this._cachedGroups = data.docs.map(doc => doc.data() as GroupData)
+			this._cachedGroups = data.docs.map((doc) => doc.data() as GroupData)
 			return this._cachedGroups
-			
 		} catch (error) {
 			this._cachedGroups = undefined
 			throw new Error(error as string)
 		}
 	}
 
+	/**
+	 * Updates a group in the database.
+	 * @param {EditBag<GroupChanges>} changes
+	 * @return {Promise<GroupsData>}
+	 */
 	async updateGroup(changes: EditBag<GroupChanges>): Promise<GroupsData> {
 		try {
 			if (!this._db) this._startDB()
@@ -362,6 +389,11 @@ export class FirebaseService {
 
 	//#region Utils
 
+	/**
+	 * Retrieves the label of a list by its UUID from the cached list data.
+	 * @param {string} UUID - The UUID of the list.
+	 * @return {Promise<Nullable<string>>} A promise that resolves to the label of the list if found, otherwise null.
+	 */
 	async getListLabelByUUID(UUID: string): Promise<Nullable<string>> {
 		if (this._cachedList === undefined) {
 			await this.loadLists()
