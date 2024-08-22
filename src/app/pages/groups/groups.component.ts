@@ -34,6 +34,7 @@ import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.
 	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
+
 	private readonly _dialog = inject(MatDialog)
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _focusSrv = inject(FocusInputService)
@@ -46,6 +47,7 @@ class GroupsComponent implements OnInit {
 	selectedGroups = new Set<string>()
 	disabled = false
 	editing = false
+	focused = false
 
 	groups = signal<GroupsData>([])
 
@@ -148,6 +150,10 @@ class GroupsComponent implements OnInit {
 		this._groupChanges.set(changes)
 		this.selectedGroups.clear()
 	}
+
+	/* groupFocused($event: boolean) {
+		throw new Error('Method not implemented.')
+		} */
 
 	/**
 	 * Group selection
