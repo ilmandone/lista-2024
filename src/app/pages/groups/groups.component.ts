@@ -67,11 +67,11 @@ class GroupsComponent implements OnInit {
 		const insertAfter = selectedUUID
 			? this.groups().find((e) => e.UUID === selectedUUID)?.position ?? this.groups().length - 1
 			: this.groups().length - 1
+
 		const {changes, groupsData} = addGroup(data, this.groups(), insertAfter)
 
     this.groups.set(groupsData)
     this._groupChanges.set(changes)
-
 		this.selectedGroups.clear()
 	}
 
@@ -173,7 +173,7 @@ class GroupsComponent implements OnInit {
 	//#region Confirm / Cancel
 
 	confirm() {
-		console.log('SAVE MODS TO DB')
+		this._firebaseSrv.updateGroup(this._groupChanges.values)
 		this._endEditing()
 	}
 

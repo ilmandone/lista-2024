@@ -4,7 +4,8 @@ import { cloneDeep } from "lodash"
 import { v4 as uuidV4 } from 'uuid'
 
 /**
- * 
+ * Add a new group
+ * @description If a group is selected the new one is insert after
  * @param {GroupNew} value 
  * @param {GroupsData} data 
  * @param {number} insertAfter 

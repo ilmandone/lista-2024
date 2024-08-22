@@ -36,6 +36,7 @@ export interface GroupChanges extends BasicItemChange {
 	color: string
 	label: string
 	position: number
+	[key: string]: unknown // ???
 }
 
 export type GroupData = Exclude<GroupChanges, 'crud'>
