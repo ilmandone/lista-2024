@@ -11,13 +11,16 @@ import {
 
 import {
 	collection,
+	CollectionReference,
 	doc,
+	DocumentData,
 	Firestore,
 	getDocs,
 	getFirestore,
 	orderBy,
 	query,
 	Timestamp,
+	WriteBatch,
 	writeBatch
 } from 'firebase/firestore'
 
@@ -32,7 +35,8 @@ import {
 	ItemsData,
 	GroupsData,
 	GroupData,
-	GroupChanges
+	GroupChanges,
+	BasicItemChange
 } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
@@ -130,12 +134,36 @@ export class FirebaseService {
 
 	//#endregion
 
-
-	//#region DB Commons 
+	//#region DB Commons
 
 	private _startDB() {
 		if (!this._app) throw new Error('App not initialized')
 		this._db = getFirestore(this._app)
+	}
+
+	/**
+	 * 
+	 * @param {WriteBatch} batch 
+	 * @param {EditBag<T>} changes 
+	 * @param {CollectionReference<DocumentData, DocumentData>} collection 
+	 */
+	private _batchDeleteUpdate<T extends BasicItemChange>(
+		batch: WriteBatch,
+		changes: EditBag<T>,
+		collection: CollectionReference<DocumentData, DocumentData>
+	): void {
+
+		// Delete
+		for (const del of changes.deleted) {
+			const d = doc(collection, del.UUID)
+			batch.delete(d)
+		}
+
+		// Update
+		for (const up of changes.updated) {
+			const d = doc(collection, up.UUID)
+			batch.update(d, up)
+		}
 	}
 
 	getDateFromTimeStamp(timeStamp: Timestamp): Date {
@@ -145,7 +173,7 @@ export class FirebaseService {
 	gewNewTimeStamp(): Timestamp {
 		return Timestamp.now()
 	}
-	
+
 	//#endregion
 
 	//#region Lists
@@ -193,11 +221,11 @@ export class FirebaseService {
 			if (!this._db) this._startDB()
 
 			const batch = writeBatch(this._db)
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const listsCollection = collection(this._db, 'ListaDellaSpesaV2')
 
 			// Create
 			for (const create of changes.created) {
-				const d = doc(mainCollection, create.UUID)
+				const d = doc(listsCollection, create.UUID)
 				batch.set(d, {
 					label: create.label,
 					position: create.position,
@@ -205,7 +233,7 @@ export class FirebaseService {
 					updated: this.gewNewTimeStamp()
 				})
 
-				// Items
+				// Create sub items
 				const itemCollection = collection(d, 'items')
 				const UUIDItem = uuidV4()
 				const itemDoc = doc(itemCollection, UUIDItem)
@@ -221,17 +249,8 @@ export class FirebaseService {
 				})
 			}
 
-			// Delete
-			for (const del of changes.deleted) {
-				const d = doc(mainCollection, del.UUID)
-				batch.delete(d)
-			}
-
-			// Update
-			for (const up of changes.updated) {
-				const d = doc(mainCollection, up.UUID)
-				batch.update(d, up)
-			}
+			// Add update and delete to write batch
+			this._batchDeleteUpdate<ListsItemChanges>(batch, changes, listsCollection)
 
 			await batch.commit()
 			return this.loadLists()
@@ -274,8 +293,8 @@ export class FirebaseService {
 			if (!this._db) this._startDB()
 
 			const batch = writeBatch(this._db)
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const list = doc(mainCollection, UUID)
+			const listsCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const list = doc(listsCollection, UUID)
 			const itemsCollection = collection(list, 'items')
 
 			// Create
@@ -292,17 +311,8 @@ export class FirebaseService {
 				})
 			}
 
-			// Delete
-			for (const del of changes.deleted) {
-				const d = doc(itemsCollection, del.UUID)
-				batch.delete(d)
-			}
-
-			// Update
-			for (const up of changes.updated) {
-				const d = doc(itemsCollection, up.UUID)
-				batch.update(d, up)
-			}
+			// Add update and delete to write batch
+			this._batchDeleteUpdate<ItemsChanges>(batch, changes, itemsCollection)
 
 			await batch.commit()
 			return this.loadList(UUID)
@@ -315,11 +325,11 @@ export class FirebaseService {
 
 	//#region Groups
 
-	public async loadGroups(useCache= false): Promise<GroupsData> {
+	public async loadGroups(useCache = false): Promise<GroupsData> {
 		try {
 			if (!this._db) this._startDB()
 
-			if(useCache && this._cachedGroups) return this._cachedGroups
+			if (useCache && this._cachedGroups) return this._cachedGroups
 
 			const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
 			const q = query(mainCollection, orderBy('position'))
@@ -363,17 +373,8 @@ export class FirebaseService {
 				})
 			}
 
-			// Delete
-			for (const del of changes.deleted) {
-				const d = doc(groupCollection, del.UUID)
-				batch.delete(d)
-			}
-
-			// Update
-			for (const up of changes.updated) {
-				const d = doc(groupCollection, up.UUID)
-				batch.update(d, up)
-			}
+			// Add update and delete to write batch
+			this._batchDeleteUpdate<GroupChanges>(batch, changes, groupCollection)
 
 			await batch.commit()
 			return this.loadGroups()
@@ -381,7 +382,6 @@ export class FirebaseService {
 			throw new Error(error as string)
 		}
 	}
-
 
 	//#endregion
 

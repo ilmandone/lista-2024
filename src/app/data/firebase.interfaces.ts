@@ -3,6 +3,7 @@ import { Timestamp } from 'firebase/firestore'
 export interface BasicItemChange {
 	UUID: string
 	crud?: 'create' | 'update' | 'delete'
+	[key: string]: unknown 
 }
 
 // Lists
@@ -24,7 +25,6 @@ export interface ItemsChanges extends BasicItemChange {
 	notToBuy: boolean
 	group: string
 	position: number
-	[key: string]: unknown // ???
 }
 
 export type ItemData = Exclude<ItemsChanges, 'crud'>
@@ -36,7 +36,6 @@ export interface GroupChanges extends BasicItemChange {
 	color: string
 	label: string
 	position: number
-	[key: string]: unknown // ???
 }
 
 export type GroupData = Exclude<GroupChanges, 'crud'>
