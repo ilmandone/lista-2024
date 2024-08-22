@@ -6,7 +6,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIcon } from '@angular/material/icon'
 import { ActivatedRoute } from '@angular/router'
 import { ItemComponent } from 'app/components/item/item.component'
-import { ItemSelectedEvent } from 'app/components/item/item.interface'
+import { ItemDataWithGroup, ItemSelectedEvent } from 'app/components/item/item.interface'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { cloneDeep } from 'lodash'
 import { Subject, takeUntil } from 'rxjs'
@@ -24,6 +24,7 @@ import {
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 
+
 @Component({
 	selector: 'app-list',
 	standalone: true,
@@ -38,7 +39,7 @@ import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.compon
 		MatBottomSheetModule,
 		MatDialogModule,
 		MatIcon,
-		MatIconButton,
+		MatIconButton
 	],
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss'
@@ -61,7 +62,7 @@ class ListComponent implements OnInit, OnDestroy {
 
 	editing = false
 	groups = signal<GroupsData>([])
-	itemsData = signal<ItemsData>([])
+	itemsData = signal<ItemDataWithGroup[]>([])
 	label!: string
 	selectedItems = new Set<string>()
 	shopping = false
@@ -101,8 +102,16 @@ class ListComponent implements OnInit, OnDestroy {
 		if (showLoader) this._mainStateSrv.showLoader()
 		this.groups.set(await this._firebaseSrv.loadGroups())
 
-		this._firebaseSrv.loadList(this._UUID).then((r) => {
-			this.itemsData.set(r)
+		this._firebaseSrv.loadList(this._UUID).then((items) => {
+			// Get items group data
+
+			const finalItemsData:ItemDataWithGroup[] = items.map(i => {
+				const data: ItemDataWithGroup = i
+				const itemGroupData = this.groups().find(g => g.UUID === data.group) ?? undefined
+				data.groupData = itemGroupData
+				return data
+			})
+			this.itemsData.set(finalItemsData)
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}

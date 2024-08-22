@@ -54,7 +54,12 @@ export class ItemComponent {
       })
   }
 
-  itemLabelChanged($event: Nullable<string>) {
+  /**
+   * Updates the label of the item and emits a 'changed' event with the updated data.
+   *
+   * @param {Nullable<string>} $event - The new label for the item.
+   */
+  itemLabelChanged($event: Nullable<string>): void {
     if ($event) {
       this.changed.emit({
         ...this.data(),
@@ -65,7 +70,12 @@ export class ItemComponent {
     }
   }
 
-  itemSelected($event: MatCheckboxChange) {
+  /**
+   * Emits an event with the UUID of the item and whether the checkbox is checked or not.
+   *
+   * @param {MatCheckboxChange} $event - The checkbox change event.
+   */
+  itemSelected($event: MatCheckboxChange): void {
     this.selectedChange.emit({
       UUID: this.data().UUID,
       isSelected: $event.checked
