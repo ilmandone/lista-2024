@@ -11,13 +11,16 @@ import {
 
 import {
 	collection,
+	CollectionReference,
 	doc,
+	DocumentData,
 	Firestore,
 	getDocs,
 	getFirestore,
 	orderBy,
 	query,
 	Timestamp,
+	WriteBatch,
 	writeBatch
 } from 'firebase/firestore'
 
@@ -32,7 +35,8 @@ import {
 	ItemsData,
 	GroupsData,
 	GroupData,
-	GroupChanges
+	GroupChanges,
+	BasicItemChange
 } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
@@ -130,12 +134,42 @@ export class FirebaseService {
 
 	//#endregion
 
+	//#region DB Commons
 
-	//#region DB Commons 
-
-	private _startDB() {
+	/**
+	 * Initializes the Firestore database connection.
+	 * @throws {Error} If the Firebase app is not initialized.
+	 * @return {void}
+	 */
+	private _startDB(): void {
 		if (!this._app) throw new Error('App not initialized')
 		this._db = getFirestore(this._app)
+	}
+
+	
+	/**
+	 * Batch deletes and updates documents in the specified collection.
+	 * @param {WriteBatch} batch
+	 * @param {EditBag<T>} changes
+	 * @param {CollectionReference<DocumentData, DocumentData>} collection
+	 * @return {void}
+	 */
+	private _batchDeleteUpdate<T extends BasicItemChange>(
+		batch: WriteBatch,
+		changes: EditBag<T>,
+		collection: CollectionReference<DocumentData, DocumentData>
+	): void {
+		// Delete
+		for (const del of changes.deleted) {
+			const d = doc(collection, del.UUID)
+			batch.delete(d)
+		}
+
+		// Update
+		for (const up of changes.updated) {
+			const d = doc(collection, up.UUID)
+			batch.update(d, up)
+		}
 	}
 
 	getDateFromTimeStamp(timeStamp: Timestamp): Date {
@@ -145,7 +179,7 @@ export class FirebaseService {
 	gewNewTimeStamp(): Timestamp {
 		return Timestamp.now()
 	}
-	
+
 	//#endregion
 
 	//#region Lists
@@ -156,26 +190,19 @@ export class FirebaseService {
 	 * @returns Promise<ListsData>
 	 */
 	async loadLists(): Promise<ListsData> {
-		try {
-			if (!this._db) this._startDB()
+		if (!this._db) this._startDB()
 
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const q = query(mainCollection, orderBy('position'))
+		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+		const q = query(mainCollection, orderBy('position'))
+
+		try {
 			const data = await getDocs(q)
 
-			if (!data) await Promise.reject('Data not found')
 			if (data.empty) return []
 
-			const lists: ListsData = []
-
-			data.forEach((doc) => {
-				lists.push(doc.data() as ListData)
-			})
-
-			// Save cache
-			this._cachedList = lists
-
-			return lists
+			// Get data as cached
+			this._cachedList = data.docs.map((doc) => doc.data() as ListData)
+			return this._cachedList
 		} catch (error) {
 			this._cachedList = undefined
 			throw new Error(error as string)
@@ -193,11 +220,11 @@ export class FirebaseService {
 			if (!this._db) this._startDB()
 
 			const batch = writeBatch(this._db)
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const listsCollection = collection(this._db, 'ListaDellaSpesaV2')
 
 			// Create
 			for (const create of changes.created) {
-				const d = doc(mainCollection, create.UUID)
+				const d = doc(listsCollection, create.UUID)
 				batch.set(d, {
 					label: create.label,
 					position: create.position,
@@ -205,7 +232,7 @@ export class FirebaseService {
 					updated: this.gewNewTimeStamp()
 				})
 
-				// Items
+				// Create sub items
 				const itemCollection = collection(d, 'items')
 				const UUIDItem = uuidV4()
 				const itemDoc = doc(itemCollection, UUIDItem)
@@ -221,17 +248,8 @@ export class FirebaseService {
 				})
 			}
 
-			// Delete
-			for (const del of changes.deleted) {
-				const d = doc(mainCollection, del.UUID)
-				batch.delete(d)
-			}
-
-			// Update
-			for (const up of changes.updated) {
-				const d = doc(mainCollection, up.UUID)
-				batch.update(d, up)
-			}
+			// Add update and delete to write batch
+			this._batchDeleteUpdate<ListsItemChanges>(batch, changes, listsCollection)
 
 			await batch.commit()
 			return this.loadLists()
@@ -244,38 +262,40 @@ export class FirebaseService {
 
 	//#region DB List
 
+	/**
+	 * Loads a list of items from the database.
+	 * @param {string} UUID
+	 * @return {Promise<ItemsData>}
+	 */
 	async loadList(UUID: string): Promise<ItemsData> {
+		if (!this._db) this._startDB()
+
+		const itemsCollection = collection(this._db, 'ListaDellaSpesaV2', UUID, 'items')
+		const q = query(itemsCollection, orderBy('position'))
+
 		try {
-			if (!this._db) this._startDB()
-
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const list = doc(mainCollection, UUID)
-			const itemsCollection = collection(list, 'items')
-			const q = query(itemsCollection, orderBy('position'))
-
 			const data = await getDocs(q)
-			if (!data) await Promise.reject('Data not found')
 			if (data.empty) return []
 
-			const items: ItemData[] = []
-
-			data.forEach((doc) => {
-				items.push(doc.data() as ItemData)
-			})
-
-			return items
+			return data.docs.map((doc) => doc.data() as ItemData)
 		} catch (error) {
 			throw new Error(error as string)
 		}
 	}
 
+	/**
+	 * Updates a list of items in the database.
+	 * @param {EditBag<ItemsChanges>} changes
+	 * @param {string} UUID
+	 * @return {Promise<ItemsData>}
+	 */
 	async updateList(changes: EditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
 		try {
 			if (!this._db) this._startDB()
 
 			const batch = writeBatch(this._db)
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const list = doc(mainCollection, UUID)
+			const listsCollection = collection(this._db, 'ListaDellaSpesaV2')
+			const list = doc(listsCollection, UUID)
 			const itemsCollection = collection(list, 'items')
 
 			// Create
@@ -292,17 +312,8 @@ export class FirebaseService {
 				})
 			}
 
-			// Delete
-			for (const del of changes.deleted) {
-				const d = doc(itemsCollection, del.UUID)
-				batch.delete(d)
-			}
-
-			// Update
-			for (const up of changes.updated) {
-				const d = doc(itemsCollection, up.UUID)
-				batch.update(d, up)
-			}
+			// Add update and delete to write batch
+			this._batchDeleteUpdate<ItemsChanges>(batch, changes, itemsCollection)
 
 			await batch.commit()
 			return this.loadList(UUID)
@@ -315,35 +326,36 @@ export class FirebaseService {
 
 	//#region Groups
 
-	public async loadGroups(useCache= false): Promise<GroupsData> {
+	/**
+	 * Loads groups from the database.
+	 * @param {boolean} useCache
+	 * @return {Promise<GroupsData>}
+	 */
+	public async loadGroups(useCache = false): Promise<GroupsData> {
+		if (!this._db) this._startDB()
+		if (useCache && this._cachedGroups) return this._cachedGroups
+
+		const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
+		const q = query(mainCollection, orderBy('position'))
+
 		try {
-			if (!this._db) this._startDB()
-
-			if(useCache && this._cachedGroups) return this._cachedGroups
-
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
-			const q = query(mainCollection, orderBy('position'))
 			const data = await getDocs(q)
-
-			if (!data) await Promise.reject('Data not found')
 			if (data.empty) return []
 
-			const groups: GroupsData = []
-
-			data.forEach((doc) => {
-				groups.push(doc.data() as GroupData)
-			})
-
 			// Save cache
-			this._cachedGroups = groups
-
-			return groups
+			this._cachedGroups = data.docs.map((doc) => doc.data() as GroupData)
+			return this._cachedGroups
 		} catch (error) {
 			this._cachedGroups = undefined
 			throw new Error(error as string)
 		}
 	}
 
+	/**
+	 * Updates a group in the database.
+	 * @param {EditBag<GroupChanges>} changes
+	 * @return {Promise<GroupsData>}
+	 */
 	async updateGroup(changes: EditBag<GroupChanges>): Promise<GroupsData> {
 		try {
 			if (!this._db) this._startDB()
@@ -363,17 +375,8 @@ export class FirebaseService {
 				})
 			}
 
-			// Delete
-			for (const del of changes.deleted) {
-				const d = doc(groupCollection, del.UUID)
-				batch.delete(d)
-			}
-
-			// Update
-			for (const up of changes.updated) {
-				const d = doc(groupCollection, up.UUID)
-				batch.update(d, up)
-			}
+			// Add update and delete to write batch
+			this._batchDeleteUpdate<GroupChanges>(batch, changes, groupCollection)
 
 			await batch.commit()
 			return this.loadGroups()
@@ -382,11 +385,15 @@ export class FirebaseService {
 		}
 	}
 
-
 	//#endregion
 
 	//#region Utils
 
+	/**
+	 * Retrieves the label of a list by its UUID from the cached list data.
+	 * @param {string} UUID - The UUID of the list.
+	 * @return {Promise<Nullable<string>>} A promise that resolves to the label of the list if found, otherwise null.
+	 */
 	async getListLabelByUUID(UUID: string): Promise<Nullable<string>> {
 		if (this._cachedList === undefined) {
 			await this.loadLists()
