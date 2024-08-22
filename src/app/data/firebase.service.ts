@@ -142,17 +142,16 @@ export class FirebaseService {
 	}
 
 	/**
-	 * 
-	 * @param {WriteBatch} batch 
-	 * @param {EditBag<T>} changes 
-	 * @param {CollectionReference<DocumentData, DocumentData>} collection 
+	 *
+	 * @param {WriteBatch} batch
+	 * @param {EditBag<T>} changes
+	 * @param {CollectionReference<DocumentData, DocumentData>} collection
 	 */
 	private _batchDeleteUpdate<T extends BasicItemChange>(
 		batch: WriteBatch,
 		changes: EditBag<T>,
 		collection: CollectionReference<DocumentData, DocumentData>
 	): void {
-
 		// Delete
 		for (const del of changes.deleted) {
 			const d = doc(collection, del.UUID)
@@ -184,26 +183,19 @@ export class FirebaseService {
 	 * @returns Promise<ListsData>
 	 */
 	async loadLists(): Promise<ListsData> {
-		try {
-			if (!this._db) this._startDB()
+		if (!this._db) this._startDB()
 
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const q = query(mainCollection, orderBy('position'))
+		const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
+		const q = query(mainCollection, orderBy('position'))
+
+		try {
 			const data = await getDocs(q)
 
-			if (!data) await Promise.reject('Data not found')
 			if (data.empty) return []
 
-			const lists: ListsData = []
-
-			data.forEach((doc) => {
-				lists.push(doc.data() as ListData)
-			})
-
-			// Save cache
-			this._cachedList = lists
-
-			return lists
+			// Get data as cached
+			this._cachedList = data.docs.map((doc) => doc.data() as ListData)
+			return this._cachedList
 		} catch (error) {
 			this._cachedList = undefined
 			throw new Error(error as string)
@@ -264,25 +256,16 @@ export class FirebaseService {
 	//#region DB List
 
 	async loadList(UUID: string): Promise<ItemsData> {
+		if (!this._db) this._startDB()
+
+		const itemsCollection = collection(this._db, 'ListaDellaSpesaV2', UUID, 'items')
+		const q = query(itemsCollection, orderBy('position'))
+
 		try {
-			if (!this._db) this._startDB()
-
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2')
-			const list = doc(mainCollection, UUID)
-			const itemsCollection = collection(list, 'items')
-			const q = query(itemsCollection, orderBy('position'))
-
 			const data = await getDocs(q)
-			if (!data) await Promise.reject('Data not found')
 			if (data.empty) return []
 
-			const items: ItemData[] = []
-
-			data.forEach((doc) => {
-				items.push(doc.data() as ItemData)
-			})
-
-			return items
+			return data.docs.map((doc) => doc.data() as ItemData)
 		} catch (error) {
 			throw new Error(error as string)
 		}
@@ -326,28 +309,20 @@ export class FirebaseService {
 	//#region Groups
 
 	public async loadGroups(useCache = false): Promise<GroupsData> {
+		if (!this._db) this._startDB()
+		if (useCache && this._cachedGroups) return this._cachedGroups
+
+		const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
+		const q = query(mainCollection, orderBy('position'))
+
 		try {
-			if (!this._db) this._startDB()
-
-			if (useCache && this._cachedGroups) return this._cachedGroups
-
-			const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
-			const q = query(mainCollection, orderBy('position'))
 			const data = await getDocs(q)
-
-			if (!data) await Promise.reject('Data not found')
 			if (data.empty) return []
 
-			const groups: GroupsData = []
-
-			data.forEach((doc) => {
-				groups.push(doc.data() as GroupData)
-			})
-
 			// Save cache
-			this._cachedGroups = groups
-
-			return groups
+			this._cachedGroups = data.docs.map(doc => doc.data() as GroupData)
+			return this._cachedGroups
+			
 		} catch (error) {
 			this._cachedGroups = undefined
 			throw new Error(error as string)
