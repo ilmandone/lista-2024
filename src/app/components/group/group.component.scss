@@ -1,0 +1,21 @@
+@use "~styles/shared.scss";
+@use "~styles/typo.scss";
+@use "~styles/utils.scss";
+
+@use "~styles/item-group.scss";
+
+:host {
+  position: relative;
+
+  .group-item {
+    @include item-group.common;
+
+    &__checkbox {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .color-picker {
+    margin-left: 1rem;
+  }
+}

@@ -23,13 +23,16 @@ import {
 
 import { environment } from 'environments/environment.development'
 import {
-	ItemsChangesEditBag,
+	EditBag,
 	ListsItemChanges,
 	ItemData,
 	ListData,
 	ListsData,
 	ItemsChanges,
-	ItemsData
+	ItemsData,
+	GroupsData,
+	GroupData,
+	GroupChanges
 } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
@@ -62,6 +65,7 @@ export class FirebaseService {
 	private _userData!: UserCredential
 
 	private _cachedList!: ListsData | undefined
+	private _cachedGroups!: GroupsData | undefined
 
 	/**
 	 * Start the firebase connection
@@ -126,7 +130,8 @@ export class FirebaseService {
 
 	//#endregion
 
-	//#region DB Lists
+
+	//#region DB Commons 
 
 	private _startDB() {
 		if (!this._app) throw new Error('App not initialized')
@@ -140,6 +145,10 @@ export class FirebaseService {
 	gewNewTimeStamp(): Timestamp {
 		return Timestamp.now()
 	}
+	
+	//#endregion
+
+	//#region Lists
 
 	/**
 	 * Get lists from the database
@@ -179,7 +188,7 @@ export class FirebaseService {
 	 * @param {ListsItemChanges[]} changes
 	 * @return {Promise<ListsData>}
 	 */
-	async updateLists(changes: ItemsChangesEditBag<ListsItemChanges>): Promise<ListsData> {
+	async updateLists(changes: EditBag<ListsItemChanges>): Promise<ListsData> {
 		try {
 			if (!this._db) this._startDB()
 
@@ -260,7 +269,7 @@ export class FirebaseService {
 		}
 	}
 
-	async updateList(changes: ItemsChangesEditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
+	async updateList(changes: EditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
 		try {
 			if (!this._db) this._startDB()
 
@@ -301,6 +310,78 @@ export class FirebaseService {
 			throw new Error(error as string)
 		}
 	}
+
+	//#endregion
+
+	//#region Groups
+
+	public async loadGroups(useCache= false): Promise<GroupsData> {
+		try {
+			if (!this._db) this._startDB()
+
+			if(useCache && this._cachedGroups) return this._cachedGroups
+
+			const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
+			const q = query(mainCollection, orderBy('position'))
+			const data = await getDocs(q)
+
+			if (!data) await Promise.reject('Data not found')
+			if (data.empty) return []
+
+			const groups: GroupsData = []
+
+			data.forEach((doc) => {
+				groups.push(doc.data() as GroupData)
+			})
+
+			// Save cache
+			this._cachedGroups = groups
+
+			return groups
+		} catch (error) {
+			this._cachedGroups = undefined
+			throw new Error(error as string)
+		}
+	}
+
+	async updateGroup(changes: EditBag<GroupChanges>): Promise<GroupsData> {
+		try {
+			if (!this._db) this._startDB()
+
+			const batch = writeBatch(this._db)
+			const groupCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
+
+			// Create
+			for (const create of changes.created) {
+				const d = doc(groupCollection, create.UUID)
+				batch.set(d, {
+					label: create.label,
+					position: create.position,
+					UUID: create.UUID,
+					color: create.color,
+					updated: this.gewNewTimeStamp()
+				})
+			}
+
+			// Delete
+			for (const del of changes.deleted) {
+				const d = doc(groupCollection, del.UUID)
+				batch.delete(d)
+			}
+
+			// Update
+			for (const up of changes.updated) {
+				const d = doc(groupCollection, up.UUID)
+				batch.update(d, up)
+			}
+
+			await batch.commit()
+			return this.loadGroups()
+		} catch (error) {
+			throw new Error(error as string)
+		}
+	}
+
 
 	//#endregion
 

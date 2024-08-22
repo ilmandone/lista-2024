@@ -10,10 +10,10 @@
         <h2>Main Menu</h2>
 
         <!--Buttons-->
-        <button class="btn--first" mat-button>
+        <a class="btn--first" mat-button [routerLink]="['/groups']">
           <mat-icon [fontIcon]="'grid_view'"></mat-icon>
           Groups
-        </button>
+        </a>
 
         <button class="btn" mat-button (click)="mainStateService.triggerReload(); drawer.toggle()">
           <mat-icon [fontIcon]="'cached'"></mat-icon>
