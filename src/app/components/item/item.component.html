@@ -33,12 +33,17 @@
 
 	<!--Right controls-->
 	<div class="item-button__right">
+		<!-- Group button -->
 		<div
 			class="group-dot"
+			role="button"
+			tabindex="0"
+			[attr.aria-label]="data().groupData?.label ?? 'default'"
 			[class.editing]="editing()"
 			[ngStyle]="{backgroundColor: data().groupData?.color ?? 'grey'}"
-			role="button"
-			[attr.aria-label]="data().groupData?.label ?? 'default'"
+			(click)="itemGroupChange(data().UUID)"
+			(keyup.Enter)="itemGroupChange(data().UUID)"
+			(keyup.Space)="itemGroupChange(data().UUID)"
 		></div>
 
 		@if (editing()) {

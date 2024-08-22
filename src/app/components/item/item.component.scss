@@ -30,17 +30,19 @@
     border: 0;
     @include shared.disabledOpacity;
   }
-}
 
-// TO BE REPLACED BY GROUP DOT COMPONENT
-.group-dot {
-  position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
+  .group-dot {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+  
+    border-radius: 50%;
 
-  border-radius: 50%;
-
-  &:not(.editing) {
-    transform: translateX(65%);
+    cursor: pointer;
+  
+    &:not(.editing) {
+      transform: translateX(65%);
+      cursor: auto;
+    }
   }
 }

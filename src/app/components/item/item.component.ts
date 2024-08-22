@@ -39,6 +39,7 @@ export class ItemComponent {
 	changed = output<ItemsChanges>()
 	clicked = output<ItemsChanges>()
 	selectedChange = output<ItemSelectedEvent>()
+  groupChange = output<string>()
 
 	disabled = false
 
@@ -82,4 +83,9 @@ export class ItemComponent {
 			isSelected: $event.checked
 		})
 	}
+
+  itemGroupChange($event: string) {
+    console.log('🚀 @@@ ~ file: item.component.ts:88 ~ ItemComponent ~ itemGroupChange ~ $event:', $event)
+    this.groupChange.emit($event)
+  }
 }
