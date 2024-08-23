@@ -24,7 +24,6 @@ import {
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 
-
 @Component({
 	selector: 'app-list',
 	standalone: true,
@@ -94,6 +93,21 @@ class ListComponent implements OnInit, OnDestroy {
 		if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
 		this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
 	}
+
+	private _createItemsDataWithGroup(groups: GroupsData, items: ItemsData): ItemDataWithGroup[] {
+		return items.map((i) => {
+			const data: ItemDataWithGroup = i
+
+			// Add group data for updated items only
+			if (!data.groupData) {
+				const itemGroupData = groups.find((g) => g.UUID === data.group)
+				data.groupData = itemGroupData
+			}
+
+			return data
+		})
+	}
+
 	/**
 	 * Load groups and items data
 	 * @param {boolean} showLoader
@@ -103,15 +117,8 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._firebaseSrv.loadGroups())
 
 		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			const finalItemsData:ItemDataWithGroup[] = items.map(i => {
-				const data: ItemDataWithGroup = i
-				const itemGroupData = this.groups().find(g => g.UUID === data.group) ?? undefined
-				data.groupData = itemGroupData
-				return data
-			})
+			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), items))
 
-			this.itemsData.set(finalItemsData)
-			
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}
@@ -120,10 +127,12 @@ class ListComponent implements OnInit, OnDestroy {
 	 * Update items
 	 * @description Save items in db and reset all the edit information
 	 */
-	_saveItems() {
+	async _saveItems() {
 		this._mainStateSrv.showLoader()
+		this.groups.set(await this._firebaseSrv.loadGroups(true))
+
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-			this.itemsData.set(r)
+			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), r))
 
 			this.selectedItems.clear()
 			this._itemsChanges.clear()
@@ -344,9 +353,9 @@ class ListComponent implements OnInit, OnDestroy {
 			if (this._itemsChanges.hasDeletedItems) {
 				const dr = this._dialog.open(DeleteConfirmDialogComponent)
 				dr.afterClosed().subscribe((result) => {
-					if (result) this._saveItems()
+					if (result) void this._saveItems()
 				})
-			} else this._saveItems()
+			} else void this._saveItems()
 		}
 	}
 
