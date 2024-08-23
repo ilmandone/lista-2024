@@ -36,17 +36,14 @@ import {
 	GroupsData,
 	GroupData,
 	GroupChanges,
-	BasicItemChange
+	BasicItemChange,
+	IIsLogged
 } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
+import { DEFAULT_GROUP } from './firebase.defaults'
 
-export interface IIsLogged {
-	state: boolean | null
-	error?: string
-}
 
-export type IResetPsw = IIsLogged
 
 @Injectable({
 	providedIn: 'root'
@@ -342,8 +339,10 @@ export class FirebaseService {
 			const data = await getDocs(q)
 			if (data.empty) return []
 
-			// Save cache
+			// Save cache with default group
 			this._cachedGroups = data.docs.map((doc) => doc.data() as GroupData)
+			this._cachedGroups.push(DEFAULT_GROUP)
+
 			return this._cachedGroups
 		} catch (error) {
 			this._cachedGroups = undefined

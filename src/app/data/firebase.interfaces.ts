@@ -1,5 +1,12 @@
 import { Timestamp } from 'firebase/firestore'
 
+export interface IIsLogged {
+	state: boolean | null
+	error?: string
+}
+
+export type IResetPsw = IIsLogged
+
 export interface BasicItemChange {
 	UUID: string
 	crud?: 'create' | 'update' | 'delete'
