@@ -218,7 +218,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 * Open the button sheet and subscribe to the dismiss event
 	 * @description If editing is enable save items to cache
 	 */
-	openButtonSheet() {
+	openMainBottomSheet() {
 		const p = this._bottomSheet.open(ListBottomSheetComponent, {
 			data: {
 				viewModeGrid: this.viewModeGrid
