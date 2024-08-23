@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import {
 	MatDialogActions,
 	MatDialogClose,
@@ -12,6 +12,8 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input'
 import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { GroupData } from 'app/data/firebase.interfaces'
+import { MatBottomSheet } from '@angular/material/bottom-sheet'
+import { ListGroupsBottomSheetComponent } from '../list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 
 interface INewItemFG {
 	label: FormControl<Nullable<string>>
@@ -37,6 +39,8 @@ interface INewItemFG {
 	styleUrl: './list.new.dialog.component.scss'
 })
 export class ListNewDialogComponent {
+
+	private readonly _bottomSheet = inject(MatBottomSheet)
   
 	groupData: GroupData = DEFAULT_GROUP
 
@@ -48,6 +52,10 @@ export class ListNewDialogComponent {
 	})
 
 	openGroupBottomSheet() {
-		console.log('openGroupBottomSheet')
+		const bs = this._bottomSheet.open(ListGroupsBottomSheetComponent)
+		
+		bs.afterDismissed().subscribe((GroupUUID: string) => {
+			this.groupFC.setValue(GroupUUID)
+		})
 	}
 }

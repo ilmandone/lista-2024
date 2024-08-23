@@ -18,7 +18,7 @@ import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
 import {
-	IListBottomSheetData,
+	ListBottomSheetData,
 	ListBottomSheetComponent
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
@@ -253,10 +253,10 @@ class ListComponent implements OnInit, OnDestroy {
 		const p = this._bottomSheet.open(ListBottomSheetComponent, {
 			data: {
 				viewModeGrid: this.viewModeGrid
-			} as IListBottomSheetData
+			} as ListBottomSheetData
 		})
 
-		p.afterDismissed().subscribe((r: IListBottomSheetData) => {
+		p.afterDismissed().subscribe((r: ListBottomSheetData) => {
 			Object.assign(this, { ...r })
 			if (this.editing) this._itemsDataCache = cloneDeep(this.itemsData())
 		})
