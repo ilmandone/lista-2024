@@ -168,7 +168,7 @@ export class FirebaseService {
 		// Update
 		for (const up of changes.updated) {
 			const d = doc(collection, up.UUID)
-			batch.update(d, up)
+			batch.update(d, up as DocumentData)
 		}
 	}
 

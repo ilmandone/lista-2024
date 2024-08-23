@@ -103,15 +103,15 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._firebaseSrv.loadGroups())
 
 		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			// Get items group data
-
 			const finalItemsData:ItemDataWithGroup[] = items.map(i => {
 				const data: ItemDataWithGroup = i
 				const itemGroupData = this.groups().find(g => g.UUID === data.group) ?? undefined
 				data.groupData = itemGroupData
 				return data
 			})
+
 			this.itemsData.set(finalItemsData)
+			
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}
