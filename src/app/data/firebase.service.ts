@@ -333,7 +333,7 @@ export class FirebaseService {
 	 */
 	public async loadGroups(useCache = false): Promise<GroupsData> {
 		if (!this._db) this._startDB()
-		if (useCache && this._cachedGroups) return this._cachedGroups
+		if (useCache && this._cachedGroups) return Promise.resolve(this._cachedGroups)
 
 		const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
 		const q = query(mainCollection, orderBy('position'))
