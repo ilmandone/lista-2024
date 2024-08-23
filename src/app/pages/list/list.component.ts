@@ -108,7 +108,7 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._loadGroups())
 
 		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), items))
+			this.itemsData.set(this._itemsWithGroupData(this.groups(), items))
 
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
@@ -131,7 +131,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param {ItemsData} items - The collection of item data.
 	 * @return {ItemDataWithGroup[]} An array of item data with group information.
 	 */
-	private _createItemsDataWithGroup(
+	private _itemsWithGroupData(
 		groups: Record<string, GroupData>,
 		items: ItemsData
 	): ItemDataWithGroup[] {
@@ -154,7 +154,7 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._loadGroups(true))
 
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), r))
+			this.itemsData.set(this._itemsWithGroupData(this.groups(), r))
 
 			this.selectedItems.clear()
 			this._itemsChanges.clear()
