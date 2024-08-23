@@ -13,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
-import { GroupsData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import { GroupData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
@@ -60,7 +60,7 @@ class ListComponent implements OnInit, OnDestroy {
 	private _destroyed$ = new Subject<boolean>()
 
 	editing = false
-	groups = signal<GroupsData>([])
+	groups = signal<Record<string, GroupData>>({})
 	itemsData = signal<ItemDataWithGroup[]>([])
 	label!: string
 	selectedItems = new Set<string>()
@@ -70,7 +70,7 @@ class ListComponent implements OnInit, OnDestroy {
 	async ngOnInit() {
 		this._UUID = this._activatedRoute.snapshot.params['id']
 		this.label = this._activatedRoute.snapshot.data['label']
-		this.groups.set(await this._firebaseSrv.loadGroups(true))
+		this.groups.set(await this._loadGroups())
 
 		await this._loadData(false)
 
@@ -84,6 +84,29 @@ class ListComponent implements OnInit, OnDestroy {
 		this._destroyed$.complete()
 	}
 
+	private async _loadGroups(useCache = false): Promise<Record<string, GroupData>> {
+		const g = await this._firebaseSrv.loadGroups(useCache)
+		return g.reduce((acc: Record<string, GroupData>, val) => {
+			acc[val.UUID] = val
+			return acc
+		}, {})
+	}
+
+	/**
+	 * Load groups and items data
+	 * @param {boolean} showLoader
+	 */
+	async _loadData(showLoader = true) {
+		if (showLoader) this._mainStateSrv.showLoader()
+		this.groups.set(await this._loadGroups())
+
+		this._firebaseSrv.loadList(this._UUID).then((items) => {
+			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), items))
+
+			if (showLoader) this._mainStateSrv.hideLoader()
+		})
+	}
+
 	//#region Editing
 
 	/**
@@ -94,32 +117,24 @@ class ListComponent implements OnInit, OnDestroy {
 		this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
 	}
 
-	private _createItemsDataWithGroup(groups: GroupsData, items: ItemsData): ItemDataWithGroup[] {
+	/**
+	 * Creates an array of item data with group information.
+	 *
+	 * @param {GroupsData} groups - The collection of group data.
+	 * @param {ItemsData} items - The collection of item data.
+	 * @return {ItemDataWithGroup[]} An array of item data with group information.
+	 */
+	private _createItemsDataWithGroup(
+		groups: Record<string, GroupData>,
+		items: ItemsData
+	): ItemDataWithGroup[] {
 		return items.map((i) => {
 			const data: ItemDataWithGroup = i
 
-			// Add group data for updated items only
-			if (!data.groupData) {
-				const itemGroupData = groups.find((g) => g.UUID === data.group)
-				data.groupData = itemGroupData
-			}
+			const itemGroupData = groups[data.group]
+			data.groupData = itemGroupData
 
 			return data
-		})
-	}
-
-	/**
-	 * Load groups and items data
-	 * @param {boolean} showLoader
-	 */
-	async _loadData(showLoader = true) {
-		if (showLoader) this._mainStateSrv.showLoader()
-		this.groups.set(await this._firebaseSrv.loadGroups())
-
-		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), items))
-
-			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}
 
@@ -129,7 +144,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	async _saveItems() {
 		this._mainStateSrv.showLoader()
-		this.groups.set(await this._firebaseSrv.loadGroups(true))
+		this.groups.set(await this._loadGroups(true))
 
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
 			this.itemsData.set(this._createItemsDataWithGroup(this.groups(), r))
