@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common'
 	selector: 'app-item',
 	standalone: true,
 	imports: [
-    CommonModule,
+		CommonModule,
 		MatRippleModule,
 		FocusInputComponent,
 		MatCheckboxModule,
@@ -39,7 +39,7 @@ export class ItemComponent {
 	changed = output<ItemsChanges>()
 	clicked = output<ItemsChanges>()
 	selectedChange = output<ItemSelectedEvent>()
-  groupChange = output<string>()
+	groupChange = output<string>()
 
 	disabled = false
 
@@ -84,8 +84,11 @@ export class ItemComponent {
 		})
 	}
 
-  itemGroupChange($event: string) {
-    console.log('🚀 @@@ ~ file: item.component.ts:88 ~ ItemComponent ~ itemGroupChange ~ $event:', $event)
-    this.groupChange.emit($event)
-  }
+	itemGroupChange($event: string) {
+		console.log(
+			'🚀 @@@ ~ file: item.component.ts:88 ~ ItemComponent ~ itemGroupChange ~ $event:',
+			$event
+		)
+		this.groupChange.emit($event)
+	}
 }
