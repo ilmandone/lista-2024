@@ -47,13 +47,16 @@ export class ItemComponent {
 
 	@HostListener('click')
 	hostClick() {
-		if (!this.editing())
+		if (!this.editing()){
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { groupData, ...rest } = this.data();
+			
 			this.clicked.emit({
-				...this.data(),
+				...rest,
 				inCart: this.shopping() ? !this.extra() : false,
 				notToBuy: this.shopping() ? this.data().notToBuy : !this.stroked(),
 				crud: 'update'
-			})
+			})}
 	}
 
 	/**
@@ -63,8 +66,11 @@ export class ItemComponent {
 	 */
 	itemLabelChanged($event: Nullable<string>): void {
 		if ($event) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { groupData, ...rest } = this.data();
+
 			this.changed.emit({
-				...this.data(),
+				...rest,
 				label: $event,
 				notToBuy: false,
 				crud: 'update'
@@ -85,10 +91,6 @@ export class ItemComponent {
 	}
 
 	itemGroupChange($event: string) {
-		console.log(
-			'🚀 @@@ ~ file: item.component.ts:88 ~ ItemComponent ~ itemGroupChange ~ $event:',
-			$event
-		)
 		this.groupChange.emit($event)
 	}
 }
