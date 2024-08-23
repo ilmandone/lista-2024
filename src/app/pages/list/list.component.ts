@@ -84,6 +84,13 @@ class ListComponent implements OnInit, OnDestroy {
 		this._destroyed$.complete()
 	}
 
+	/**
+	 * Loads the groups data from the Firebase service and returns a promise that resolves to a record
+	 * mapping group UUIDs to GroupData objects.
+	 *
+	 * @param {boolean} useCache - Whether to use the cache or load the groups data from the Firebase service.
+	 * @return {Promise<Record<string, GroupData>>} A promise that resolves to a record mapping group UUIDs to GroupData objects.
+	 */
 	private async _loadGroups(useCache = false): Promise<Record<string, GroupData>> {
 		const g = await this._firebaseSrv.loadGroups(useCache)
 		return g.reduce((acc: Record<string, GroupData>, val) => {
