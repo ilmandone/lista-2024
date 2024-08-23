@@ -10,6 +10,7 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field'
 import { MatInput } from '@angular/material/input'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms'
 import { Nullable } from '../../../shared/common.interfaces'
+import { DEFAULT_GROUP } from 'app/data/firebase.defaults';
 
 interface INewGroupFG {
   label: FormControl<Nullable<string>>
@@ -36,7 +37,7 @@ interface INewGroupFG {
 })
 export class GroupsNewDialogComponent {
   readonly labelFC = new FormControl('', Validators.required)
-  readonly colorFC = new FormControl('#ff0000')
+  readonly colorFC = new FormControl(DEFAULT_GROUP.color)
   readonly newGroupFG= new FormGroup<INewGroupFG>({
     label: this.labelFC,
     color: this.colorFC

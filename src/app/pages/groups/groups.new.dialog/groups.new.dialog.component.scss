@@ -8,17 +8,16 @@
   }
 
   .form-field {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     width: 100%;
   }
 
   .color-wrapper {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    padding: 0.5rem 0;
+    width: 100%;
+    margin-top: 0.25rem;
 
     display: flex;
+    justify-content: flex-end;
     align-items: center;
 
     .color-input-container {
@@ -27,8 +26,12 @@
       height: 2.5rem;
     }
 
-    span {
-      font-size: typo.$text-m;
+    label {
+      margin-right: 0.5rem;
+      font-size: typo.$text;
     }
   }
 }
+
+
+
