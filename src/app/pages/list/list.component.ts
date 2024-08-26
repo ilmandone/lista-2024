@@ -110,9 +110,10 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._loadGroups())
 
 		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			this.itemsData.set(this._itemsWithGroupData(this.groups(), items, true))
+			const {data, changes} = this._itemsWithGroupData(this.groups(), items) 
+			this.itemsData.set(data)
 
-			if(this._itemsChanges.values.updated.length > 0) this._saveItems()
+			if (changes.length > 0) this._saveItems()
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}
@@ -136,31 +137,34 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	private _itemsWithGroupData(
 		groups: Record<string, GroupData>,
-		items: ItemsData,
-		fixMissingGroupData = false
-	): ItemDataWithGroup[] {
-		return items.map((i) => {
+		items: ItemsData
+	): { data: ItemDataWithGroup[]; changes: ItemsChanges[] } {
+		const changes: ItemsChanges[] = []
+		const data = items.map((i) => {
 			const data: ItemDataWithGroup = i
 			const itemGroupData = groups[data.group]
 
 			if (itemGroupData) data.groupData = itemGroupData
 			else {
 				data.groupData = DEFAULT_GROUP
-				if(fixMissingGroupData) {
 
-					// eslint-disable-next-line @typescript-eslint/no-unused-vars
-					const {groupData, ...rest} = data
+				// Add group
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				const { groupData, ...rest } = data
 
-					this._itemsChanges.set([{
+				this._itemsChanges.set([
+					{
 						...rest,
 						crud: 'update',
 						group: DEFAULT_GROUP.UUID
-					}])
-				}
+					}
+				])
 			}
 
 			return data
 		})
+
+		return { data, changes }
 	}
 
 	/**
@@ -172,7 +176,7 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._loadGroups(true))
 
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-			this.itemsData.set(this._itemsWithGroupData(this.groups(), r))
+			this.itemsData.set(this._itemsWithGroupData(this.groups(), r).data)
 
 			this.selectedItems.clear()
 			this._itemsChanges.clear()
