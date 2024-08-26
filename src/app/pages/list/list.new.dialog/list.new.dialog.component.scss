@@ -23,7 +23,6 @@
 
     &__selector {
       @include color-picker.common('.group__selector');
-      background: red;
     }
   }
 }

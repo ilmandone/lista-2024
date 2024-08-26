@@ -2,6 +2,8 @@
 
 <form [formGroup]="newItemFG">
 	<mat-dialog-content class="contents">
+
+		<!-- Name -->
 		<mat-form-field class="form-field">
 			<mat-label>Inserisci un nome</mat-label>
 			<input
@@ -16,18 +18,22 @@
 			<mat-error>'Label required'</mat-error>
 			}
 		</mat-form-field>
+
+		<!-- Group -->
 		<div class="group">
 			<div
 				class="group__selector"
 				role="button"
 				aria-label="Select group"
         tabindex="0"
+				[ngStyle]="{backgroundColor: groupData.color}"
 				(click)="openGroupBottomSheet()"
 				(keyup.enter)="openGroupBottomSheet()"
 				(keyup.space)="openGroupBottomSheet()"
 			></div>
 			<input type="hidden" [formControl]="groupFC" />
 		</div>
+
 	</mat-dialog-content>
 
 	<mat-dialog-actions>
@@ -36,7 +42,7 @@
 			type="submit"
 			[disabled]="labelFC.invalid"
 			mat-button
-			[mat-dialog-close]="labelFC.value"
+			[mat-dialog-close]="newItemFG.value"
 		>
 			Conferma
 		</button>

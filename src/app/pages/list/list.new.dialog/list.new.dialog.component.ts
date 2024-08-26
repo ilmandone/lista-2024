@@ -14,6 +14,7 @@ import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { GroupData } from 'app/data/firebase.interfaces'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { ListGroupsBottomSheetComponent } from '../list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { CommonModule } from '@angular/common'
 
 interface INewItemFG {
 	label: FormControl<Nullable<string>>
@@ -24,6 +25,7 @@ interface INewItemFG {
 	selector: 'app-list-new-dialog',
 	standalone: true,
 	imports: [
+		CommonModule,
 		MatButton,
 		MatDialogActions,
 		MatDialogClose,
@@ -54,8 +56,9 @@ export class ListNewDialogComponent {
 	openGroupBottomSheet() {
 		const bs = this._bottomSheet.open(ListGroupsBottomSheetComponent)
 		
-		bs.afterDismissed().subscribe((GroupUUID: string) => {
-			this.groupFC.setValue(GroupUUID)
+		bs.afterDismissed().subscribe((data: GroupData) => {
+			this.groupData = data
+			this.groupFC.setValue(data.UUID)
 		})
 	}
 }

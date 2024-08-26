@@ -23,7 +23,7 @@ export class ListGroupsBottomSheetComponent implements OnInit {
 	}
 
 	selectGroup($event: Event, g: GroupData) {
-		this._bottomSheetRef.dismiss(g.UUID)
+		this._bottomSheetRef.dismiss(g)
     $event.preventDefault()
   }
 }

@@ -170,15 +170,22 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @description If another item is selected the new one is added after it
 	 * @param {string} label
 	 */
-	addItem(label: string) {
+	addItem(label: string, groupUUID: string) {
 		const selectedUUID =
 			this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+
 		const insertAfter = selectedUUID
-			? this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
-				this.itemsData().length - 1
+			? (this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
+				this.itemsData().length - 1)
 			: this.itemsData().length - 1
 
-		const { itemsData, changes } = addItem(label, this.itemsData() as ItemsData, insertAfter)
+		const groupData = this.groups()[groupUUID]
+		const { itemsData, changes } = addItem(
+			label,
+			groupData,
+			this.itemsData() as ItemsData,
+			insertAfter
+		)
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
@@ -234,9 +241,9 @@ class ListComponent implements OnInit, OnDestroy {
 	openNewItemDialog() {
 		const d = this._dialog.open(ListNewDialogComponent)
 
-		d.afterClosed().subscribe((r: string) => {
-			if (r) {
-				this.addItem(r)
+		d.afterClosed().subscribe((r: { label: string; color: string }) => {
+			if (r.label) {
+				this.addItem(r.label, r.color)
 			}
 		})
 	}
