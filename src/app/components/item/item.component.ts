@@ -1,4 +1,5 @@
 import { CdkDragHandle } from '@angular/cdk/drag-drop'
+import { CommonModule } from '@angular/common'
 import { Component, computed, HostListener, inject, input, output } from '@angular/core'
 import { MatIconButton } from '@angular/material/button'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
@@ -9,7 +10,6 @@ import { Nullable } from 'app/shared/common.interfaces'
 import { FocusInputComponent } from '../focus-input/focus-input.component'
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { ItemDataWithGroup, ItemSelectedEvent } from './item.interface'
-import { CommonModule } from '@angular/common'
 
 @Component({
 	selector: 'app-item',
@@ -39,7 +39,7 @@ export class ItemComponent {
 	changed = output<ItemsChanges>()
 	clicked = output<ItemsChanges>()
 	selectedChange = output<ItemSelectedEvent>()
-	groupChange = output<string>()
+	groupChange = output<ItemsChanges>()
 
 	disabled = false
 
@@ -90,7 +90,20 @@ export class ItemComponent {
 		})
 	}
 
-	itemGroupChange($event: string) {
-		this.groupChange.emit($event)
+	/**
+	 * Start group change
+	 * @param {string} $event 
+	 */
+	changeGroup($event: ItemDataWithGroup) {
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { groupData, ...rest } = $event
+		
+		this.groupChange.emit({
+			...rest,
+			inCart: false,
+			notToBuy: false,
+			crud: 'update'
+		})
 	}
 }

@@ -18,11 +18,12 @@ import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
 import {
-	ListBottomSheetData,
-	ListBottomSheetComponent
+	ListBottomSheetComponent,
+	ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
+import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 
 @Component({
 	selector: 'app-list',
@@ -223,6 +224,24 @@ class ListComponent implements OnInit, OnDestroy {
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
+	}
+
+	/**
+	 * Item group changed
+	 * @description Open bottom sheet to edit the item group
+	 * @param {ItemsChanges} $event 
+	 */
+	itemGroupChanged($event: ItemsChanges) {
+
+		const bs = this._bottomSheet.open(ListGroupsBottomSheetComponent)
+
+		bs.afterDismissed().subscribe((data: GroupData) => {
+			const { itemsData, changes } = updateItemAttr($event, this.itemsData(), data)
+			changes[0].group = data.UUID
+
+			this.itemsData.set(itemsData)
+			this._itemsChanges.set(changes)
+		})
 	}
 
 	/**

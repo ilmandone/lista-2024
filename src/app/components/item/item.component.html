@@ -41,9 +41,9 @@
 			[attr.aria-label]="data().groupData?.label"
 			[class.editing]="editing()"
 			[ngStyle]="{backgroundColor: data().groupData?.color}"
-			(click)="itemGroupChange(data().UUID)"
-			(keyup.Enter)="itemGroupChange(data().UUID)"
-			(keyup.Space)="itemGroupChange(data().UUID)"
+			(click)="changeGroup(data())"
+			(keyup.Enter)="changeGroup(data())"
+			(keyup.Space)="changeGroup(data())"
 		></div>
 
 		@if (editing()) {

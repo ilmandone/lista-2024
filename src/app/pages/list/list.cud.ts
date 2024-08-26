@@ -131,7 +131,8 @@ export const deleteItem = (
  */
 export const updateItemAttr = (
 	change: ItemsChanges,
-	data: ItemsData
+	data: ItemDataWithGroup[],
+	groupData?: GroupData
 ): {
 	changes: ItemsChanges[]
 	itemsData: ItemsData
@@ -143,6 +144,11 @@ export const updateItemAttr = (
 		item.label = change.label
 		item.notToBuy = change.notToBuy
     item.inCart = change.inCart
+		item.group = change.group
+
+		if (groupData) {
+			item.groupData = groupData
+		}
 	}
 
 	return { itemsData, changes: [change] }
