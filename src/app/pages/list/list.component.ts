@@ -24,6 +24,7 @@ import {
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 
 @Component({
 	selector: 'app-list',
@@ -109,8 +110,9 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._loadGroups())
 
 		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			this.itemsData.set(this._itemsWithGroupData(this.groups(), items))
+			this.itemsData.set(this._itemsWithGroupData(this.groups(), items, true))
 
+			if(this._itemsChanges.values.updated.length > 0) this._saveItems()
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}
@@ -134,13 +136,28 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	private _itemsWithGroupData(
 		groups: Record<string, GroupData>,
-		items: ItemsData
+		items: ItemsData,
+		fixMissingGroupData = false
 	): ItemDataWithGroup[] {
 		return items.map((i) => {
 			const data: ItemDataWithGroup = i
-
 			const itemGroupData = groups[data.group]
-			data.groupData = itemGroupData
+
+			if (itemGroupData) data.groupData = itemGroupData
+			else {
+				data.groupData = DEFAULT_GROUP
+				if(fixMissingGroupData) {
+
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					const {groupData, ...rest} = data
+
+					this._itemsChanges.set([{
+						...rest,
+						crud: 'update',
+						group: DEFAULT_GROUP.UUID
+					}])
+				}
+			}
 
 			return data
 		})

@@ -156,6 +156,7 @@ export class FirebaseService {
 		changes: EditBag<T>,
 		collection: CollectionReference<DocumentData, DocumentData>
 	): void {
+
 		// Delete
 		for (const del of changes.deleted) {
 			const d = doc(collection, del.UUID)
@@ -165,7 +166,10 @@ export class FirebaseService {
 		// Update
 		for (const up of changes.updated) {
 			const d = doc(collection, up.UUID)
-			batch.update(d, up as DocumentData)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const {crud, ...value} = up
+			
+			batch.update(d, value as DocumentData)
 		}
 	}
 
