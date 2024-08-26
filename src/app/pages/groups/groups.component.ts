@@ -17,7 +17,6 @@ import { MainStateService } from 'app/shared/main-state.service'
 import { addGroup, deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
 import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.component'
 
-import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 
 @Component({
 	selector: 'app-groups',
@@ -37,8 +36,6 @@ import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
-
-	private readonly DEFAULT_GROUP = DEFAULT_GROUP
 
 	private readonly _dialog = inject(MatDialog)
 	private readonly _firebaseSrv = inject(FirebaseService)

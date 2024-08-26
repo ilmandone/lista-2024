@@ -380,7 +380,7 @@ export class FirebaseService {
 			this._batchDeleteUpdate<GroupChanges>(batch, changes, groupCollection)
 
 			await batch.commit()
-			return this.loadGroups()
+			return this.loadGroups(false, false)
 		} catch (error) {
 			throw new Error(error as string)
 		}
