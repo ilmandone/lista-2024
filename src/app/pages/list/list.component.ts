@@ -229,18 +229,19 @@ class ListComponent implements OnInit, OnDestroy {
 	/**
 	 * Item group changed
 	 * @description Open bottom sheet to edit the item group
-	 * @param {ItemsChanges} $event 
+	 * @param {ItemsChanges} $event
 	 */
 	itemGroupChanged($event: ItemsChanges) {
-
 		const bs = this._bottomSheet.open(ListGroupsBottomSheetComponent)
 
 		bs.afterDismissed().subscribe((data: GroupData) => {
-			const { itemsData, changes } = updateItemAttr($event, this.itemsData(), data)
-			changes[0].group = data.UUID
+			if (data) {
+				const { itemsData, changes } = updateItemAttr($event, this.itemsData(), data)
+				changes[0].group = data.UUID
 
-			this.itemsData.set(itemsData)
-			this._itemsChanges.set(changes)
+				this.itemsData.set(itemsData)
+				this._itemsChanges.set(changes)
+			}
 		})
 	}
 
