@@ -2,20 +2,22 @@ import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/
 import { Location } from '@angular/common'
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { ConfirmCancelComponent } from 'app/components/confirm-cancel/confirm-cancel.component'
 import { FocusInputService } from 'app/components/focus-input/focus-input.service'
 import { GroupComponent } from 'app/components/group/group.component'
+import { GroupSelected } from 'app/components/group/group.interface'
 import { LoaderComponent } from 'app/components/loader/loader.component'
 import { GroupChanges, GroupData, GroupNew, GroupsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { SetOfItemsChanges } from 'app/data/items.changes'
+import { DeleteConfirmDialogComponent } from 'app/shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from 'app/shared/main-state.service'
 import { addGroup, deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
-import { GroupSelected } from 'app/components/group/group.interface'
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.component'
-import { DeleteConfirmDialogComponent } from 'app/shared/delete.confirm.dialog/delete.confirm.dialog.component'
+
+import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 
 @Component({
 	selector: 'app-groups',
@@ -35,6 +37,8 @@ import { DeleteConfirmDialogComponent } from 'app/shared/delete.confirm.dialog/d
 	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
+
+	private readonly DEFAULT_GROUP = DEFAULT_GROUP
 
 	private readonly _dialog = inject(MatDialog)
 	private readonly _firebaseSrv = inject(FirebaseService)
@@ -59,7 +63,7 @@ class GroupsComponent implements OnInit {
 	}
 
 	async ngOnInit() {
-		this.groups.set(await this._firebaseSrv.loadGroups())
+		this.groups.set(await this._firebaseSrv.loadGroups(false, false))
 	}
 
 	//#region Privates

@@ -328,7 +328,7 @@ export class FirebaseService {
 	 * @param {boolean} useCache
 	 * @return {Promise<GroupsData>}
 	 */
-	public async loadGroups(useCache = false): Promise<GroupsData> {
+	public async loadGroups(useCache = false, withDefault = true): Promise<GroupsData> {
 		if (!this._db) this._startDB()
 		if (useCache && this._cachedGroups) return Promise.resolve(this._cachedGroups)
 
@@ -341,6 +341,8 @@ export class FirebaseService {
 
 			// Save cache with default group
 			this._cachedGroups = data.docs.map((doc) => doc.data() as GroupData)
+
+			if(withDefault)
 			this._cachedGroups.push(DEFAULT_GROUP)
 
 			return this._cachedGroups
