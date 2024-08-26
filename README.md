@@ -8,7 +8,7 @@
    1) ~~Aggiungere i gruppi per i singoli item~~
    2) ~~Aggiungere il gruppo alla creazione di un nuovo item  -- TODO: Contiuare da qui utilizzando il valore nel FG del new item~~
    3) ~~Aggiungere la modifica del grouppo sul singolo item~~
-   4) Quando viene cancellato un gruppo al caricamento di una lista devono essere aggiornati tutti gli elementi con quel gruppo e deve essere mandato in esecuzione il salvataggio.
+   4) ~~Quando viene cancellato un gruppo al caricamento di una lista devono essere aggiornati tutti gli elementi con quel gruppo e deve essere mandato in esecuzione il salvataggio.~~
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
 

@@ -103,6 +103,7 @@ class ListComponent implements OnInit, OnDestroy {
 
 	/**
 	 * Load groups and items data
+	 * @description Items with missing group UUID are updated to default group value
 	 * @param {boolean} showLoader
 	 */
 	async _loadData(showLoader = true) {
@@ -110,10 +111,15 @@ class ListComponent implements OnInit, OnDestroy {
 		this.groups.set(await this._loadGroups())
 
 		this._firebaseSrv.loadList(this._UUID).then((items) => {
-			const {data, changes} = this._itemsWithGroupData(this.groups(), items) 
+			const { data, itemsToDefault } = this._itemsWithGroupData(this.groups(), items)
 			this.itemsData.set(data)
 
-			if (changes.length > 0) this._saveItems()
+			// Fix missing items groups values
+			if (itemsToDefault.length > 0) {
+				this._itemsChanges.set(itemsToDefault)
+				this._saveItems()
+			}
+
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
 	}
@@ -138,33 +144,31 @@ class ListComponent implements OnInit, OnDestroy {
 	private _itemsWithGroupData(
 		groups: Record<string, GroupData>,
 		items: ItemsData
-	): { data: ItemDataWithGroup[]; changes: ItemsChanges[] } {
-		const changes: ItemsChanges[] = []
+	): { data: ItemDataWithGroup[]; itemsToDefault: ItemsChanges[] } {
+		const itemsToDefault: ItemsChanges[] = []
 		const data = items.map((i) => {
 			const data: ItemDataWithGroup = i
 			const itemGroupData = groups[data.group]
 
 			if (itemGroupData) data.groupData = itemGroupData
 			else {
-				data.groupData = DEFAULT_GROUP
 
-				// Add group
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				const { groupData, ...rest } = data
-
-				this._itemsChanges.set([
+				// Set item to default group and register the change
+				data.group = DEFAULT_GROUP.UUID
+				itemsToDefault.push(
 					{
-						...rest,
+						...data,
 						crud: 'update',
-						group: DEFAULT_GROUP.UUID
 					}
-				])
+				)
+
+				data.groupData = DEFAULT_GROUP	
 			}
 
 			return data
 		})
 
-		return { data, changes }
+		return { data, itemsToDefault }
 	}
 
 	/**
