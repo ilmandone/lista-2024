@@ -66,6 +66,7 @@ class ListComponent implements OnInit, OnDestroy {
 	itemsData = signal<ItemDataWithGroup[]>([])
 	label!: string
 	selectedItems = new Set<string>()
+	showByGroups = false
 	shopping = false
 	viewModeGrid = false
 
@@ -152,17 +153,14 @@ class ListComponent implements OnInit, OnDestroy {
 
 			if (itemGroupData) data.groupData = itemGroupData
 			else {
-
 				// Set item to default group and register the change
 				data.group = DEFAULT_GROUP.UUID
-				itemsToDefault.push(
-					{
-						...data,
-						crud: 'update',
-					}
-				)
+				itemsToDefault.push({
+					...data,
+					crud: 'update'
+				})
 
-				data.groupData = DEFAULT_GROUP	
+				data.groupData = DEFAULT_GROUP
 			}
 
 			return data
@@ -311,6 +309,7 @@ class ListComponent implements OnInit, OnDestroy {
 		p.afterDismissed().subscribe((r: ListBottomSheetData) => {
 			Object.assign(this, { ...r })
 			if (this.editing) this._itemsDataCache = cloneDeep(this.itemsData())
+			if (this.showByGroups) console.log('SHOW BY GROUPS')
 		})
 	}
 
