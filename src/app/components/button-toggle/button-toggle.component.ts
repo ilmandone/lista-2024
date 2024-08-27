@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, input, model, OnInit } from '@angular/core'
+import { NgTemplateOutlet } from '@angular/common'
+import { ChangeDetectionStrategy, Component, input, model, OnInit } from '@angular/core'
 import { MatButton, MatIconButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
-import { NgTemplateOutlet } from '@angular/common'
 
 @Component({
   selector: 'app-button-toggle',

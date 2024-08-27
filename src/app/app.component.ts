@@ -13,8 +13,6 @@ import {FirebaseService} from "./data/firebase.service";
 export class AppComponent implements OnInit{
   private _fbSrv = inject(FirebaseService);
 
-  constructor() {}
-
   @HostListener('window:resize')
   private _updateBodyVh() {
     document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);

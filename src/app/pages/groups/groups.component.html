@@ -33,6 +33,7 @@
 			[data]="group"
 			[selected]="selectedGroups.has(group.UUID)"
 			(changed)="groupChanged($event)"
+			(focused)="focused = $event"
 			(selectedChange)="groupSelected($event)"
 		></app-group>
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
@@ -42,6 +43,6 @@
 	}
 </main>
 
-@if (editing) {
+@if (editing && !focused) {
 <app-confirm-cancel (cancel)="cancel()" (confirm)="confirm()"> </app-confirm-cancel>
 }

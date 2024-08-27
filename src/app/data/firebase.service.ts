@@ -36,17 +36,14 @@ import {
 	GroupsData,
 	GroupData,
 	GroupChanges,
-	BasicItemChange
+	BasicItemChange,
+	IIsLogged
 } from './firebase.interfaces'
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
+import { DEFAULT_GROUP } from './firebase.defaults'
 
-export interface IIsLogged {
-	state: boolean | null
-	error?: string
-}
 
-export type IResetPsw = IIsLogged
 
 @Injectable({
 	providedIn: 'root'
@@ -159,6 +156,7 @@ export class FirebaseService {
 		changes: EditBag<T>,
 		collection: CollectionReference<DocumentData, DocumentData>
 	): void {
+
 		// Delete
 		for (const del of changes.deleted) {
 			const d = doc(collection, del.UUID)
@@ -168,7 +166,10 @@ export class FirebaseService {
 		// Update
 		for (const up of changes.updated) {
 			const d = doc(collection, up.UUID)
-			batch.update(d, up)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const {crud, ...value} = up
+			
+			batch.update(d, value as DocumentData)
 		}
 	}
 
@@ -331,9 +332,9 @@ export class FirebaseService {
 	 * @param {boolean} useCache
 	 * @return {Promise<GroupsData>}
 	 */
-	public async loadGroups(useCache = false): Promise<GroupsData> {
+	public async loadGroups(useCache = false, withDefault = true): Promise<GroupsData> {
 		if (!this._db) this._startDB()
-		if (useCache && this._cachedGroups) return this._cachedGroups
+		if (useCache && this._cachedGroups) return Promise.resolve(this._cachedGroups)
 
 		const mainCollection = collection(this._db, 'ListaDellaSpesaV2-Groups')
 		const q = query(mainCollection, orderBy('position'))
@@ -342,8 +343,12 @@ export class FirebaseService {
 			const data = await getDocs(q)
 			if (data.empty) return []
 
-			// Save cache
+			// Save cache with default group
 			this._cachedGroups = data.docs.map((doc) => doc.data() as GroupData)
+
+			if(withDefault)
+			this._cachedGroups.push(DEFAULT_GROUP)
+
 			return this._cachedGroups
 		} catch (error) {
 			this._cachedGroups = undefined
@@ -379,7 +384,7 @@ export class FirebaseService {
 			this._batchDeleteUpdate<GroupChanges>(batch, changes, groupCollection)
 
 			await batch.commit()
-			return this.loadGroups()
+			return this.loadGroups(false, false)
 		} catch (error) {
 			throw new Error(error as string)
 		}

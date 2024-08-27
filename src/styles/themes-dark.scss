@@ -50,6 +50,9 @@ html {
   --lists-item-drag-placeholder-color-border: #595959;
 
   --button-toggle-active-color-bg: rgb(11, 198, 255);
+  --button-custom-border-color: rgb(43, 43, 43);
+  --button-custom-color-bg: rgba(112, 224, 0, 0.05);
+  --button-custom-color-bg-hover: rgba(112, 224, 0, 0.2);
 
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);

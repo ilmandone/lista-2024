@@ -1,0 +1,12 @@
+<header>
+	<h2>Scegli un gruppo</h2>
+</header>
+
+<main>
+	@for(group of groups(); track group.UUID) {
+	<button matRipple class="group-button" (click)="selectGroup($event, group)">
+		<span class="group-button__label">{{group.label | uppercase}}</span>
+		<span class="group-button__color" [ngStyle]="{'background-color': group.color}"></span>
+	</button>
+	}
+</main>

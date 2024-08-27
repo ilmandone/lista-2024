@@ -3,7 +3,7 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bott
 import { MatButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
 
-export interface IListBottomSheetData {
+export interface ListBottomSheetData {
   viewModeGrid?: boolean
   editing?: boolean
 }
@@ -32,7 +32,7 @@ export class ListBottomSheetComponent implements OnInit {
   starEdit($event: Event) {
     this._bottomSheetRef.dismiss({
       editing: true
-    } as IListBottomSheetData)
+    } as ListBottomSheetData)
 
     $event.preventDefault()
   }
@@ -41,7 +41,7 @@ export class ListBottomSheetComponent implements OnInit {
     this.viewModeGrid = !this.viewModeGrid
     this._bottomSheetRef.dismiss({
       viewModeGrid: this.viewModeGrid
-    } as IListBottomSheetData)
+    } as ListBottomSheetData)
 
     $event.preventDefault()
   }

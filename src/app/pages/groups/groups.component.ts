@@ -2,19 +2,21 @@ import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/
 import { Location } from '@angular/common'
 import { Component, effect, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { ConfirmCancelComponent } from 'app/components/confirm-cancel/confirm-cancel.component'
 import { FocusInputService } from 'app/components/focus-input/focus-input.service'
 import { GroupComponent } from 'app/components/group/group.component'
+import { GroupSelected } from 'app/components/group/group.interface'
 import { LoaderComponent } from 'app/components/loader/loader.component'
 import { GroupChanges, GroupData, GroupNew, GroupsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { SetOfItemsChanges } from 'app/data/items.changes'
+import { DeleteConfirmDialogComponent } from 'app/shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from 'app/shared/main-state.service'
 import { addGroup, deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
-import { GroupSelected } from 'app/components/group/group.interface'
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.component'
+
 
 @Component({
 	selector: 'app-groups',
@@ -34,6 +36,7 @@ import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.
 	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
+
 	private readonly _dialog = inject(MatDialog)
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _focusSrv = inject(FocusInputService)
@@ -46,6 +49,7 @@ class GroupsComponent implements OnInit {
 	selectedGroups = new Set<string>()
 	disabled = false
 	editing = false
+	focused = false
 
 	groups = signal<GroupsData>([])
 
@@ -56,12 +60,18 @@ class GroupsComponent implements OnInit {
 	}
 
 	async ngOnInit() {
-		this.groups.set(await this._firebaseSrv.loadGroups())
+		this.groups.set(await this._firebaseSrv.loadGroups(false, false))
 	}
 
 	//#region Privates
 
 	private _addGroup(data: GroupNew) {
+	/**
+	 * Adds a new group to the existing groups.
+	 *
+	 * @param {GroupNew} data - The new group data to be added.
+	 * @return {void}
+	 */
 		const selectedUUID =
 			this.selectedGroups.size > 0 ? this.selectedGroups.values().next().value : null
 		const insertAfter = selectedUUID
@@ -73,6 +83,24 @@ class GroupsComponent implements OnInit {
     this.groups.set(groupsData)
     this._groupChanges.set(changes)
 		this.selectedGroups.clear()
+	}
+
+	/**
+	 * Save groups
+	 * @description Saves the groups by updating the groups in the database and
+	 * setting the updated groups in the component.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	private _saveGroups() {
+		this._mainStateSrv.showLoader()
+		this._firebaseSrv.updateGroup(this._groupChanges.values).then(r => {
+			this.groups.set(r)
+			this._endEditing()
+
+			this._mainStateSrv.hideLoader()
+		})
 	}
 
 	/**
@@ -158,6 +186,11 @@ class GroupsComponent implements OnInit {
 		else this.selectedGroups.delete($event.UUID)
 	}
 
+	/**
+	 * Opens a new group dialog and handles the result.
+	 *
+	 * @return {void}
+	 */
 	openNewGroupDialog() {
 		const d = this._dialog.open(GroupsNewDialogComponent)
 		d.afterClosed().subscribe((r: GroupNew) => {
@@ -172,12 +205,30 @@ class GroupsComponent implements OnInit {
 
 	//#region Confirm / Cancel
 
-	confirm() {
-		this._firebaseSrv.updateGroup(this._groupChanges.values)
-		this._endEditing()
+	/**
+	 * Confirm editing changes.
+	 * @description If there are deleted items, opens a confirmation dialog.
+	 *
+	 * @return {void}
+	 */
+	confirm(): void {
+		if(this._groupChanges.hasDeletedItems) {
+			const dr = this._dialog.open(DeleteConfirmDialogComponent)
+				dr.afterClosed().subscribe((result) => {
+					if (result) this._saveGroups()
+				})
+		} else 
+		this._saveGroups()
 	}
 
-	cancel() {
+	/**
+	 * Cancels the current editing session.
+	 * @description Resets the groups data to its cached state and ends the editing mode.
+	 *
+	 * @return {void}
+	 */
+	cancel(): void {
+	
 		this.groups.set(this._groupsDataCache)
 		this._endEditing()
 	}

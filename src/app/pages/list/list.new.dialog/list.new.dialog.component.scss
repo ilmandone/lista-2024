@@ -1,4 +1,6 @@
 @use '~styles/shared.scss';
+@use '~styles/color-picker.scss';
+
 
 :host {
   .contents {
@@ -8,5 +10,19 @@
   .form-field {
     margin-top: 1rem;
     width: 100%;
+  }
+
+  .group{
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    &__selector {
+      @include color-picker.common('.group__selector');
+    }
   }
 }

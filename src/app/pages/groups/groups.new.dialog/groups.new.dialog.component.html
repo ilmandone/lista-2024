@@ -1,5 +1,5 @@
 
-<h2 mat-dialog-title>Aggiungi</h2>
+<h2 mat-dialog-title>Crea un gruppo</h2>
 
 <form [formGroup]="newGroupFG">
   <mat-dialog-content class="contents">
@@ -18,8 +18,10 @@
       }
     </mat-form-field>
     <div class="color-wrapper">
+      <label for="new-group-color">Seleziona un colore:</label>
       <div class="color-input-container">
-        <input type="color" [formControl]="colorFC" />
+        
+        <input id="new-group-color" type="color" [formControl]="colorFC" />
       </div>
     </div>
   </mat-dialog-content>

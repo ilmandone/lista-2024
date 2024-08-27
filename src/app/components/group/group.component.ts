@@ -29,6 +29,7 @@ export class GroupComponent {
 	selected = input<boolean>()
 
 	changed = output<GroupChanges>()
+	focused = output<boolean>()
 	selectedChange = output<GroupSelected>()
 
   

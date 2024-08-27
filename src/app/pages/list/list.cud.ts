@@ -1,10 +1,11 @@
 /**
  * CREATE, UPDATE AND DELETE ITEMS IN A LIST
  */
-import { ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import { GroupData, ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
+import { ItemDataWithGroup } from 'app/components/item/item.interface'
 
 /**
  * Add a new item to the itemData list and (add a change action for b/e update)
@@ -15,6 +16,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
  */
 export const addItem = (
 	label: string,
+	groupData: GroupData,
 	data: ItemsData,
 	insertAfter: number
 ): {
@@ -22,13 +24,14 @@ export const addItem = (
 	changes: ItemsChanges[]
 } => {
 	const itemsData = cloneDeep(data)
-	const newItem: ItemData = {
+	const newItem: ItemDataWithGroup = {
 		UUID: uuidV4(),
 		label,
-		group: 'verdure',
+		group: groupData.UUID,
 		inCart: false,
 		notToBuy: true,
-		position: insertAfter + 1
+		position: insertAfter + 1,
+		groupData
 	}
 
 	if (insertAfter === data.length - 1) itemsData.push(newItem)
@@ -128,7 +131,8 @@ export const deleteItem = (
  */
 export const updateItemAttr = (
 	change: ItemsChanges,
-	data: ItemsData
+	data: ItemDataWithGroup[],
+	groupData?: GroupData
 ): {
 	changes: ItemsChanges[]
 	itemsData: ItemsData
@@ -140,6 +144,11 @@ export const updateItemAttr = (
 		item.label = change.label
 		item.notToBuy = change.notToBuy
     item.inCart = change.inCart
+		item.group = change.group
+
+		if (groupData) {
+			item.groupData = groupData
+		}
 	}
 
 	return { itemsData, changes: [change] }

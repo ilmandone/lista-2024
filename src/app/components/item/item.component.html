@@ -8,20 +8,17 @@
 >
 	<!--Left group-->
 	<div class="item-button__left">
+		@if(shopping() && extra() ) {
+		<mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
+		} @if (editing()) {
 
-    @if(shopping() && extra() ) {
-      <mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
-    }
-
-		@if (editing()) {
-
-			<!--Checkbox-->
-			<mat-checkbox
-				class="item-button__left__checkbox"
-				aria-label="Select this item"
-				[checked]="selected()"
-				(change)="itemSelected($event)"
-			></mat-checkbox>
+		<!--Checkbox-->
+		<mat-checkbox
+			class="item-button__left__checkbox"
+			aria-label="Select this item"
+			[checked]="selected()"
+			(change)="itemSelected($event)"
+		></mat-checkbox>
 		}
 
 		<!--  Label-->
@@ -36,17 +33,24 @@
 
 	<!--Right controls-->
 	<div class="item-button__right">
-		<!-- Da sostituire con il componente del gruppo -->
-		<div class="group-dot" [class.editing]="editing()"></div>
+		<!-- Group button -->
+		<div
+			class="group-dot"
+			role="button"
+			tabindex="0"
+			[attr.aria-label]="data().groupData?.label"
+			[class.editing]="editing()"
+			[ngStyle]="{backgroundColor: data().groupData?.color}"
+			(click)="changeGroup(data())"
+			(keyup.Enter)="changeGroup(data())"
+			(keyup.Space)="changeGroup(data())"
+		></div>
 
-    @if (editing()) {
-      <!-- Drag handler -->
-      <button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
-        <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
-      </button>
-    }
+		@if (editing()) {
+		<!-- Drag handler -->
+		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
+			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+		</button>
+		}
 	</div>
-
-
-
 </div>

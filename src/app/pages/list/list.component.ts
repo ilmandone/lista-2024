@@ -6,23 +6,25 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIcon } from '@angular/material/icon'
 import { ActivatedRoute } from '@angular/router'
 import { ItemComponent } from 'app/components/item/item.component'
-import { ItemSelectedEvent } from 'app/components/item/item.interface'
+import { ItemDataWithGroup, ItemSelectedEvent } from 'app/components/item/item.interface'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { cloneDeep } from 'lodash'
 import { Subject, takeUntil } from 'rxjs'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
-import { GroupsData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import { GroupData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
 import {
-	IListBottomSheetData,
-	ListBottomSheetComponent
+	ListBottomSheetComponent,
+	ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
+import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 
 @Component({
 	selector: 'app-list',
@@ -38,7 +40,7 @@ import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.compon
 		MatBottomSheetModule,
 		MatDialogModule,
 		MatIcon,
-		MatIconButton,
+		MatIconButton
 	],
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss'
@@ -60,8 +62,8 @@ class ListComponent implements OnInit, OnDestroy {
 	private _destroyed$ = new Subject<boolean>()
 
 	editing = false
-	groups = signal<GroupsData>([])
-	itemsData = signal<ItemsData>([])
+	groups = signal<Record<string, GroupData>>({})
+	itemsData = signal<ItemDataWithGroup[]>([])
 	label!: string
 	selectedItems = new Set<string>()
 	shopping = false
@@ -70,7 +72,7 @@ class ListComponent implements OnInit, OnDestroy {
 	async ngOnInit() {
 		this._UUID = this._activatedRoute.snapshot.params['id']
 		this.label = this._activatedRoute.snapshot.data['label']
-		this.groups.set(await this._firebaseSrv.loadGroups(true))
+		this.groups.set(await this._loadGroups())
 
 		await this._loadData(false)
 
@@ -84,6 +86,44 @@ class ListComponent implements OnInit, OnDestroy {
 		this._destroyed$.complete()
 	}
 
+	/**
+	 * Loads the groups data from the Firebase service and returns a promise that resolves to a record
+	 * mapping group UUIDs to GroupData objects.
+	 *
+	 * @param {boolean} useCache - Whether to use the cache or load the groups data from the Firebase service.
+	 * @return {Promise<Record<string, GroupData>>} A promise that resolves to a record mapping group UUIDs to GroupData objects.
+	 */
+	private async _loadGroups(useCache = false): Promise<Record<string, GroupData>> {
+		const g = await this._firebaseSrv.loadGroups(useCache)
+		return g.reduce((acc: Record<string, GroupData>, val) => {
+			acc[val.UUID] = val
+			return acc
+		}, {})
+	}
+
+	/**
+	 * Load groups and items data
+	 * @description Items with missing group UUID are updated to default group value
+	 * @param {boolean} showLoader
+	 */
+	async _loadData(showLoader = true) {
+		if (showLoader) this._mainStateSrv.showLoader()
+		this.groups.set(await this._loadGroups())
+
+		this._firebaseSrv.loadList(this._UUID).then((items) => {
+			const { data, itemsToDefault } = this._itemsWithGroupData(this.groups(), items)
+			this.itemsData.set(data)
+
+			// Fix missing items groups values
+			if (itemsToDefault.length > 0) {
+				this._itemsChanges.set(itemsToDefault)
+				this._saveItems()
+			}
+
+			if (showLoader) this._mainStateSrv.hideLoader()
+		})
+	}
+
 	//#region Editing
 
 	/**
@@ -93,28 +133,54 @@ class ListComponent implements OnInit, OnDestroy {
 		if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
 		this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_TIME_OUT)
 	}
-	/**
-	 * Load groups and items data
-	 * @param {boolean} showLoader
-	 */
-	async _loadData(showLoader = true) {
-		if (showLoader) this._mainStateSrv.showLoader()
-		this.groups.set(await this._firebaseSrv.loadGroups())
 
-		this._firebaseSrv.loadList(this._UUID).then((r) => {
-			this.itemsData.set(r)
-			if (showLoader) this._mainStateSrv.hideLoader()
+	/**
+	 * Creates an array of item data with group information.
+	 *
+	 * @param {GroupsData} groups - The collection of group data.
+	 * @param {ItemsData} items - The collection of item data.
+	 * @return {ItemDataWithGroup[]} An array of item data with group information.
+	 */
+	private _itemsWithGroupData(
+		groups: Record<string, GroupData>,
+		items: ItemsData
+	): { data: ItemDataWithGroup[]; itemsToDefault: ItemsChanges[] } {
+		const itemsToDefault: ItemsChanges[] = []
+		const data = items.map((i) => {
+			const data: ItemDataWithGroup = i
+			const itemGroupData = groups[data.group]
+
+			if (itemGroupData) data.groupData = itemGroupData
+			else {
+
+				// Set item to default group and register the change
+				data.group = DEFAULT_GROUP.UUID
+				itemsToDefault.push(
+					{
+						...data,
+						crud: 'update',
+					}
+				)
+
+				data.groupData = DEFAULT_GROUP	
+			}
+
+			return data
 		})
+
+		return { data, itemsToDefault }
 	}
 
 	/**
 	 * Update items
 	 * @description Save items in db and reset all the edit information
 	 */
-	_saveItems() {
+	async _saveItems() {
 		this._mainStateSrv.showLoader()
+		this.groups.set(await this._loadGroups(true))
+
 		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-			this.itemsData.set(r)
+			this.itemsData.set(this._itemsWithGroupData(this.groups(), r).data)
 
 			this.selectedItems.clear()
 			this._itemsChanges.clear()
@@ -130,15 +196,22 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @description If another item is selected the new one is added after it
 	 * @param {string} label
 	 */
-	addItem(label: string) {
+	addItem(label: string, groupUUID: string) {
 		const selectedUUID =
 			this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+
 		const insertAfter = selectedUUID
-			? this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
-				this.itemsData().length - 1
+			? (this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
+				this.itemsData().length - 1)
 			: this.itemsData().length - 1
 
-		const { itemsData, changes } = addItem(label, this.itemsData() as ItemsData, insertAfter)
+		const groupData = this.groups()[groupUUID]
+		const { itemsData, changes } = addItem(
+			label,
+			groupData,
+			this.itemsData() as ItemsData,
+			insertAfter
+		)
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
@@ -179,6 +252,25 @@ class ListComponent implements OnInit, OnDestroy {
 	}
 
 	/**
+	 * Item group changed
+	 * @description Open bottom sheet to edit the item group
+	 * @param {ItemsChanges} $event
+	 */
+	itemGroupChanged($event: ItemsChanges) {
+		const bs = this._bottomSheet.open(ListGroupsBottomSheetComponent)
+
+		bs.afterDismissed().subscribe((data: GroupData) => {
+			if (data) {
+				const { itemsData, changes } = updateItemAttr($event, this.itemsData(), data)
+				changes[0].group = data.UUID
+
+				this.itemsData.set(itemsData)
+				this._itemsChanges.set(changes)
+			}
+		})
+	}
+
+	/**
 	 * Add or remove and item from the selectedItems set
 	 * @param {ItemSelectedEvent} $event
 	 */
@@ -194,9 +286,9 @@ class ListComponent implements OnInit, OnDestroy {
 	openNewItemDialog() {
 		const d = this._dialog.open(ListNewDialogComponent)
 
-		d.afterClosed().subscribe((r: string) => {
-			if (r) {
-				this.addItem(r)
+		d.afterClosed().subscribe((r: { label: string; color: string }) => {
+			if (r.label) {
+				this.addItem(r.label, r.color)
 			}
 		})
 	}
@@ -209,14 +301,14 @@ class ListComponent implements OnInit, OnDestroy {
 	 * Open the button sheet and subscribe to the dismiss event
 	 * @description If editing is enable save items to cache
 	 */
-	openButtonSheet() {
+	openMainBottomSheet() {
 		const p = this._bottomSheet.open(ListBottomSheetComponent, {
 			data: {
 				viewModeGrid: this.viewModeGrid
-			} as IListBottomSheetData
+			} as ListBottomSheetData
 		})
 
-		p.afterDismissed().subscribe((r: IListBottomSheetData) => {
+		p.afterDismissed().subscribe((r: ListBottomSheetData) => {
 			Object.assign(this, { ...r })
 			if (this.editing) this._itemsDataCache = cloneDeep(this.itemsData())
 		})
@@ -335,9 +427,9 @@ class ListComponent implements OnInit, OnDestroy {
 			if (this._itemsChanges.hasDeletedItems) {
 				const dr = this._dialog.open(DeleteConfirmDialogComponent)
 				dr.afterClosed().subscribe((result) => {
-					if (result) this._saveItems()
+					if (result) void this._saveItems()
 				})
-			} else this._saveItems()
+			} else void this._saveItems()
 		}
 	}
 
