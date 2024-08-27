@@ -46,7 +46,7 @@
 			(keyup.Space)="changeGroup(data())"
 		></div>
 
-		@if (editing()) {
+		@if (editing() && sortable()) {
 		<!-- Drag handler -->
 		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
 			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>

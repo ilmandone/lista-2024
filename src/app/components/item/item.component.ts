@@ -34,6 +34,7 @@ export class ItemComponent {
 	editing = input<boolean>(false)
 	selected = input<boolean>(false)
 	extra = input<Nullable<string>>(null)
+	sortable = input<boolean>(true)
 	shopping = input<boolean>(false)
 
 	changed = output<ItemsChanges>()
