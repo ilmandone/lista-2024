@@ -15,6 +15,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 /**
  * Add a new item to the itemData list and (add a change action for b/e update)
  * @param {string} label
+ * @param {GroupData} groupData
  * @param {ItemData[]} data
  * @param insertAfter
  * @private
@@ -132,6 +133,7 @@ export const deleteItem = (
  * @description Return an update itemsData list and the changes for b/e
  * @param {ItemsChanges} change
  * @param {ItemsData} data
+ * @param {GroupData} groupData
  * @return {{changes: ItemsChanges[], itemsData: ItemsData}} - An object containing the updated itemsData array and the change object.
  */
 export const updateItemAttr = (
