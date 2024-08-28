@@ -62,7 +62,7 @@
         [editing]="editing"
         [shopping]="shopping"
         [selected]="selectedItems.has(item.UUID)"
-				[sortable]="showByGroups"
+				[sortable]="!showByGroups"
         [stroked]="item.notToBuy"
         [extra]="item.inCart ? 'shopping_cart' : ''"
         (changed)="itemChanged($event)"
