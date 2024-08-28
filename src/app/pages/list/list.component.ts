@@ -6,14 +6,19 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIcon } from '@angular/material/icon'
 import { ActivatedRoute } from '@angular/router'
 import { ItemComponent } from 'app/components/item/item.component'
-import { ItemDataWithGroup, ItemSelectedEvent } from 'app/components/item/item.interface'
+import { ItemSelectedEvent } from 'app/components/item/item.interface'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { cloneDeep } from 'lodash'
 import { Subject, takeUntil } from 'rxjs'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
-import { GroupData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import {
+  GroupData,
+  ItemDataWithGroup,
+  ItemsChanges,
+  ItemsData, ItemsDataWithGroup
+} from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
@@ -63,7 +68,7 @@ class ListComponent implements OnInit, OnDestroy {
 
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
-	itemsData = signal<ItemDataWithGroup[]>([])
+	itemsData = signal<ItemsDataWithGroup>([])
 	label!: string
 	selectedItems = new Set<string>()
 	showByGroups = false
@@ -144,7 +149,7 @@ class ListComponent implements OnInit, OnDestroy {
 	private _itemsWithGroupData(
 		groups: Record<string, GroupData>,
 		items: ItemsData
-	): { data: ItemDataWithGroup[]; itemsToDefault: ItemsChanges[] } {
+	): { data: ItemsDataWithGroup; itemsToDefault: ItemsChanges[] } {
 		const itemsToDefault: ItemsChanges[] = []
 		const data = items.map((i) => {
 			const data: ItemDataWithGroup = i

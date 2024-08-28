@@ -5,11 +5,11 @@ import { MatIconButton } from '@angular/material/button'
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { MatRippleModule } from '@angular/material/core'
 import { MatIconModule } from '@angular/material/icon'
-import { ItemsChanges } from 'app/data/firebase.interfaces'
+import { ItemDataWithGroup, ItemsChanges } from 'app/data/firebase.interfaces'
 import { Nullable } from 'app/shared/common.interfaces'
 import { FocusInputComponent } from '../focus-input/focus-input.component'
 import { FocusInputService } from '../focus-input/focus-input.service'
-import { ItemDataWithGroup, ItemSelectedEvent } from './item.interface'
+import { ItemSelectedEvent } from './item.interface'
 
 @Component({
 	selector: 'app-item',
@@ -51,7 +51,7 @@ export class ItemComponent {
 		if (!this.editing()){
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { groupData, ...rest } = this.data();
-			
+
 			this.clicked.emit({
 				...rest,
 				inCart: this.shopping() ? !this.extra() : false,
@@ -93,13 +93,13 @@ export class ItemComponent {
 
 	/**
 	 * Start group change
-	 * @param {string} $event 
+	 * @param {string} $event
 	 */
 	changeGroup($event: ItemDataWithGroup) {
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { groupData, ...rest } = $event
-		
+
 		this.groupChange.emit({
 			...rest,
 			inCart: false,

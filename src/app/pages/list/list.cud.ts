@@ -1,11 +1,16 @@
 /**
  * CREATE, UPDATE AND DELETE ITEMS IN A LIST
  */
-import { GroupData, ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import {
+  GroupData,
+  ItemData,
+  ItemDataWithGroup,
+  ItemsChanges,
+  ItemsData
+} from '../../data/firebase.interfaces'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
-import { ItemDataWithGroup } from 'app/components/item/item.interface'
 
 /**
  * Add a new item to the itemData list and (add a change action for b/e update)
