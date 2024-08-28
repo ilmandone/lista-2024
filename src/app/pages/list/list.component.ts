@@ -68,7 +68,6 @@ class ListComponent implements OnInit, OnDestroy {
 	selectedItems = new Set<string>()
 	showByGroups = false
 	shopping = false
-	viewModeGrid = false
 
 	async ngOnInit() {
 		this._UUID = this._activatedRoute.snapshot.params['id']
@@ -302,7 +301,7 @@ class ListComponent implements OnInit, OnDestroy {
 	openMainBottomSheet() {
 		const p = this._bottomSheet.open(ListBottomSheetComponent, {
 			data: {
-				viewModeGrid: this.viewModeGrid
+        showByGroups: this.showByGroups
 			} as ListBottomSheetData
 		})
 

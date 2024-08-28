@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
 
 export interface ListBottomSheetData {
-  viewModeGrid?: boolean
+  showByGroups?: boolean
   editing?: boolean
 }
 
@@ -40,7 +40,7 @@ export class ListBottomSheetComponent implements OnInit {
   toggleViewMode($event: Event) {
     this.showByGroups = !this.showByGroups
     this._bottomSheetRef.dismiss({
-      viewModeGrid: this.showByGroups
+      showByGroups: this.showByGroups
     } as ListBottomSheetData)
 
     $event.preventDefault()
