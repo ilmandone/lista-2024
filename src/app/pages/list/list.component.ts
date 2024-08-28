@@ -189,10 +189,11 @@ class ListComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Add an item
-	 * @description If another item is selected the new one is added after it
-	 * @param {string} label
-	 */
+   * Add an item
+   * @description If another item is selected the new one is added after it
+   * @param {string} label
+   * @param {string} groupUUID
+   */
 	addItem(label: string, groupUUID: string) {
 		const selectedUUID =
 			this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
