@@ -37,7 +37,7 @@ export type ItemData = Omit<ItemsChanges, 'crud'>
 export type ItemsData = ItemData[]
 
 export interface ItemDataWithGroup extends ItemData {
-  groupData?: GroupData
+  groupData: GroupData
 }
 
 export type ItemsDataWithGroup = ItemDataWithGroup[]

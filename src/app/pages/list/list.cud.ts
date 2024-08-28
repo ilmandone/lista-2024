@@ -3,10 +3,10 @@
  */
 import {
   GroupData,
-  ItemData,
   ItemDataWithGroup,
   ItemsChanges,
-  ItemsData
+  ItemsData,
+  ItemsDataWithGroup
 } from '../../data/firebase.interfaces'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
@@ -23,10 +23,10 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 export const addItem = (
 	label: string,
 	groupData: GroupData,
-	data: ItemsData,
+	data: ItemsDataWithGroup,
 	insertAfter: number
 ): {
-	itemsData: ItemData[]
+	itemsData: ItemsDataWithGroup
 	changes: ItemsChanges[]
 } => {
 	const itemsData = cloneDeep(data)
@@ -69,9 +69,9 @@ export const addItem = (
  */
 export const deleteItem = (
 	UUIDs: string[],
-	data: ItemsData
+	data: ItemsDataWithGroup
 ): {
-	itemsData: ItemsData
+	itemsData: ItemsDataWithGroup
 	changes: ItemsChanges[]
 } => {
 	const itemsData = cloneDeep(data)
@@ -138,11 +138,11 @@ export const deleteItem = (
  */
 export const updateItemAttr = (
 	change: ItemsChanges,
-	data: ItemDataWithGroup[],
+	data: ItemsDataWithGroup,
 	groupData?: GroupData
 ): {
 	changes: ItemsChanges[]
-	itemsData: ItemsData
+	itemsData: ItemsDataWithGroup
 } => {
 	const itemsData = cloneDeep(data)
 	const item = itemsData.find((i) => i.UUID === change.UUID)
@@ -168,9 +168,9 @@ export const updateItemAttr = (
  */
 export const updateItemPosition = (
 	$event: CdkDragDrop<ItemsData>,
-	data: ItemsData
+	data: ItemsDataWithGroup
 ): {
-	itemsData: ItemsData
+	itemsData: ItemsDataWithGroup
 	changes: ItemsChanges[]
 } => {
 	const ld = cloneDeep(data)
