@@ -99,6 +99,7 @@ class ListsComponent implements OnInit, OnDestroy {
 			this.listsData.set(r)
 			this._mainStateSrv.hideLoader()
 			this.editing = false
+			this._itemsChanges.clear()
 		})
 	}
 
