@@ -1,9 +1,10 @@
-import {APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection} from '@angular/core';
+import {APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection, isDevMode} from '@angular/core';
 import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {FirebaseService} from "./data/firebase.service";
+import { provideServiceWorker } from '@angular/service-worker';
 
 export function InitApp(fbSrv: FirebaseService) {
   return (): Promise<void> =>
@@ -16,5 +17,8 @@ export const appConfig: ApplicationConfig = {
     useFactory: InitApp,
     deps: [FirebaseService],
     multi: true
-  }]
+  }, provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })]
 };
