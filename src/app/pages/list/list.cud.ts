@@ -1,15 +1,21 @@
 /**
  * CREATE, UPDATE AND DELETE ITEMS IN A LIST
  */
-import { GroupData, ItemData, ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
+import {
+  GroupData,
+  ItemDataWithGroup,
+  ItemsChanges,
+  ItemsData,
+  ItemsDataWithGroup
+} from '../../data/firebase.interfaces'
 import { cloneDeep } from 'lodash'
 import { v4 as uuidV4 } from 'uuid'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
-import { ItemDataWithGroup } from 'app/components/item/item.interface'
 
 /**
  * Add a new item to the itemData list and (add a change action for b/e update)
  * @param {string} label
+ * @param {GroupData} groupData
  * @param {ItemData[]} data
  * @param insertAfter
  * @private
@@ -17,10 +23,10 @@ import { ItemDataWithGroup } from 'app/components/item/item.interface'
 export const addItem = (
 	label: string,
 	groupData: GroupData,
-	data: ItemsData,
+	data: ItemsDataWithGroup,
 	insertAfter: number
 ): {
-	itemsData: ItemData[]
+	itemsData: ItemsDataWithGroup
 	changes: ItemsChanges[]
 } => {
 	const itemsData = cloneDeep(data)
@@ -63,9 +69,9 @@ export const addItem = (
  */
 export const deleteItem = (
 	UUIDs: string[],
-	data: ItemsData
+	data: ItemsDataWithGroup
 ): {
-	itemsData: ItemsData
+	itemsData: ItemsDataWithGroup
 	changes: ItemsChanges[]
 } => {
 	const itemsData = cloneDeep(data)
@@ -127,15 +133,16 @@ export const deleteItem = (
  * @description Return an update itemsData list and the changes for b/e
  * @param {ItemsChanges} change
  * @param {ItemsData} data
+ * @param {GroupData} groupData
  * @return {{changes: ItemsChanges[], itemsData: ItemsData}} - An object containing the updated itemsData array and the change object.
  */
 export const updateItemAttr = (
 	change: ItemsChanges,
-	data: ItemDataWithGroup[],
+	data: ItemsDataWithGroup,
 	groupData?: GroupData
 ): {
 	changes: ItemsChanges[]
-	itemsData: ItemsData
+	itemsData: ItemsDataWithGroup
 } => {
 	const itemsData = cloneDeep(data)
 	const item = itemsData.find((i) => i.UUID === change.UUID)
@@ -161,9 +168,9 @@ export const updateItemAttr = (
  */
 export const updateItemPosition = (
 	$event: CdkDragDrop<ItemsData>,
-	data: ItemsData
+	data: ItemsDataWithGroup
 ): {
-	itemsData: ItemsData
+	itemsData: ItemsDataWithGroup
 	changes: ItemsChanges[]
 } => {
 	const ld = cloneDeep(data)

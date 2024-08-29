@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
 
 export interface ListBottomSheetData {
-  viewModeGrid?: boolean
+  showByGroups?: boolean
   editing?: boolean
 }
 
@@ -23,7 +23,7 @@ export class ListBottomSheetComponent implements OnInit {
   private readonly _bottomSheetRef = inject(MatBottomSheetRef<ListBottomSheetComponent>)
   private readonly _bottomSheetData = inject(MAT_BOTTOM_SHEET_DATA)
 
-  viewModeGrid = false
+  showByGroups = false
 
   ngOnInit() {
     Object.assign(this, { ...this._bottomSheetData })
@@ -38,9 +38,9 @@ export class ListBottomSheetComponent implements OnInit {
   }
 
   toggleViewMode($event: Event) {
-    this.viewModeGrid = !this.viewModeGrid
+    this.showByGroups = !this.showByGroups
     this._bottomSheetRef.dismiss({
-      viewModeGrid: this.viewModeGrid
+      showByGroups: this.showByGroups
     } as ListBottomSheetData)
 
     $event.preventDefault()

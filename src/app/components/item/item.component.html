@@ -38,15 +38,15 @@
 			class="group-dot"
 			role="button"
 			tabindex="0"
-			[attr.aria-label]="data().groupData?.label"
+			[attr.aria-label]="data().groupData.label"
 			[class.editing]="editing()"
-			[ngStyle]="{backgroundColor: data().groupData?.color}"
+			[ngStyle]="{backgroundColor: data().groupData.color}"
 			(click)="changeGroup(data())"
 			(keyup.Enter)="changeGroup(data())"
 			(keyup.Space)="changeGroup(data())"
 		></div>
 
-		@if (editing()) {
+		@if (editing() && sortable()) {
 		<!-- Drag handler -->
 		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
 			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
