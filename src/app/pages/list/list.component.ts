@@ -186,7 +186,9 @@ class ListComponent implements OnInit, OnDestroy {
     this.groups.set(await this._loadGroups(true))
 
     this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-      this.itemsData.set(this._itemsWithGroupData(this.groups(), r).data)
+
+      const dataWithGroup = this._itemsWithGroupData(this.groups(), r).data
+      this.itemsData.set(this.showByGroups ? listToGridView(dataWithGroup) : dataWithGroup)
 
       this.selectedItems.clear()
       this._itemsChanges.clear()
