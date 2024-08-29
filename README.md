@@ -2,7 +2,7 @@
 
 ## TODO:
 
-1) Impedire la cancellazione di un item o gruppo se c'è solo un elemento o se sono selezionti tutti gli elementi
+1) ~~Impedire la cancellazione di un item o gruppo se c'è solo un elemento o se sono selezionti tutti gli elementi~~
 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
