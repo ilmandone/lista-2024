@@ -15,7 +15,7 @@
 		<button
 			mat-icon-button
 			[title]="'Delete group'"
-			[disabled]="selectedGroups.size === 0"
+			[disabled]="selectedGroups.size === 0 || selectedGroups.size === groups().length"
 			(click)="groupsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>

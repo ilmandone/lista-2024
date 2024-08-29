@@ -40,7 +40,7 @@
 			mat-icon-button
 			title="add item"
 			type="button"
-			[disabled]="selectedItems.size === 0 || itemsData().length <= 1"
+			[disabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
 			(click)="itemsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
@@ -54,8 +54,7 @@
 	<!--Items-->
 	@for (item of itemsData(); track item.UUID) {
 	<!-- Drag Box -->
-	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">
-
+	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">		
     @if(!shopping || (shopping && !item.notToBuy)){
       <app-item
         [data]="item"

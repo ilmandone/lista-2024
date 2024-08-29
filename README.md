@@ -2,13 +2,8 @@
 
 ## TODO:
 
-1) ~~Aggiungere la dialog se sono stati cancellati dei gruppi~~
-2) ~~Aggiungere un grouppo di default in coda ai dati caricati~~
-2) Nella pagina della singola lista:
-   1) ~~Aggiungere i gruppi per i singoli item~~
-   2) ~~Aggiungere il gruppo alla creazione di un nuovo item  -- TODO: Contiuare da qui utilizzando il valore nel FG del new item~~
-   3) ~~Aggiungere la modifica del grouppo sul singolo item~~
-   4) ~~Quando viene cancellato un gruppo al caricamento di una lista devono essere aggiornati tutti gli elementi con quel gruppo e deve essere mandato in esecuzione il salvataggio.~~
+1) ~~Impedire la cancellazione di un item o gruppo se c'è solo un elemento o se sono selezionti tutti gli elementi~~
+
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.2.
 
