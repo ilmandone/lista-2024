@@ -241,10 +241,9 @@ export class FirebaseService {
 				batch.set(itemDoc, {
 					UUID: UUIDItem,
 					inCart: false,
-					label: 'Hello',
-					qt: 1,
-					toBuy: true,
-					group: null, // TODO: set to default group
+					label: 'Hello',					
+					notToBuy: false,
+					group: DEFAULT_GROUP.UUID,
 					position: 0
 				})
 			}
