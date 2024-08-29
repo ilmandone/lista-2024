@@ -316,8 +316,15 @@ class ListComponent implements OnInit, OnDestroy {
 
     p.afterDismissed().subscribe((r: ListBottomSheetData) => {
       Object.assign(this, { ...r })
-      if (this.editing) this._itemsDataCache = cloneDeep(this.itemsData())
-      if (this.showByGroups) console.log('SHOW BY GROUPS')
+
+      if ('showByGroups' in r) {
+        console.log('SHOW BY GROUPS', this.showByGroups)
+        return
+      }
+
+      if('editing' in r) {
+        this._itemsDataCache = cloneDeep(this.itemsData())
+      }      
     })
   }
 
