@@ -34,6 +34,7 @@ import {
   ListGroupsBottomSheetComponent
 } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
+import { gridToListView, listToGridView } from './list.groups-view'
 
 @Component({
   selector: 'app-list',
@@ -318,11 +319,14 @@ class ListComponent implements OnInit, OnDestroy {
       Object.assign(this, { ...r })
 
       if ('showByGroups' in r) {
-        console.log('SHOW BY GROUPS', this.showByGroups)
-        return
+
+        if(this.showByGroups) 
+          this.itemsData.set(listToGridView(this.itemsData()))
+        else 
+          this.itemsData.set(gridToListView(this.itemsData()))        
       }
 
-      if('editing' in r) {
+      else if('editing' in r) {
         this._itemsDataCache = cloneDeep(this.itemsData())
       }      
     })
