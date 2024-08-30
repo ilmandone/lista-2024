@@ -1,0 +1,79 @@
+@use "~styles/shared.scss";
+@use "~styles/utils.scss";
+@use "~styles/vars.scss";
+@use "~styles/typo.scss";
+
+@use '~styles/drag-and-drop.scss';
+
+:host {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: utils.getRealVh(100);
+
+  .header {
+    width: calc(100% - var(--main-header-height));
+    height: var(--main-header-height);
+
+    margin-left: var(--main-nav-width);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__title {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    &__controls {
+      flex: 0;
+
+      display: flex;
+    }
+
+    @include utils.media-query('t') {
+      &__controls {
+        padding-right: 1rem;
+      }
+    }
+
+    h1 {
+      width: 100%;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
+      font-size: typo.$text-xl;
+      font-weight: 400;
+      letter-spacing: -0.5px;
+
+      @include utils.media-query('t') {
+        font-size: typo.$text-2xl;
+      }
+    }
+
+    button {
+      @include shared.disabledOpacity;
+    }
+  }
+
+  .main {
+    position: relative;
+    width: 100%;
+    height: calc(utils.getRealVh(100) - var(--main-header-height));
+
+    padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // Drag and drop
+		@include drag-and-drop.main;
+    
+  }
+
+  @include drag-and-drop.common;
+}

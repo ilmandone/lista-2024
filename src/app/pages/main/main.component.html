@@ -1,0 +1,64 @@
+<mat-drawer-container [hasBackdrop]="true">
+  <!-- Sidebar -->
+  <mat-drawer class="mat-drawer" #drawer [mode]="'over'">
+    <div class="main-menu">
+
+      <!--Top-->
+      <div class="main-menu__top">
+
+        <!-- Title -->
+        <h2>Main Menu</h2>
+
+        <!--Buttons-->
+        <a class="btn--first" mat-button [routerLink]="['/groups']">
+          <mat-icon [fontIcon]="'grid_view'"></mat-icon>
+          Groups
+        </a>
+
+        <button class="btn" mat-button (click)="mainStateService.triggerReload(); drawer.toggle()">
+          <mat-icon [fontIcon]="'cached'"></mat-icon>
+          Reload
+        </button>
+
+        <button class="btn" mat-button (click)="logOut()">
+          <mat-icon [fontIcon]="'logout'"></mat-icon>
+          Sign out
+        </button>
+      </div>
+
+      <!--Bottom-->
+      <div class="main-menu__bottom">
+        <div class="theme-label">
+          <mat-icon [fontIcon]="'dark_mode'"></mat-icon>
+          <span>Dark</span>
+        </div>
+
+        <mat-slide-toggle title="Dark theme controller" [checked]="themeSrv.isDark()"
+                          (change)="themeToggle($event)"></mat-slide-toggle>
+      </div>
+    </div>
+  </mat-drawer>
+
+  <mat-drawer-content class="drawer-content">
+    <!-- Header -->
+    <nav class="drawer-content__nav">
+      <button mat-icon-button (click)="drawer.toggle()" [title]="'Open main menu'"
+              [disabled]="disabled">
+        <mat-icon [fontIcon]="'menu'"></mat-icon>
+      </button>
+    </nav>
+
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>
+
+<!--Main loader-->
+@if (mainStateService.loader()) {
+  <div class="main-loader">
+    <div class="main-loader__content">
+      <app-loader [loading]="true" [mode]="'indeterminate'"
+                  [bg]="'linear-gradient(90deg, var(--mat-app-background-color), var(--loader-default-color-bg))'"></app-loader>
+    </div>
+  </div>
+}
+

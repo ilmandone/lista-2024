@@ -1,0 +1,37 @@
+@use '~styles/shared.scss';
+@use '~styles/typo.scss';
+@use '~styles/color-picker.scss';
+
+:host {
+  .contents {
+    @include shared.dialogCommon;
+  }
+
+  .form-field {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .color-wrapper {
+    width: 100%;
+    margin-top: 0.25rem;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .color-input-container {
+      @include color-picker.common;
+      width: 4rem;
+      height: 2.5rem;
+    }
+
+    label {
+      margin-right: 0.5rem;
+      font-size: typo.$text;
+    }
+  }
+}
+
+
+

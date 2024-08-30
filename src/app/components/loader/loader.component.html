@@ -1,0 +1,11 @@
+@if(loading()) {
+<div class="loader" [ngStyle]="{background: bg()}">
+  <mat-spinner
+    class="loader__spinner"
+    [diameter]="diameter()"
+    [mode]="mode()"
+    [strokeWidth]="strokeWidth()"
+    [value]="value()"
+  ></mat-spinner>
+</div>
+}

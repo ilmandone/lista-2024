@@ -1,0 +1,56 @@
+<app-hero-image class="hero"></app-hero-image>
+
+<main>
+  <!--Title -->
+  <h1>Tati's List</h1>
+
+  <!--Form-->
+  <form class="login-form" [formGroup]="loginFG" (ngSubmit)="loginSubmit()">
+    <!--Email-->
+    <mat-form-field class="form-field">
+      <mat-label>Email</mat-label>
+      <input
+        [formControl]="emailFC"
+        [required]="true"
+        matInput
+        placeholder="Your account email"
+        type="email"
+      />
+      @if (emailFC.invalid) {
+      <mat-error
+        >{{emailFC.errors?.['email'] ? 'Not a valid email' : 'Email required'}}</mat-error
+      >
+      }
+    </mat-form-field>
+
+    <!--Password-->
+    <mat-form-field class="form-field">
+      <mat-label>Password</mat-label>
+      <input
+        [formControl]="passwordFC"
+        [required]="true"
+        matInput
+        placeholder="Your account password"
+        type="password"
+      />
+      @if (passwordFC.invalid) {
+      <mat-error>Password required</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="submit-wrapper">
+      <!--Submit-->
+      <button mat-flat-button type="submit" [disabled]="loginFG.invalid">
+        Login
+      </button>
+
+      <!--Loader-->
+      <app-loader [loading]="emailFC.disabled" [mode]="'indeterminate'"
+                  [bg]="'transparent'"></app-loader>
+    </div>
+  </form>
+
+  <div class="forgot-password">
+    <a mat-button routerLink="/forgot">Forgot password?</a>
+  </div>
+</main>

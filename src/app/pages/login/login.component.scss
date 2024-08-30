@@ -1,0 +1,74 @@
+@use '~styles/utils.scss';
+@use '~styles/typo.scss';
+
+:host {
+  @include utils.customEl;
+
+  .hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: utils.getRealVh(42);
+  }
+
+  main {
+    position: relative;
+    height: utils.getRealVh(65);
+    width: 85vw;
+
+    margin: utils.getRealVh(30) auto 0;
+    padding-top: utils.getRealVh(5);
+
+    background-color: var(--mat-app-background-color);
+
+    border-radius: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    h1 {
+      font-size: typo.$text-3xl;
+      font-weight: 300;
+      text-transform: uppercase;
+      color: var(--mdc-filled-button-container-color);
+    }
+
+    .login-form {
+      margin-top: 1rem;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .form-field {
+      width: 80vw;
+      max-width: 16rem;
+      margin: 1.25rem 0 0;
+
+      &:first-child {
+        margin-top: 2.5rem;
+      }
+    }
+
+    .submit-wrapper {
+      position: relative;
+      min-width: 10rem;
+      margin: 2rem 0 0;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  .forgot-password {
+    margin: utils.getRealVh(5) 0 0;
+
+    font-size: typo.$text-sm;
+    text-decoration: underline;
+  }
+}

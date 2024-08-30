@@ -1,0 +1,115 @@
+@use '~styles/utils.scss';
+@use '~styles/typo.scss';
+@use '~styles/vars.scss';
+
+:host {
+  @include utils.customEl;
+
+  .mat-drawer {
+    max-width: 16rem;
+  }
+
+  .drawer-content {
+    height: utils.getRealVh(100);
+
+    overflow: inherit;
+
+    &__nav {
+      position: absolute;
+      height: var(--main-header-height);
+      width: var(--main-nav-width);
+
+      padding: 0 0.5rem;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      z-index: utils.getZ('main-menu');
+    }
+  }
+
+  .main-menu {
+    height: 100%;
+    padding: 4vh 1.5rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    &__top {
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      h2 {
+        padding-top: 0.5rem;
+        padding-left: 1rem;
+        font-size: typo.$text-xl;
+        font-weight: 400;
+      }
+
+      .btn {
+        height: 3rem;
+        width: 100%;
+
+        margin-top: 0.5rem;
+        padding: 0 1.5rem;
+
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      .btn--first {
+        @extend .btn;
+        margin-top: 2.5rem;
+      }
+    }
+
+    &__bottom {
+      width: 100%;
+      padding: 0 0.5rem;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .theme-label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        span {
+          margin-left: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .main-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: utils.getRealVh(100);
+
+    z-index: utils.getZ('main-loader');
+
+    display: flex;
+    justify-content: flex-end;
+
+    &__content {
+      position: relative;
+      right: 0;
+
+      width: 12rem;
+      height: var(--main-header-height);
+
+      border-bottom-left-radius: 25px;
+      background-color: var(--mat-app-background-color);
+    }
+  }
+}

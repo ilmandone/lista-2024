@@ -1,0 +1,5 @@
+@use '~styles/color-picker.scss';
+
+:host {
+  @include color-picker.common;
+}

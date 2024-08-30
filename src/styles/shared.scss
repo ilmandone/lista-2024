@@ -1,0 +1,12 @@
+// Common
+@mixin disabledOpacity() {
+  &[disabled] {
+    opacity: 0.2;
+  }
+}
+
+// Dialog
+@mixin dialogCommon() {
+  width: 80vw;
+  max-width: var(--mat-dialog-container-max-width);
+}

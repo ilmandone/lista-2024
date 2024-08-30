@@ -1,0 +1,35 @@
+<div class="group-item">
+	<!--  Left group-->
+	<div class="group-item__left">
+		<!--Checkbox-->
+		<mat-checkbox
+			class="group-item__checkbox"
+			aria-label="Select this item"
+			[checked]="selected()"
+			(change)="groupSelected($event)"
+		></mat-checkbox>
+
+		<!--Label-->
+		<app-focus-input
+			[key]="data().UUID"
+			[value]="data().label"
+      (focused)="focused.emit($event)"
+			(changed)="labelChanged($event)"
+		></app-focus-input>
+	</div>
+
+	<!--  Right group-->
+	<div class="group-item__right">
+		<!--Color picker-->
+		<app-color-picker
+			class="color-picker"
+			[value]="data().color"
+			(valueChanged)="colorChanged($event)"
+		></app-color-picker>
+
+		<!--Drag handler-->
+		<button cdkDragHandle mat-icon-button [title]="'Drag handler'">
+			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+		</button>
+	</div>
+</div>

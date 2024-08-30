@@ -1,0 +1,63 @@
+@use "~styles/utils.scss";
+@use "~styles/vars.scss";
+@use "~styles/typo.scss";
+
+@use '~styles/drag-and-drop.scss';
+
+:host {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: utils.getRealVh(100);
+
+  .header {
+    width: calc(100% - var(--main-header-height));
+    height: var(--main-header-height);
+
+    margin-left: var(--main-nav-width);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__controls {
+      padding-right: 0.25rem;
+    }
+
+    @include utils.media-query('t') {
+      &__controls {
+        padding-right: 1rem;
+      }
+    }
+
+    h1 {
+      font-size: typo.$text-3xl;
+      font-weight: 300;
+      text-transform: uppercase;
+
+      @include utils.media-query('t') {
+        font-size: typo.$text-4xl;
+      }
+    }
+  }
+
+  .main {
+    position: relative;
+    width: 100%;
+    height: calc(utils.getRealVh(100) - var(--main-header-height));
+
+    padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // Drag and drop
+		@include drag-and-drop.main;
+  }
+
+  @include drag-and-drop.common;
+}
+
+

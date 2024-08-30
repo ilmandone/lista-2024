@@ -1,0 +1,44 @@
+<!--Main component-->
+<div
+	class="item-button"
+	mat-ripple
+	[attr.tabindex]="!editing() ? -1 : 0"
+	[attr.role]="!editing() ? 'button' : 'none'"
+	[class.editing]="editing()"
+	[matRippleDisabled]="editing()"
+	(click)="itemClicked()"
+	(keyup.enter)="itemClicked()"
+	(keyup.space)="itemClicked()"
+>
+	<!--  Drag button -->
+	@if (editing()) {
+	<button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled">
+		<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+	</button>
+	}
+
+	<!--  Label-->
+	<app-focus-input
+		[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
+		[key]="data().UUID"
+		[value]="data().label"
+		(changed)="itemLabelChanged($event)"
+	/>
+
+	<!--  Time or delete button-->
+	@if (!editing()) {
+	<span class="item-button__time"
+		>{{ time.toLocaleDateString() }} <br />
+		{{ time.getHours() }} :{{ time.getMinutes() }}</span
+	>
+	} @else {
+	<button
+		mat-icon-button
+		[title]="'delete ' + data().label + 'list'"
+		(click)="deleteList()"
+		[disabled]="disabled"
+	>
+		<mat-icon [fontIcon]="'delete'"></mat-icon>
+	</button>
+	}
+</div>

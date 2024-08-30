@@ -1,0 +1,57 @@
+@use '~styles/typo.scss';
+
+:host {
+	padding: 0.5rem 1.5rem;
+
+	h2 {
+		padding: 0 1.5rem;
+		margin: 0.25rem 0 2rem;
+
+		font-size: typo.$text-xl;
+		font-weight: 500;
+		letter-spacing: -0.5px;
+	}
+
+	main {
+    margin-top: 1.5rem;
+
+		.group-button {
+			width: 100%;
+			height: 3rem;
+			margin-bottom: 0.5rem;
+			padding: 0.5rem 0.5rem 0.5rem 1rem;
+
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			border: 1px solid transparent;
+			background-color: var(--button-custom-color-bg);
+			border-radius: 1.5rem;
+
+			color: var(--mdc-text-button-label-text-color);
+
+			> span {
+				display: block;
+        font-family: Inter;
+				font-weight: 600;
+			}
+
+			&:hover {
+				background-color: var(--button-custom-color-bg-hover);
+			}
+
+			&__color {
+				width: 2rem;
+				height: 2rem;
+
+				border-radius: 1rem;
+			}
+		}
+
+		.contents {
+			display: block;
+			position: relative;
+		}
+	}
+}

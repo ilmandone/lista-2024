@@ -1,0 +1,60 @@
+@use '../../node_modules/@angular/material/index' as mat;
+
+@include mat.core();
+
+// Define a light theme
+$light-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$orange-palette,
+  ),
+  typography: (
+    plain-family: 'Inter',
+    brand-family: 'Inter',
+    bold-weight: 800,
+    medium-weight: 600,
+    regular-weight: 400,
+  )
+));
+
+html {
+  @include mat.core-theme($light-theme);
+  @include mat.button-theme($light-theme);
+  @include mat.input-theme($light-theme);
+  @include mat.fab-theme($light-theme);
+  @include mat.form-field-theme($light-theme);
+  @include mat.sidenav-theme($light-theme);
+  @include mat.slide-toggle-theme($light-theme);
+  @include mat.dialog-theme($light-theme);
+  @include mat.bottom-sheet-theme($light-theme);
+  @include mat.checkbox-theme($light-theme);
+
+  // Overrides
+
+  --mdc-filled-button-container-height: 3rem;
+  --mdc-protected-button-container-height: 3rem;
+  --mdc-text-button-container-height: 3rem;
+  --mat-dialog-container-max-width: 640px;
+
+  --mdc-fab-container-shape: 0.5rem;
+
+  // Custom colors
+  --loader-default-color-bg: #f2ece4;
+
+  --snack-bar-error: #dd0808;
+  --snack-bar-warning: #d47d0a;
+  --snack-bar-info: #69dd64;
+
+  --lists-item-color-bg: #F3F3F3;
+  --lists-item-input-color-bg: #ececec;
+  --lists-item-drag-placeholder-color-bg: #c2c2c2;
+  --lists-item-drag-placeholder-color-border: #9a9a9a;
+
+  --button-toggle-active-color-bg: rgb(194, 57, 8);
+  --button-custom-border-color: rgb(228, 228, 228);
+  --button-custom-color-bg: rgba(150, 73, 0, 0.05);
+  --button-custom-color-bg-hover: rgba(150, 73, 0, 0.2);
+
+  background-color: var(--mat-app-background-color);
+  color: var(--mat-app-text-color);
+}

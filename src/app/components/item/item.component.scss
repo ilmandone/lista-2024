@@ -1,0 +1,48 @@
+@use "~styles/shared.scss";
+@use "~styles/typo.scss";
+@use "~styles/utils.scss";
+
+@use "~styles/item-group.scss";
+
+:host {
+  position: relative;
+
+  .item-button {
+    @include item-group.common;
+
+    &.editing {
+      app-focus-input {
+        padding-right: 1rem;
+      }
+
+      .item-button__right {
+        width: 6rem;
+      }
+    }
+
+    .shopping-icon {
+      margin: 0 1rem;
+      color: var(--button-toggle-active-color-bg);
+    }
+  }
+
+  button {
+    border: 0;
+    @include shared.disabledOpacity;
+  }
+
+  .group-dot {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+  
+    border-radius: 50%;
+
+    cursor: pointer;
+  
+    &:not(.editing) {
+      transform: translateX(65%);
+      cursor: auto;
+    }
+  }
+}

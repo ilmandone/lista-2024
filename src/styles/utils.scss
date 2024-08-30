@@ -1,0 +1,61 @@
+@mixin customEl {
+  display: block;
+}
+
+@function getRealVh($val) {
+  @return calc(var(--vh) * $val);
+}
+
+// Z index
+
+$z-indexes: (
+  "main-menu": 2997,
+  "loader": 2998,
+  "main-loader": 2999
+);
+
+@function getZ($key) {
+  @if map-has-key($z-indexes, $key) {
+    @return map-get($z-indexes, $key);
+  } @else {
+    @warn "Chiave `#{$key}` non trovata nella mappa $z-indexes";
+    @return null;
+  }
+}
+
+// Media query
+
+$media-map: (
+  "t": "(min-width: 768px)",
+  "tl": "(min-width: 1024px)",
+  "m": "(min-width: 1440px)",
+  "l": "(min-width: 1920px)",
+  "w": "(min-width: 2560px)"
+) !default;
+
+@mixin media-query($key) {
+  @if map-has-key($media-map, $key) {
+    @media #{map-get($media-map, $key)} {
+      @content;
+    }
+  }
+}
+
+@mixin media-touch() {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+@mixin media-pointer() {
+  @media (hover: hover) and (pointer: fine){
+    @content
+  }
+}
+
+@mixin text-not-selectable() {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Standard syntax */
+}

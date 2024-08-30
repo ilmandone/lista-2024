@@ -1,0 +1,8 @@
+@use '~styles/typo.scss';
+
+:host {
+  .dialog-content {
+    font-size: typo.$text-2xl;
+  }
+}
+
