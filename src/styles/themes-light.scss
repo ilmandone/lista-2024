@@ -28,6 +28,7 @@ html {
   @include mat.dialog-theme($light-theme);
   @include mat.bottom-sheet-theme($light-theme);
   @include mat.checkbox-theme($light-theme);
+  @include mat.tooltip-theme($light-theme);
 
   // Overrides
 
