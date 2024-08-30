@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
-    "build": "ng build",
+    "build": "ng build --base-href /tati-lista/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -21,6 +21,7 @@
     "@angular/platform-browser": "^18.0.0",
     "@angular/platform-browser-dynamic": "^18.0.0",
     "@angular/router": "^18.0.0",
+    "@angular/service-worker": "^18.0.0",
     "firebase": "^10.12.2",
     "lodash": "^4.17.21",
     "rxjs": "~7.8.0",

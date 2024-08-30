@@ -9,15 +9,11 @@
 
   z-index: utils.getZ('loader');
 
-  background-color: var(--mat-app-background-color);
+  background-color: var(--loader-default-color-bg);
 
   display: flex;
   align-items: center;
   justify-content: center;
-
-  &__transparent {
-    background-color: transparent;
-  }
 
   &__spinner {
     position: absolute;
