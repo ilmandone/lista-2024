@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { Nullable } from '../../shared/common.interfaces'
 import { CommonModule } from '@angular/common'
 
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common'
   styleUrl: './loader.component.scss'
 })
 export class LoaderComponent {
-  bg = input<Nullable<string>>(null);
+  bg = input<Nullable<string>>(null)
   diameter = input<number>(30)
   loading = input.required<boolean>()
   mode = input.required<'determinate' | 'indeterminate'>()
