@@ -1,10 +1,11 @@
 {
-  "name": "lista-2024",
-  "short_name": "lista-2024",
+  "name": "Tati's List",
+  "short_name": "Tati's List",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
+  "orientation": "portrait",
   "start_url": "./",
   "icons": [
     {
