@@ -1,7 +1,7 @@
 {
   "name": "Tati's List",
   "short_name": "Tati's List",
-  "theme_color": "#1976d2",
+  "theme_color": "#D97818",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
