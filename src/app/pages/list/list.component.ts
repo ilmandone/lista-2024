@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet'
 import { MatIconButton } from '@angular/material/button'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
@@ -296,7 +296,7 @@ class ListComponent implements OnInit, OnDestroy {
     const d = this._dialog.open(ListNewDialogComponent)
 
     d.afterClosed().subscribe((r: { label: string; color: string }) => {
-      if (r.label) {
+      if (r?.label) {
         this.addItem(r.label, r.color)
       }
     })
@@ -322,15 +322,13 @@ class ListComponent implements OnInit, OnDestroy {
 
       if ('showByGroups' in r) {
 
-        if(this.showByGroups) 
+        if (this.showByGroups)
           this.itemsData.set(listToGridView(this.itemsData()))
-        else 
-          this.itemsData.set(gridToListView(this.itemsData()))        
-      }
-
-      else if('editing' in r) {
+        else
+          this.itemsData.set(gridToListView(this.itemsData()))
+      } else if ('editing' in r) {
         this._itemsDataCache = cloneDeep(this.itemsData())
-      }      
+      }
     })
   }
 
