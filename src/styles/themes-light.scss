@@ -39,6 +39,7 @@ html {
   --mdc-fab-container-shape: 0.5rem;
 
   // Custom colors
+  --loader-default-color-bg: #f2ece4;
 
   --snack-bar-error: #dd0808;
   --snack-bar-warning: #d47d0a;
@@ -53,7 +54,7 @@ html {
   --button-custom-border-color: rgb(228, 228, 228);
   --button-custom-color-bg: rgba(150, 73, 0, 0.05);
   --button-custom-color-bg-hover: rgba(150, 73, 0, 0.2);
-  
+
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);
 }

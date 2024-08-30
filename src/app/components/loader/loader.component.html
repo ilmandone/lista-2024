@@ -1,5 +1,5 @@
 @if(loading()) {
-<div class="loader" [class.loader__transparent]="bgTransparent()">
+<div class="loader" [ngStyle]="{background: bg()}">
   <mat-spinner
     class="loader__spinner"
     [diameter]="diameter()"
