@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, effect, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { ListData, ListsData, ListsItemChanges } from 'app/data/firebase.interfaces'
@@ -20,6 +20,7 @@ import { cloneDeep } from 'lodash'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { addList, deleteList, updateListAttr, updateListPosition } from './lists.cud'
 import { Subject, takeUntil } from 'rxjs'
+import { MatTooltip } from '@angular/material/tooltip'
 
 @Component({
 	selector: 'app-lists',
@@ -34,7 +35,8 @@ import { Subject, takeUntil } from 'rxjs'
 		ConfirmCancelComponent,
 		CdkDrag,
 		CdkDropList,
-		CdkDragPlaceholder
+		CdkDragPlaceholder,
+    MatTooltip
 	],
 	templateUrl: './lists.component.html',
 	styleUrl: './lists.component.scss'
@@ -74,6 +76,21 @@ class ListsComponent implements OnInit, OnDestroy {
 		this._destroyed$.next(true)
 		this._destroyed$.complete()
 	}
+
+  /**
+   * Shortcuts for editing on desktop
+   * @param $event
+   */
+  @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
+    if (navigator.maxTouchPoints === 0 && this.editing && $event.shiftKey && $event.altKey) {
+      $event.preventDefault()
+
+      if ($event.key.toLowerCase() === 'a') {
+        this.openCreateNew()
+        return
+      }
+    }
+  }
 
 	//#region Privates
 

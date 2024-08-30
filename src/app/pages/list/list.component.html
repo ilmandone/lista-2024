@@ -29,6 +29,7 @@
 			mat-icon-button
 			title="add item"
 			type="button"
+      matTooltip="⇧ + Alt + A"
 			[disabled]="selectedItems.size > 1"
 			(click)="openNewItemDialog()"
 		>
@@ -40,6 +41,8 @@
 			mat-icon-button
 			title="add item"
 			type="button"
+      matTooltip="⇧ + Alt + D"
+      [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
 			[disabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
 			(click)="itemsDeleted()"
 		>
