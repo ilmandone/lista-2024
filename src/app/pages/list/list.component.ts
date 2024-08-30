@@ -84,8 +84,12 @@ class ListComponent implements OnInit, OnDestroy {
     this._destroyed$.complete()
   }
 
+  /**
+   * Shortcuts for editing on desktop
+   * @param $event
+   */
   @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-    if (this.editing && $event.shiftKey && $event.altKey) {
+    if (navigator.maxTouchPoints === 0 && this.editing && $event.shiftKey && $event.altKey) {
       $event.preventDefault()
 
       if ($event.key.toLowerCase() === 'a') {
