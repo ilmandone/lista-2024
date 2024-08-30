@@ -39,19 +39,7 @@ import { gridToListView, listToGridView } from './list.groups-view'
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [
-    ButtonToggleComponent,
-    CdkDrag,
-    CdkDragPlaceholder,
-    CdkDropList,
-    ConfirmCancelComponent,
-    ItemComponent,
-    LoaderComponent,
-    MatBottomSheetModule,
-    MatDialogModule,
-    MatIcon,
-    MatIconButton
-  ],
+  imports: [ButtonToggleComponent, CdkDrag, CdkDragPlaceholder, CdkDropList, ConfirmCancelComponent, ItemComponent, LoaderComponent, MatBottomSheetModule, MatDialogModule, MatIcon, MatIconButton],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -94,6 +82,22 @@ class ListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroyed$.next(true)
     this._destroyed$.complete()
+  }
+
+  @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
+    if (this.editing && $event.shiftKey && $event.altKey) {
+      $event.preventDefault()
+
+      if ($event.key.toLowerCase() === 'a') {
+        this.openNewItemDialog()
+        return
+      }
+
+      if ($event.key.toLowerCase() === 'd'
+        && (this.selectedItems.size > 0 || this.selectedItems.size !== this.itemsData().length)) {
+        this.itemsDeleted()
+      }
+    }
   }
 
   /**
@@ -151,10 +155,10 @@ class ListComponent implements OnInit, OnDestroy {
    * @param {ItemsData} items - The collection of item data.
    * @return {ItemDataWithGroup[]} An array of item data with group information.
    */
-  private _itemsWithGroupData(
-    groups: Record<string, GroupData>,
-    items: ItemsData
-  ): { data: ItemsDataWithGroup; itemsToDefault: ItemsChanges[] } {
+  private _itemsWithGroupData(groups: Record<string, GroupData>, items: ItemsData): {
+    data: ItemsDataWithGroup;
+    itemsToDefault: ItemsChanges[]
+  } {
     const itemsToDefault: ItemsChanges[] = []
 
     const data = items.map(item => {
@@ -166,9 +170,7 @@ class ListComponent implements OnInit, OnDestroy {
       // The item doesn't have a valid group UUID -> Set default value
       else {
         itemsToDefault.push({
-          ...item,
-          group: DEFAULT_GROUP.UUID,
-          crud: 'update'
+          ...item, group: DEFAULT_GROUP.UUID, crud: 'update'
         })
         return { ...item, group: DEFAULT_GROUP.UUID, groupData: DEFAULT_GROUP }
       }
@@ -206,21 +208,12 @@ class ListComponent implements OnInit, OnDestroy {
    * @param {string} groupUUID
    */
   addItem(label: string, groupUUID: string) {
-    const selectedUUID =
-      this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
+    const selectedUUID = this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
 
-    const insertAfter = selectedUUID
-      ? (this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
-        this.itemsData().length - 1)
-      : this.itemsData().length - 1
+    const insertAfter = selectedUUID ? (this.itemsData().find((e) => e.UUID === selectedUUID)?.position ?? this.itemsData().length - 1) : this.itemsData().length - 1
 
     const groupData = this.groups()[groupUUID]
-    const { itemsData, changes } = addItem(
-      label,
-      groupData,
-      this.itemsData(),
-      insertAfter
-    )
+    const { itemsData, changes } = addItem(label, groupData, this.itemsData(), insertAfter)
 
     this.itemsData.set(itemsData)
     this._itemsChanges.set(changes)
@@ -322,10 +315,8 @@ class ListComponent implements OnInit, OnDestroy {
 
       if ('showByGroups' in r) {
 
-        if (this.showByGroups)
-          this.itemsData.set(listToGridView(this.itemsData()))
-        else
-          this.itemsData.set(gridToListView(this.itemsData()))
+        if (this.showByGroups) this.itemsData.set(listToGridView(this.itemsData()))
+        else this.itemsData.set(gridToListView(this.itemsData()))
       } else if ('editing' in r) {
         this._itemsDataCache = cloneDeep(this.itemsData())
       }
@@ -343,10 +334,7 @@ class ListComponent implements OnInit, OnDestroy {
    * @param {Set<number>} inCartItems
    * @private
    */
-  private _resetInCart(
-    data: ItemsDataWithGroup,
-    inCartItems: Set<number>
-  ): {
+  private _resetInCart(data: ItemsDataWithGroup, inCartItems: Set<number>): {
     newItemsData: ItemsDataWithGroup
     changes: ItemsChanges[]
   } {
@@ -358,8 +346,7 @@ class ListComponent implements OnInit, OnDestroy {
       if (d.inCart) {
         d.inCart = false
         changes.push({
-          ...d,
-          crud: 'update'
+          ...d, crud: 'update'
         })
       }
     })
@@ -374,10 +361,7 @@ class ListComponent implements OnInit, OnDestroy {
    * @param {Set<number>} inCartItems
    * @private
    */
-  private _fromInCartToNotToBuy(
-    data: ItemsDataWithGroup,
-    inCartItems: Set<number>
-  ): {
+  private _fromInCartToNotToBuy(data: ItemsDataWithGroup, inCartItems: Set<number>): {
     newItemsData: ItemsDataWithGroup
     changes: ItemsChanges[]
   } {
@@ -390,8 +374,7 @@ class ListComponent implements OnInit, OnDestroy {
         d.notToBuy = true
         d.inCart = false
         changes.push({
-          ...d,
-          crud: 'update'
+          ...d, crud: 'update'
         })
       }
     })
@@ -430,10 +413,10 @@ class ListComponent implements OnInit, OnDestroy {
    */
   confirm() {
     if (this.shopping) {
-      const { newItemsData, changes } = this._fromInCartToNotToBuy(
-        this.itemsData(),
-        this._inCartItems
-      )
+      const {
+        newItemsData,
+        changes
+      } = this._fromInCartToNotToBuy(this.itemsData(), this._inCartItems)
       this._inCartItems.clear()
       this._itemsChanges.set(changes)
       this.itemsData.set(newItemsData)

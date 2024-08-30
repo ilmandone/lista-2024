@@ -4,7 +4,7 @@
 
 1) Aggiungere l'aggiornamento delle liste dopo una modifica da parte di un altro utente
 2) Aggiungere le shortcut con tooltip per le azioni principali delle sezioni
-
+3) Controllare il focus degli icons button
 
 
 ## In attesa di sistemare il server
