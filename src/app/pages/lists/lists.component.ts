@@ -20,6 +20,7 @@ import { cloneDeep } from 'lodash'
 import { SetOfItemsChanges } from 'app/data/items.changes'
 import { addList, deleteList, updateListAttr, updateListPosition } from './lists.cud'
 import { Subject, takeUntil } from 'rxjs'
+import { MatTooltip } from '@angular/material/tooltip'
 
 @Component({
 	selector: 'app-lists',
@@ -34,7 +35,8 @@ import { Subject, takeUntil } from 'rxjs'
 		ConfirmCancelComponent,
 		CdkDrag,
 		CdkDropList,
-		CdkDragPlaceholder
+		CdkDragPlaceholder,
+    MatTooltip
 	],
 	templateUrl: './lists.component.html',
 	styleUrl: './lists.component.scss'

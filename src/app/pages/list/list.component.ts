@@ -35,11 +35,12 @@ import {
 } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { gridToListView, listToGridView } from './list.groups-view'
+import { MatTooltip } from '@angular/material/tooltip'
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [ButtonToggleComponent, CdkDrag, CdkDragPlaceholder, CdkDropList, ConfirmCancelComponent, ItemComponent, LoaderComponent, MatBottomSheetModule, MatDialogModule, MatIcon, MatIconButton],
+  imports: [ButtonToggleComponent, CdkDrag, CdkDragPlaceholder, CdkDropList, ConfirmCancelComponent, ItemComponent, LoaderComponent, MatBottomSheetModule, MatDialogModule, MatIcon, MatIconButton, MatTooltip],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
 })
@@ -315,6 +316,8 @@ class ListComponent implements OnInit, OnDestroy {
     })
 
     p.afterDismissed().subscribe((r: ListBottomSheetData) => {
+      if (!r) return
+
       Object.assign(this, { ...r })
 
       if ('showByGroups' in r) {

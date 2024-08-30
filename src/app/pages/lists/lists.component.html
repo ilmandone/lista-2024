@@ -6,6 +6,8 @@
 		@if (listsData()) {
 		<button
 			mat-icon-button
+      [matTooltip]="'⇧ + Alt + A'"
+      [matTooltipDisabled]="!editing"
 			[title]="!editing ? 'Edit lists': 'Create a new list'"
 			[disabled]="disabled"
 			(click)="clickTopButton()"
