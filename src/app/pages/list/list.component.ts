@@ -63,14 +63,13 @@ class ListComponent implements OnInit, OnDestroy {
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _mainStateSrv = inject(MainStateService)
 	private _UUID!: string
+  private _escKeyDisabled = false
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
 	private _itemsDataCache: ItemsDataWithGroup = []
 	private _autoSaveTimeOutID!: number
 	private _inCartItems = new Set<number>()
 
 	private _destroyed$ = new Subject<boolean>()
-
-	private _escKeyDisabled = false
 
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
@@ -104,6 +103,7 @@ class ListComponent implements OnInit, OnDestroy {
 	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
 		if (checkMobile()) return
 
+    $event.preventDefault()
 		const k = $event.key.toLowerCase()
 
 		if (k === 'escape' && !this._escKeyDisabled) {
@@ -111,8 +111,6 @@ class ListComponent implements OnInit, OnDestroy {
 		}
 
 		if (!$event.shiftKey || !$event.altKey) return
-
-		$event.preventDefault()
 
 		if (this.editing) {
 			switch (k) {
@@ -130,8 +128,7 @@ class ListComponent implements OnInit, OnDestroy {
 		} else if (!this.editing) {
 			switch (k) {
 				case 'e':
-					this._itemsDataCache = cloneDeep(this.itemsData())
-					this.editing = true
+					this.openMainBottomSheet()
 					break
 			}
 		}
