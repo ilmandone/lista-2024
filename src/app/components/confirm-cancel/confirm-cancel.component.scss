@@ -5,13 +5,15 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: vars.$confirm-cancel-height;
+  height: calc(vars.$confirm-cancel-height + 1rem);
 
-  padding: 0 0.5rem;
+  padding: 1rem;
 
   display: flex;
 
   transition: transform vars.$time-basic ease-in-out;
+
+  background-color: var(--mat-app-background-color);
 
   &.hidden {
     transform: translateY(100%);
