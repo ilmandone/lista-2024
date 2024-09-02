@@ -61,14 +61,8 @@
   }
 
   .main {
-    position: relative;
-    width: 100%;
-    height: calc(utils.getRealVh(100) - var(--main-header-height));
 
-    padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
-
-    overflow-y: auto;
-    overflow-x: hidden;
+    @include shared.mainCommon;
 
     // Drag and drop
 		@include drag-and-drop.main;
@@ -76,4 +70,13 @@
   }
 
   @include drag-and-drop.common;
+
+  .cancel-container {
+    display: flex;
+    align-items: center;
+    
+    > span {
+      display: block;
+    }
+  }
 }

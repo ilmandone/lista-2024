@@ -1,12 +1,28 @@
+@use "~styles/utils.scss";
+@use "~styles/vars.scss";
+
 // Common
 @mixin disabledOpacity() {
-  &[disabled] {
-    opacity: 0.2;
-  }
+	&[disabled] {
+		opacity: 0.2;
+	}
 }
 
 // Dialog
 @mixin dialogCommon() {
-  width: 80vw;
-  max-width: var(--mat-dialog-container-max-width);
+	width: 80vw;
+	max-width: var(--mat-dialog-container-max-width);
+}
+
+@mixin mainCommon() {
+	position: relative;
+	width: 100%;
+	height: calc(utils.getRealVh(100) - var(--main-header-height));
+
+	padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
+
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	scroll-behavior: smooth;
 }
