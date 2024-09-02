@@ -37,7 +37,7 @@ import { checkMobile } from 'app/shared/detect.mobile'
 		CdkDrag,
 		CdkDropList,
 		CdkDragPlaceholder,
-    MatTooltip
+		MatTooltip
 	],
 	templateUrl: './lists.component.html',
 	styleUrl: './lists.component.scss'
@@ -49,10 +49,11 @@ class ListsComponent implements OnInit, OnDestroy {
 	private readonly _mainStateSrv = inject(MainStateService)
 	private readonly _route = inject(Router)
 
-	private _destroyed$ = new Subject<boolean>()
-
+	private _escKeyDisabled = false
 	private _listDataCache!: Nullable<ListsData>
 	private _itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
+
+	private _destroyed$ = new Subject<boolean>()
 
 	listsData = signal<Nullable<ListsData>>(null)
 
@@ -78,20 +79,29 @@ class ListsComponent implements OnInit, OnDestroy {
 		this._destroyed$.complete()
 	}
 
-  /**
-   * Shortcuts for editing on desktop
-   * @param $event
-   */
-  @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-    if (!checkMobile() && this.editing && $event.shiftKey && $event.altKey) {
-      $event.preventDefault()
+	/**
+	 * Shortcuts for editing on desktop
+	 * @param $event
+	 */
+	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
+		if (checkMobile()) return
 
-      if ($event.key.toLowerCase() === 'a') {
-        this.openCreateNew()
-        return
-      }
-    }
-  }
+		$event.preventDefault()
+		const k = $event.key.toLowerCase()
+
+		if (k === 'escape' && !this._escKeyDisabled) {
+			this.onCancel()
+		}
+
+		if (!$event.shiftKey || !$event.altKey) return
+
+		if (this.editing && k === 'a') {
+			this.openCreateNew()
+		} else if (!this.editing && k === 'e') {
+			this._listDataCache = cloneDeep(this.listsData())
+			this.editing = true
+		}
+	}
 
 	//#region Privates
 
@@ -157,19 +167,23 @@ class ListsComponent implements OnInit, OnDestroy {
 	 * @description On confirm add the new list in f/e data and update _itemsChanges
 	 */
 	openCreateNew() {
-		const dr = this._dialog.open(ListsNewDialogComponent)
+		this._escKeyDisabled = true
+		this._dialog
+			.open(ListsNewDialogComponent)
+			.afterClosed()
+			.subscribe((result) => {
+				this._escKeyDisabled = false
 
-		dr.afterClosed().subscribe((result) => {
-			if (result) {
-				const { changes, newListsData } = addList(
-					result,
-					this.listsData(),
-					this._firebaseSrv.gewNewTimeStamp()
-				)
-				this.listsData.set(newListsData)
-				this._itemsChanges.set(changes)
-			}
-		})
+				if (result) {
+					const { changes, newListsData } = addList(
+						result,
+						this.listsData(),
+						this._firebaseSrv.gewNewTimeStamp()
+					)
+					this.listsData.set(newListsData)
+					this._itemsChanges.set(changes)
+				}
+			})
 	}
 
 	//#endregion
