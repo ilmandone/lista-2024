@@ -1,12 +1,20 @@
+@use "~styles/shared.scss";
+@use "~styles/utils.scss";
+@use "~styles/vars.scss";
+
 // Common
 @mixin disabledOpacity() {
-  &[disabled] {
-    opacity: 0.2;
-  }
+	&[disabled] {
+		opacity: 0.2;
+	}
 }
 
 // Dialog
 @mixin dialogCommon() {
-  width: 80vw;
-  max-width: var(--mat-dialog-container-max-width);
+	width: 80vw;
+	max-width: var(--mat-dialog-container-max-width);
+}
+
+@mixin mainCommon() {
+	@include shared.mainCommon;
 }

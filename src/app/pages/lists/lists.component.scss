@@ -53,6 +53,8 @@
     overflow-y: auto;
     overflow-x: hidden;
 
+    scroll-behavior: smooth;
+
     // Drag and drop
 		@include drag-and-drop.main;
   }
