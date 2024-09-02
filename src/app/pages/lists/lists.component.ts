@@ -21,6 +21,7 @@ import { SetOfItemsChanges } from 'app/data/items.changes'
 import { addList, deleteList, updateListAttr, updateListPosition } from './lists.cud'
 import { Subject, takeUntil } from 'rxjs'
 import { MatTooltip } from '@angular/material/tooltip'
+import { checkMobile } from 'app/shared/detect.mobile'
 
 @Component({
 	selector: 'app-lists',
@@ -82,7 +83,7 @@ class ListsComponent implements OnInit, OnDestroy {
    * @param $event
    */
   @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-    if (navigator.maxTouchPoints === 0 && this.editing && $event.shiftKey && $event.altKey) {
+    if (!checkMobile() && this.editing && $event.shiftKey && $event.altKey) {
       $event.preventDefault()
 
       if ($event.key.toLowerCase() === 'a') {

@@ -36,6 +36,7 @@ import {
 import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { gridToListView, listToGridView } from './list.groups-view'
 import { MatTooltip } from '@angular/material/tooltip'
+import { checkMobile } from 'app/shared/detect.mobile'
 
 @Component({
   selector: 'app-list',
@@ -90,7 +91,13 @@ class ListComponent implements OnInit, OnDestroy {
    * @param $event
    */
   @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-    if (navigator.maxTouchPoints === 0 && this.editing && $event.shiftKey && $event.altKey) {
+    if (checkMobile() || !this.editing ) return
+
+    if ($event.key.toLowerCase() === 'escape') {
+      this.cancel()
+    }
+
+    if (this.editing && $event.shiftKey && $event.altKey) {
       $event.preventDefault()
 
       if ($event.key.toLowerCase() === 'a') {
