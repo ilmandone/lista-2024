@@ -70,4 +70,13 @@
   }
 
   @include drag-and-drop.common;
+
+  .cancel-container {
+    display: flex;
+    align-items: center;
+    
+    > span {
+      display: block;
+    }
+  }
 }

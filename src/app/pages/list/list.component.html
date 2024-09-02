@@ -89,13 +89,20 @@
 	(confirm)="confirm()"
 >
 	<ng-template #cancelTemplate>
-		@if (shopping) {
-		<mat-icon [fontIcon]="'close'"></mat-icon>
-		} @else {
-		<span>Cancel</span>
-		@if(!isMobile) {
-		<span> (ESC)</span>
-		} }
+
+		<span class="cancel-container">
+			@if (shopping) {
+				<mat-icon [fontIcon]="'close'"></mat-icon>
+			} @else {
+				<span>Cancel</span>
+			}
+	
+			@if(!isMobile) {
+				<span> (ESC)</span>
+			}
+		</span>
+		
+
 	</ng-template>
 
 	<ng-template #confirmTemplate>
