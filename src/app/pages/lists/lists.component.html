@@ -42,5 +42,19 @@
 </main>
 
 @if (editing) {
-<app-confirm-cancel (cancel)="onCancel()" (confirm)="onConfirm()"></app-confirm-cancel>
+<app-confirm-cancel (cancel)="onCancel()" (confirm)="onConfirm()">
+	<ng-template #cancelTemplate>		
+		<span>Cancel</span>
+		@if(!isMobile) {
+		<span> (ESC)</span>
+		}
+	</ng-template>
+
+	<ng-template #confirmTemplate>
+		<span>Confirm</span>
+		@if(!isMobile) {
+		<span> ( ⇧ + Alt + ⏎ )</span>
+		}
+	</ng-template>
+</app-confirm-cancel>
 }

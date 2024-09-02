@@ -73,6 +73,7 @@ class ListComponent implements OnInit, OnDestroy {
 
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
+  isMobile = checkMobile()
 	itemsData = signal<ItemsDataWithGroup>([])
 	label!: string
 	selectedItems = new Set<string>()
@@ -101,7 +102,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-		if (checkMobile()) return
+		if (this.isMobile) return
 
     $event.preventDefault()
 		const k = $event.key.toLowerCase()
@@ -121,7 +122,10 @@ class ListComponent implements OnInit, OnDestroy {
 					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData().length) {
 						this.itemsDeleted()
 					}
-					break				
+					break
+        case 'enter':
+          this.confirm()
+          break
 				default:
 					console.warn('Unknown shortcut key', k)
 			}

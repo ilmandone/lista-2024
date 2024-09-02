@@ -30,7 +30,7 @@
 			mat-icon-button
 			title="add item"
 			type="button"
-      matTooltip="⇧ + Alt + A"
+			matTooltip="⇧ + Alt + A"
 			[disabled]="selectedItems.size > 1"
 			(click)="openNewItemDialog()"
 		>
@@ -42,8 +42,8 @@
 			mat-icon-button
 			title="add item"
 			type="button"
-      matTooltip="⇧ + Alt + D"
-      [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
+			matTooltip="⇧ + Alt + D"
+			[matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
 			[disabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
 			(click)="itemsDeleted()"
 		>
@@ -59,21 +59,21 @@
 	@for (item of itemsData(); track item.UUID) {
 	<!-- Drag Box -->
 	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">
-    @if(!shopping || (shopping && !item.notToBuy)){
-      <app-item
-        [data]="item"
-        [editing]="editing"
-        [shopping]="shopping"
-        [selected]="selectedItems.has(item.UUID)"
-				[sortable]="!showByGroups"
-        [stroked]="item.notToBuy"
-        [extra]="item.inCart ? 'shopping_cart' : ''"
-        (changed)="itemChanged($event)"
-        (clicked)="itemClicked($event)"
-				(groupChange)="itemGroupChanged($event)"
-        (selectedChange)="itemSelected($event)"
-      ></app-item>
-    }
+		@if(!shopping || (shopping && !item.notToBuy)){
+		<app-item
+			[data]="item"
+			[editing]="editing"
+			[shopping]="shopping"
+			[selected]="selectedItems.has(item.UUID)"
+			[sortable]="!showByGroups"
+			[stroked]="item.notToBuy"
+			[extra]="item.inCart ? 'shopping_cart' : ''"
+			(changed)="itemChanged($event)"
+			(clicked)="itemClicked($event)"
+			(groupChange)="itemGroupChanged($event)"
+			(selectedChange)="itemSelected($event)"
+		></app-item>
+		}
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
 	</div>
 	} } @loading {
@@ -91,7 +91,18 @@
 	<ng-template #cancelTemplate>
 		@if (shopping) {
 		<mat-icon [fontIcon]="'close'"></mat-icon>
-		} @else { Cancel }
+		} @else {
+		<span>Cancel</span>
+		@if(!isMobile) {
+		<span> (ESC)</span>
+		} }
+	</ng-template>
+
+	<ng-template #confirmTemplate>
+		<span>Confirm</span>
+		@if(!isMobile) {
+		<span> ( ⇧ + Alt + ⏎ )</span>
+		}
 	</ng-template>
 </app-confirm-cancel>
 }

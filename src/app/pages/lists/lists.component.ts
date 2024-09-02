@@ -59,6 +59,7 @@ class ListsComponent implements OnInit, OnDestroy {
 
 	disabled = false
 	editing = false
+	isMobile = checkMobile()
 
 	constructor() {
 		effect(() => {
@@ -84,7 +85,7 @@ class ListsComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-		if (checkMobile()) return
+		if (this.isMobile) return
 
 		$event.preventDefault()
 		const k = $event.key.toLowerCase()
