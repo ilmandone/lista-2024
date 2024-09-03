@@ -14,25 +14,30 @@ import { ButtonToggleComponent } from '../../components/button-toggle/button-tog
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import {
-	GroupData,
-	ItemsChanges,
-	ItemsData,
-	ItemsDataWithGroup
+  GroupData,
+  ItemsChanges,
+  ItemsData,
+  ItemsDataWithGroup
 } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
-import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import {
+  DeleteConfirmDialogComponent
+} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
 import {
-	ListBottomSheetComponent,
-	ListBottomSheetData
+  ListBottomSheetComponent,
+  ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
-import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import {
+  ListGroupsBottomSheetComponent
+} from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { gridToListView, listToGridView } from './list.groups-view'
 import { MatTooltip } from '@angular/material/tooltip'
 import { checkMobile } from 'app/shared/detect.mobile'
+import { animate, style, transition, trigger } from '@angular/animations'
 
 @Component({
 	selector: 'app-list',
@@ -52,7 +57,30 @@ import { checkMobile } from 'app/shared/detect.mobile'
 		MatTooltip
 	],
 	templateUrl: './list.component.html',
-	styleUrl: './list.component.scss'
+	styleUrl: './list.component.scss',
+  animations: [
+    trigger(
+      'inOutAnimation',
+      [
+        transition(
+          ':enter',
+          [
+            style({ height: 0, opacity: 0 }),
+            animate('0.4s ease-out',
+              style({ height: '*', opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave',
+          [
+            style({ height: '*', opacity: 1 }),
+            animate('0.25s ease-in',
+              style({ height: 0, opacity: 0 }))
+          ]
+        )
+      ]
+    )
+  ]
 })
 class ListComponent implements OnInit, OnDestroy {
 	private readonly AUTOSAVE_TIME_OUT = 1200

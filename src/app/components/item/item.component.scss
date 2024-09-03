@@ -6,6 +6,7 @@
 
 :host {
   position: relative;
+  display: block;
 
   .item-button {
     @include item-group.common;
@@ -35,11 +36,11 @@
     position: relative;
     width: 2.5rem;
     height: 2.5rem;
-  
+
     border-radius: 50%;
 
     cursor: pointer;
-  
+
     &:not(.editing) {
       transform: translateX(65%);
       cursor: auto;

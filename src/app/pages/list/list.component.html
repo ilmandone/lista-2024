@@ -61,6 +61,7 @@
 	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">
 		@if(!shopping || (shopping && !item.notToBuy)){
 		<app-item
+      @inOutAnimation
 			[data]="item"
 			[editing]="editing"
 			[shopping]="shopping"
@@ -96,12 +97,12 @@
 			} @else {
 				<span>Cancel</span>
 			}
-	
+
 			@if(!isMobile) {
 				<span> (ESC)</span>
 			}
 		</span>
-		
+
 
 	</ng-template>
 
