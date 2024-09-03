@@ -116,7 +116,7 @@ class ListComponent implements OnInit, OnDestroy {
 		if (this.editing) {
 			switch (k) {
 				case 'a':
-					this.openNewItemDialog()
+          if (!this._escKeyDisabled) this.openNewItemDialog()
 					break
 				case 'd':
 					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData().length) {

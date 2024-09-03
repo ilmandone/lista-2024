@@ -143,11 +143,11 @@ export class FirebaseService {
 		this._db = getFirestore(this._app)
 	}
 
-	
+
 	/**
 	 * Batch deletes and updates documents in the specified collection.
 	 * @param {WriteBatch} batch
-	 * @param {EditBag<T>} changes
+	 * @param {EditBag<T extends BasicItemChange>} changes
 	 * @param {CollectionReference<DocumentData, DocumentData>} collection
 	 * @return {void}
 	 */
@@ -168,7 +168,7 @@ export class FirebaseService {
 			const d = doc(collection, up.UUID)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const {crud, ...value} = up
-			
+
 			batch.update(d, value as DocumentData)
 		}
 	}
@@ -241,7 +241,7 @@ export class FirebaseService {
 				batch.set(itemDoc, {
 					UUID: UUIDItem,
 					inCart: false,
-					label: 'Hello',					
+					label: 'Hello',
 					notToBuy: false,
 					group: DEFAULT_GROUP.UUID,
 					position: 0
@@ -306,7 +306,7 @@ export class FirebaseService {
 					inCart: false,
 					label: create.label,
 					qt: 1,
-					toBuy: true,
+					notToBuy: true,
 					group: create.group,
 					position: create.position
 				})
@@ -327,10 +327,11 @@ export class FirebaseService {
 	//#region Groups
 
 	/**
-	 * Loads groups from the database.
-	 * @param {boolean} useCache
-	 * @return {Promise<GroupsData>}
-	 */
+   * Loads groups from the database.
+   * @param {boolean} useCache
+   * @param {boolean} withDefault
+   * @return {Promise<GroupsData>}
+   */
 	public async loadGroups(useCache = false, withDefault = true): Promise<GroupsData> {
 		if (!this._db) this._startDB()
 		if (useCache && this._cachedGroups) return Promise.resolve(this._cachedGroups)
