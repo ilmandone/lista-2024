@@ -8,8 +8,12 @@
 		</div>
 	</div>
 	<div class="header__controls">
-		<button mat-icon-button [title]="'Add group'" [disabled]="disabled"
-            (click)="openNewGroupDialog()">
+		<button
+      mat-icon-button
+      matTooltip="⇧ + Alt + A"
+      [title]="'Add group'"
+      [disabled]="disabled"
+      (click)="openNewGroupDialog()">
 			<mat-icon [fontIcon]="'add'"></mat-icon>
 		</button>
 		<button
@@ -44,5 +48,19 @@
 </main>
 
 @if (editing && !focused) {
-<app-confirm-cancel (cancel)="cancel()" (confirm)="confirm()"> </app-confirm-cancel>
+<app-confirm-cancel (cancel)="cancel()" (confirm)="confirm()">
+  <ng-template #cancelTemplate>
+    <span>Cancel</span>
+    @if(!isMobile) {
+      <span> (ESC)</span>
+    }
+  </ng-template>
+
+  <ng-template #confirmTemplate>
+    <span>Confirm</span>
+    @if(!isMobile) {
+      <span> ( ⇧ + Alt + ⏎ )</span>
+    }
+  </ng-template>
+</app-confirm-cancel>
 }
