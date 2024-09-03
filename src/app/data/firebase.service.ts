@@ -305,7 +305,7 @@ export class FirebaseService {
 					UUID: create.UUID,
 					inCart: false,
 					label: create.label,
-					notToBuy: true,
+					notToBuy: false,
 					group: create.group,
 					position: create.position
 				})
