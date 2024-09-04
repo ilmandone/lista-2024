@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 
 export const revealHor = trigger(
-  'slideFromLeft',
+  'revealHor',
   [
     transition(
       ':enter',
