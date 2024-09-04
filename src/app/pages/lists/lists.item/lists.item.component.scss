@@ -50,6 +50,9 @@
       letter-spacing: 0;
       text-align: right;
       word-break: keep-all;
+      white-space: nowrap;
+
+      overflow-x: hidden;
     }
 
     &.editing {

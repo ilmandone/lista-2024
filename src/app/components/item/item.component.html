@@ -10,10 +10,13 @@
 	<div class="item-button__left">
 		@if(shopping() && extra() ) {
 		<mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
-		} @if (editing()) {
+		} 
+		
+		@if (editing()) {
 
 		<!--Checkbox-->
 		<mat-checkbox
+			@revealHor
 			class="item-button__left__checkbox"
 			aria-label="Select this item"
 			[checked]="selected()"
@@ -23,7 +26,7 @@
 
 		<!--  Label-->
 		<app-focus-input
-			[disabled]="!editing() || (disabled && data().UUID !== focusSrv.id() )"
+			[disabled]="!editing() || (focusSrv.id() !== null && data().UUID !== focusSrv.id())"
 			[key]="data().UUID"
 			[value]="data().label"
 			[stroked]="stroked()"
@@ -37,7 +40,7 @@
 		<div
 			class="group-dot"
 			role="button"
-			tabindex="0"
+			[attr.tabindex]="editing() ? 0 : -1"
 			[attr.aria-label]="data().groupData.label"
 			[class.editing]="editing()"
 			[ngStyle]="{backgroundColor: data().groupData.color}"
@@ -46,11 +49,11 @@
 			(keyup.Space)="editing() && changeGroup(data())"
 		></div>
 
-		@if (editing() && sortable()) {
+		<!-- @if (editing() && sortable()) { -->
 		<!-- Drag handler -->
-		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled">
+		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled() " class="drag" [class.show]="!disabled()">
 			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
 		</button>
-		}
+		<!-- } -->
 	</div>
 </div>

@@ -6,6 +6,7 @@
 
 :host {
   position: relative;
+  display: block;
 
   .item-button {
     @include item-group.common;
@@ -29,20 +30,33 @@
   button {
     border: 0;
     @include shared.disabledOpacity;
+
+    will-change: width;
   }
 
   .group-dot {
     position: relative;
     width: 2.5rem;
     height: 2.5rem;
-  
+
     border-radius: 50%;
 
     cursor: pointer;
-  
+
+    transition: transform 0.3s ease-in-out;
+
     &:not(.editing) {
-      transform: translateX(65%);
+      transform: translateX(4.5rem);
       cursor: auto;
+    }
+  }
+
+  .drag {
+    transform: translateX(100px);
+    transition: transform 0.3s ease-in-out;
+
+    &.show {
+      transform: translateX(0);
     }
   }
 }

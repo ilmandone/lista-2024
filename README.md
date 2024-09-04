@@ -2,10 +2,10 @@
 
 ## TODO:
 
-1) Aggiungere l'aggiornamento delle liste dopo una modifica da parte di un altro utente
-2) Aggiungere le shortcut con tooltip per le azioni principali delle sezioni
-3) Controllare il focus degli icons button
-
+1) ~~Aggiungere l'animazione per l'ingresso e uscita dalla modalità di editing~~
+2) ~~Controllare come mai che si aggiorna la lista se annullo la modalità spesa.~~
+3) ~~Sistemare il loader per lists, list e group components. Mettiamone uno semplice che si disattiva appena viene finito il caricamento dei dati all'inizializzazione.~~
+4) ~~Aggiungere il bordo al focus per tutti gli icon buttons.~~
 
 ## In attesa di sistemare il server
 

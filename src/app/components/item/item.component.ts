@@ -10,6 +10,7 @@ import { Nullable } from 'app/shared/common.interfaces'
 import { FocusInputComponent } from '../focus-input/focus-input.component'
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { ItemSelectedEvent } from './item.interface'
+import { revealHor } from './item.animation'
 
 @Component({
 	selector: 'app-item',
@@ -24,7 +25,8 @@ import { ItemSelectedEvent } from './item.interface'
 		MatIconButton
 	],
 	templateUrl: './item.component.html',
-	styleUrl: './item.component.scss'
+	styleUrl: './item.component.scss',
+	animations: [revealHor]
 })
 export class ItemComponent {
 	readonly focusSrv = inject(FocusInputService)
@@ -42,7 +44,7 @@ export class ItemComponent {
 	selectedChange = output<ItemSelectedEvent>()
 	groupChange = output<ItemsChanges>()
 
-	disabled = false
+	disabled = computed(() => !(this.editing() && this.sortable()) )
 
 	extraString = computed(() => this.extra() || '')
 
