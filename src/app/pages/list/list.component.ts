@@ -96,8 +96,22 @@ class ListComponent implements OnInit, OnDestroy {
 			await this._loadData()
 		})
 
-		this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d:ItemsData) => {
-			console.log(d)
+		this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d: ItemsData) => {
+			if (d.length > 0) {
+				this._mainStateSrv.showLoader()
+				const dataWithGroup = this._itemsWithGroupData(this.groups(), d).data
+				const newData = this.itemsData() as ItemsDataWithGroup
+				
+				dataWithGroup.forEach((d) => {
+					const index = newData?.findIndex((nd) => nd.UUID === d.UUID)
+					if (index > -1) {
+						newData[index] = d
+					}
+				})
+
+				this.itemsData.set(newData)
+				this._mainStateSrv.hideLoader()				
+			}
 		})
 	}
 
