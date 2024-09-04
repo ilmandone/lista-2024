@@ -43,8 +43,8 @@
 			title="add item"
 			type="button"
 			matTooltip="⇧ + Alt + D"
-			[matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
-			[disabled]="selectedItems.size === 0 || selectedItems.size === itemsData().length"
+			[matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length"
+			[disabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length"
 			(click)="itemsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
@@ -58,7 +58,7 @@
 	<!--Items-->
 	@for (item of itemsData(); track item.UUID) {
 	<!-- Drag Box -->
-	<div cdkDrag [cdkDragDisabled]="!editing || itemsData().length < 2">
+	<div cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
 		@if(!shopping || (shopping && !item.notToBuy)){
 		<app-item
       @inOutAnimation
@@ -77,7 +77,7 @@
 		}
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
 	</div>
-	} } @loading {
+	} } @placeholder {
 	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
 	}
 </main>

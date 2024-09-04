@@ -38,6 +38,7 @@ import { gridToListView, listToGridView } from './list.groups-view'
 import { MatTooltip } from '@angular/material/tooltip'
 import { checkMobile } from 'app/shared/detect.mobile'
 import { animate, style, transition, trigger } from '@angular/animations'
+import { Nullable } from 'app/shared/common.interfaces'
 
 @Component({
 	selector: 'app-list',
@@ -102,7 +103,7 @@ class ListComponent implements OnInit, OnDestroy {
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
   isMobile = checkMobile()
-	itemsData = signal<ItemsDataWithGroup>([])
+	itemsData = signal<Nullable<ItemsDataWithGroup>>(null)
 	label!: string
 	selectedItems = new Set<string>()
 	showByGroups = false
@@ -147,7 +148,7 @@ class ListComponent implements OnInit, OnDestroy {
           if (!this._escKeyDisabled) this.openNewItemDialog()
 					break
 				case 'd':
-					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData().length) {
+					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData()?.length) {
 						this.itemsDeleted()
 					}
 					break
@@ -278,16 +279,20 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param {string} groupUUID
 	 */
 	addItem(label: string, groupUUID: string) {
+
+		if(this.itemsData() === null) return
+
+		const d = this.itemsData() as ItemsDataWithGroup
 		const selectedUUID =
 			this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
 
 		const insertAfter = selectedUUID
-			? (this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
-				this.itemsData().length - 1)
-			: this.itemsData().length - 1
+			? (d.find((e) => e.UUID === selectedUUID)?.position ??
+				d.length - 1)
+			: d.length - 1
 
 		const groupData = this.groups()[groupUUID]
-		const { itemsData, changes } = addItem(label, groupData, this.itemsData(), insertAfter)
+		const { itemsData, changes } = addItem(label, groupData, d, insertAfter)
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
@@ -299,7 +304,9 @@ class ListComponent implements OnInit, OnDestroy {
 	 * Delete button click
 	 */
 	itemsDeleted() {
-		const { itemsData, changes } = deleteItem([...this.selectedItems], this.itemsData())
+		if(this.itemsData() === null) return
+
+		const { itemsData, changes } = deleteItem([...this.selectedItems], this.itemsData() as ItemsDataWithGroup)
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 		this.selectedItems.clear()
@@ -310,7 +317,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	itemChanged($event: ItemsChanges) {
-		const { itemsData, changes } = updateItemAttr($event, this.itemsData())
+		const { itemsData, changes } = updateItemAttr($event, this.itemsData() as ItemsDataWithGroup)
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
@@ -321,8 +328,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	itemDrop($event: CdkDragDrop<ItemsData>) {
-		const { itemsData, changes } = updateItemPosition($event, this.itemsData())
-
+		const { itemsData, changes } = updateItemPosition($event, this.itemsData() as ItemsDataWithGroup)
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 	}
@@ -338,7 +344,7 @@ class ListComponent implements OnInit, OnDestroy {
 			.afterDismissed()
 			.subscribe((data: GroupData) => {
 				if (data) {
-					const { itemsData, changes } = updateItemAttr($event, this.itemsData(), data)
+					const { itemsData, changes } = updateItemAttr($event, this.itemsData() as ItemsDataWithGroup, data)
 					changes[0].group = data.UUID
 
 					this.itemsData.set(itemsData)
@@ -395,10 +401,10 @@ class ListComponent implements OnInit, OnDestroy {
 			Object.assign(this, { ...r })
 
 			if ('showByGroups' in r) {
-				if (this.showByGroups) this.itemsData.set(listToGridView(this.itemsData()))
-				else this.itemsData.set(gridToListView(this.itemsData()))
+				if (this.showByGroups) this.itemsData.set(listToGridView(this.itemsData() as ItemsDataWithGroup))
+				else this.itemsData.set(gridToListView(this.itemsData() as ItemsDataWithGroup))
 			} else if ('editing' in r) {
-				this._itemsDataCache = cloneDeep(this.itemsData())
+				this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
 			}
 		})
 	}
@@ -478,7 +484,7 @@ class ListComponent implements OnInit, OnDestroy {
 	itemClicked($event: ItemsChanges) {
 		if (!this.editing) {
 			if (this.shopping) {
-				const index = this.itemsData().findIndex((i) => i.UUID === $event.UUID)
+				const index = (this.itemsData() as ItemsDataWithGroup).findIndex((i) => i.UUID === $event.UUID)
 
 				if ($event.inCart) {
 					this._inCartItems.add(index)
@@ -502,7 +508,7 @@ class ListComponent implements OnInit, OnDestroy {
 	confirm() {
 		if (this.shopping) {
 			const { newItemsData, changes } = this._fromInCartToNotToBuy(
-				this.itemsData(),
+				this.itemsData() as ItemsDataWithGroup,
 				this._inCartItems
 			)
 			this._inCartItems.clear()
@@ -529,7 +535,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	cancel() {
 		if (this.shopping) {
-			const { newItemsData, changes } = this._resetInCart(this.itemsData(), this._inCartItems)
+			const { newItemsData, changes } = this._resetInCart(this.itemsData() as ItemsDataWithGroup, this._inCartItems)
 			this._inCartItems.clear()
 			this._itemsChanges.set(changes)
 			this.itemsData.set(newItemsData)
