@@ -12,263 +12,259 @@ import { LoaderComponent } from 'app/components/loader/loader.component'
 import { GroupChanges, GroupData, GroupNew, GroupsData } from 'app/data/firebase.interfaces'
 import { FirebaseService } from 'app/data/firebase.service'
 import { SetOfItemsChanges } from 'app/data/items.changes'
-import {
-  DeleteConfirmDialogComponent
-} from 'app/shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import { DeleteConfirmDialogComponent } from 'app/shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from 'app/shared/main-state.service'
 import { addGroup, deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
 import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.component'
 import { MatTooltip } from '@angular/material/tooltip'
 import { checkMobile } from '../../shared/detect.mobile'
-
+import { Nullable } from 'app/shared/common.interfaces'
 
 @Component({
-  selector: 'app-groups',
-  standalone: true,
-  imports: [
-    CdkDrag,
-    CdkDragPlaceholder,
-    CdkDropList,
-    ConfirmCancelComponent,
-    GroupComponent,
-    LoaderComponent,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTooltip
-  ],
-  templateUrl: './groups.component.html',
-  styleUrl: './groups.component.scss'
+	selector: 'app-groups',
+	standalone: true,
+	imports: [
+		CdkDrag,
+		CdkDragPlaceholder,
+		CdkDropList,
+		ConfirmCancelComponent,
+		GroupComponent,
+		LoaderComponent,
+		MatButtonModule,
+		MatIconModule,
+		MatDialogModule,
+		MatTooltip
+	],
+	templateUrl: './groups.component.html',
+	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
+	private readonly _dialog = inject(MatDialog)
+	private readonly _firebaseSrv = inject(FirebaseService)
+	private readonly _focusSrv = inject(FocusInputService)
+	private readonly _location = inject(Location)
+	private readonly _mainStateSrv = inject(MainStateService)
 
-  private readonly _dialog = inject(MatDialog)
-  private readonly _firebaseSrv = inject(FirebaseService)
-  private readonly _focusSrv = inject(FocusInputService)
-  private readonly _location = inject(Location)
-  private readonly _mainStateSrv = inject(MainStateService)
+	private _escKeyDisabled = false
+	private _groupsDataCache: GroupsData = []
+	private _groupChanges = new SetOfItemsChanges<GroupData>()
 
-  private _escKeyDisabled = false
-  private _groupsDataCache: GroupsData = []
-  private _groupChanges = new SetOfItemsChanges<GroupData>()
+	selectedGroups = new Set<string>()
+	disabled = false
+	editing = false
+	focused = false
+	isMobile = checkMobile()
 
-  selectedGroups = new Set<string>()
-  disabled = false
-  editing = false
-  focused = false
-  isMobile = checkMobile()
+	groups = signal<Nullable<GroupsData>>(null)
 
-  groups = signal<GroupsData>([])
+	constructor() {
+		effect(() => {
+			this.disabled = this._focusSrv.id() !== null
+		})
+	}
 
-  constructor() {
-    effect(() => {
-      this.disabled = this._focusSrv.id() !== null
-    })
-  }
+	async ngOnInit() {
+		this.groups.set(await this._firebaseSrv.loadGroups(false, false))
+	}
 
-  async ngOnInit() {
-    this.groups.set(await this._firebaseSrv.loadGroups(false, false))
-  }
+	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
+		if (this.isMobile) return
 
-  @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-    if (this.isMobile) return
+		$event.preventDefault()
+		const k = $event.key.toLowerCase()
 
-    $event.preventDefault()
-    const k = $event.key.toLowerCase()
+		if (k === 'escape' && !this._escKeyDisabled) {
+			this.cancel()
+		}
 
-    if (k === 'escape' && !this._escKeyDisabled) {
-      this.cancel()
-    }
+		if (!$event.shiftKey || !$event.altKey) return
 
-    if (!$event.shiftKey || !$event.altKey) return
+		if (k === 'a' && !this._escKeyDisabled) this.openNewGroupDialog()
 
-    if (k === 'a' && !this._escKeyDisabled) this.openNewGroupDialog()
+		if (this.editing) {
+			switch (k) {
+				case 'enter':
+					this.confirm()
+					break
+			}
+		}
+	}
 
-    if (this.editing) {
-      switch (k) {
-        case 'enter':
-          this.confirm()
-          break
-      }
-    }
-  }
+	//#region Privates
+	/**
+	 * Adds a new group to the existing groups.
+	 *
+	 * @param {GroupNew} data - The new group data to be added.
+	 * @return {void}
+	 */
+	private _addGroup(data: GroupNew) {
+    if(this.groups() === null) return
+    const g = this.groups() as GroupsData
+		const selectedUUID =
+			this.selectedGroups.size > 0 ? this.selectedGroups.values().next().value : null
+		const insertAfter = selectedUUID
+			? (g.find((e) => e.UUID === selectedUUID)?.position ?? g.length - 1)
+			: g.length - 1
 
-  //#region Privates
+		const { changes, groupsData } = addGroup(data, g, insertAfter)
 
-  private _addGroup(data: GroupNew) {
-    /**
-     * Adds a new group to the existing groups.
-     *
-     * @param {GroupNew} data - The new group data to be added.
-     * @return {void}
-     */
-    const selectedUUID =
-      this.selectedGroups.size > 0 ? this.selectedGroups.values().next().value : null
-    const insertAfter = selectedUUID
-      ? this.groups().find((e) => e.UUID === selectedUUID)?.position ?? this.groups().length - 1
-      : this.groups().length - 1
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
+		this.selectedGroups.clear()
+	}
 
-    const { changes, groupsData } = addGroup(data, this.groups(), insertAfter)
+	/**
+	 * Save groups
+	 * @description Saves the groups by updating the groups in the database and
+	 * setting the updated groups in the component.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	private _saveGroups() {
+		this._mainStateSrv.showLoader()
+		this._firebaseSrv.updateGroup(this._groupChanges.values).then((r) => {
+			this.groups.set(r)
+			this._endEditing()
 
-    this.groups.set(groupsData)
-    this._groupChanges.set(changes)
-    this.selectedGroups.clear()
-  }
+			this._mainStateSrv.hideLoader()
+		})
+	}
 
-  /**
-   * Save groups
-   * @description Saves the groups by updating the groups in the database and
-   * setting the updated groups in the component.
-   *
-   * @private
-   * @return {void}
-   */
-  private _saveGroups() {
-    this._mainStateSrv.showLoader()
-    this._firebaseSrv.updateGroup(this._groupChanges.values).then(r => {
-      this.groups.set(r)
-      this._endEditing()
+	/**
+	 * Start edit mode
+	 * @description set cache data and start edit mode
+	 * @private
+	 */
+	private _startEditing(): void {
+		if (this.editing) return
 
-      this._mainStateSrv.hideLoader()
-    })
-  }
+		this._groupsDataCache = this.groups() as GroupsData
+		this.editing = true
+	}
 
-  /**
-   * Start edit mode
-   * @description set cache data and start edit mode
-   * @private
-   */
-  private _startEditing(): void {
-    if (this.editing) return
+	/**
+	 * End editing
+	 * @description Clear selected and cached data
+	 * @private
+	 */
+	private _endEditing(): void {
+		if (!this.editing) return
 
-    this._groupsDataCache = this.groups()
-    this.editing = true
-  }
+		this._groupsDataCache = []
+		this.selectedGroups.clear()
+		this._groupChanges.clear()
 
-  /**
-   * End editing
-   * @description Clear selected and cached data
-   * @private
-   */
-  private _endEditing(): void {
-    if (!this.editing) return
+		this.editing = false
+	}
 
-    this._groupsDataCache = []
-    this.selectedGroups.clear()
-    this._groupChanges.clear()
+	//#endregion
 
-    this.editing = false
-  }
+	//#region Interaction
 
-  //#endregion
+	/**
+	 * Go back
+	 */
+	goBack() {
+		this._location.back()
+	}
 
-  //#region Interaction
+	/**
+	 * Update group attributes
+	 * @param {GroupChanges} $event
+	 */
+	groupChanged($event: GroupChanges) {
+		this._startEditing()
+		const { groupsData, changes } = updateGroupAttr($event, this.groups() as GroupsData)
 
-  /**
-   * Go back
-   */
-  goBack() {
-    this._location.back()
-  }
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
+	}
 
-  /**
-   * Update group attributes
-   * @param {GroupChanges} $event
-   */
-  groupChanged($event: GroupChanges) {
-    this._startEditing()
-    const { groupsData, changes } = updateGroupAttr($event, this.groups())
+	/**
+	 * Delete group(s) and update items positions
+	 */
+	groupsDeleted() {
+		this._startEditing()
+		const { changes, groupsData } = deleteGroup([...this.selectedGroups], this.groups() as GroupsData)
 
-    this.groups.set(groupsData)
-    this._groupChanges.set(changes)
-  }
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
+		this.selectedGroups.clear()
+	}
 
-  /**
-   * Delete group(s) and update items positions
-   */
-  groupsDeleted() {
-    this._startEditing()
-    const { changes, groupsData } = deleteGroup([...this.selectedGroups], this.groups())
+	/**
+	 * Update group position
+	 * @param {CdkDragDrop<GroupData>} $event
+	 */
+	groupDrop($event: CdkDragDrop<GroupData>) {
+		this._startEditing()
+		const { changes, groupsData } = updateGroupPosition($event, this.groups() as GroupsData)
 
-    this.groups.set(groupsData)
-    this._groupChanges.set(changes)
-    this.selectedGroups.clear()
-  }
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
+		this.selectedGroups.clear()
+	}
 
-  /**
-   * Update group position
-   * @param {CdkDragDrop<GroupData>} $event
-   */
-  groupDrop($event: CdkDragDrop<GroupData>) {
-    this._startEditing()
-    const { changes, groupsData } = updateGroupPosition($event, this.groups())
+	/**
+	 * Group selection
+	 * @param {GroupSelected} $event
+	 */
+	groupSelected($event: GroupSelected) {
+		if ($event.isSelected) this.selectedGroups.add($event.UUID)
+		else this.selectedGroups.delete($event.UUID)
+	}
 
-    this.groups.set(groupsData)
-    this._groupChanges.set(changes)
-    this.selectedGroups.clear()
-  }
+	/**
+	 * Opens a new group dialog and handles the result.
+	 *
+	 * @return {void}
+	 */
+	openNewGroupDialog(): void {
+		this._escKeyDisabled = true
+		this._dialog
+			.open(GroupsNewDialogComponent)
+			.afterClosed()
+			.subscribe((r: GroupNew) => {
+				if (r) {
+					this._startEditing()
+					this._addGroup(r)
+				}
+				this._escKeyDisabled = false
+			})
+	}
 
-  /**
-   * Group selection
-   * @param {GroupSelected} $event
-   */
-  groupSelected($event: GroupSelected) {
-    if ($event.isSelected) this.selectedGroups.add($event.UUID)
-    else this.selectedGroups.delete($event.UUID)
-  }
+	//#endregion
 
-  /**
-   * Opens a new group dialog and handles the result.
-   *
-   * @return {void}
-   */
-  openNewGroupDialog(): void {
-    this._escKeyDisabled = true
-    this._dialog
-      .open(GroupsNewDialogComponent)
-      .afterClosed()
-      .subscribe((r: GroupNew) => {
-        if (r) {
-          this._startEditing()
-          this._addGroup(r)
-        }
-        this._escKeyDisabled = false
-      })
-  }
+	//#region Confirm / Cancel
 
-  //#endregion
+	/**
+	 * Confirm editing changes.
+	 * @description If there are deleted items, opens a confirmation dialog.
+	 *
+	 * @return {void}
+	 */
+	confirm(): void {
+		if (this._groupChanges.hasDeletedItems) {
+			const dr = this._dialog.open(DeleteConfirmDialogComponent)
+			dr.afterClosed().subscribe((result) => {
+				if (result) this._saveGroups()
+			})
+		} else this._saveGroups()
+	}
 
-  //#region Confirm / Cancel
+	/**
+	 * Cancels the current editing session.
+	 * @description Resets the groups data to its cached state and ends the editing mode.
+	 *
+	 * @return {void}
+	 */
+	cancel(): void {
+		this.groups.set(this._groupsDataCache)
+		this._endEditing()
+	}
 
-  /**
-   * Confirm editing changes.
-   * @description If there are deleted items, opens a confirmation dialog.
-   *
-   * @return {void}
-   */
-  confirm(): void {
-    if (this._groupChanges.hasDeletedItems) {
-      const dr = this._dialog.open(DeleteConfirmDialogComponent)
-      dr.afterClosed().subscribe((result) => {
-        if (result) this._saveGroups()
-      })
-    } else
-      this._saveGroups()
-  }
-
-  /**
-   * Cancels the current editing session.
-   * @description Resets the groups data to its cached state and ends the editing mode.
-   *
-   * @return {void}
-   */
-  cancel(): void {
-
-    this.groups.set(this._groupsDataCache)
-    this._endEditing()
-  }
-
-  //#endregion
+	//#endregion
 }
 
 export default GroupsComponent

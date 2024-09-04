@@ -19,7 +19,7 @@
 		<button
 			mat-icon-button
 			[title]="'Delete group'"
-			[disabled]="selectedGroups.size === 0 || selectedGroups.size === groups().length"
+			[disabled]="selectedGroups.size === 0 || selectedGroups.size === groups()!.length"
 			(click)="groupsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
@@ -28,22 +28,25 @@
 </header>
 
 <main class="main" cdkDropList (cdkDropListDropped)="groupDrop($event)">
+
 	@defer (when groups() !== null) {
-	<!-- Groups -->
-	@for(group of groups(); track group.UUID) {
-	<!-- Drag box -->
-	<div cdkDrag>
-		<app-group
-			[data]="group"
-			[selected]="selectedGroups.has(group.UUID)"
-			(changed)="groupChanged($event)"
-			(focused)="focused = $event"
-			(selectedChange)="groupSelected($event)"
-		></app-group>
-		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
-	</div>
-	} } @loading {
-	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+		<!-- Groups -->
+		@for(group of groups(); track group.UUID) {
+		<!-- Drag box -->
+		<div cdkDrag>
+			<app-group
+				[data]="group"
+				[selected]="selectedGroups.has(group.UUID)"
+				(changed)="groupChanged($event)"
+				(focused)="focused = $event"
+				(selectedChange)="groupSelected($event)"
+			></app-group>
+			<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+		</div>
+		} 
+	} 
+	@placeholder {
+		<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
 	}
 </main>
 
