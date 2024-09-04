@@ -40,7 +40,7 @@
 		<div
 			class="group-dot"
 			role="button"
-			tabindex="0"
+			[attr.tabindex]="editing() ? 0 : -1"
 			[attr.aria-label]="data().groupData.label"
 			[class.editing]="editing()"
 			[ngStyle]="{backgroundColor: data().groupData.color}"
