@@ -61,7 +61,6 @@
 	<div cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
 		@if(!shopping || (shopping && !item.notToBuy)){
 		<app-item
-      @revealVert
 			[data]="item"
 			[editing]="editing"
 			[shopping]="shopping"

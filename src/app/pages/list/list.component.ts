@@ -34,7 +34,6 @@ import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.
 import { gridToListView, listToGridView } from './list.groups-view'
 import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
-import { revealVert } from './list.animation'
 import { Unsubscribe } from 'firebase/firestore'
 
 @Component({
@@ -55,8 +54,7 @@ import { Unsubscribe } from 'firebase/firestore'
 		MatTooltip
 	],
 	templateUrl: './list.component.html',
-	styleUrl: './list.component.scss',
-	animations: [revealVert]
+	styleUrl: './list.component.scss'
 })
 class ListComponent implements OnInit, OnDestroy {
 	private readonly AUTOSAVE_TIME_OUT = 1200
@@ -420,7 +418,9 @@ class ListComponent implements OnInit, OnDestroy {
 			} else if ('editing' in r) {
 				this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
 			}
-		})
+
+      console.log(this.itemsData()?.filter(d => !d.notToBuy))
+    })
 	}
 
 	//#endregion
@@ -510,7 +510,6 @@ class ListComponent implements OnInit, OnDestroy {
 			}
 
 			this.itemChanged($event)
-			// this._engageSaveItems()
 		}
 	}
 
