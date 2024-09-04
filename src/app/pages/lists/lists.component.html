@@ -6,7 +6,7 @@
 		@if (listsData()) {
 		<button
 			mat-icon-button
-      [matTooltip]="editing ? '⇧ + Alt + A': '⇧ + Alt + E'"      
+			[matTooltip]="editing ? '⇧ + Alt + A': '⇧ + Alt + E'"
 			[title]="!editing ? 'Edit lists': 'Create a new list'"
 			[disabled]="disabled"
 			(click)="clickTopButton()"
@@ -18,7 +18,7 @@
 </header>
 
 <main class="main" cdkDropList (cdkDropListDropped)="listsDrop($event)">
-	@defer (when listsData() !== null) { @if (listsData()!.length > 0) {
+	@defer (when listsData() !== null) { @if(listsData()!.length > 0) {
 	<!--Lists-->
 	@for (data of listsData(); track data.UUID) {
 	<!--Drag box-->
@@ -32,18 +32,16 @@
 		></app-lists-item>
 		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
 	</div>
-
 	} } @else {
-	<!--No lists -> show placeholder-->
 	<app-empty-lists (newList)="openCreateNew()"></app-empty-lists>
-	} } @loading {
+	} } @placeholder {
 	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
 	}
 </main>
 
 @if (editing) {
 <app-confirm-cancel (cancel)="onCancel()" (confirm)="onConfirm()">
-	<ng-template #cancelTemplate>		
+	<ng-template #cancelTemplate>
 		<span>Cancel</span>
 		@if(!isMobile) {
 		<span> (ESC)</span>
