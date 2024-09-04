@@ -131,7 +131,7 @@ class ListComponent implements OnInit, OnDestroy {
 		$event.preventDefault()
 		const k = $event.key.toLowerCase()
 
-		if (k === 'escape' && !this._escKeyDisabled) {
+		if (k === 'escape' && !this._escKeyDisabled && (this.shopping || this.editing)) {
 			this.cancel()
       return
 		}
@@ -418,8 +418,6 @@ class ListComponent implements OnInit, OnDestroy {
 			} else if ('editing' in r) {
 				this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
 			}
-
-      console.log(this.itemsData()?.filter(d => !d.notToBuy))
     })
 	}
 
@@ -507,7 +505,9 @@ class ListComponent implements OnInit, OnDestroy {
 				} else if (this._inCartItemsIndex.has(index)) {
 					this._inCartItemsIndex.delete(index)
 				}
-			}
+			} else if (!this.editing) {
+        this._engageSaveItems()
+      }
 
 			this.itemChanged($event)
 		}

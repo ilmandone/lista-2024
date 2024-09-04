@@ -2,7 +2,7 @@
 <div
 	class="item-button"
 	mat-ripple
-	[attr.tabindex]="!editing() ? -1 : 0"
+	[attr.tabindex]="!editing() ? 0 : -1"
 	[attr.role]="!editing() ? 'button' : 'none'"
 	[class.editing]="editing()"
 	[matRippleDisabled]="editing()"
@@ -26,7 +26,7 @@
 	/>
 
 	<!--  Time or delete button-->
-	@if (!editing()) { 
+	@if (!editing()) {
 	<span class="item-button__time" @revealHor
 		>{{ time.toLocaleDateString() }} <br />
 		{{ time.getHours() }} :{{ time.getMinutes() }}</span
