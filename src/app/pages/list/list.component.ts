@@ -4,41 +4,37 @@ import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-s
 import { MatIconButton } from '@angular/material/button'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIcon } from '@angular/material/icon'
+import { MatTooltip } from '@angular/material/tooltip'
 import { ActivatedRoute } from '@angular/router'
 import { ItemComponent } from 'app/components/item/item.component'
 import { ItemSelectedEvent } from 'app/components/item/item.interface'
+import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { SetOfItemsChanges } from 'app/data/items.changes'
+import { Nullable } from 'app/shared/common.interfaces'
+import { checkMobile } from 'app/shared/detect.mobile'
 import { cloneDeep } from 'lodash'
 import { Subject, takeUntil } from 'rxjs'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import {
-  GroupData,
-  ItemsChanges,
-  ItemsData,
-  ItemsDataWithGroup
+	GroupData,
+	ItemsChanges,
+	ItemsData,
+	ItemsDataWithGroup
 } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
-import {
-  DeleteConfirmDialogComponent
-} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
+import { inOutAnimation } from './list.animation'
 import {
-  ListBottomSheetComponent,
-  ListBottomSheetData
+	ListBottomSheetComponent,
+	ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
-import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
-import {
-  ListGroupsBottomSheetComponent
-} from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
-import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { gridToListView, listToGridView } from './list.groups-view'
-import { MatTooltip } from '@angular/material/tooltip'
-import { checkMobile } from 'app/shared/detect.mobile'
-import { animate, style, transition, trigger } from '@angular/animations'
-import { Nullable } from 'app/shared/common.interfaces'
+import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 
 @Component({
 	selector: 'app-list',
@@ -59,29 +55,7 @@ import { Nullable } from 'app/shared/common.interfaces'
 	],
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss',
-  animations: [
-    trigger(
-      'inOutAnimation',
-      [
-        transition(
-          ':enter',
-          [
-            style({ height: 0, opacity: 0 }),
-            animate('0.4s ease-out',
-              style({ height: '*', opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave',
-          [
-            style({ height: '*', opacity: 1 }),
-            animate('0.25s ease-in',
-              style({ height: 0, opacity: 0 }))
-          ]
-        )
-      ]
-    )
-  ]
+	animations: [inOutAnimation]
 })
 class ListComponent implements OnInit, OnDestroy {
 	private readonly AUTOSAVE_TIME_OUT = 1200
@@ -92,7 +66,7 @@ class ListComponent implements OnInit, OnDestroy {
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _mainStateSrv = inject(MainStateService)
 	private _UUID!: string
-  private _escKeyDisabled = false
+	private _escKeyDisabled = false
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
 	private _itemsDataCache: ItemsDataWithGroup = []
 	private _autoSaveTimeOutID!: number
@@ -102,7 +76,7 @@ class ListComponent implements OnInit, OnDestroy {
 
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
-  isMobile = checkMobile()
+	isMobile = checkMobile()
 	itemsData = signal<Nullable<ItemsDataWithGroup>>(null)
 	label!: string
 	selectedItems = new Set<string>()
@@ -133,7 +107,7 @@ class ListComponent implements OnInit, OnDestroy {
 	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
 		if (this.isMobile) return
 
-    $event.preventDefault()
+		$event.preventDefault()
 		const k = $event.key.toLowerCase()
 
 		if (k === 'escape' && !this._escKeyDisabled) {
@@ -145,16 +119,16 @@ class ListComponent implements OnInit, OnDestroy {
 		if (this.editing) {
 			switch (k) {
 				case 'a':
-          if (!this._escKeyDisabled) this.openNewItemDialog()
+					if (!this._escKeyDisabled) this.openNewItemDialog()
 					break
 				case 'd':
 					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData()?.length) {
 						this.itemsDeleted()
 					}
 					break
-        case 'enter':
-          this.confirm()
-          break
+				case 'enter':
+					this.confirm()
+					break
 				default:
 					console.warn('Unknown shortcut key', k)
 			}
@@ -279,16 +253,14 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param {string} groupUUID
 	 */
 	addItem(label: string, groupUUID: string) {
-
-		if(this.itemsData() === null) return
+		if (this.itemsData() === null) return
 
 		const d = this.itemsData() as ItemsDataWithGroup
 		const selectedUUID =
 			this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
 
 		const insertAfter = selectedUUID
-			? (d.find((e) => e.UUID === selectedUUID)?.position ??
-				d.length - 1)
+			? (d.find((e) => e.UUID === selectedUUID)?.position ?? d.length - 1)
 			: d.length - 1
 
 		const groupData = this.groups()[groupUUID]
@@ -304,9 +276,12 @@ class ListComponent implements OnInit, OnDestroy {
 	 * Delete button click
 	 */
 	itemsDeleted() {
-		if(this.itemsData() === null) return
+		if (this.itemsData() === null) return
 
-		const { itemsData, changes } = deleteItem([...this.selectedItems], this.itemsData() as ItemsDataWithGroup)
+		const { itemsData, changes } = deleteItem(
+			[...this.selectedItems],
+			this.itemsData() as ItemsDataWithGroup
+		)
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 		this.selectedItems.clear()
@@ -328,7 +303,10 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	itemDrop($event: CdkDragDrop<ItemsData>) {
-		const { itemsData, changes } = updateItemPosition($event, this.itemsData() as ItemsDataWithGroup)
+		const { itemsData, changes } = updateItemPosition(
+			$event,
+			this.itemsData() as ItemsDataWithGroup
+		)
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 	}
@@ -344,7 +322,11 @@ class ListComponent implements OnInit, OnDestroy {
 			.afterDismissed()
 			.subscribe((data: GroupData) => {
 				if (data) {
-					const { itemsData, changes } = updateItemAttr($event, this.itemsData() as ItemsDataWithGroup, data)
+					const { itemsData, changes } = updateItemAttr(
+						$event,
+						this.itemsData() as ItemsDataWithGroup,
+						data
+					)
 					changes[0].group = data.UUID
 
 					this.itemsData.set(itemsData)
@@ -401,7 +383,8 @@ class ListComponent implements OnInit, OnDestroy {
 			Object.assign(this, { ...r })
 
 			if ('showByGroups' in r) {
-				if (this.showByGroups) this.itemsData.set(listToGridView(this.itemsData() as ItemsDataWithGroup))
+				if (this.showByGroups)
+					this.itemsData.set(listToGridView(this.itemsData() as ItemsDataWithGroup))
 				else this.itemsData.set(gridToListView(this.itemsData() as ItemsDataWithGroup))
 			} else if ('editing' in r) {
 				this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
@@ -484,7 +467,9 @@ class ListComponent implements OnInit, OnDestroy {
 	itemClicked($event: ItemsChanges) {
 		if (!this.editing) {
 			if (this.shopping) {
-				const index = (this.itemsData() as ItemsDataWithGroup).findIndex((i) => i.UUID === $event.UUID)
+				const index = (this.itemsData() as ItemsDataWithGroup).findIndex(
+					(i) => i.UUID === $event.UUID
+				)
 
 				if ($event.inCart) {
 					this._inCartItems.add(index)
@@ -535,7 +520,10 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	cancel() {
 		if (this.shopping) {
-			const { newItemsData, changes } = this._resetInCart(this.itemsData() as ItemsDataWithGroup, this._inCartItems)
+			const { newItemsData, changes } = this._resetInCart(
+				this.itemsData() as ItemsDataWithGroup,
+				this._inCartItems
+			)
 			this._inCartItems.clear()
 			this._itemsChanges.set(changes)
 			this.itemsData.set(newItemsData)
