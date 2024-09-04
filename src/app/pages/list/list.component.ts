@@ -97,7 +97,7 @@ class ListComponent implements OnInit, OnDestroy {
 			await this._loadData()
 		})
 
-    // Registration to firebase snapshot for updates from other users
+    // Registration to firebase snapshot for other's user update
 		this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d: ItemsData) => {
 			if (d.length > 0) {
 				this._mainStateSrv.showLoader()
@@ -135,9 +135,14 @@ class ListComponent implements OnInit, OnDestroy {
 
 		if (k === 'escape' && !this._escKeyDisabled) {
 			this.cancel()
+      return
 		}
 
 		if (!$event.shiftKey || !$event.altKey) return
+
+    if (k === 'enter' && this.shopping || this.editing) {
+      this.confirm()
+    }
 
 		if (this.editing) {
 			switch (k) {
@@ -148,9 +153,6 @@ class ListComponent implements OnInit, OnDestroy {
 					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData()?.length) {
 						this.itemsDeleted()
 					}
-					break
-				case 'enter':
-					this.confirm()
 					break
 				default:
 					console.warn('Unknown shortcut key', k)
