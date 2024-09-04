@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 
-export const inOutAnimation = trigger(
-  'inOutAnimation',
+export const revealVert = trigger(
+  'revealVert',
   [
     transition(
       ':enter',

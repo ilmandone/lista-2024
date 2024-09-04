@@ -26,7 +26,6 @@ import {
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
-import { inOutAnimation } from './list.animation'
 import {
 	ListBottomSheetComponent,
 	ListBottomSheetData
@@ -35,6 +34,7 @@ import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.
 import { gridToListView, listToGridView } from './list.groups-view'
 import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
+import { revealVert } from './list.animation'
 
 @Component({
 	selector: 'app-list',
@@ -55,7 +55,7 @@ import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.compon
 	],
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss',
-	animations: [inOutAnimation]
+	animations: [revealVert]
 })
 class ListComponent implements OnInit, OnDestroy {
 	private readonly AUTOSAVE_TIME_OUT = 1200
