@@ -71,7 +71,7 @@ class ListComponent implements OnInit, OnDestroy {
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
 	private _itemsDataCache: ItemsDataWithGroup = []
 	private _autoSaveTimeOutID!: number
-	private _inCartItems = new Set<number>()
+	private _inCartItemsIndex = new Set<number>()
 
 	private _destroyed$ = new Subject<boolean>()
 	private _itemUpdateUnsubscribe!: Unsubscribe
@@ -92,16 +92,18 @@ class ListComponent implements OnInit, OnDestroy {
 
 		await this._loadData(false)
 
+    // Reload action
 		this._mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
 			await this._loadData()
 		})
 
+    // Registration to firebase snapshot for updates from other users
 		this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d: ItemsData) => {
 			if (d.length > 0) {
 				this._mainStateSrv.showLoader()
 				const dataWithGroup = this._itemsWithGroupData(this.groups(), d).data
 				const newData = this.itemsData() as ItemsDataWithGroup
-				
+
 				dataWithGroup.forEach((d) => {
 					const index = newData?.findIndex((nd) => nd.UUID === d.UUID)
 					if (index > -1) {
@@ -110,7 +112,7 @@ class ListComponent implements OnInit, OnDestroy {
 				})
 
 				this.itemsData.set(newData)
-				this._mainStateSrv.hideLoader()				
+				this._mainStateSrv.hideLoader()
 			}
 		})
 	}
@@ -195,6 +197,12 @@ class ListComponent implements OnInit, OnDestroy {
 				this._itemsChanges.set(itemsToDefault)
 				this._saveItems()
 			}
+
+      // Add the in cart items to inCart index list
+      this._inCartItemsIndex = new Set(data.reduce((acc, data, index) => {
+        if (data.inCart) acc.push(index)
+        return acc
+      }, [] as number[]))
 
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
@@ -493,14 +501,14 @@ class ListComponent implements OnInit, OnDestroy {
 				)
 
 				if ($event.inCart) {
-					this._inCartItems.add(index)
-				} else if (this._inCartItems.has(index)) {
-					this._inCartItems.delete(index)
+					this._inCartItemsIndex.add(index)
+				} else if (this._inCartItemsIndex.has(index)) {
+					this._inCartItemsIndex.delete(index)
 				}
 			}
 
 			this.itemChanged($event)
-			this._engageSaveItems()
+			// this._engageSaveItems()
 		}
 	}
 
@@ -515,9 +523,9 @@ class ListComponent implements OnInit, OnDestroy {
 		if (this.shopping) {
 			const { newItemsData, changes } = this._fromInCartToNotToBuy(
 				this.itemsData() as ItemsDataWithGroup,
-				this._inCartItems
+				this._inCartItemsIndex
 			)
-			this._inCartItems.clear()
+			this._inCartItemsIndex.clear()
 			this._itemsChanges.set(changes)
 			this.itemsData.set(newItemsData)
 
@@ -543,9 +551,9 @@ class ListComponent implements OnInit, OnDestroy {
 		if (this.shopping) {
 			const { newItemsData, changes } = this._resetInCart(
 				this.itemsData() as ItemsDataWithGroup,
-				this._inCartItems
+				this._inCartItemsIndex
 			)
-			this._inCartItems.clear()
+			this._inCartItemsIndex.clear()
 			this._itemsChanges.set(changes)
 			this.itemsData.set(newItemsData)
 
