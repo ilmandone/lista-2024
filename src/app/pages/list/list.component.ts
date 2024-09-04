@@ -505,7 +505,9 @@ class ListComponent implements OnInit, OnDestroy {
 				} else if (this._inCartItemsIndex.has(index)) {
 					this._inCartItemsIndex.delete(index)
 				}
-			}
+			} else if (!this.editing) {
+        this._engageSaveItems()
+      }
 
 			this.itemChanged($event)
 		}

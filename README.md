@@ -2,10 +2,10 @@
 
 ## TODO:
 
-1) ~~Aggiungere l'animazione per l'ingresso e uscita dalla modalità di editing~~
-2) ~~Controllare come mai che si aggiorna la lista se annullo la modalità spesa.~~
-3) ~~Sistemare il loader per lists, list e group components. Mettiamone uno semplice che si disattiva appena viene finito il caricamento dei dati all'inizializzazione.~~
-4) ~~Aggiungere il bordo al focus per tutti gli icon buttons.~~
+1) Controllare escape come shortcut per tutte le modalità 
+2) Vedere se è possibile fare un'animazione che funziona per il passaggio a shopping mode
+3) Accelerare lo scrolling in drag mode
+4) Evidenziare il gruppo selezionato nella modifica di un gruppo di un item
 
 ## In attesa di sistemare il server
 
