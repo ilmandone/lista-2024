@@ -17,9 +17,11 @@ import {
 	Firestore,
 	getDocs,
 	getFirestore,
+	onSnapshot,
 	orderBy,
 	query,
 	Timestamp,
+	Unsubscribe,
 	WriteBatch,
 	writeBatch
 } from 'firebase/firestore'
@@ -42,8 +44,6 @@ import {
 import { Nullable } from '../shared/common.interfaces'
 import { v4 as uuidV4 } from 'uuid'
 import { DEFAULT_GROUP } from './firebase.defaults'
-
-
 
 @Injectable({
 	providedIn: 'root'
@@ -143,7 +143,6 @@ export class FirebaseService {
 		this._db = getFirestore(this._app)
 	}
 
-
 	/**
 	 * Batch deletes and updates documents in the specified collection.
 	 * @param {WriteBatch} batch
@@ -156,7 +155,6 @@ export class FirebaseService {
 		changes: EditBag<T>,
 		collection: CollectionReference<DocumentData, DocumentData>
 	): void {
-
 		// Delete
 		for (const del of changes.deleted) {
 			const d = doc(collection, del.UUID)
@@ -167,7 +165,7 @@ export class FirebaseService {
 		for (const up of changes.updated) {
 			const d = doc(collection, up.UUID)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const {crud, ...value} = up
+			const { crud, ...value } = up
 
 			batch.update(d, value as DocumentData)
 		}
@@ -321,16 +319,32 @@ export class FirebaseService {
 		}
 	}
 
+	registerUpdates(UUID: string, cbFn: (data: ItemsData) => unknown): Unsubscribe {
+		const mainCollection = collection(this._db, 'ListaDellaSpesaV2', UUID, 'items')
+
+		return onSnapshot(mainCollection, (querySnapshot) => {
+			const itemModified: ItemData[] = querySnapshot.docChanges().reduce((acc, change) => {
+				const doc = change.doc
+				if(!doc.metadata.hasPendingWrites && change.type === 'modified') {
+					acc.push(change.doc.data() as ItemData)
+				}
+				return acc
+			}, [] as ItemsData)
+
+			cbFn(itemModified)
+		})
+	}
+
 	//#endregion
 
 	//#region Groups
 
 	/**
-   * Loads groups from the database.
-   * @param {boolean} useCache
-   * @param {boolean} withDefault
-   * @return {Promise<GroupsData>}
-   */
+	 * Loads groups from the database.
+	 * @param {boolean} useCache
+	 * @param {boolean} withDefault
+	 * @return {Promise<GroupsData>}
+	 */
 	public async loadGroups(useCache = false, withDefault = true): Promise<GroupsData> {
 		if (!this._db) this._startDB()
 		if (useCache && this._cachedGroups) return Promise.resolve(this._cachedGroups)
@@ -345,8 +359,7 @@ export class FirebaseService {
 			// Save cache with default group
 			this._cachedGroups = data.docs.map((doc) => doc.data() as GroupData)
 
-			if(withDefault)
-			this._cachedGroups.push(DEFAULT_GROUP)
+			if (withDefault) this._cachedGroups.push(DEFAULT_GROUP)
 
 			return this._cachedGroups
 		} catch (error) {

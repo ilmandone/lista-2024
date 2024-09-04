@@ -35,6 +35,7 @@ import { gridToListView, listToGridView } from './list.groups-view'
 import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { revealVert } from './list.animation'
+import { Unsubscribe } from 'firebase/firestore'
 
 @Component({
 	selector: 'app-list',
@@ -73,6 +74,7 @@ class ListComponent implements OnInit, OnDestroy {
 	private _inCartItems = new Set<number>()
 
 	private _destroyed$ = new Subject<boolean>()
+	private _itemUpdateUnsubscribe!: Unsubscribe
 
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
@@ -93,9 +95,14 @@ class ListComponent implements OnInit, OnDestroy {
 		this._mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
 			await this._loadData()
 		})
+
+		this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d:ItemsData) => {
+			console.log(d)
+		})
 	}
 
 	ngOnDestroy(): void {
+		this._itemUpdateUnsubscribe()
 		this._destroyed$.next(true)
 		this._destroyed$.complete()
 	}
