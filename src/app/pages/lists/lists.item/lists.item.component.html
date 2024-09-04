@@ -12,7 +12,7 @@
 >
 	<!--  Drag button -->
 	@if (editing()) {
-	<button cdkDragHandle mat-icon-button [title]="'Jolly button'" [disabled]="disabled">
+	<button cdkDragHandle mat-icon-button @slideFromLeft [title]="'Jolly button'" [disabled]="disabled">
 		<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
 	</button>
 	}
@@ -26,14 +26,14 @@
 	/>
 
 	<!--  Time or delete button-->
-	@if (!editing()) {
-	<span class="item-button__time"
+	@if (!editing()) { 
+	<span class="item-button__time" @slideFromLeft
 		>{{ time.toLocaleDateString() }} <br />
 		{{ time.getHours() }} :{{ time.getMinutes() }}</span
 	>
 	} @else {
 	<button
-		mat-icon-button
+		mat-icon-button @slideFromLeft
 		[title]="'delete ' + data().label + 'list'"
 		(click)="deleteList()"
 		[disabled]="disabled"
