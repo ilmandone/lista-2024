@@ -1,6 +1,6 @@
 import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { Location } from '@angular/common'
-import { Component, effect, inject, OnInit, signal } from '@angular/core'
+import { Component, effect, HostListener, inject, OnInit, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
@@ -16,7 +16,9 @@ import { DeleteConfirmDialogComponent } from 'app/shared/delete.confirm.dialog/d
 import { MainStateService } from 'app/shared/main-state.service'
 import { addGroup, deleteGroup, updateGroupAttr, updateGroupPosition } from './groups.cud'
 import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.component'
-
+import { MatTooltip } from '@angular/material/tooltip'
+import { checkMobile } from '../../shared/detect.mobile'
+import { Nullable } from 'app/shared/common.interfaces'
 
 @Component({
 	selector: 'app-groups',
@@ -30,19 +32,20 @@ import { GroupsNewDialogComponent } from './groups.new.dialog/groups.new.dialog.
 		LoaderComponent,
 		MatButtonModule,
 		MatIconModule,
-		MatDialogModule
+		MatDialogModule,
+		MatTooltip
 	],
 	templateUrl: './groups.component.html',
 	styleUrl: './groups.component.scss'
 })
 class GroupsComponent implements OnInit {
-
 	private readonly _dialog = inject(MatDialog)
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _focusSrv = inject(FocusInputService)
 	private readonly _location = inject(Location)
 	private readonly _mainStateSrv = inject(MainStateService)
 
+	private _escKeyDisabled = false
 	private _groupsDataCache: GroupsData = []
 	private _groupChanges = new SetOfItemsChanges<GroupData>()
 
@@ -50,8 +53,9 @@ class GroupsComponent implements OnInit {
 	disabled = false
 	editing = false
 	focused = false
+	isMobile = checkMobile()
 
-	groups = signal<GroupsData>([])
+	groups = signal<Nullable<GroupsData>>(null)
 
 	constructor() {
 		effect(() => {
@@ -63,25 +67,49 @@ class GroupsComponent implements OnInit {
 		this.groups.set(await this._firebaseSrv.loadGroups(false, false))
 	}
 
-	//#region Privates
+	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
+		if (this.isMobile) return
 
-	private _addGroup(data: GroupNew) {
+		$event.preventDefault()
+		const k = $event.key.toLowerCase()
+
+		if (k === 'escape' && !this._escKeyDisabled) {
+			this.cancel()
+		}
+
+		if (!$event.shiftKey || !$event.altKey) return
+
+		if (k === 'a' && !this._escKeyDisabled) this.openNewGroupDialog()
+
+		if (this.editing) {
+			switch (k) {
+				case 'enter':
+					this.confirm()
+					break
+			}
+		}
+	}
+
+	//#region Privates
 	/**
 	 * Adds a new group to the existing groups.
 	 *
 	 * @param {GroupNew} data - The new group data to be added.
 	 * @return {void}
 	 */
+	private _addGroup(data: GroupNew) {
+    if(this.groups() === null) return
+    const g = this.groups() as GroupsData
 		const selectedUUID =
 			this.selectedGroups.size > 0 ? this.selectedGroups.values().next().value : null
 		const insertAfter = selectedUUID
-			? this.groups().find((e) => e.UUID === selectedUUID)?.position ?? this.groups().length - 1
-			: this.groups().length - 1
+			? (g.find((e) => e.UUID === selectedUUID)?.position ?? g.length - 1)
+			: g.length - 1
 
-		const {changes, groupsData} = addGroup(data, this.groups(), insertAfter)
+		const { changes, groupsData } = addGroup(data, g, insertAfter)
 
-    this.groups.set(groupsData)
-    this._groupChanges.set(changes)
+		this.groups.set(groupsData)
+		this._groupChanges.set(changes)
 		this.selectedGroups.clear()
 	}
 
@@ -95,7 +123,7 @@ class GroupsComponent implements OnInit {
 	 */
 	private _saveGroups() {
 		this._mainStateSrv.showLoader()
-		this._firebaseSrv.updateGroup(this._groupChanges.values).then(r => {
+		this._firebaseSrv.updateGroup(this._groupChanges.values).then((r) => {
 			this.groups.set(r)
 			this._endEditing()
 
@@ -111,7 +139,7 @@ class GroupsComponent implements OnInit {
 	private _startEditing(): void {
 		if (this.editing) return
 
-		this._groupsDataCache = this.groups()
+		this._groupsDataCache = this.groups() as GroupsData
 		this.editing = true
 	}
 
@@ -125,6 +153,7 @@ class GroupsComponent implements OnInit {
 
 		this._groupsDataCache = []
 		this.selectedGroups.clear()
+		this._groupChanges.clear()
 
 		this.editing = false
 	}
@@ -146,7 +175,7 @@ class GroupsComponent implements OnInit {
 	 */
 	groupChanged($event: GroupChanges) {
 		this._startEditing()
-		const { groupsData, changes } = updateGroupAttr($event, this.groups())
+		const { groupsData, changes } = updateGroupAttr($event, this.groups() as GroupsData)
 
 		this.groups.set(groupsData)
 		this._groupChanges.set(changes)
@@ -157,7 +186,7 @@ class GroupsComponent implements OnInit {
 	 */
 	groupsDeleted() {
 		this._startEditing()
-		const { changes, groupsData } = deleteGroup([...this.selectedGroups], this.groups())
+		const { changes, groupsData } = deleteGroup([...this.selectedGroups], this.groups() as GroupsData)
 
 		this.groups.set(groupsData)
 		this._groupChanges.set(changes)
@@ -170,7 +199,7 @@ class GroupsComponent implements OnInit {
 	 */
 	groupDrop($event: CdkDragDrop<GroupData>) {
 		this._startEditing()
-		const { changes, groupsData } = updateGroupPosition($event, this.groups())
+		const { changes, groupsData } = updateGroupPosition($event, this.groups() as GroupsData)
 
 		this.groups.set(groupsData)
 		this._groupChanges.set(changes)
@@ -191,14 +220,18 @@ class GroupsComponent implements OnInit {
 	 *
 	 * @return {void}
 	 */
-	openNewGroupDialog() {
-		const d = this._dialog.open(GroupsNewDialogComponent)
-		d.afterClosed().subscribe((r: GroupNew) => {
-			if (r) {
-        this._startEditing()
-				this._addGroup(r)
-			}
-		})
+	openNewGroupDialog(): void {
+		this._escKeyDisabled = true
+		this._dialog
+			.open(GroupsNewDialogComponent)
+			.afterClosed()
+			.subscribe((r: GroupNew) => {
+				if (r) {
+					this._startEditing()
+					this._addGroup(r)
+				}
+				this._escKeyDisabled = false
+			})
 	}
 
 	//#endregion
@@ -212,13 +245,12 @@ class GroupsComponent implements OnInit {
 	 * @return {void}
 	 */
 	confirm(): void {
-		if(this._groupChanges.hasDeletedItems) {
+		if (this._groupChanges.hasDeletedItems) {
 			const dr = this._dialog.open(DeleteConfirmDialogComponent)
-				dr.afterClosed().subscribe((result) => {
-					if (result) this._saveGroups()
-				})
-		} else 
-		this._saveGroups()
+			dr.afterClosed().subscribe((result) => {
+				if (result) this._saveGroups()
+			})
+		} else this._saveGroups()
 	}
 
 	/**
@@ -228,7 +260,6 @@ class GroupsComponent implements OnInit {
 	 * @return {void}
 	 */
 	cancel(): void {
-	
 		this.groups.set(this._groupsDataCache)
 		this._endEditing()
 	}

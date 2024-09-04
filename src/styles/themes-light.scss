@@ -58,4 +58,9 @@ html {
 
   background-color: var(--mat-app-background-color);
   color: var(--mat-app-text-color);
+
+  // Overrides
+  .mat-mdc-icon-button.cdk-keyboard-focused {
+    outline: 1px solid var(--mat-app-text-color);
+  }
 }

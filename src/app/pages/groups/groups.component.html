@@ -8,14 +8,18 @@
 		</div>
 	</div>
 	<div class="header__controls">
-		<button mat-icon-button [title]="'Add group'" [disabled]="disabled"
-            (click)="openNewGroupDialog()">
+		<button
+      mat-icon-button
+      matTooltip="⇧ + Alt + A"
+      [title]="'Add group'"
+      [disabled]="disabled"
+      (click)="openNewGroupDialog()">
 			<mat-icon [fontIcon]="'add'"></mat-icon>
 		</button>
 		<button
 			mat-icon-button
 			[title]="'Delete group'"
-			[disabled]="selectedGroups.size === 0 || selectedGroups.size === groups().length"
+			[disabled]="selectedGroups.size === 0 || selectedGroups.size === groups()!.length"
 			(click)="groupsDeleted()"
 		>
 			<mat-icon [fontIcon]="'delete'"></mat-icon>
@@ -24,25 +28,42 @@
 </header>
 
 <main class="main" cdkDropList (cdkDropListDropped)="groupDrop($event)">
+
 	@defer (when groups() !== null) {
-	<!-- Groups -->
-	@for(group of groups(); track group.UUID) {
-	<!-- Drag box -->
-	<div cdkDrag>
-		<app-group
-			[data]="group"
-			[selected]="selectedGroups.has(group.UUID)"
-			(changed)="groupChanged($event)"
-			(focused)="focused = $event"
-			(selectedChange)="groupSelected($event)"
-		></app-group>
-		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
-	</div>
-	} } @loading {
-	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+		<!-- Groups -->
+		@for(group of groups(); track group.UUID) {
+		<!-- Drag box -->
+		<div cdkDrag>
+			<app-group
+				[data]="group"
+				[selected]="selectedGroups.has(group.UUID)"
+				(changed)="groupChanged($event)"
+				(focused)="focused = $event"
+				(selectedChange)="groupSelected($event)"
+			></app-group>
+			<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+		</div>
+		} 
+	} 
+	@placeholder {
+		<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
 	}
 </main>
 
 @if (editing && !focused) {
-<app-confirm-cancel (cancel)="cancel()" (confirm)="confirm()"> </app-confirm-cancel>
+<app-confirm-cancel (cancel)="cancel()" (confirm)="confirm()">
+  <ng-template #cancelTemplate>
+    <span>Cancel</span>
+    @if(!isMobile) {
+      <span> (ESC)</span>
+    }
+  </ng-template>
+
+  <ng-template #confirmTemplate>
+    <span>Confirm</span>
+    @if(!isMobile) {
+      <span> ( ⇧ + Alt + ⏎ )</span>
+    }
+  </ng-template>
+</app-confirm-cancel>
 }

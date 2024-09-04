@@ -4,10 +4,14 @@ import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-s
 import { MatIconButton } from '@angular/material/button'
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'
 import { MatIcon } from '@angular/material/icon'
+import { MatTooltip } from '@angular/material/tooltip'
 import { ActivatedRoute } from '@angular/router'
 import { ItemComponent } from 'app/components/item/item.component'
 import { ItemSelectedEvent } from 'app/components/item/item.interface'
+import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { SetOfItemsChanges } from 'app/data/items.changes'
+import { Nullable } from 'app/shared/common.interfaces'
+import { checkMobile } from 'app/shared/detect.mobile'
 import { cloneDeep } from 'lodash'
 import { Subject, takeUntil } from 'rxjs'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
@@ -27,12 +31,11 @@ import {
 	ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
-import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
-import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
-import { DEFAULT_GROUP } from 'app/data/firebase.defaults'
 import { gridToListView, listToGridView } from './list.groups-view'
-import { MatTooltip } from '@angular/material/tooltip'
-import { checkMobile } from 'app/shared/detect.mobile'
+import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
+import { revealVert } from './list.animation'
+import { Unsubscribe } from 'firebase/firestore'
 
 @Component({
 	selector: 'app-list',
@@ -52,7 +55,8 @@ import { checkMobile } from 'app/shared/detect.mobile'
 		MatTooltip
 	],
 	templateUrl: './list.component.html',
-	styleUrl: './list.component.scss'
+	styleUrl: './list.component.scss',
+	animations: [revealVert]
 })
 class ListComponent implements OnInit, OnDestroy {
 	private readonly AUTOSAVE_TIME_OUT = 1200
@@ -63,18 +67,19 @@ class ListComponent implements OnInit, OnDestroy {
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _mainStateSrv = inject(MainStateService)
 	private _UUID!: string
-  private _escKeyDisabled = false
+	private _escKeyDisabled = false
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
 	private _itemsDataCache: ItemsDataWithGroup = []
 	private _autoSaveTimeOutID!: number
-	private _inCartItems = new Set<number>()
+	private _inCartItemsIndex = new Set<number>()
 
 	private _destroyed$ = new Subject<boolean>()
+	private _itemUpdateUnsubscribe!: Unsubscribe
 
 	editing = false
 	groups = signal<Record<string, GroupData>>({})
-  isMobile = checkMobile()
-	itemsData = signal<ItemsDataWithGroup>([])
+	isMobile = checkMobile()
+	itemsData = signal<Nullable<ItemsDataWithGroup>>(null)
 	label!: string
 	selectedItems = new Set<string>()
 	showByGroups = false
@@ -87,12 +92,33 @@ class ListComponent implements OnInit, OnDestroy {
 
 		await this._loadData(false)
 
+    // Reload action
 		this._mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
 			await this._loadData()
+		})
+
+    // Registration to firebase snapshot for other's user update
+		this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d: ItemsData) => {
+			if (d.length > 0) {
+				this._mainStateSrv.showLoader()
+				const dataWithGroup = this._itemsWithGroupData(this.groups(), d).data
+				const newData = this.itemsData() as ItemsDataWithGroup
+
+				dataWithGroup.forEach((d) => {
+					const index = newData?.findIndex((nd) => nd.UUID === d.UUID)
+					if (index > -1) {
+						newData[index] = d
+					}
+				})
+
+				this.itemsData.set(newData)
+				this._mainStateSrv.hideLoader()
+			}
 		})
 	}
 
 	ngOnDestroy(): void {
+		this._itemUpdateUnsubscribe()
 		this._destroyed$.next(true)
 		this._destroyed$.complete()
 	}
@@ -104,28 +130,30 @@ class ListComponent implements OnInit, OnDestroy {
 	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
 		if (this.isMobile) return
 
-    $event.preventDefault()
+		$event.preventDefault()
 		const k = $event.key.toLowerCase()
 
 		if (k === 'escape' && !this._escKeyDisabled) {
 			this.cancel()
+      return
 		}
 
 		if (!$event.shiftKey || !$event.altKey) return
 
+    if (k === 'enter' && this.shopping || this.editing) {
+      this.confirm()
+    }
+
 		if (this.editing) {
 			switch (k) {
 				case 'a':
-          if (!this._escKeyDisabled) this.openNewItemDialog()
+					if (!this._escKeyDisabled) this.openNewItemDialog()
 					break
 				case 'd':
-					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData().length) {
+					if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsData()?.length) {
 						this.itemsDeleted()
 					}
 					break
-        case 'enter':
-          this.confirm()
-          break
 				default:
 					console.warn('Unknown shortcut key', k)
 			}
@@ -171,6 +199,12 @@ class ListComponent implements OnInit, OnDestroy {
 				this._itemsChanges.set(itemsToDefault)
 				this._saveItems()
 			}
+
+      // Add the in cart items to inCart index list
+      this._inCartItemsIndex = new Set(data.reduce((acc, data, index) => {
+        if (data.inCart) acc.push(index)
+        return acc
+      }, [] as number[]))
 
 			if (showLoader) this._mainStateSrv.hideLoader()
 		})
@@ -250,16 +284,18 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param {string} groupUUID
 	 */
 	addItem(label: string, groupUUID: string) {
+		if (this.itemsData() === null) return
+
+		const d = this.itemsData() as ItemsDataWithGroup
 		const selectedUUID =
 			this.selectedItems.size > 0 ? this.selectedItems.values().next().value : null
 
 		const insertAfter = selectedUUID
-			? (this.itemsData().find((e) => e.UUID === selectedUUID)?.position ??
-				this.itemsData().length - 1)
-			: this.itemsData().length - 1
+			? (d.find((e) => e.UUID === selectedUUID)?.position ?? d.length - 1)
+			: d.length - 1
 
 		const groupData = this.groups()[groupUUID]
-		const { itemsData, changes } = addItem(label, groupData, this.itemsData(), insertAfter)
+		const { itemsData, changes } = addItem(label, groupData, d, insertAfter)
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
@@ -271,7 +307,12 @@ class ListComponent implements OnInit, OnDestroy {
 	 * Delete button click
 	 */
 	itemsDeleted() {
-		const { itemsData, changes } = deleteItem([...this.selectedItems], this.itemsData())
+		if (this.itemsData() === null) return
+
+		const { itemsData, changes } = deleteItem(
+			[...this.selectedItems],
+			this.itemsData() as ItemsDataWithGroup
+		)
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 		this.selectedItems.clear()
@@ -282,7 +323,7 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	itemChanged($event: ItemsChanges) {
-		const { itemsData, changes } = updateItemAttr($event, this.itemsData())
+		const { itemsData, changes } = updateItemAttr($event, this.itemsData() as ItemsDataWithGroup)
 
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
@@ -293,8 +334,10 @@ class ListComponent implements OnInit, OnDestroy {
 	 * @param $event
 	 */
 	itemDrop($event: CdkDragDrop<ItemsData>) {
-		const { itemsData, changes } = updateItemPosition($event, this.itemsData())
-
+		const { itemsData, changes } = updateItemPosition(
+			$event,
+			this.itemsData() as ItemsDataWithGroup
+		)
 		this.itemsData.set(itemsData)
 		this._itemsChanges.set(changes)
 	}
@@ -310,7 +353,11 @@ class ListComponent implements OnInit, OnDestroy {
 			.afterDismissed()
 			.subscribe((data: GroupData) => {
 				if (data) {
-					const { itemsData, changes } = updateItemAttr($event, this.itemsData(), data)
+					const { itemsData, changes } = updateItemAttr(
+						$event,
+						this.itemsData() as ItemsDataWithGroup,
+						data
+					)
 					changes[0].group = data.UUID
 
 					this.itemsData.set(itemsData)
@@ -367,10 +414,11 @@ class ListComponent implements OnInit, OnDestroy {
 			Object.assign(this, { ...r })
 
 			if ('showByGroups' in r) {
-				if (this.showByGroups) this.itemsData.set(listToGridView(this.itemsData()))
-				else this.itemsData.set(gridToListView(this.itemsData()))
+				if (this.showByGroups)
+					this.itemsData.set(listToGridView(this.itemsData() as ItemsDataWithGroup))
+				else this.itemsData.set(gridToListView(this.itemsData() as ItemsDataWithGroup))
 			} else if ('editing' in r) {
-				this._itemsDataCache = cloneDeep(this.itemsData())
+				this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
 			}
 		})
 	}
@@ -450,17 +498,19 @@ class ListComponent implements OnInit, OnDestroy {
 	itemClicked($event: ItemsChanges) {
 		if (!this.editing) {
 			if (this.shopping) {
-				const index = this.itemsData().findIndex((i) => i.UUID === $event.UUID)
+				const index = (this.itemsData() as ItemsDataWithGroup).findIndex(
+					(i) => i.UUID === $event.UUID
+				)
 
 				if ($event.inCart) {
-					this._inCartItems.add(index)
-				} else if (this._inCartItems.has(index)) {
-					this._inCartItems.delete(index)
+					this._inCartItemsIndex.add(index)
+				} else if (this._inCartItemsIndex.has(index)) {
+					this._inCartItemsIndex.delete(index)
 				}
 			}
 
 			this.itemChanged($event)
-			this._engageSaveItems()
+			// this._engageSaveItems()
 		}
 	}
 
@@ -474,10 +524,10 @@ class ListComponent implements OnInit, OnDestroy {
 	confirm() {
 		if (this.shopping) {
 			const { newItemsData, changes } = this._fromInCartToNotToBuy(
-				this.itemsData(),
-				this._inCartItems
+				this.itemsData() as ItemsDataWithGroup,
+				this._inCartItemsIndex
 			)
-			this._inCartItems.clear()
+			this._inCartItemsIndex.clear()
 			this._itemsChanges.set(changes)
 			this.itemsData.set(newItemsData)
 
@@ -501,8 +551,11 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	cancel() {
 		if (this.shopping) {
-			const { newItemsData, changes } = this._resetInCart(this.itemsData(), this._inCartItems)
-			this._inCartItems.clear()
+			const { newItemsData, changes } = this._resetInCart(
+				this.itemsData() as ItemsDataWithGroup,
+				this._inCartItemsIndex
+			)
+			this._inCartItemsIndex.clear()
 			this._itemsChanges.set(changes)
 			this.itemsData.set(newItemsData)
 
