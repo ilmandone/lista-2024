@@ -33,7 +33,7 @@
 		<!-- Groups -->
 		@for(group of groups(); track group.UUID) {
 		<!-- Drag box -->
-		<div cdkDrag>
+		<div cdkDrag class="drag-box">
 			<app-group
 				[data]="group"
 				[selected]="selectedGroups.has(group.UUID)"

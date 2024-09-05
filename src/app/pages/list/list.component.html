@@ -58,7 +58,7 @@
 	<!--Items-->
 	@for (item of itemsData(); track item.UUID) {
 	<!-- Drag Box -->
-	<div cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
+	<div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
 		@if(!shopping || (shopping && !item.notToBuy)){
 		<app-item
 			[data]="item"
