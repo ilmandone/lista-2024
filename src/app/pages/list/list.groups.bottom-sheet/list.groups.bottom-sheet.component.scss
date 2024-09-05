@@ -1,5 +1,4 @@
 @use '~styles/typo.scss';
-
 :host {
 	padding: 0.5rem 1.5rem;
 
@@ -41,6 +40,10 @@
 				background-color: var(--button-custom-color-bg-hover);
 			}
 
+			&.selected {
+				border: 2px dotted var(--mdc-text-button-label-text-color);
+			}
+			
 			&__color {
 				width: 2rem;
 				height: 2rem;
