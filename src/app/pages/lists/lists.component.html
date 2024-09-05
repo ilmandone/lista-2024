@@ -17,26 +17,45 @@
 	</div>
 </header>
 
-<main class="main" cdkDropList (cdkDropListDropped)="listsDrop($event)">
-	@defer (when listsData() !== null) { @if(listsData()!.length > 0) {
-	<!--Lists-->
-	@for (data of listsData(); track data.UUID) {
-	<!--Drag box-->
-	<div cdkDrag class="drag-box" [cdkDragDisabled]="!editing">
-		<app-lists-item
-			[data]="data"
-			[editing]="editing"
-			(changed)="itemChanged($event)"
-			(clicked)="listClicked($event)"
-			(deleted)="itemChanged($event)"
-		></app-lists-item>
-		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+<main 
+	class="main" 
+	
+	cdkDropList
+	[cdkDropListAutoScrollDisabled]="false"
+	[cdkDropListAutoScrollStep]="35" 	
+	cdkDropListElementContainer=".main__container"
+
+	(cdkDropListDropped)="listsDrop($event)"
+>
+
+	<!-- Container for autoscroll -->
+	<div class="main__container">
+
+		@defer (when listsData() !== null) { @if(listsData()!.length > 0) {
+
+			<!--Lists-->
+			@for (data of listsData(); track data.UUID) {
+
+			<!--Drag box-->
+			<div cdkDrag class="drag-box" [cdkDragDisabled]="!editing">
+				<app-lists-item
+					[data]="data"
+					[editing]="editing"
+					(changed)="itemChanged($event)"
+					(clicked)="listClicked($event)"
+					(deleted)="itemChanged($event)"
+				></app-lists-item>
+				<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+			</div>
+
+			} } @else {
+			<app-empty-lists (newList)="openCreateNew()"></app-empty-lists>
+			} } @placeholder {
+			<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+			}
+
 	</div>
-	} } @else {
-	<app-empty-lists (newList)="openCreateNew()"></app-empty-lists>
-	} } @placeholder {
-	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
-	}
+	
 </main>
 
 @if (editing) {

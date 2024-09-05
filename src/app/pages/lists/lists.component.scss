@@ -49,6 +49,16 @@
 
     // Drag and drop
 		@include drag-and-drop.main;
+
+    &__container {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    &.cdk-drop-list-dragging .drag-box:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
   }
 
   @include drag-and-drop.common;

@@ -53,32 +53,46 @@
 	</div>
 </header>
 
-<main class="main" cdkDropList (cdkDropListDropped)="itemDrop($event)">
-	@defer (when itemsData() !== null) {
-	<!--Items-->
-	@for (item of itemsData(); track item.UUID) {
-	<!-- Drag Box -->
-	<div cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
-		@if(!shopping || (shopping && !item.notToBuy)){
-		<app-item
-			[data]="item"
-			[editing]="editing"
-			[shopping]="shopping"
-			[selected]="selectedItems.has(item.UUID)"
-			[sortable]="!showByGroups"
-			[stroked]="item.notToBuy"
-			[extra]="item.inCart ? 'shopping_cart' : ''"
-			(changed)="itemChanged($event)"
-			(clicked)="itemClicked($event)"
-			(groupChange)="itemGroupChanged($event)"
-			(selectedChange)="itemSelected($event)"
-		></app-item>
-		}
-		<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+<main 
+	class="main" 
+	[class.main__with-footer]="shopping || editing"
+	cdkDropList 	
+	cdkScrollable
+	[cdkDropListAutoScrollStep]="20" 
+	[cdkDropListAutoScrollDisabled]="false"
+	cdkDropListElementContainer=".main__container"
+	(cdkDropListDropped)="itemDrop($event)"
+	>
+
+	<div class="main__container">
+		@defer (when itemsData() !== null) {
+			<!--Items-->
+			@for (item of itemsData(); track item.UUID) {
+			<!-- Drag Box -->
+			<div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
+				@if(!shopping || (shopping && !item.notToBuy)){
+				<app-item
+					[data]="item"
+					[editing]="editing"
+					[shopping]="shopping"
+					[selected]="selectedItems.has(item.UUID)"
+					[sortable]="!showByGroups"
+					[stroked]="item.notToBuy"
+					[extra]="item.inCart ? 'shopping_cart' : ''"
+					(changed)="itemChanged($event)"
+					(clicked)="itemClicked($event)"
+					(groupChange)="itemGroupChanged($event)"
+					(selectedChange)="itemSelected($event)"
+				></app-item>
+				}
+				<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+			</div>
+			} } @placeholder {
+			<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+			}
 	</div>
-	} } @placeholder {
-	<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
-	}
+
+	
 </main>
 
 @if (shopping || editing) {
