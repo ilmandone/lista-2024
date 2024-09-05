@@ -26,15 +26,16 @@ import {
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
-import {
+import {	
 	ListBottomSheetComponent,
 	ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import { gridToListView, listToGridView } from './list.groups-view'
-import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { GroupBottomSheetData, ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { Unsubscribe } from 'firebase/firestore'
+import { ScrollingModule } from '@angular/cdk/scrolling'
 
 @Component({
 	selector: 'app-list',
@@ -51,7 +52,8 @@ import { Unsubscribe } from 'firebase/firestore'
 		MatDialogModule,
 		MatIcon,
 		MatIconButton,
-		MatTooltip
+		MatTooltip,
+		ScrollingModule
 	],
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss'
@@ -347,7 +349,11 @@ class ListComponent implements OnInit, OnDestroy {
 	 */
 	itemGroupChanged($event: ItemsChanges) {
 		this._bottomSheet
-			.open(ListGroupsBottomSheetComponent)
+			.open(ListGroupsBottomSheetComponent, {
+				data: {
+					UUID: $event.group
+				} as GroupBottomSheetData
+			})
 			.afterDismissed()
 			.subscribe((data: GroupData) => {
 				if (data) {

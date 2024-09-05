@@ -4,9 +4,9 @@
 
 <main>
 	@for(group of groups(); track group.UUID) {
-	<button matRipple class="group-button" (click)="selectGroup($event, group)">
+	<button matRipple class="group-button" (click)="selectGroup($event, group)" [class.selected]="group.UUID === data.UUID">		
 		<span class="group-button__label">{{group.label | uppercase}}</span>
-		<span class="group-button__color" [ngStyle]="{'background-color': group.color}"></span>
+		<span class="group-button__color" [ngStyle]="{'background-color': group.color, 'border': group.UUID === data.UUID ? '2px solid #fff' : 'none'}"></span>
 	</button>
 	}
 </main>
