@@ -67,25 +67,32 @@ class GroupsComponent implements OnInit {
 		this.groups.set(await this._firebaseSrv.loadGroups(false, false))
 	}
 
-	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-		if (this.isMobile) return
+	/**
+	 * Handles keyboard events for the component.
+	 * 
+	 * @param {KeyboardEvent} $event - The keyboard event object.
+	 */
+	@HostListener('window:keyup', ['$event'])
+	onKeyPress($event: KeyboardEvent) {
+		if (this.isMobile) return;
 
-		$event.preventDefault()
-		const k = $event.key.toLowerCase()
+		const key = $event.key.toLowerCase();
 
-		if (k === 'escape' && !this._escKeyDisabled) {
-			this.cancel()
+		if (key === 'escape' && !this._escKeyDisabled && this.editing) {
+			$event.preventDefault();
+			this.cancel();
+			return;
 		}
 
-		if (!$event.shiftKey || !$event.altKey) return
-
-		if (k === 'a' && !this._escKeyDisabled) this.openNewGroupDialog()
-
-		if (this.editing) {
-			switch (k) {
+		if ($event.shiftKey && $event.altKey) {
+			$event.preventDefault();
+			switch (key) {
+				case 'a':
+					if (!this._escKeyDisabled) this.openNewGroupDialog();
+					break;
 				case 'enter':
-					this.confirm()
-					break
+					if (this.editing) this.confirm();
+					break;
 			}
 		}
 	}

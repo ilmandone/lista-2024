@@ -84,31 +84,37 @@ class ListsComponent implements OnInit, OnDestroy {
 	 * Shortcuts for editing on desktop
 	 * @param $event
 	 */
-	@HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
-		if (this.isMobile) return
+	@HostListener('window:keyup', ['$event'])
+	onKeyPress($event: KeyboardEvent) {
+		if (this.isMobile) return;
 
-		$event.preventDefault()
-		const k = $event.key.toLowerCase()
+		const key = $event.key.toLowerCase();
 
-		if (k === 'escape' && !this._escKeyDisabled) {
-			this.onCancel()
+		if (key === 'escape' && !this._escKeyDisabled && this.editing) {
+			$event.preventDefault();
+			this.onCancel();
+			return;
 		}
 
-		if (!$event.shiftKey || !$event.altKey) return
-
-		if (this.editing) {
-			switch (k) {
+		if ($event.shiftKey && $event.altKey) {
+			$event.preventDefault();
+			switch (key) {
 				case 'a':
-					if (!this._escKeyDisabled) this.openCreateNew()
-					break
+					if (!this._escKeyDisabled && this.editing) this.openCreateNew();
+					break;
 				case 'enter':
-					this.onConfirm()
-					break
+					if (this.editing) this.onConfirm();
+					break;
+				case 'e':
+					if (!this.editing) this.startEditing();
+					break;
 			}
-		} else if (!this.editing && k === 'e') {
-			this._listDataCache = cloneDeep(this.listsData())
-			this.editing = true
 		}
+	}
+
+	private startEditing(): void {
+		this._listDataCache = cloneDeep(this.listsData());
+		this.editing = true;
 	}
 
 	//#region Privates
