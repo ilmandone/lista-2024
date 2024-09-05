@@ -35,6 +35,7 @@ import { gridToListView, listToGridView } from './list.groups-view'
 import { ListGroupsBottomSheetComponent } from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { Unsubscribe } from 'firebase/firestore'
+import { ScrollingModule } from '@angular/cdk/scrolling'
 
 @Component({
 	selector: 'app-list',
@@ -51,7 +52,8 @@ import { Unsubscribe } from 'firebase/firestore'
 		MatDialogModule,
 		MatIcon,
 		MatIconButton,
-		MatTooltip
+		MatTooltip,
+		ScrollingModule
 	],
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss'

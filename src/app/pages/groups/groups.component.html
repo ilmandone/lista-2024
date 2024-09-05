@@ -27,27 +27,43 @@
 	</div>
 </header>
 
-<main class="main" cdkDropList (cdkDropListDropped)="groupDrop($event)">
+<main 
+	class="main" 
+	
+	cdkDropList
+	[cdkDropListAutoScrollDisabled]="false"
+	[cdkDropListAutoScrollStep]="35" 	
+	cdkDropListElementContainer=".main__container"
 
-	@defer (when groups() !== null) {
-		<!-- Groups -->
-		@for(group of groups(); track group.UUID) {
-		<!-- Drag box -->
-		<div cdkDrag class="drag-box">
-			<app-group
-				[data]="group"
-				[selected]="selectedGroups.has(group.UUID)"
-				(changed)="groupChanged($event)"
-				(focused)="focused = $event"
-				(selectedChange)="groupSelected($event)"
-			></app-group>
-			<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
-		</div>
+	(cdkDropListDropped)="groupDrop($event)"
+>
+
+	<!-- Container for autoscroll -->
+	<div class="main__container">
+
+		@defer (when groups() !== null) {
+
+			<!-- Groups -->
+			@for(group of groups(); track group.UUID) {
+
+			<!-- Drag box -->
+			<div cdkDrag class="drag-box">
+				<app-group
+					[data]="group"
+					[selected]="selectedGroups.has(group.UUID)"
+					(changed)="groupChanged($event)"
+					(focused)="focused = $event"
+					(selectedChange)="groupSelected($event)"
+				></app-group>
+				<div class="list-drag-placeholder" *cdkDragPlaceholder></div>
+			</div>
+			} 
 		} 
-	} 
-	@placeholder {
-		<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
-	}
+		@placeholder {
+			<app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+		}
+	</div>
+	
 </main>
 
 @if (editing && !focused) {

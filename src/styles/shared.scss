@@ -1,5 +1,5 @@
-@use "~styles/utils.scss";
-@use "~styles/vars.scss";
+@use '~styles/utils.scss';
+@use '~styles/vars.scss';
 
 // Common
 @mixin disabledOpacity() {
@@ -21,8 +21,7 @@
 
 	padding-bottom: calc(#{vars.$confirm-cancel-height} + 0.5rem);
 
-	overflow-y: auto;
-	overflow-x: hidden;
-
-	scroll-behavior: smooth;
+	overflow: hidden;
 }
+
+
