@@ -57,7 +57,8 @@
   <div class="main-loader">
     <div class="main-loader__content">
       <app-loader [loading]="true" [mode]="'indeterminate'"
-                  [bg]="'linear-gradient(90deg, var(--mat-app-background-color), var(--loader-default-color-bg))'"></app-loader>
+                  [bg]="'var(--mdc-filled-button-container-color)'"
+                  [color]="'var(--mat-app-background-color)'"></app-loader>
     </div>
   </div>
 }
