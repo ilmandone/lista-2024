@@ -7,6 +7,8 @@
   width: 100%;
   height: 100%;
 
+  border-radius: 0.5rem;
+
   z-index: utils.getZ('loader');
 
   background-color: var(--loader-default-color-bg);

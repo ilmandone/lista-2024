@@ -1,6 +1,7 @@
 @if(loading()) {
 <div class="loader" [ngStyle]="{background: bg()}">
   <mat-spinner
+  [appSpinnerColor]="this.color()"
     class="loader__spinner"
     [diameter]="diameter()"
     [mode]="mode()"
