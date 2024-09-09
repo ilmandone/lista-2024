@@ -565,7 +565,7 @@ class ListComponent implements OnInit, OnDestroy {
 			this.itemsData.set(newItemsData)
 
 			this.shopping = false
-			this._engageSaveItems()
+			// this._engageSaveItems()
 		} else {
 			this.itemsData.set(this._itemsDataCache)
 			this._itemsDataCache = []
