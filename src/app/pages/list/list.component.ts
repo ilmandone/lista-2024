@@ -36,6 +36,7 @@ import { GroupBottomSheetData, ListGroupsBottomSheetComponent } from './list.gro
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { Unsubscribe } from 'firebase/firestore'
 import { ScrollingModule } from '@angular/cdk/scrolling'
+import { SnackBarService } from 'app/shared/snack-bar.service'
 
 @Component({
 	selector: 'app-list',
@@ -66,6 +67,8 @@ class ListComponent implements OnInit, OnDestroy {
 	private readonly _dialog = inject(MatDialog)
 	private readonly _firebaseSrv = inject(FirebaseService)
 	private readonly _mainStateSrv = inject(MainStateService)
+	private _snackBarSrv = inject(SnackBarService)
+
 	private _UUID!: string
 	private _escKeyDisabled = false
 	private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
@@ -274,6 +277,11 @@ class ListComponent implements OnInit, OnDestroy {
 
 			this._mainStateSrv.hideLoader()
 			this.editing = false
+
+			this._snackBarSrv.show({
+				message: 'Lista aggiornata',
+				severity: 'info',
+			})
 		})
 	}
 
@@ -565,7 +573,7 @@ class ListComponent implements OnInit, OnDestroy {
 			this.itemsData.set(newItemsData)
 
 			this.shopping = false
-			this._engageSaveItems()
+			// this._engageSaveItems()
 		} else {
 			this.itemsData.set(this._itemsDataCache)
 			this._itemsDataCache = []
