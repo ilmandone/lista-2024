@@ -26,7 +26,7 @@ import {
 import { FirebaseService } from '../../data/firebase.service'
 import { DeleteConfirmDialogComponent } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
-import {	
+import {
 	ListBottomSheetComponent,
 	ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
@@ -267,9 +267,7 @@ class ListComponent implements OnInit, OnDestroy {
 		this._mainStateSrv.showLoader()
 		this.groups.set(await this._loadGroups(true))
 
-		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then((r) => {
-			const dataWithGroup = this._itemsWithGroupData(this.groups(), r).data
-			this.itemsData.set(this.showByGroups ? listToGridView(dataWithGroup) : dataWithGroup)
+		this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID).then(() => {
 
 			this.selectedItems.clear()
 			this._itemsChanges.clear()
