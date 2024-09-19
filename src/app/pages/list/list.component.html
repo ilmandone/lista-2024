@@ -79,7 +79,7 @@
               [shopping]="shopping"
               [selected]="selectedItems.has(item.UUID)"
               [sortable]="!showByGroups"
-              [stroked]="item.notToBuy"
+              [stroked]="item.notToBuy && !editing"
               [extra]="item.inCart ? 'shopping_cart' : ''"
               (changed)="itemChanged($event)"
               (clicked)="itemClicked($event)"
