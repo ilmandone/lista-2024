@@ -265,6 +265,19 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Reset selected items, items changes and cache after save editing
+   * @private
+   */
+  private _resetEditing() {
+    this.selectedItems.clear()
+    this._itemsChanges.clear()
+    this._itemsDataCache = []
+
+    this._mainStateSrv.hideLoader()
+    this.editing = false
+  }
+
+  /**
    * Update items
    * @description Save items in db and reset all the edit information
    */
@@ -274,17 +287,20 @@ class ListComponent implements OnInit, OnDestroy {
 
     this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID)
       .then(() => {
-
-        this.selectedItems.clear()
-        this._itemsChanges.clear()
-        this._itemsDataCache = []
-
-        this._mainStateSrv.hideLoader()
-        this.editing = false
+        this._resetEditing()
 
         this._snackBarSrv.show({
           message: 'Lista aggiornata',
           severity: 'info'
+        })
+      })
+      .catch(() => {
+        this.itemsData.set(this._itemsDataCache)
+        this._resetEditing()
+
+        this._snackBarSrv.show({
+          message: 'Aggiornamento fallito',
+          severity: 'error'
         })
       })
   }
