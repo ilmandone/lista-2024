@@ -161,7 +161,7 @@ class GroupsComponent implements OnInit {
    * @private
    * @return {void}
    */
-  private _saveGroups() {
+  private _saveGroups(): void {
     this._mainStateSrv.showLoader()
     this._firebaseSrv.updateGroup(this._groupChanges.values)
       .then((r) => {
