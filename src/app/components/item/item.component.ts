@@ -95,18 +95,23 @@ export class ItemComponent {
 
 	/**
 	 * Start group change
-	 * @param {string} $event
 	 */
-	changeGroup($event: ItemDataWithGroup) {
+	changeGroup() {
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { groupData, ...rest } = $event
+    // TODO: Fix here -> this data contains the old data and not the new ones
 
-		this.groupChange.emit({
-			...rest,
-			inCart: false,
-			notToBuy: false,
-			crud: 'update'
-		})
+    window.setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { groupData, ...rest } = this.data()
+
+      this.groupChange.emit({
+        ...rest,
+        inCart: false,
+        notToBuy: false,
+        crud: 'update'
+      })
+    })
+
+
 	}
 }
