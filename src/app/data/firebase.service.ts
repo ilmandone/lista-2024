@@ -287,7 +287,7 @@ export class FirebaseService {
 	 * @param {string} UUID
 	 * @return {Promise<ItemsData>}
 	 */
-	async updateList(changes: EditBag<ItemsChanges>, UUID: string): Promise<ItemsData> {
+	async updateList(changes: EditBag<ItemsChanges>, UUID: string): Promise<void> {
 		try {
 			if (!this._db) this._startDB()
 
@@ -313,7 +313,7 @@ export class FirebaseService {
 			this._batchDeleteUpdate<ItemsChanges>(batch, changes, itemsCollection)
 
 			await batch.commit()
-			return this.loadList(UUID)
+      return Promise.resolve()
 		} catch (error) {
 			throw new Error(error as string)
 		}
