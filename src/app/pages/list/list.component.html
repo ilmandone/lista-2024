@@ -7,6 +7,7 @@
 
       <!--Shopping mode-->
       <app-button-toggle
+        [disabled]="mainStateSrv.offline()"
         [fontIcon]="'shopping_cart'"
         [toggle]="shopping"
         (toggleChange)="shopping = $event"
@@ -18,7 +19,7 @@
         title="options"
         matTooltip="⇧ + Alt + E"
         [matTooltipDisabled]="isMobile"
-        [disabled]="shopping"
+        [disabled]="shopping || mainStateSrv.offline()"
         type="button"
         (click)="!shopping && openMainBottomSheet()"
       >
@@ -33,7 +34,7 @@
         type="button"
         matTooltip="⇧ + Alt + A"
         [matTooltipDisabled]="isMobile"
-        [disabled]="selectedItems.size > 1"
+        [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
         (click)="openNewItemDialog()"
       >
         <mat-icon [fontIcon]="'add'"></mat-icon>
@@ -46,7 +47,7 @@
         type="button"
         matTooltip="⇧ + Alt + D"
         [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length || isMobile"
-        [disabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length"
+        [disabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length || mainStateSrv.offline()"
         (click)="itemsDeleted()"
       >
         <mat-icon [fontIcon]="'delete'"></mat-icon>

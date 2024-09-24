@@ -23,6 +23,11 @@
     background-color: var(--lists-item-color-bg);
     color: var(--mat-sidenav-content-text-color);
 
+    &.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
     @include utils.text-not-selectable;
 
     @include utils.media-pointer() {

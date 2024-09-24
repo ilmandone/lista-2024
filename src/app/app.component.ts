@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button'
 import { SnackBarService } from './shared/snack-bar.service'
 import { MatSnackBarRef } from '@angular/material/snack-bar'
 import { LoaderComponent } from './components/loader/loader.component'
+import { MainStateService } from './shared/main-state.service'
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { LoaderComponent } from './components/loader/loader.component'
 })
 export class AppComponent implements OnInit{
   private readonly _snackBarSrv = inject(SnackBarService)
+  private readonly _mainStateSrv = inject(MainStateService)
 
   offlineSnack!:MatSnackBarRef<unknown> | undefined
 
@@ -28,7 +30,11 @@ export class AppComponent implements OnInit{
       message: 'Offline',
       severity: 'error',
     }, 300000)
+
+    this._mainStateSrv.setOffline(true)
   }
+
+
 
   @HostListener('window:online')
   protected online() {
@@ -36,7 +42,7 @@ export class AppComponent implements OnInit{
       this.offlineSnack.dismiss()
       this.offlineSnack = undefined
     }
-
+    this._mainStateSrv.setOffline(false)
   }
 
   ngOnInit() {

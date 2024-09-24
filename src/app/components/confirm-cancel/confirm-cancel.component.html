@@ -1,4 +1,5 @@
 <button mat-button
+        [disabled]="mainStateSrv.offline()"
         [ngStyle]="{flexBasis: 100 - confirmSize() + '%'}"
         (click)="cancel.emit()">
 
@@ -11,6 +12,7 @@
 </button>
 
 <button mat-flat-button [color]="'accent'"
+        [disabled]="mainStateSrv.offline()"
         [ngStyle]="{flexBasis: confirmSize() + '%'}"
         (click)="confirm.emit()">
 

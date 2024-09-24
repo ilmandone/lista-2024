@@ -49,7 +49,6 @@ class ListsComponent implements OnInit, OnDestroy {
   private readonly _firebaseSrv = inject(FirebaseService)
   private readonly _dialog = inject(MatDialog)
   private readonly _focusSrv = inject(FocusInputService)
-  private readonly _mainStateSrv = inject(MainStateService)
   private readonly _route = inject(Router)
   private readonly _snackBarSrv = inject(SnackBarService)
 
@@ -58,6 +57,8 @@ class ListsComponent implements OnInit, OnDestroy {
   private _itemsChanges = new SetOfItemsChanges<ListsItemChanges>()
 
   private _destroyed$ = new Subject<boolean>()
+
+  readonly mainStateSrv = inject(MainStateService)
 
   listsData = signal<Nullable<ListsData>>(null)
 
@@ -74,7 +75,7 @@ class ListsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._loadLists()
 
-    this._mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
+    this.mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
       this._loadLists()
     })
   }
@@ -128,10 +129,10 @@ class ListsComponent implements OnInit, OnDestroy {
    * @private
    */
   private _loadLists(): void {
-    this._mainStateSrv.showLoader()
+    this.mainStateSrv.showLoader()
     this._firebaseSrv.loadLists().then((r) => {
       this.listsData.set(r)
-      this._mainStateSrv.hideLoader()
+      this.mainStateSrv.hideLoader()
     })
   }
 
@@ -142,7 +143,7 @@ class ListsComponent implements OnInit, OnDestroy {
   private _resetAfterSave() {
     this._itemsChanges.clear()
     this._listDataCache = []
-    this._mainStateSrv.hideLoader()
+    this.mainStateSrv.hideLoader()
     this.editing = false
   }
 
@@ -151,7 +152,7 @@ class ListsComponent implements OnInit, OnDestroy {
    * @private
    */
   private _saveLists(): void {
-    this._mainStateSrv.showLoader()
+    this.mainStateSrv.showLoader()
     this._firebaseSrv.updateLists(this._itemsChanges.values)
       .then((r) => {
         this.listsData.set(r)
