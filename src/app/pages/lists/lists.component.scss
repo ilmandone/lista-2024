@@ -25,6 +25,10 @@
 
     &__controls {
       padding-right: 0.25rem;
+
+      &__button[disabled=true] {
+        opacity: 0.3;
+      }
     }
 
     @include utils.media-query('t') {

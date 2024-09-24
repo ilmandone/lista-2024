@@ -26,6 +26,10 @@
       align-items: center;
 
       z-index: utils.getZ('main-menu');
+
+      &__button[disabled=true] {
+        opacity: 0.4;
+      }
     }
   }
 
