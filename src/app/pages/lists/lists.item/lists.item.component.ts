@@ -11,6 +11,7 @@ import { ListData, ListsItemChanges } from '../../../data/firebase.interfaces'
 import { FirebaseService } from '../../../data/firebase.service'
 import { Nullable } from '../../../shared/common.interfaces'
 import { revealHor } from './lists.item.animation'
+import { MainStateService } from '../../../shared/main-state.service'
 
 @Component({
 	selector: 'app-lists-item',
@@ -31,6 +32,7 @@ import { revealHor } from './lists.item.animation'
 export class ListsItemComponent implements OnInit {
 	private readonly _firebaseSrv = inject(FirebaseService)
 	readonly focusSrv = inject(FocusInputService)
+  readonly mainStateSrv = inject(MainStateService)
 
 	data = input.required<ListData>()
 	editing = input.required<boolean>()
