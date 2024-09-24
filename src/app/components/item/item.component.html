@@ -44,9 +44,9 @@
 			[attr.aria-label]="data().groupData.label"
 			[class.editing]="editing()"
 			[ngStyle]="{backgroundColor: data().groupData.color}"
-			(click)="editing() && changeGroup(data())"
-			(keyup.Enter)="editing() && changeGroup(data())"
-			(keyup.Space)="editing() && changeGroup(data())"
+			(click)="editing() && changeGroup()"
+			(keyup.Enter)="editing() && changeGroup()"
+			(keyup.Space)="editing() && changeGroup()"
 		></div>
 
 		<!-- @if (editing() && sortable()) { -->
