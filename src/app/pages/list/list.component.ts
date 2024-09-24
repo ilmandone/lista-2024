@@ -71,7 +71,6 @@ class ListComponent implements OnInit, OnDestroy {
   private readonly _bottomSheet = inject(MatBottomSheet)
   private readonly _dialog = inject(MatDialog)
   private readonly _firebaseSrv = inject(FirebaseService)
-  private readonly _mainStateSrv = inject(MainStateService)
   private readonly _snackBarSrv = inject(SnackBarService)
 
   private _UUID!: string
@@ -83,6 +82,8 @@ class ListComponent implements OnInit, OnDestroy {
 
   private _destroyed$ = new Subject<boolean>()
   private _itemUpdateUnsubscribe!: Unsubscribe
+
+  readonly mainStateSrv = inject(MainStateService)
 
   editing = false
   groups = signal<Record<string, GroupData>>({})
@@ -101,14 +102,14 @@ class ListComponent implements OnInit, OnDestroy {
     await this._loadData(false)
 
     // Reload action
-    this._mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
+    this.mainStateSrv.reload$.pipe(takeUntil(this._destroyed$)).subscribe(async () => {
       await this._loadData()
     })
 
     // Registration to firebase snapshot for other's user update
     this._itemUpdateUnsubscribe = this._firebaseSrv.registerUpdates(this._UUID, (d: ItemsData) => {
       if (d.length > 0) {
-        this._mainStateSrv.showLoader()
+        this.mainStateSrv.showLoader()
         const dataWithGroup = this._itemsWithGroupData(this.groups(), d).data
         const newData = this.itemsData() as ItemsDataWithGroup
 
@@ -120,7 +121,7 @@ class ListComponent implements OnInit, OnDestroy {
         })
 
         this.itemsData.set(newData)
-        this._mainStateSrv.hideLoader()
+        this.mainStateSrv.hideLoader()
       }
     })
   }
@@ -195,7 +196,7 @@ class ListComponent implements OnInit, OnDestroy {
    * @param {boolean} showLoader
    */
   async _loadData(showLoader = true) {
-    if (showLoader) this._mainStateSrv.showLoader()
+    if (showLoader) this.mainStateSrv.showLoader()
     this.groups.set(await this._loadGroups())
 
     this._firebaseSrv.loadList(this._UUID).then((items) => {
@@ -214,7 +215,7 @@ class ListComponent implements OnInit, OnDestroy {
         return acc
       }, [] as number[]))
 
-      if (showLoader) this._mainStateSrv.hideLoader()
+      if (showLoader) this.mainStateSrv.hideLoader()
     })
   }
 
@@ -273,7 +274,7 @@ class ListComponent implements OnInit, OnDestroy {
     this._itemsChanges.clear()
     this._itemsDataCache = []
 
-    this._mainStateSrv.hideLoader()
+    this.mainStateSrv.hideLoader()
     this.editing = false
   }
 
@@ -282,7 +283,7 @@ class ListComponent implements OnInit, OnDestroy {
    * @description Save items in db and reset all the edit information
    */
   async _saveItems() {
-    this._mainStateSrv.showLoader()
+    this.mainStateSrv.showLoader()
     this.groups.set(await this._loadGroups(true))
 
     this._firebaseSrv.updateList(this._itemsChanges.values, this._UUID)
