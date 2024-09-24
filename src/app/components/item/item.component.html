@@ -3,8 +3,9 @@
 	mat-ripple
 	[attr.tabindex]="editing() ? -1 : 0"
 	[attr.role]="!editing() ? 'button' : 'none'"
+  [class.disabled]="mainStateSrv.offline()"
 	[class.editing]="editing()"
-	[matRippleDisabled]="editing()"
+	[matRippleDisabled]="editing() || mainStateSrv.offline()"
 >
 	<!--Left group-->
 	<div class="item-button__left">
@@ -45,8 +46,8 @@
 			[class.editing]="editing()"
 			[ngStyle]="{backgroundColor: data().groupData.color}"
 			(click)="editing() && changeGroup()"
-			(keyup.Enter)="editing() && changeGroup()"
-			(keyup.Space)="editing() && changeGroup()"
+			(keyup.enter)="editing() && changeGroup()"
+			(keyup.space)="editing() && changeGroup()"
 		></div>
 
 		<!-- @if (editing() && sortable()) { -->

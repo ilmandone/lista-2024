@@ -11,6 +11,7 @@ import { FocusInputComponent } from '../focus-input/focus-input.component'
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { ItemSelectedEvent } from './item.interface'
 import { revealHor } from './item.animation'
+import { MainStateService } from '../../shared/main-state.service'
 
 @Component({
 	selector: 'app-item',
@@ -30,6 +31,7 @@ import { revealHor } from './item.animation'
 })
 export class ItemComponent {
 	readonly focusSrv = inject(FocusInputService)
+  readonly mainStateSrv = inject(MainStateService)
 
 	stroked = input<boolean>(true)
 	data = input.required<ItemDataWithGroup>()
@@ -45,12 +47,11 @@ export class ItemComponent {
 	groupChange = output<ItemsChanges>()
 
 	disabled = computed(() => !(this.editing() && this.sortable()) )
-
 	extraString = computed(() => this.extra() || '')
 
 	@HostListener('click')
 	hostClick() {
-		if (!this.editing()){
+		if (!this.editing() && !this.mainStateSrv.offline()){
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { groupData, ...rest } = this.data();
 
@@ -111,7 +112,5 @@ export class ItemComponent {
         crud: 'update'
       })
     })
-
-
 	}
 }
