@@ -5,10 +5,11 @@
 	<div class="header__controls">
 		@if (listsData()) {
 		<button
+      class="header__controls__button"
 			mat-icon-button
 			[matTooltip]="editing ? '⇧ + Alt + A': '⇧ + Alt + E'"
 			[title]="!editing ? 'Edit lists': 'Create a new list'"
-			[disabled]="disabled"
+			[disabled]="disabled || mainStateSrv.offline()"
 			(click)="clickTopButton()"
 		>
 			<mat-icon [fontIcon]="!editing ? 'edit' : 'add' "></mat-icon>
@@ -17,12 +18,12 @@
 	</div>
 </header>
 
-<main 
-	class="main" 
-	
+<main
+	class="main"
+
 	cdkDropList
 	[cdkDropListAutoScrollDisabled]="false"
-	[cdkDropListAutoScrollStep]="35" 	
+	[cdkDropListAutoScrollStep]="35"
 	cdkDropListElementContainer=".main__container"
 
 	(cdkDropListDropped)="listsDrop($event)"
@@ -55,7 +56,7 @@
 			}
 
 	</div>
-	
+
 </main>
 
 @if (editing) {
