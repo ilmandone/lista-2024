@@ -11,6 +11,7 @@ import {
 import { FocusInputService } from '../focus-input/focus-input.service'
 import { MatButtonModule } from '@angular/material/button'
 import { NgStyle, NgTemplateOutlet } from '@angular/common'
+import { MainStateService } from '../../shared/main-state.service'
 
 @Component({
   selector: 'app-confirm-cancel',
@@ -20,7 +21,8 @@ import { NgStyle, NgTemplateOutlet } from '@angular/common'
   styleUrl: './confirm-cancel.component.scss'
 })
 export class ConfirmCancelComponent{
-  private _focusInput = inject(FocusInputService)
+  private readonly _focusInput = inject(FocusInputService)
+  readonly mainStateSrv = inject(MainStateService)
 
   cancelLabel = input<string>()
   confirmLabel = input<string>()
