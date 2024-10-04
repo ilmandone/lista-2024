@@ -64,4 +64,9 @@ html {
   .mat-mdc-icon-button.cdk-keyboard-focused {
     outline: 1px solid var(--mat-app-text-color);
   }
+
+  // Offline custom dialog
+  .offline-alert-dialog .mat-mdc-dialog-surface{
+    background-color: var(--snack-bar-error);
+  }
 }
