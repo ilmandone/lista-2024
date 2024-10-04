@@ -11,6 +11,11 @@
   .item-button {
     @include item-group.common;
 
+    .shopping-icon {
+      margin: 0 1rem;
+      color: var(--mat-outlined-button-state-layer-color);
+    }
+
     &.editing {
 
       app-focus-input {
@@ -28,16 +33,15 @@
       app-focus-input {
         opacity: 0.8;
       }
+
+      .shopping-icon {
+        filter: saturate(0.5);
+      }
     }
 
     &.disabled {
       opacity: 0.4;
       pointer-events: none;
-    }
-
-    .shopping-icon {
-      margin: 0 1rem;
-      color: var(--mat-outlined-button-state-layer-color);
     }
   }
 
