@@ -21,6 +21,11 @@
       }
     }
 
+    &.in-cart {
+      background-color: var(--lists-item-in-cart-color-bg);
+
+    }
+
     &.disabled {
       opacity: 0.4;
       pointer-events: none;
@@ -28,7 +33,7 @@
 
     .shopping-icon {
       margin: 0 1rem;
-      color: var(--button-toggle-active-color-bg);
+      color: var(--mat-outlined-button-state-layer-color);
     }
   }
 
