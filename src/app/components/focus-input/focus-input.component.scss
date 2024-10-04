@@ -21,10 +21,8 @@ input {
   background-color: var(--lists-item-input-color-bg);
   color: var(--mat-sidenav-content-text-color);
 
-  // z-index: 2;
-
   &[disabled] {
-    background-color: var(--lists-item-color-bg);
+    background-color: transparent;
     pointer-events: none;
   }
 

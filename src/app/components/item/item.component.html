@@ -1,60 +1,64 @@
 <div
-	class="item-button"
-	mat-ripple
-	[attr.tabindex]="editing() ? -1 : 0"
-	[attr.role]="!editing() ? 'button' : 'none'"
+  class="item-button"
+  mat-ripple
+  [attr.tabindex]="editing() ? -1 : 0"
+  [attr.role]="!editing() ? 'button' : 'none'"
   [class.disabled]="mainStateSrv.offline()"
-	[class.editing]="editing()"
-	[matRippleDisabled]="editing() || mainStateSrv.offline()"
+  [class.editing]="editing()"
+  [class.in-cart]="shopping() && extra()"
+  [matRippleDisabled]="editing() || mainStateSrv.offline()"
 >
-	<!--Left group-->
-	<div class="item-button__left">
-		@if(shopping() && extra() ) {
-		<mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
-		}
+  <!--Left group-->
+  <div class="item-button__left">
 
-		@if (editing()) {
 
-		<!--Checkbox-->
-		<mat-checkbox
-			@revealHor
-			class="item-button__left__checkbox"
-			aria-label="Select this item"
-			[checked]="selected()"
-			(change)="itemSelected($event)"
-		></mat-checkbox>
-		}
+    @if (shopping() && extra()) {
+      <mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
+    }
 
-		<!--  Label-->
-		<app-focus-input
-			[disabled]="!editing() || (focusSrv.id() !== null && data().UUID !== focusSrv.id())"
-			[key]="data().UUID"
-			[value]="data().label"
-			[stroked]="stroked()"
-			(changed)="itemLabelChanged($event)"
-		/>
-	</div>
+    @if (editing()) {
 
-	<!--Right controls-->
-	<div class="item-button__right">
-		<!-- Group button -->
-		<div
-			class="group-dot"
-			role="button"
-			[attr.tabindex]="editing() ? 0 : -1"
-			[attr.aria-label]="data().groupData.label"
-			[class.editing]="editing()"
-			[ngStyle]="{backgroundColor: data().groupData.color}"
-			(click)="editing() && changeGroup()"
-			(keyup.enter)="editing() && changeGroup()"
-			(keyup.space)="editing() && changeGroup()"
-		></div>
+      <!--Checkbox-->
+      <mat-checkbox
+        @revealHor
+        class="item-button__left__checkbox"
+        aria-label="Select this item"
+        [checked]="selected()"
+        (change)="itemSelected($event)"
+      ></mat-checkbox>
+    }
 
-		<!-- @if (editing() && sortable()) { -->
-		<!-- Drag handler -->
-		<button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled() " class="drag" [class.show]="!disabled()">
-			<mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
-		</button>
-		<!-- } -->
-	</div>
+    <!--  Label-->
+    <app-focus-input
+      [disabled]="!editing() || (focusSrv.id() !== null && data().UUID !== focusSrv.id())"
+      [key]="data().UUID"
+      [value]="data().label"
+      [stroked]="stroked()"
+      (changed)="itemLabelChanged($event)"
+    />
+  </div>
+
+  <!--Right controls-->
+  <div class="item-button__right">
+    <!-- Group button -->
+    <div
+      class="group-dot"
+      role="button"
+      [attr.tabindex]="editing() ? 0 : -1"
+      [attr.aria-label]="data().groupData.label"
+      [class.editing]="editing()"
+      [ngStyle]="{backgroundColor: data().groupData.color}"
+      (click)="editing() && changeGroup()"
+      (keyup.enter)="editing() && changeGroup()"
+      (keyup.space)="editing() && changeGroup()"
+    ></div>
+
+    <!-- @if (editing() && sortable()) { -->
+    <!-- Drag handler -->
+    <button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled() "
+            class="drag" [class.show]="!disabled()">
+      <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
+    </button>
+    <!-- } -->
+  </div>
 </div>
