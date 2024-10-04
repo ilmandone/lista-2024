@@ -12,6 +12,7 @@
     @include item-group.common;
 
     &.editing {
+
       app-focus-input {
         padding-right: 1rem;
       }
@@ -24,6 +25,9 @@
     &.in-cart {
       background-color: var(--lists-item-in-cart-color-bg);
 
+      app-focus-input {
+        opacity: 0.8;
+      }
     }
 
     &.disabled {
