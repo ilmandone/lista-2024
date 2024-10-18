@@ -1,11 +1,9 @@
 .alert-bar {
   position: fixed;
-  left: 0;
+  right: 0;
   top: 0;
   width: 100%;
-  height:var(--main-header-height);
-
-  filter: opacity(0.5);
+  height:0.5rem;
 
   opacity: 1;
   animation: kf-fadeout 1s forwards ease-out;
@@ -28,18 +26,16 @@
 @keyframes kf-fadeout {
   0%{
     opacity: 1;
-    transform: scaleY(0.95);
-  }
-
-  35% {
-    transform: scaleY(1);
+    width: 100%;
   }
 
   65% {
-    opacity: 0.75;
+    opacity: 0.85;
+    width: 100%;
   }
 
   100% {
     opacity: 0;
+    width: 0;
   }
 }
