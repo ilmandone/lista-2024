@@ -42,11 +42,12 @@
   <mat-drawer-content class="drawer-content">
     <!-- Header -->
     <nav class="drawer-content__nav">
-      <div class="drawer-content__nav__top-bar">
-        @if(mainStateService.topLineAlert().severity){
-          <div class="top-bar-alert"></div>
-        }
-      </div>
+      <app-alert-bar [severity]="mainStateService.topLineAlert()"/>
+      <!--<div class="drawer-content__nav__top-bar">
+
+
+
+      </div>-->
       <button class="drawer-content__nav__button" mat-icon-button (click)="drawer.toggle()"
               [title]="'Open main menu'"
               [disabled]="disabled || mainStateService.offline()">
