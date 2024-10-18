@@ -42,6 +42,9 @@ import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.compon
 import { Unsubscribe } from 'firebase/firestore'
 import { ScrollingModule } from '@angular/cdk/scrolling'
 import { SnackBarService } from 'app/shared/snack-bar.service'
+import {
+  ShoppingCancelDialogComponent
+} from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
 
 @Component({
   selector: 'app-list',
@@ -276,6 +279,18 @@ class ListComponent implements OnInit, OnDestroy {
 
     this.mainStateSrv.hideLoader()
     this.editing = false
+  }
+
+  private _resetShopping() {
+    const { newItemsData, changes } = this._resetInCart(
+      this.itemsData() as ItemsDataWithGroup,
+      this._inCartItemsIndex
+    )
+    this._inCartItemsIndex.clear()
+    this._itemsChanges.set(changes)
+    this.itemsData.set(newItemsData)
+
+    this.shopping = false
   }
 
   /**
@@ -589,16 +604,15 @@ class ListComponent implements OnInit, OnDestroy {
    */
   cancel() {
     if (this.shopping) {
-      const { newItemsData, changes } = this._resetInCart(
-        this.itemsData() as ItemsDataWithGroup,
-        this._inCartItemsIndex
-      )
-      this._inCartItemsIndex.clear()
-      this._itemsChanges.set(changes)
-      this.itemsData.set(newItemsData)
 
-      this.shopping = false
-      // this._engageSaveItems()
+      if (this._inCartItemsIndex.size > 0) {
+        const dr = this._dialog.open(ShoppingCancelDialogComponent)
+        dr.afterClosed().subscribe((result) => {
+          if (result) this._resetShopping()
+        })
+      } else
+        this._resetShopping()
+
     } else {
       this.itemsData.set(this._itemsDataCache)
       this._itemsDataCache = []
