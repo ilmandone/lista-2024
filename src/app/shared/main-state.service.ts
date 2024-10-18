@@ -50,7 +50,7 @@ export class MainStateService {
     return this._topLineAlert.asReadonly()
   }
 
-  setTopLineAlert(level: Severity) {
+  showTopLineAlert(level: Severity) {
     this._topLineAlert.set({ level })
   }
 
