@@ -80,16 +80,19 @@
   // Snack bars
   .snack-bar--error {
     background-color: var(--snack-bar-error);
+    background: var(--snack-bar-error-gradient);
     color: white;
   }
 
   .snack-bar--warning {
     background-color: var(--snack-bar-warning);
+    background: var(--snack-bar-warning-gradient);
     color: white
   }
 
   .snack-bar--info {
     background-color: var(--snack-bar-info);
+    background: var(--snack-bar-info-gradient);
     color: black
   }
 }

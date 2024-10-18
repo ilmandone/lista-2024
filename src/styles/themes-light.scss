@@ -46,6 +46,10 @@ html {
   --snack-bar-warning: #d47d0a;
   --snack-bar-info: #69dd64;
 
+  --snack-bar-error-gradient: linear-gradient(180deg, rgba(213,70,9,1) 0%, rgba(221,8,8,1) 100%);
+  --snack-bar-warning-gradient: linear-gradient(180deg, rgba(212,149,10,1) 0%, rgba(212,125,10,1) 100%);
+  --snack-bar-info-gradient: linear-gradient(180deg, rgba(149,213,105,1) 0%, rgba(105,221,100,1) 100%);
+
   --lists-item-color-bg: #F3F3F3;
   --lists-item-in-cart-color-bg: #faf5f5;
   --lists-item-input-color-bg: #ececec;
@@ -63,6 +67,12 @@ html {
   // Overrides
   .mat-mdc-icon-button.cdk-keyboard-focused {
     outline: 1px solid var(--mat-app-text-color);
+  }
+
+  .mdc-snackbar,
+  .mat-mdc-snack-bar-handset .mat-mdc-snackbar-surface
+  {
+    border-radius: 1rem;
   }
 
   // Offline custom dialog
