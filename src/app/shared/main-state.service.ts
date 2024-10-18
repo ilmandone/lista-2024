@@ -10,6 +10,7 @@ export class MainStateService {
 
   private _loader = signal<boolean>(false)
   private _offLine = signal<boolean>(false)
+  private _topLineAlert = signal<{severity: Severity | null}>({severity: null})
 
   //#region Offline
 
@@ -45,8 +46,12 @@ export class MainStateService {
 
   //#region Top line alert
 
-  topLineAlert(severity: Severity) {
-    console.log(severity)
+  get topLineAlert() {
+    return this._topLineAlert.asReadonly()
+  }
+
+  setTopLineAlert(severity: Severity) {
+    this._topLineAlert.set({ severity })
   }
 
   //#endregion

@@ -296,7 +296,7 @@ class ListComponent implements OnInit, OnDestroy {
             severity: 'info'
           })
         else {
-          this.mainStateSrv.topLineAlert('info')
+          this.mainStateSrv.setTopLineAlert('info')
         }
       })
       .catch(() => {
