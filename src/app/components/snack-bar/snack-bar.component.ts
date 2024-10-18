@@ -11,16 +11,9 @@ import {MatButton, MatIconButton} from "@angular/material/button";
   templateUrl: './snack-bar.component.html',
   styleUrl: './snack-bar.component.scss',
 })
-export class SnackBarComponent implements OnInit {
+export class SnackBarComponent /*implements OnInit*/ {
   snackBarData: ISnackBar = inject(MAT_SNACK_BAR_DATA);
   snackBar = inject(MatSnackBarRef);
-
-  @HostBinding('class')
-  containerClass!: string;
-
-  ngOnInit(): void {
-    this.containerClass = 'snack-bar--' + this.snackBarData.severity;
-  }
 
   dismiss() {
     this.snackBar.dismiss()

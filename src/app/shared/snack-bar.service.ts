@@ -15,7 +15,7 @@ export class SnackBarService {
       panelClass: `snack-bar--${options.severity}`,
       duration,
       verticalPosition: 'top',
-      data: options
+      data: options,
     })
   }
 
