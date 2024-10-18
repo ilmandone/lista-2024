@@ -1,8 +1,13 @@
-import {Component, HostBinding, inject, OnInit} from '@angular/core';
-import {MAT_SNACK_BAR_DATA, MatSnackBarAction, MatSnackBarActions, MatSnackBarRef} from '@angular/material/snack-bar';
-import {ISnackBar} from './snack-bar.interface';
-import {MatIcon} from "@angular/material/icon";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import { Component, inject } from '@angular/core'
+import {
+  MAT_SNACK_BAR_DATA,
+  MatSnackBarAction,
+  MatSnackBarActions,
+  MatSnackBarRef
+} from '@angular/material/snack-bar'
+import { ISnackBar } from './snack-bar.interface'
+import { MatIcon } from '@angular/material/icon'
+import { MatButton, MatIconButton } from '@angular/material/button'
 
 @Component({
   selector: 'app-snack-bar',
