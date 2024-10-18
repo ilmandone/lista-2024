@@ -1,4 +1,6 @@
+import { Severity } from '../../shared/common.interfaces'
+
 export interface ISnackBar {
     message: string
-    severity: 'error' | 'warning' | 'info'
+    severity: Severity
 }

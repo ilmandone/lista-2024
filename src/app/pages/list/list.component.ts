@@ -282,7 +282,7 @@ class ListComponent implements OnInit, OnDestroy {
    * Update items
    * @description Save items in db and reset all the edit information
    */
-  async _saveItems() {
+  async _saveItems(asSnackbar = false) {
     this.mainStateSrv.showLoader()
     this.groups.set(await this._loadGroups(true))
 
@@ -290,10 +290,14 @@ class ListComponent implements OnInit, OnDestroy {
       .then(() => {
         this._resetEditing()
 
-        this._snackBarSrv.show({
-          message: 'Lista aggiornata',
-          severity: 'info'
-        })
+        if (asSnackbar)
+          this._snackBarSrv.show({
+            message: 'Lista aggiornata',
+            severity: 'info'
+          })
+        else {
+          this.mainStateSrv.showTopLineAlert('info')
+        }
       })
       .catch(() => {
         this.itemsData.set(this._itemsDataCache)
@@ -572,9 +576,9 @@ class ListComponent implements OnInit, OnDestroy {
       if (this._itemsChanges.hasDeletedItems) {
         const dr = this._dialog.open(DeleteConfirmDialogComponent)
         dr.afterClosed().subscribe((result) => {
-          if (result) void this._saveItems()
+          if (result) void this._saveItems(true)
         })
-      } else void this._saveItems()
+      } else void this._saveItems(true)
     }
   }
 

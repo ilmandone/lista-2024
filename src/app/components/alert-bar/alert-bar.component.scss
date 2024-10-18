@@ -1,0 +1,41 @@
+.alert-bar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height:0.5rem;
+
+  opacity: 1;
+  animation: kf-fadeout 1s forwards ease-out;
+  transform-origin: top center;
+
+
+  &.info {
+    background-color: var(--snack-bar-info);
+  }
+
+  &.warning {
+    background-color: var(--snack-bar-warning);
+  }
+
+  &.error {
+    background-color: var(--snack-bar-error);
+  }
+}
+
+@keyframes kf-fadeout {
+  0%{
+    opacity: 1;
+    width: 100%;
+  }
+
+  65% {
+    opacity: 0.85;
+    width: 100%;
+  }
+
+  100% {
+    opacity: 0;
+    width: 0;
+  }
+}
