@@ -8,7 +8,8 @@
   filter: opacity(0.5);
 
   opacity: 1;
-  animation: kf-fadeout 1s forwards ease-in-out;
+  animation: kf-fadeout 1s forwards ease-out;
+  transform-origin: top center;
 
 
   &.info {
@@ -22,16 +23,20 @@
   &.error {
     background-color: var(--snack-bar-error);
   }
-
 }
 
 @keyframes kf-fadeout {
   0%{
     opacity: 1;
+    transform: scaleY(0.95);
   }
 
-  50% {
-    opacity: 0.25;
+  35% {
+    transform: scaleY(1);
+  }
+
+  65% {
+    opacity: 0.75;
   }
 
   100% {
