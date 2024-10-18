@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core'
 import { Subject } from 'rxjs'
+import { Severity } from './common.interfaces'
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,14 @@ export class MainStateService {
 
   triggerReload() {
     this.reload$.next()
+  }
+
+  //#endregion
+
+  //#region Top line alert
+
+  topLineAlert(severity: Severity) {
+    console.log(severity)
   }
 
   //#endregion
