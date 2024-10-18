@@ -13,20 +13,22 @@ import { LogoutDialogComponent } from './logout.dialog/logout.dialog.component'
 import { FocusInputService } from '../../components/focus-input/focus-input.service'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { MainStateService } from '../../shared/main-state.service'
+import { AlertBarComponent } from '../../components/alert-bar/alert-bar.component'
 
 @Component({
   selector: 'app-home',
   standalone: true,
 	imports: [
-		MatSidenavModule,
 		CommonModule,
-		RouterOutlet,
-    RouterModule,
-		MatIconModule,
+		LoaderComponent,
 		MatButtonModule,
-		MatSlideToggleModule,
 		MatDialogModule,
-		LoaderComponent
+		MatIconModule,
+		MatSidenavModule,
+		MatSlideToggleModule,
+		RouterOutlet,
+    AlertBarComponent,
+    RouterModule,
 	],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',

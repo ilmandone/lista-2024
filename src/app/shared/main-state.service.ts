@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core'
 import { Subject } from 'rxjs'
+import { Severity } from './common.interfaces'
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ export class MainStateService {
 
   private _loader = signal<boolean>(false)
   private _offLine = signal<boolean>(false)
+  private _topLineAlert = signal<{level: Severity | null}>({level: null})
 
   //#region Offline
 
@@ -38,6 +40,18 @@ export class MainStateService {
 
   triggerReload() {
     this.reload$.next()
+  }
+
+  //#endregion
+
+  //#region Top line alert
+
+  get topLineAlert() {
+    return this._topLineAlert.asReadonly()
+  }
+
+  showTopLineAlert(level: Severity) {
+    this._topLineAlert.set({ level })
   }
 
   //#endregion
