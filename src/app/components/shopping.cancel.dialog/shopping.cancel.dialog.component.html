@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>Vuoi confermare ?</h2>
+
+<mat-dialog-content>
+  <p> <strong>ATTENZIONE!</strong> </p>
+  <p>Stai annullando gli aquisti in corso!</p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="false">Torna allo shopping</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Annulla</button>
+</mat-dialog-actions>
