@@ -75,6 +75,9 @@
         <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
           @if (!shopping || (shopping && !item.notToBuy)) {
             <app-item
+              [appLongPress]="!shopping && !editing"
+              (longPress)="longPressed()"
+
               [data]="item"
               [editing]="editing"
               [extra]="item.inCart ? 'add_shopping_cart' : ''"
@@ -84,7 +87,7 @@
               [stroked]="item.notToBuy && !editing"
               (changed)="itemChanged($event)"
               (clicked)="itemClicked($event)"
-              (longPress)="longPressed()"
+
               (groupChange)="itemGroupChanged($event)"
 
               (selectedChange)="itemSelected($event)"

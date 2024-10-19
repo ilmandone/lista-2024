@@ -45,6 +45,7 @@ import { SnackBarService } from 'app/shared/snack-bar.service'
 import {
   ShoppingCancelDialogComponent
 } from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
+import { LongPressDirective } from '../../shared/directives/long-press.directive'
 
 @Component({
   selector: 'app-list',
@@ -57,6 +58,7 @@ import {
     ConfirmCancelComponent,
     ItemComponent,
     LoaderComponent,
+    LongPressDirective,
     MatBottomSheetModule,
     MatDialogModule,
     MatIcon,
