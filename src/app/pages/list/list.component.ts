@@ -624,6 +624,11 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+
+  longPressed() {
+    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
+    this.editing = true
+  }
 }
 
 export default ListComponent

@@ -30,8 +30,13 @@ import { MainStateService } from '../../shared/main-state.service'
 	animations: [revealHor]
 })
 export class ItemComponent {
+  readonly LONG_PRESS_TIMEOUT = 700
 	readonly focusSrv = inject(FocusInputService)
   readonly mainStateSrv = inject(MainStateService)
+
+  private _longPressTimeoutID: number | null = null
+
+  //#region Input / Output
 
 	stroked = input<boolean>(true)
 	data = input.required<ItemDataWithGroup>()
@@ -43,11 +48,62 @@ export class ItemComponent {
 
 	changed = output<ItemsChanges>()
 	clicked = output<ItemsChanges>()
-	selectedChange = output<ItemSelectedEvent>()
 	groupChange = output<ItemsChanges>()
+  longPress = output<void>()
+	selectedChange = output<ItemSelectedEvent>()
+
+  //#endregion
 
 	disabled = computed(() => !(this.editing() && this.sortable()) )
 	extraString = computed(() => this.extra() || '')
+
+  //#region Long press
+
+  /**
+   * Clear the long press timeout and set to null
+   * @private
+   */
+  private _clearLongPressTimeoutID() {
+    window.clearTimeout(this._longPressTimeoutID!)
+    this._longPressTimeoutID = null
+  }
+
+  /**
+   * Long press pointer down
+   * @description On pointer down start tracking press time and emit the event after a delay time
+   * @param event$
+   */
+  @HostListener('pointerdown', ['$event'])
+  pointerDown(event$: PointerEvent) {
+    event$.preventDefault();
+
+    if(this._longPressTimeoutID) {
+      this._clearLongPressTimeoutID()
+    }
+
+    if (!this.editing())
+      this._longPressTimeoutID = window.setTimeout(() => {
+        if (!this.editing() && !this.shopping()) {
+          this.longPress.emit()
+          this._longPressTimeoutID = null
+        }
+      },this.LONG_PRESS_TIMEOUT)
+  }
+
+  /**
+   * Clear long press pointer up timeout tracking
+   * @param event$
+   */
+  @HostListener('pointerup', ['$event'])
+  pointerUp(event$: PointerEvent) {
+    event$.preventDefault();
+
+    if(this._longPressTimeoutID) {
+      this._clearLongPressTimeoutID()
+    }
+  }
+
+  //#endregion
 
 	@HostListener('click')
 	hostClick() {

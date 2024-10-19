@@ -77,14 +77,16 @@
             <app-item
               [data]="item"
               [editing]="editing"
-              [shopping]="shopping"
+              [extra]="item.inCart ? 'add_shopping_cart' : ''"
               [selected]="selectedItems.has(item.UUID)"
+              [shopping]="shopping"
               [sortable]="!showByGroups"
               [stroked]="item.notToBuy && !editing"
-              [extra]="item.inCart ? 'add_shopping_cart' : ''"
               (changed)="itemChanged($event)"
               (clicked)="itemClicked($event)"
+              (longPress)="longPressed()"
               (groupChange)="itemGroupChanged($event)"
+
               (selectedChange)="itemSelected($event)"
             ></app-item>
           }
