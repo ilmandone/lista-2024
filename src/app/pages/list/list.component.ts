@@ -45,6 +45,7 @@ import { SnackBarService } from 'app/shared/snack-bar.service'
 import {
   ShoppingCancelDialogComponent
 } from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
+import { LongPressDirective } from '../../shared/directives/long-press.directive'
 
 @Component({
   selector: 'app-list',
@@ -57,6 +58,7 @@ import {
     ConfirmCancelComponent,
     ItemComponent,
     LoaderComponent,
+    LongPressDirective,
     MatBottomSheetModule,
     MatDialogModule,
     MatIcon,
@@ -425,6 +427,14 @@ class ListComponent implements OnInit, OnDestroy {
   itemSelected($event: ItemSelectedEvent) {
     if ($event.isSelected) this.selectedItems.add($event.UUID)
     else this.selectedItems.delete($event.UUID)
+  }
+
+  /**
+   * Long press on a list item
+   */
+  longPressed() {
+    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
+    this.editing = true
   }
 
   /**

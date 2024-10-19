@@ -33,6 +33,8 @@ export class ItemComponent {
 	readonly focusSrv = inject(FocusInputService)
   readonly mainStateSrv = inject(MainStateService)
 
+  //#region Input / Output
+
 	stroked = input<boolean>(true)
 	data = input.required<ItemDataWithGroup>()
 	editing = input<boolean>(false)
@@ -43,8 +45,10 @@ export class ItemComponent {
 
 	changed = output<ItemsChanges>()
 	clicked = output<ItemsChanges>()
-	selectedChange = output<ItemSelectedEvent>()
 	groupChange = output<ItemsChanges>()
+	selectedChange = output<ItemSelectedEvent>()
+
+  //#endregion
 
 	disabled = computed(() => !(this.editing() && this.sortable()) )
 	extraString = computed(() => this.extra() || '')
