@@ -40,6 +40,8 @@
 			<!--Drag box-->
 			<div cdkDrag class="drag-box" [cdkDragDisabled]="!editing">
 				<app-lists-item
+          [appLongPress]="!editing"
+          (longPress)="longPressed()"
 
 					[data]="data"
 					[editing]="editing"
