@@ -119,11 +119,6 @@ class ListsComponent implements OnInit, OnDestroy {
     }
   }
 
-  private startEditing(): void {
-    this._listDataCache = cloneDeep(this.listsData())
-    this.editing = true
-  }
-
   //#region Privates
 
   /**
@@ -259,6 +254,14 @@ class ListsComponent implements OnInit, OnDestroy {
     this._itemsChanges.set(changes)
   }
 
+  /**
+   * Start editing mode
+   */
+  public startEditing(): void {
+    this._listDataCache = cloneDeep(this.listsData())
+    this.editing = true
+  }
+
   //#endregion
 
   //#region Confirm / Cancel
@@ -288,10 +291,7 @@ class ListsComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
-  longPressed() {
-    this._listDataCache = cloneDeep(this.listsData())
-    this.editing = true
-  }
+
 }
 
 export default ListsComponent

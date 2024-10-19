@@ -430,6 +430,14 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Long press on a list item
+   */
+  longPressed() {
+    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
+    this.editing = true
+  }
+
+  /**
    * Open the new item dialog
    * @description On confirm the item is added to f/e data
    */
@@ -626,11 +634,6 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
-
-  longPressed() {
-    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
-    this.editing = true
-  }
 }
 
 export default ListComponent

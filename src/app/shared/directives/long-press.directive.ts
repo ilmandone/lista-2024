@@ -6,7 +6,7 @@ import { Directive, HostListener, input, output } from '@angular/core'
 })
 export class LongPressDirective {
 
-  private readonly LONG_PRESS_TIMEOUT = 1000
+  private readonly LONG_PRESS_TIMEOUT = 600
   private _longPressTimeoutID: number | null = null
 
   active = input.required<boolean>({ alias: 'appLongPress' })
@@ -50,6 +50,7 @@ export class LongPressDirective {
    * @param {PointerEvent} event$
    */
   @HostListener('pointerup', ['$event'])
+  @HostListener('pointerout', ['$event'])
   pointerUp(event$: PointerEvent) {
     if (!this.active()) return
     event$.preventDefault();
