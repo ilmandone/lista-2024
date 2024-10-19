@@ -29,6 +29,7 @@ export class LongPressDirective {
    */
   @HostListener('pointerdown', ['$event'])
   pointerDown(event$: PointerEvent) {
+    if (!this.active) return
     event$.preventDefault();
 
     if(this._longPressTimeoutID) {
@@ -50,6 +51,7 @@ export class LongPressDirective {
    */
   @HostListener('pointerup', ['$event'])
   pointerUp(event$: PointerEvent) {
+    if (!this.active) return
     event$.preventDefault();
 
     if(this._longPressTimeoutID) {

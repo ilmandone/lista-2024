@@ -40,6 +40,7 @@
 			<!--Drag box-->
 			<div cdkDrag class="drag-box" [cdkDragDisabled]="!editing">
 				<app-lists-item
+
 					[data]="data"
 					[editing]="editing"
 					(changed)="itemChanged($event)"

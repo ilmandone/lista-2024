@@ -25,21 +25,23 @@ import { Subject, takeUntil } from 'rxjs'
 import { MatTooltip } from '@angular/material/tooltip'
 import { checkMobile } from 'app/shared/detect.mobile'
 import { SnackBarService } from '../../shared/snack-bar.service'
+import { LongPressDirective } from '../../shared/directives/long-press.directive'
 
 @Component({
   selector: 'app-lists',
   standalone: true,
   imports: [
-    MatIconModule,
-    MatButtonModule,
+    CdkDrag,
+    CdkDragPlaceholder,
+    CdkDropList,
+    ConfirmCancelComponent,
     ListsEmptyComponent,
-    MatDialogModule,
     ListsItemComponent,
     LoaderComponent,
-    ConfirmCancelComponent,
-    CdkDrag,
-    CdkDropList,
-    CdkDragPlaceholder,
+    LongPressDirective,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
     MatTooltip
   ],
   templateUrl: './lists.component.html',
@@ -286,6 +288,10 @@ class ListsComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+  longPressed() {
+    this._listDataCache = cloneDeep(this.listsData())
+    this.editing = true
+  }
 }
 
 export default ListsComponent
