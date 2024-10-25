@@ -100,6 +100,7 @@ class ListComponent implements OnInit, OnDestroy {
   shopping = false
 
   async ngOnInit() {
+
     this._UUID = this._activatedRoute.snapshot.params['id']
     this.label = this._activatedRoute.snapshot.data['label']
     this.groups.set(await this._loadGroups())
