@@ -10,7 +10,7 @@
         [disabled]="mainStateSrv.offline()"
         [fontIcon]="'shopping_cart'"
         [toggle]="shopping"
-        (toggleChange)="shopping = $event"
+        (toggleChange)="shoppingState($event)"
       ></app-button-toggle>
 
       <!--Open bottom sheet-->

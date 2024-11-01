@@ -43,14 +43,10 @@
     <!-- Header -->
     <nav class="drawer-content__nav">
       <app-alert-bar [severity]="mainStateService.topLineAlert()"/>
-      <!--<div class="drawer-content__nav__top-bar">
 
-
-
-      </div>-->
       <button class="drawer-content__nav__button" mat-icon-button (click)="drawer.toggle()"
               [title]="'Open main menu'"
-              [disabled]="disabled || mainStateService.offline()">
+              [disabled]="disabled || mainStateService.offline() || mainStateService.interfaceDisabled()">
         <mat-icon [fontIcon]="'menu'"></mat-icon>
       </button>
     </nav>

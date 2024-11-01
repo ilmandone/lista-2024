@@ -11,6 +11,7 @@ export class MainStateService {
   private _loader = signal<boolean>(false)
   private _offLine = signal<boolean>(false)
   private _topLineAlert = signal<{level: Severity | null}>({level: null})
+  private _disableInterface = signal<boolean>(false)
 
   //#region Offline
 
@@ -52,6 +53,19 @@ export class MainStateService {
 
   showTopLineAlert(level: Severity) {
     this._topLineAlert.set({ level })
+  }
+
+  //#endregion
+
+  //#region
+
+  get interfaceDisabled() {
+    return this._disableInterface.asReadonly()
+  }
+
+  disableInterface(v: boolean) {
+    console.log(v)
+    this._disableInterface.set(v)
   }
 
   //#endregion

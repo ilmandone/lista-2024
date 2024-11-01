@@ -293,7 +293,7 @@ class ListComponent implements OnInit, OnDestroy {
     this._itemsChanges.set(changes)
     this.itemsData.set(newItemsData)
 
-    this.shopping = false
+    this.shoppingState(false)
   }
 
   /**
@@ -595,7 +595,7 @@ class ListComponent implements OnInit, OnDestroy {
       this._itemsChanges.set(changes)
       this.itemsData.set(newItemsData)
 
-      this.shopping = false
+      this.shoppingState(false)
 
       this._engageSaveItems()
     } else {
@@ -635,6 +635,10 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+  shoppingState($event: boolean) {
+    this.shopping = $event
+    this.mainStateSrv.disableInterface($event)
+  }
 }
 
 export default ListComponent
