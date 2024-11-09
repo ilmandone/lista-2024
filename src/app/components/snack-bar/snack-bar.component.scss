@@ -2,14 +2,32 @@
   padding: 0.35rem;
 
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
-  div {
-    width: 100%;
-    text-align: center;
-    font-size: 1.1rem;
+  > *:not(:last-child) {
+    margin-right: 0.5rem;
+  }
 
+  span {
+    font-size: 1.1rem;
     font-weight: 500;
+  }
+
+  mat-icon {
+    transform-origin: center top;
+    animation: ringing-keyframes 0.5s infinite ease-in-out;
+  }
+}
+
+@keyframes ringing-keyframes {
+  0% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(10deg);
   }
 }

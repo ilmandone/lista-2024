@@ -16,7 +16,8 @@ import { MatButton, MatIconButton } from '@angular/material/button'
   templateUrl: './snack-bar.component.html',
   styleUrl: './snack-bar.component.scss',
 })
-export class SnackBarComponent /*implements OnInit*/ {
+export class SnackBarComponent{
+
   snackBarData: ISnackBar = inject(MAT_SNACK_BAR_DATA);
   snackBar = inject(MatSnackBarRef);
 

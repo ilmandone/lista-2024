@@ -45,6 +45,7 @@ import { SnackBarService } from 'app/shared/snack-bar.service'
 import {
   ShoppingCancelDialogComponent
 } from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
+import { LongPressDirective } from '../../shared/directives/long-press.directive'
 
 @Component({
   selector: 'app-list',
@@ -57,6 +58,7 @@ import {
     ConfirmCancelComponent,
     ItemComponent,
     LoaderComponent,
+    LongPressDirective,
     MatBottomSheetModule,
     MatDialogModule,
     MatIcon,
@@ -98,6 +100,7 @@ class ListComponent implements OnInit, OnDestroy {
   shopping = false
 
   async ngOnInit() {
+
     this._UUID = this._activatedRoute.snapshot.params['id']
     this.label = this._activatedRoute.snapshot.data['label']
     this.groups.set(await this._loadGroups())
@@ -290,7 +293,7 @@ class ListComponent implements OnInit, OnDestroy {
     this._itemsChanges.set(changes)
     this.itemsData.set(newItemsData)
 
-    this.shopping = false
+    this.shoppingState(false)
   }
 
   /**
@@ -425,6 +428,14 @@ class ListComponent implements OnInit, OnDestroy {
   itemSelected($event: ItemSelectedEvent) {
     if ($event.isSelected) this.selectedItems.add($event.UUID)
     else this.selectedItems.delete($event.UUID)
+  }
+
+  /**
+   * Long press on a list item
+   */
+  longPressed() {
+    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
+    this.editing = true
   }
 
   /**
@@ -584,7 +595,7 @@ class ListComponent implements OnInit, OnDestroy {
       this._itemsChanges.set(changes)
       this.itemsData.set(newItemsData)
 
-      this.shopping = false
+      this.shoppingState(false)
 
       this._engageSaveItems()
     } else {
@@ -624,6 +635,10 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+  shoppingState($event: boolean) {
+    this.shopping = $event
+    this.mainStateSrv.disableInterface($event)
+  }
 }
 
 export default ListComponent
