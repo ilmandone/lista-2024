@@ -25,8 +25,6 @@ export class ListGroupsBottomSheetComponent implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		this.groups.set(await this._firebaseSrv.loadGroups(true))
-		console.log(this.data);
-		
 	}
 
 	selectGroup($event: Event, g: GroupData) {
