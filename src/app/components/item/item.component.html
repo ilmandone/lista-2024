@@ -12,7 +12,7 @@
   <div class="item-button__left">
 
     @if (shopping() && extra()) {
-      <mat-icon class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
+      <mat-icon @revealHor class="shopping-icon" [fontIcon]="extraString()"></mat-icon>
     }
 
     @if (editing()) {
