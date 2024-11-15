@@ -2,6 +2,11 @@ import { Injectable, signal } from '@angular/core'
 import { Subject } from 'rxjs'
 import { Severity } from './common.interfaces'
 
+export interface ISearch {
+  val: string,
+  dir: 'asc' | 'desc'
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,6 +17,7 @@ export class MainStateService {
   private _offLine = signal<boolean>(false)
   private _topLineAlert = signal<{level: Severity | null}>({level: null})
   private _disableInterface = signal<boolean>(false)
+  private _searchItem = signal<ISearch | null>(null)
 
   //#region Offline
 
@@ -57,7 +63,7 @@ export class MainStateService {
 
   //#endregion
 
-  //#region
+  //#region Interface disable
 
   get interfaceDisabled() {
     return this._disableInterface.asReadonly()
@@ -66,6 +72,18 @@ export class MainStateService {
   disableInterface(v: boolean) {
     console.log(v)
     this._disableInterface.set(v)
+  }
+
+  //#endregion
+
+  //#region Search in page
+
+  searchingItem(v: ISearch) {
+    this._searchItem.set(v)
+  }
+
+  get searchItem() {
+    return this._searchItem.asReadonly()
   }
 
   //#endregion
