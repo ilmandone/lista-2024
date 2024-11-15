@@ -46,6 +46,7 @@ import {
   ShoppingCancelDialogComponent
 } from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
+import { SearchItemComponent } from '../../components/search-item/search-item.component'
 
 @Component({
   selector: 'app-list',
@@ -398,7 +399,7 @@ class ListComponent implements OnInit, OnDestroy {
    * @description Open bottom sheet to edit the item group
    * @param {ItemsChanges} $event
    */
-  itemGroupChanged($event: ItemsChanges) {
+  changeItemGroup($event: ItemsChanges) {
     this._bottomSheet
       .open(ListGroupsBottomSheetComponent, {
         data: {
@@ -578,6 +579,15 @@ class ListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Update the shopping state and disable the interface
+   * @param $event
+   */
+  shoppingState($event: boolean) {
+    this.shopping = $event
+    this.mainStateSrv.disableInterface($event)
+  }
+
   //#endregion
 
   //#region Confirm / Cancel
@@ -635,10 +645,18 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
-  shoppingState($event: boolean) {
-    this.shopping = $event
-    this.mainStateSrv.disableInterface($event)
+
+  //#region Search
+
+  /**
+   * Open the search input
+   */
+  search() {
+    this._bottomSheet.open(SearchItemComponent, {})
   }
+
+  //#endregion
+
 }
 
 export default ListComponent

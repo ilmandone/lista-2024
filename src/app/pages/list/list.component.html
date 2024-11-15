@@ -3,6 +3,19 @@
     <h1>{{ label }}</h1>
   </div>
   <div class="header__controls">
+
+    <button
+      mat-icon-button
+      title="options"
+      matTooltip="⇧ + Alt + S"
+      [matTooltipDisabled]="isMobile"
+      [disabled]="shopping || mainStateSrv.offline()"
+      type="button"
+      (click)="search()"
+    >
+      <mat-icon [fontIcon]="'search'"></mat-icon>
+    </button>
+
     @if (!editing) {
 
       <!--Shopping mode-->
@@ -88,7 +101,7 @@
               (changed)="itemChanged($event)"
               (clicked)="itemClicked($event)"
 
-              (groupChange)="itemGroupChanged($event)"
+              (groupChange)="changeItemGroup($event)"
 
               (selectedChange)="itemSelected($event)"
             ></app-item>
