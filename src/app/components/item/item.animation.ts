@@ -6,17 +6,17 @@ export const revealHor = trigger(
     transition(
       ':enter',
       [
-        style({ width: 0,  opacity: 0, padding: 0 }),
-        animate('0.3s ease-in',
-          style({ width: '*', opacity: 1, padding: '*' }))
+        style({ width: 0,  opacity: 0, padding: 0, margin: 0 }),
+        animate('0.3s ease-in-out',
+          style({ width: '*', opacity: 1, padding: '*', margin: '*' }))
       ]
     ),
     transition(
       ':leave',
       [
-        style({ width: '*',  opacity: 1, padding: '*' }),
-        animate('0.3s',
-          style({ width: 0, opacity: 0, padding: 0 }))
+        style({ width: '*',  opacity: 1, padding: '*', margin: '*' }),
+        animate('0.3s ease-in-out',
+          style({ width: 0, opacity: 0, padding: 0, margin: 0 }))
       ]
     )
   ]
