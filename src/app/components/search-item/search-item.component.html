@@ -1,0 +1,30 @@
+<mat-form-field class="form-field">
+  <mat-label>Cerca</mat-label>
+  <input
+    [formControl]="searchFC"
+    [required]="true"
+    cdkFocusInitial
+    matInput
+    placeholder="Due o più caratteri"
+    type="text"
+
+    (keyup.enter)="searchItem()"
+    (keyup.space)="searchItem()"
+  />
+</mat-form-field>
+
+<button
+  mat-icon-button
+  title="options"
+  type="button"
+>
+  <mat-icon [fontIcon]="'keyboard_arrow_down'"></mat-icon>
+</button>
+
+<button
+  mat-icon-button
+  title="options"
+  type="button"
+>
+  <mat-icon [fontIcon]="'keyboard_arrow_up'"></mat-icon>
+</button>

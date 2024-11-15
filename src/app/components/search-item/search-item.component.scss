@@ -1,0 +1,11 @@
+@use "~styles/typo.scss";
+
+:host {
+  display: flex;
+  align-items: center;
+
+  .form-field {
+    padding: 1rem 1rem 0 0.25rem;
+    width: 100%;
+  }
+}
