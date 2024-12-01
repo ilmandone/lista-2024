@@ -52,12 +52,10 @@
       (keyup.space)="editing() && changeGroup()"
     ></div>
 
-    <!-- @if (editing() && sortable()) { -->
     <!-- Drag handler -->
     <button cdkDragHandle mat-icon-button [title]="'Drag handler'" [disabled]="disabled() "
-            class="drag" [class.show]="!disabled()">
+            class="drag" [class.show]="editing()">
       <mat-icon [fontIcon]="'drag_indicator'"></mat-icon>
     </button>
-    <!-- } -->
   </div>
 </div>
