@@ -34,6 +34,8 @@ const labelListView = (data: ItemsDataWithGroup): ItemsDataWithGroup => {
   })
 }
 
+export type SortMode = 'default' | 'label' | 'group'
+
 export interface SortFunctions {
   default: typeof listGridView
   label: typeof labelListView

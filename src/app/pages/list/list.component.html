@@ -5,6 +5,14 @@
   <div class="header__controls">
     @if (!editing) {
 
+      <!--Shopping mode-->
+      <app-button-toggle
+        [disabled]="mainStateSrv.offline()"
+        [fontIcon]="'shopping_cart'"
+        [toggle]="shopping"
+        (toggleChange)="shoppingState($event)"
+      ></app-button-toggle>
+
       <!-- Sort menu-->
       <button
         mat-icon-button
@@ -18,34 +26,21 @@
         <mat-icon [fontIcon]="'filter_list'"></mat-icon>
       </button>
 
-      <mat-menu #sortMenu="matMenu">
-        <button mat-menu-item (click)="sortItems('default')">
-          <mat-icon>dialpad</mat-icon>
+      <mat-menu #sortMenu="matMenu" class="sort-menu" >
+        <button mat-menu-item [disabled]="sortMode === 'default'" (click)="sortItems('default')">
+          <mat-icon>list</mat-icon>
           Default</button>
-        <button mat-menu-item (click)="sortItems('label')">Nome</button>
-        <button mat-menu-item (click)="sortItems('group')">Gruppi</button>
+        <button mat-menu-item [disabled]="sortMode === 'label'" (click)="sortItems('label')">
+          Nome
+          <mat-icon>text_fields</mat-icon>
+        </button>
+        <button mat-menu-item  [disabled]="sortMode === 'group'" (click)="sortItems('group')">
+          Gruppi
+          <mat-icon>grid_view</mat-icon>
+        </button>
       </mat-menu>
 
-      <!--Shopping mode-->
-      <app-button-toggle
-        [disabled]="mainStateSrv.offline()"
-        [fontIcon]="'shopping_cart'"
-        [toggle]="shopping"
-        (toggleChange)="shoppingState($event)"
-      ></app-button-toggle>
 
-      <!--Open bottom sheet-->
-      <button
-        mat-icon-button
-        title="options"
-        matTooltip="⇧ + Alt + E"
-        [matTooltipDisabled]="isMobile"
-        [disabled]="shopping || mainStateSrv.offline()"
-        type="button"
-        (click)="!shopping && openMainBottomSheet()"
-      >
-        <mat-icon [fontIcon]="'more_vert'"></mat-icon>
-      </button>
     } @else {
 
       <!--Add new item-->

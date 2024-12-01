@@ -28,10 +28,6 @@ import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MainStateService } from '../../shared/main-state.service'
-import {
-  ListBottomSheetComponent,
-  ListBottomSheetData
-} from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
 import {
   GroupBottomSheetData,
@@ -46,7 +42,7 @@ import {
 } from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
 import { MatMenuModule } from '@angular/material/menu'
-import { sortFunctions } from './list.groups-view'
+import { sortFunctions, SortMode } from './list.sort-view'
 
 @Component({
   selector: 'app-list',
@@ -66,7 +62,7 @@ import { sortFunctions } from './list.groups-view'
     MatIconButton,
     MatMenuModule,
     MatTooltip,
-    ScrollingModule,
+    ScrollingModule
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -81,11 +77,11 @@ class ListComponent implements OnInit, OnDestroy {
   private readonly _snackBarSrv = inject(SnackBarService)
 
   private _UUID!: string
+  private _autoSaveTimeOutID!: number
   private _escKeyDisabled = false
+  private _inCartItemsIndex = new Set<number>()
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _itemsDataCache: ItemsDataWithGroup = []
-  private _autoSaveTimeOutID!: number
-  private _inCartItemsIndex = new Set<number>()
 
   private _destroyed$ = new Subject<boolean>()
   private _itemUpdateUnsubscribe!: Unsubscribe
@@ -100,6 +96,7 @@ class ListComponent implements OnInit, OnDestroy {
   selectedItems = new Set<string>()
   showByGroups = false
   shopping = false
+  sortMode: SortMode = 'default'
 
   async ngOnInit() {
 
@@ -173,12 +170,6 @@ class ListComponent implements OnInit, OnDestroy {
           break
         default:
           console.warn('Unknown shortcut key', k)
-      }
-    } else if (!this.editing) {
-      switch (k) {
-        case 'e':
-          this.openMainBottomSheet()
-          break
       }
     }
   }
@@ -460,36 +451,6 @@ class ListComponent implements OnInit, OnDestroy {
 
   //#endregion
 
-  //#region Bottom sheet
-
-  /**
-   * Open the button sheet and subscribe to the dismiss event
-   * @description If editing is enable save items to cache
-   */
-  openMainBottomSheet() {
-    const p = this._bottomSheet.open(ListBottomSheetComponent, {
-      data: {
-        showByGroups: this.showByGroups
-      } as ListBottomSheetData
-    })
-
-    p.afterDismissed().subscribe((r: ListBottomSheetData) => {
-      if (!r) return
-
-      Object.assign(this, { ...r })
-
-      /*if ('showByGroups' in r) {
-        if (this.showByGroups)
-          this.itemsData.set(listToGridView(this.itemsData() as ItemsDataWithGroup))
-        else this.itemsData.set(gridToListView(this.itemsData() as ItemsDataWithGroup))
-      } else*/ if ('editing' in r) {
-        this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
-      }
-    })
-  }
-
-  //#endregion
-
   //#region Interaction
 
   /**
@@ -580,7 +541,8 @@ class ListComponent implements OnInit, OnDestroy {
     }
   }
 
-  sortItems(sortMode: 'default' | 'label' | 'group') {
+  sortItems(sortMode: SortMode) {
+    this.sortMode = sortMode
     const sortFn = sortFunctions[sortMode]
     this.itemsData.set(sortFn(this.itemsData() as ItemsDataWithGroup))
   }
