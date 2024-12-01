@@ -37,6 +37,8 @@ html {
   --mdc-text-button-container-height: 3rem;
   --mat-dialog-container-max-width: 640px;
 
+  --mdc-dialog-container-color: #252525;
+
   --mdc-fab-container-shape: 0.5rem;
 
   // Custom colors
@@ -50,13 +52,13 @@ html {
   --snack-bar-warning-gradient: linear-gradient(180deg, rgba(212,149,10,1) 0%, rgba(212,125,10,1) 100%);
   --snack-bar-info-gradient: linear-gradient(180deg, rgba(149,213,105,1) 0%, rgba(105,221,100,1) 100%);
 
-  --lists-item-color-bg: #323232;
-  --lists-item-in-cart-color-bg: #212121;
+  --lists-item-color-bg: #21241f;
+  --lists-item-in-cart-color-bg: #101010;
   --lists-item-input-color-bg: #2b2b2b;
   --lists-item-drag-placeholder-color-bg: #1e1e1e;
   --lists-item-drag-placeholder-color-border: #595959;
 
-  --button-toggle-active-color-bg: rgb(11, 198, 255);
+  --button-toggle-active-color-bg: rgb(105,221,100,1);
   --button-custom-border-color: rgb(43, 43, 43);
   --button-custom-color-bg: rgba(112, 224, 0, 0.05);
   --button-custom-color-bg-hover: rgba(112, 224, 0, 0.2);
