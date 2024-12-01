@@ -64,7 +64,7 @@
 
     @include shared.mainCommon;
 
-    transition-property: height padding;
+    transition-property: height, padding;
     transition-duration: 0.4s;
     transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
     will-change: height;
@@ -73,7 +73,7 @@
       height: calc(utils.getRealVh(100) - var(--main-header-height) - 4.5rem);
       padding-bottom: 0;
     }
-    
+
 
     // Drag and drop
 		@include drag-and-drop.main;
@@ -87,7 +87,7 @@
     &.cdk-drop-list-dragging .drag-box:not(.cdk-drag-placeholder) {
       transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     }
-    
+
   }
 
   @include drag-and-drop.common;
@@ -95,7 +95,7 @@
   .cancel-container {
     display: flex;
     align-items: center;
-    
+
     > span {
       display: block;
     }

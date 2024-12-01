@@ -29,6 +29,7 @@ html {
   @include mat.bottom-sheet-theme($light-theme);
   @include mat.checkbox-theme($light-theme);
   @include mat.tooltip-theme($light-theme);
+  @include mat.menu-theme($light-theme);
 
   // Overrides
 

@@ -13,18 +13,34 @@
         (toggleChange)="shoppingState($event)"
       ></app-button-toggle>
 
-      <!--Open bottom sheet-->
+      <!-- Sort menu-->
       <button
         mat-icon-button
-        title="options"
-        matTooltip="⇧ + Alt + E"
+        title="sort by"
+        matTooltip="⇧ + Alt + S"
         [matTooltipDisabled]="isMobile"
+        [matMenuTriggerFor]="sortMenu"
         [disabled]="shopping || mainStateSrv.offline()"
         type="button"
-        (click)="!shopping && openMainBottomSheet()"
       >
-        <mat-icon [fontIcon]="'more_vert'"></mat-icon>
+        <mat-icon [fontIcon]="'filter_list'"></mat-icon>
       </button>
+
+      <mat-menu #sortMenu="matMenu" class="sort-menu" >
+        <button mat-menu-item [disabled]="sortMode === 'default'" (click)="sortItems('default')">
+          <mat-icon>list</mat-icon>
+          Default</button>
+        <button mat-menu-item [disabled]="sortMode === 'label'" (click)="sortItems('label')">
+          Nome
+          <mat-icon>text_fields</mat-icon>
+        </button>
+        <button mat-menu-item  [disabled]="sortMode === 'group'" (click)="sortItems('group')">
+          Gruppi
+          <mat-icon>grid_view</mat-icon>
+        </button>
+      </mat-menu>
+
+
     } @else {
 
       <!--Add new item-->
