@@ -5,6 +5,27 @@
   <div class="header__controls">
     @if (!editing) {
 
+      <!-- Sort menu-->
+      <button
+        mat-icon-button
+        title="sort by"
+        matTooltip="⇧ + Alt + S"
+        [matTooltipDisabled]="isMobile"
+        [matMenuTriggerFor]="sortMenu"
+        [disabled]="shopping || mainStateSrv.offline()"
+        type="button"
+      >
+        <mat-icon [fontIcon]="'filter_list'"></mat-icon>
+      </button>
+
+      <mat-menu #sortMenu="matMenu">
+        <button mat-menu-item (click)="sortItems('default')">
+          <mat-icon>dialpad</mat-icon>
+          Default</button>
+        <button mat-menu-item (click)="sortItems('label')">Nome</button>
+        <button mat-menu-item (click)="sortItems('group')">Gruppi</button>
+      </mat-menu>
+
       <!--Shopping mode-->
       <app-button-toggle
         [disabled]="mainStateSrv.offline()"

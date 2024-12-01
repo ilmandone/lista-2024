@@ -33,7 +33,6 @@ import {
   ListBottomSheetData
 } from './list.bottom-sheet/list.bottom-sheet.component'
 import { addItem, deleteItem, updateItemAttr, updateItemPosition } from './list.cud'
-import { gridToListView, listToGridView } from './list.groups-view'
 import {
   GroupBottomSheetData,
   ListGroupsBottomSheetComponent
@@ -46,6 +45,8 @@ import {
   ShoppingCancelDialogComponent
 } from '../../components/shopping.cancel.dialog/shopping.cancel.dialog.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
+import { MatMenuModule } from '@angular/material/menu'
+import { sortFunctions } from './list.groups-view'
 
 @Component({
   selector: 'app-list',
@@ -63,8 +64,9 @@ import { LongPressDirective } from '../../shared/directives/long-press.directive
     MatDialogModule,
     MatIcon,
     MatIconButton,
+    MatMenuModule,
     MatTooltip,
-    ScrollingModule
+    ScrollingModule,
   ],
   templateUrl: './list.component.html',
   styleUrl: './list.component.scss'
@@ -476,11 +478,11 @@ class ListComponent implements OnInit, OnDestroy {
 
       Object.assign(this, { ...r })
 
-      if ('showByGroups' in r) {
+      /*if ('showByGroups' in r) {
         if (this.showByGroups)
           this.itemsData.set(listToGridView(this.itemsData() as ItemsDataWithGroup))
         else this.itemsData.set(gridToListView(this.itemsData() as ItemsDataWithGroup))
-      } else if ('editing' in r) {
+      } else*/ if ('editing' in r) {
         this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
       }
     })
@@ -578,7 +580,13 @@ class ListComponent implements OnInit, OnDestroy {
     }
   }
 
+  sortItems(sortMode: 'default' | 'label' | 'group') {
+    const sortFn = sortFunctions[sortMode]
+    this.itemsData.set(sortFn(this.itemsData() as ItemsDataWithGroup))
+  }
+
   //#endregion
+
 
   //#region Confirm / Cancel
 

@@ -30,20 +30,20 @@ export class ListBottomSheetComponent implements OnInit {
   }
 
   starEdit($event: Event) {
+    $event.preventDefault()
+
     this._bottomSheetRef.dismiss({
       editing: true
     } as ListBottomSheetData)
-
-    $event.preventDefault()
   }
 
   toggleViewMode($event: Event) {
+    $event.preventDefault()
+
     this.showByGroups = !this.showByGroups
     this._bottomSheetRef.dismiss({
       showByGroups: this.showByGroups
     } as ListBottomSheetData)
-
-    $event.preventDefault()
   }
 }
 
