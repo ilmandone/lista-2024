@@ -17,13 +17,11 @@
       <button
         mat-icon-button
         title="sort by"
-        matTooltip="⇧ + Alt + S"
-        [matTooltipDisabled]="isMobile"
         [matMenuTriggerFor]="sortMenu"
         [disabled]="shopping || mainStateSrv.offline()"
         type="button"
       >
-        <mat-icon [fontIcon]="'filter_list'"></mat-icon>
+        <mat-icon [fontIcon]="'dashboard'"></mat-icon>
       </button>
 
       <mat-menu #sortMenu="matMenu" class="sort-menu" >
@@ -99,7 +97,7 @@
               [extra]="item.inCart ? 'add_shopping_cart' : ''"
               [selected]="selectedItems.has(item.UUID)"
               [shopping]="shopping"
-              [sortable]="!showByGroups"
+              [sortable]="!(sortMode === 'group' || sortMode === 'label')"
               [stroked]="item.notToBuy && !editing"
               (changed)="itemChanged($event)"
               (clicked)="itemClicked($event)"

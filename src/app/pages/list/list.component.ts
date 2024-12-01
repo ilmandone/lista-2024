@@ -94,7 +94,6 @@ class ListComponent implements OnInit, OnDestroy {
   itemsData = signal<Nullable<ItemsDataWithGroup>>(null)
   label!: string
   selectedItems = new Set<string>()
-  showByGroups = false
   shopping = false
   sortMode: SortMode = 'default'
 
