@@ -25,7 +25,7 @@
       </button>
 
       <mat-menu #sortMenu="matMenu" class="sort-menu" >
-        <button mat-menu-item [disabled]="sortMode === 'default'" (click)="sortItems('default')">
+        <button mat-menu-item [disabled]="sortMode === 'position'" (click)="sortItems('position')">
           <mat-icon>list</mat-icon>
           Default</button>
         <button mat-menu-item [disabled]="sortMode === 'label'" (click)="sortItems('label')">

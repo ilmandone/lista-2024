@@ -95,7 +95,7 @@ class ListComponent implements OnInit, OnDestroy {
   label!: string
   selectedItems = new Set<string>()
   shopping = false
-  sortMode: SortMode = 'default'
+  sortMode: SortMode = 'position'
 
   async ngOnInit() {
 
@@ -206,12 +206,6 @@ class ListComponent implements OnInit, OnDestroy {
         this._itemsChanges.set(itemsToDefault)
         this._saveItems()
       }
-
-      // Add the in cart items to inCart index list
-      this._inCartItemsIndex = new Set(data.reduce((acc, data, index) => {
-        if (data.inCart) acc.push(index)
-        return acc
-      }, [] as number[]))
 
       if (showLoader) this.mainStateSrv.hideLoader()
     })
@@ -426,8 +420,10 @@ class ListComponent implements OnInit, OnDestroy {
    * Long press on a list item
    */
   longPressed() {
-    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
-    this.editing = true
+    if(this.sortMode === 'position') {
+      this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
+      this.editing = true
+    }
   }
 
   /**
@@ -541,6 +537,7 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   sortItems(sortMode: SortMode) {
+    console.log(sortMode)
     this.sortMode = sortMode
     const sortFn = sortFunctions[sortMode]
     this.itemsData.set(sortFn(this.itemsData() as ItemsDataWithGroup))
@@ -604,6 +601,7 @@ class ListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+
   shoppingState($event: boolean) {
     this.shopping = $event
     this.mainStateSrv.disableInterface($event)

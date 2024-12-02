@@ -5,7 +5,7 @@ import { ItemsDataWithGroup } from 'app/data/firebase.interfaces'
  * @param {ItemDataWithGroup} data
  * @returns {ItemDataWithGroup}
  */
-const listGridView = (data: ItemsDataWithGroup): ItemsDataWithGroup => {
+const listPositionView = (data: ItemsDataWithGroup): ItemsDataWithGroup => {
   return data.sort((a, b) => a.groupData.position - b.groupData.position)
 }
 
@@ -34,16 +34,16 @@ const labelListView = (data: ItemsDataWithGroup): ItemsDataWithGroup => {
   })
 }
 
-export type SortMode = 'default' | 'label' | 'group'
+export type SortMode = 'position' | 'label' | 'group'
 
 export interface SortFunctions {
-  default: typeof listGridView
+  position: typeof listPositionView
   label: typeof labelListView
   group: typeof gridListView
 }
 
 export const sortFunctions: SortFunctions = {
-  default: listGridView,
+  position: listPositionView,
   label: labelListView,
   group: gridListView
 }
