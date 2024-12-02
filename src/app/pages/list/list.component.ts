@@ -420,10 +420,8 @@ class ListComponent implements OnInit, OnDestroy {
    * Long press on a list item
    */
   longPressed() {
-    if(this.sortMode === 'position') {
-      this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
-      this.editing = true
-    }
+    this._itemsDataCache = cloneDeep(this.itemsData() as ItemsDataWithGroup)
+    this.editing = true
   }
 
   /**
