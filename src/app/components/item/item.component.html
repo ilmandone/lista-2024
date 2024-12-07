@@ -22,6 +22,7 @@
         @revealHor
         class="item-button__left__checkbox"
         aria-label="Select this item"
+        [disabled]="!sortable()"
         [checked]="selected()"
         (change)="itemSelected($event)"
       ></mat-checkbox>
