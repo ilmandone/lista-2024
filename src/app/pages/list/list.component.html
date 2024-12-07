@@ -48,7 +48,7 @@
         type="button"
         matTooltip="⇧ + Alt + A"
         [matTooltipDisabled]="isMobile"
-        [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
+        [disabled]="selectedItems.size > 1 || mainStateSrv.offline() || sortMode !== 'position'"
         (click)="openNewItemDialog()"
       >
         <mat-icon [fontIcon]="'add'"></mat-icon>
