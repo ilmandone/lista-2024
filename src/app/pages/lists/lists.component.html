@@ -3,16 +3,16 @@
 		<h1>Dashboard</h1>
 	</div>
 	<div class="header__controls">
-		@if (listsData()) {
+		@if (listsData() && editing) {
 		<button
       class="header__controls__button"
 			mat-icon-button
-			[matTooltip]="editing ? '⇧ + Alt + A': '⇧ + Alt + E'"
-			[title]="!editing ? 'Edit lists': 'Create a new list'"
+			[matTooltip]="'⇧ + Alt + A'"
+			[title]="'Create a new list'"
 			[disabled]="disabled || mainStateSrv.offline()"
-			(click)="clickTopButton()"
+			(click)="openCreateNew()"
 		>
-			<mat-icon [fontIcon]="!editing ? 'edit' : 'add' "></mat-icon>
+			<mat-icon [fontIcon]="'add' "></mat-icon>
 		</button>
 		}
 	</div>

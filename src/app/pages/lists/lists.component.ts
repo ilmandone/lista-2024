@@ -174,21 +174,6 @@ class ListsComponent implements OnInit, OnDestroy {
 
 //#endregion
 
-  //#region Main
-
-  /**
-   * Top button click
-   * @description Start edit mode | Open the create new dialog
-   */
-  clickTopButton() {
-    if (!this.editing) {
-      this._listDataCache = cloneDeep(this.listsData())
-      this.editing = true
-    } else this.openCreateNew()
-  }
-
-  //#endregion
-
   //#region Interactions
 
   /**
