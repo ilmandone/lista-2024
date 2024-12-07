@@ -13,18 +13,32 @@
         (toggleChange)="shoppingState($event)"
       ></app-button-toggle>
 
-      <!--Open bottom sheet-->
+      <!-- Sort menu-->
       <button
         mat-icon-button
-        title="options"
-        matTooltip="⇧ + Alt + E"
-        [matTooltipDisabled]="isMobile"
+        title="sort by"
+        [matMenuTriggerFor]="sortMenu"
         [disabled]="shopping || mainStateSrv.offline()"
         type="button"
-        (click)="!shopping && openMainBottomSheet()"
       >
-        <mat-icon [fontIcon]="'more_vert'"></mat-icon>
+        <mat-icon [fontIcon]="'dashboard'"></mat-icon>
       </button>
+
+      <mat-menu #sortMenu="matMenu" class="sort-menu" >
+        <button mat-menu-item [disabled]="sortMode === 'position'" (click)="sortItems('position')">
+          <mat-icon>list</mat-icon>
+          Default</button>
+        <button mat-menu-item [disabled]="sortMode === 'label'" (click)="sortItems('label')">
+          Nome
+          <mat-icon>text_fields</mat-icon>
+        </button>
+        <button mat-menu-item  [disabled]="sortMode === 'group'" (click)="sortItems('group')">
+          Gruppi
+          <mat-icon>grid_view</mat-icon>
+        </button>
+      </mat-menu>
+
+
     } @else {
 
       <!--Add new item-->
@@ -34,7 +48,7 @@
         type="button"
         matTooltip="⇧ + Alt + A"
         [matTooltipDisabled]="isMobile"
-        [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
+        [disabled]="selectedItems.size > 1 || mainStateSrv.offline() || sortMode !== 'position'"
         (click)="openNewItemDialog()"
       >
         <mat-icon [fontIcon]="'add'"></mat-icon>
@@ -83,7 +97,7 @@
               [extra]="item.inCart ? 'add_shopping_cart' : ''"
               [selected]="selectedItems.has(item.UUID)"
               [shopping]="shopping"
-              [sortable]="!showByGroups"
+              [sortable]="!(sortMode === 'group' || sortMode === 'label')"
               [stroked]="item.notToBuy && !editing"
               (changed)="itemChanged($event)"
               (clicked)="itemClicked($event)"

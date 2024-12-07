@@ -29,6 +29,7 @@ html {
   @include mat.bottom-sheet-theme($dark-theme);
   @include mat.checkbox-theme($dark-theme);
   @include mat.tooltip-theme($dark-theme);
+  @include mat.menu-theme($dark-theme);
 
   // Overrides
 
@@ -50,7 +51,7 @@ html {
 
   --snack-bar-error-gradient: linear-gradient(180deg, rgba(213,70,9,1) 0%, rgba(221,8,8,1) 100%);
   --snack-bar-warning-gradient: linear-gradient(180deg, rgba(212,149,10,1) 0%, rgba(212,125,10,1) 100%);
-  --snack-bar-info-gradient: linear-gradient(180deg, rgba(149,213,105,1) 0%, rgba(105,221,100,1) 100%);
+  --snack-bar-info-gradient: linear-gradient(180deg, rgb(37, 136, 31) 0%,  rgb(93, 169, 43) 100%);
 
   --lists-item-color-bg: #21241f;
   --lists-item-in-cart-color-bg: #101010;
