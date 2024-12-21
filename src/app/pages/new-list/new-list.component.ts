@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core'
+import { Component, DestroyRef, effect, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { GroupData, ItemsData } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
@@ -8,6 +8,7 @@ import { NewListService } from './new-list.service'
 import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { LoaderComponent } from '../../components/loader/loader.component'
+import { Unsubscribe } from 'firebase/firestore'
 
 @Component({
   selector: 'app-new-list',
@@ -19,7 +20,7 @@ import { LoaderComponent } from '../../components/loader/loader.component'
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss'
 })
-class NewListComponent implements OnInit {
+class NewListComponent implements OnInit, OnDestroy {
 
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _groupsSrv = inject(NewListGroupsService)
@@ -29,6 +30,7 @@ class NewListComponent implements OnInit {
   readonly mainStateSrv = inject(MainStateService)
 
   private _UUID!: string
+  private _listUpdateReg!: Unsubscribe
 
   label!: string
   editing = false
@@ -37,26 +39,11 @@ class NewListComponent implements OnInit {
   groups = signal<Record<string, GroupData>>({})
   items = signal<ItemsData>([])
 
-  ngOnInit() {
-    this._UUID = this._activatedRoute.snapshot.params['id']
-    this.label = this._activatedRoute.snapshot.data['label']
-
-    this._loadData()
-
-    this.mainStateSrv.reload$
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(() => {
-        this._loadData()
-      })
-  }
-
-  /**
-   * Set the shopping state and disable / enable main interface
-   * @param $event
-   */
-  setShoppingState($event: boolean) {
-    this.shopping = $event
-    this.mainStateSrv.disableInterface($event)
+  constructor() {
+    effect(() => {
+      const itemsUpdated = this._listSrv.itemsUpdated$$();
+      console.log(itemsUpdated)
+    })
   }
 
   //#region Privates
@@ -80,6 +67,34 @@ class NewListComponent implements OnInit {
   }
 
   //#endregion
+
+  ngOnInit() {
+    this._UUID = this._activatedRoute.snapshot.params['id']
+    this.label = this._activatedRoute.snapshot.data['label']
+
+    this._loadData()
+
+    this.mainStateSrv.reload$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => {
+        this._loadData()
+      })
+
+    this._listUpdateReg = this._listSrv.registerItemsUpdate(this._UUID)
+  }
+
+  ngOnDestroy() {
+    this._listUpdateReg()
+  }
+
+  /**
+   * Set the shopping state and disable / enable main interface
+   * @param $event
+   */
+  setShoppingState($event: boolean) {
+    this.shopping = $event
+    this.mainStateSrv.disableInterface($event)
+  }
 }
 
 export default NewListComponent
