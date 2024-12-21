@@ -8,8 +8,11 @@ export class NewListService {
 
   private readonly firebaseSrv = inject(FirebaseService)
 
+  /**
+   * Load list's items
+   * @param UUID
+   */
   loadItems (UUID: string): Observable<ItemsData> {
     return from(this.firebaseSrv.loadList(UUID))
   }
-
 }

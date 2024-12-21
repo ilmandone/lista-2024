@@ -14,3 +14,19 @@
     }
   </div>
 </header>
+
+<main
+  class="main"
+  [class.main__with-footer]="shopping || editing"
+>
+
+  <div class="main__container">
+    @defer (when items() !== null) {
+      <div>items loaded</div>
+    }
+    @placeholder {
+      <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+    }
+  </div>
+
+</main>

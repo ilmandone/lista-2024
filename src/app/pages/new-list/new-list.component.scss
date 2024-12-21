@@ -1,3 +1,5 @@
+@use "~styles/drag-and-drop.scss";
+@use "~styles/shared.scss";
 @use "~styles/utils.scss";
 @use "~styles/typo.scss";
 
@@ -43,5 +45,24 @@
       flex: 0;
       display: flex;
     }
+  }
+
+  .main {
+    @include shared.mainCommon;
+
+    transition-property: height, padding;
+    transition-duration: 0.4s;
+    transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+    will-change: height;
+
+    &__with-footer {
+      height: calc(#{utils.getRealVh(100)} - var(--main-header-height) - 4.5rem);
+      padding-bottom: 0;
+    }
+
+    // Drag and drop
+    @include drag-and-drop.main;
+
+
   }
 }
