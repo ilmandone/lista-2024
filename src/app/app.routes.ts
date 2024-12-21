@@ -2,6 +2,7 @@ import {Routes} from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import {loginGuard} from "./guards/login.guard";
 import { newListResolver } from './pages/new-list/new-list.resolver'
+import { NewListGroupsService } from './pages/new-list/new-list.groups.service'
 
 export const routes: Routes = [
   {
@@ -25,7 +26,10 @@ export const routes: Routes = [
         canActivate: [authGuard],
         resolve: {
           label: newListResolver
-        }
+        },
+        providers: [
+          NewListGroupsService
+        ]
       },
     ]
   },

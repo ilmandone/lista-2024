@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { GroupData } from '../../data/firebase.interfaces'
+import { NewListGroupsService } from './new-list.groups.service'
 
 @Component({
   selector: 'app-new-list',
@@ -12,6 +13,7 @@ import { GroupData } from '../../data/firebase.interfaces'
 class NewListComponent implements OnInit {
 
   private readonly _activatedRoute = inject(ActivatedRoute)
+  private readonly _listGroupSrv = inject(NewListGroupsService)
 
   private _UUID!: string
 
@@ -23,7 +25,9 @@ class NewListComponent implements OnInit {
     this._UUID = this._activatedRoute.snapshot.params['id']
     this.label = this._activatedRoute.snapshot.data['label']
 
-    this.groups.set(await this._loadGroups())
+    this._listGroupSrv.loadGroups().subscribe(r => {
+      this.groups.set(r);
+    })
   }
 }
 
