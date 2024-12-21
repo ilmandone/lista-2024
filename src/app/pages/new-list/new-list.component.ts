@@ -1,4 +1,13 @@
-import { Component, DestroyRef, effect, inject, OnDestroy, OnInit, signal } from '@angular/core'
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  untracked
+} from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { GroupData, ItemsDataWithGroup } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
@@ -42,7 +51,14 @@ class NewListComponent implements OnInit, OnDestroy {
   constructor() {
     effect(() => {
       const itemsUpdated = this._listSrv.itemsUpdated$$();
-      console.log(itemsUpdated)
+      if (itemsUpdated)
+        if (!this.shopping && !this.editing)
+          this.items.set(
+            this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
+          )
+        else throw new Error ('WARNING: Data updated from another user')
+    }, {
+      allowSignalWrites: true
     })
   }
 

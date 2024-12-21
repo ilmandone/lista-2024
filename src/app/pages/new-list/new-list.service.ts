@@ -1,6 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core'
 import { from, Observable } from 'rxjs'
-import { GroupData, ItemsData, ItemsDataWithGroup } from '../../data/firebase.interfaces'
+import {
+  GroupData,
+  ItemDataWithGroup,
+  ItemsData,
+  ItemsDataWithGroup
+} from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { Unsubscribe } from 'firebase/firestore'
 import { Nullable } from '../../shared/common.interfaces'
@@ -17,20 +22,57 @@ export class NewListService {
    * @param items
    * @param groups
    */
-  addGroupDataInItems(items: ItemsData, groups: Record<string,  GroupData>): ItemsDataWithGroup {
+  addGroupDataInItems(items: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroup {
     const r: ItemsDataWithGroup = []
-    items.forEach((item,index) => {
-      r[index] = {...item, groupData: groups[item.group] }
+    items.forEach((item, index) => {
+      r[index] = { ...item, groupData: groups[item.group] }
+    })
+    return r
+  }
+
+  /**
+   * Updates data items with a set of items
+   *
+   * @description Updates items groups data are also matched
+   * @param originals
+   * @param updates
+   * @param groups
+   */
+  updateItemsData(originals: ItemsDataWithGroup, updates: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroup {
+    // Get list of updates UUID
+    const updateUUIDs = new Set(updates.map(u => u.UUID))
+
+    // Save original as Map of UUID with data and index
+    const originalsMap = new Map<string,  {item: ItemDataWithGroup, index: number}>()
+    originals.forEach((o, index) => {
+      if (updateUUIDs.has(o.UUID)) {
+        originalsMap.set(o.UUID,{item: o,  index})
+      }
     })
 
-    return r
+    updates.forEach(updated => {
+      const original = originalsMap.get(updated.UUID)
+
+      if (original) {
+        const { index, item } = original
+
+        originals[index] = {
+          ...item,
+          ...updated,
+          groupData: updated.group !== item.group ?
+            groups[updated.group] : item.groupData
+        }
+      }
+    })
+
+    return originals
   }
 
   /**
    * Load list's items
    * @param UUID
    */
-  loadItems (UUID: string): Observable<ItemsData> {
+  loadItems(UUID: string): Observable<ItemsData> {
     return from(this._firebaseSrv.loadList(UUID))
   }
 
