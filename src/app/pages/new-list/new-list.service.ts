@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core'
 import { from, Observable } from 'rxjs'
-import { ItemsData } from '../../data/firebase.interfaces'
+import { GroupData, ItemsData, ItemsDataWithGroup } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { Unsubscribe } from 'firebase/firestore'
 import { Nullable } from '../../shared/common.interfaces'
@@ -11,6 +11,20 @@ export class NewListService {
   private readonly _firebaseSrv = inject(FirebaseService)
 
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
+
+  /**
+   * Inject group data into list's items
+   * @param items
+   * @param groups
+   */
+  addGroupDataInItems(items: ItemsData, groups: Record<string,  GroupData>): ItemsDataWithGroup {
+    const r: ItemsDataWithGroup = []
+    items.forEach((item,index) => {
+      r[index] = {...item, groupData: groups[item.group] }
+    })
+
+    return r
+  }
 
   /**
    * Load list's items

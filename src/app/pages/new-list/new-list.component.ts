@@ -1,6 +1,6 @@
 import { Component, DestroyRef, effect, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { GroupData, ItemsData } from '../../data/firebase.interfaces'
+import { GroupData, ItemsDataWithGroup } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
 import { MainStateService } from '../../shared/main-state.service'
 import { forkJoin } from 'rxjs'
@@ -37,7 +37,7 @@ class NewListComponent implements OnInit, OnDestroy {
   shopping = false
 
   groups = signal<Record<string, GroupData>>({})
-  items = signal<ItemsData>([])
+  items = signal<ItemsDataWithGroup>([])
 
   constructor() {
     effect(() => {
@@ -49,7 +49,9 @@ class NewListComponent implements OnInit, OnDestroy {
   //#region Privates
 
   /**
-   * Load groups and list's items
+   * Get groups and list items
+   *
+   * @description items data will also contain group data
    * @private
    */
   private _loadData() {
@@ -60,7 +62,7 @@ class NewListComponent implements OnInit, OnDestroy {
       items: this._listSrv.loadItems(this._UUID)
     }).subscribe(({ groups, items }) => {
       this.groups.set(groups)
-      this.items.set(items)
+      this.items.set(this._listSrv.addGroupDataInItems(items, groups))
 
       this.mainStateSrv.hideLoader()
     })
