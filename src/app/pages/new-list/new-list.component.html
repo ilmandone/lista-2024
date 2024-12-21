@@ -1,1 +1,16 @@
-<p>new-list works!</p>
+<header class="header">
+  <div class="header__title">
+    <h1>{{ label }}</h1>
+  </div>
+  <div class="header__controls">
+    @if (!editing) {
+      <!--Shopping mode-->
+      <app-button-toggle
+        [disabled]="mainStateSrv.offline()"
+        [fontIcon]="'shopping_cart'"
+        [toggle]="shopping"
+        (toggleChange)="setShoppingState($event)"
+      ></app-button-toggle>
+    }
+  </div>
+</header>

@@ -1,0 +1,47 @@
+@use "~styles/utils.scss";
+@use "~styles/typo.scss";
+
+:host {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: utils.getRealVh(100);
+
+  .header {
+    width: calc(100% - var(--main-header-height));
+    height: var(--main-header-height);
+
+    margin-left: var(--main-nav-width);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__title {
+      flex: 1;
+      overflow: hidden;
+
+      h1 {
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        font-size: typo.$text-xl;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+
+        @include utils.media-query('t') {
+          font-size: typo.$text-2xl;
+        }
+      }
+    }
+
+    &__controls {
+      flex: 0;
+      display: flex;
+    }
+  }
+}

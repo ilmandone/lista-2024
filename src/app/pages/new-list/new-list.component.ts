@@ -5,11 +5,14 @@ import { NewListGroupsService } from './new-list.groups.service'
 import { MainStateService } from '../../shared/main-state.service'
 import { forkJoin } from 'rxjs'
 import { NewListService } from './new-list.service'
+import { ButtonToggleComponent } from '../../components/button-toggle/button-toggle.component'
 
 @Component({
   selector: 'app-new-list',
   standalone: true,
-  imports: [],
+  imports: [
+    ButtonToggleComponent
+  ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss'
 })
@@ -18,11 +21,13 @@ class NewListComponent implements OnInit {
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _groupsSrv = inject(NewListGroupsService)
   private readonly _listSrv = inject(NewListService)
-  private readonly _mainStateSrv = inject(MainStateService)
+  readonly mainStateSrv = inject(MainStateService)
 
   private _UUID!: string
 
   label!: string
+  editing = false
+  shopping = false
 
   groups = signal<Record<string, GroupData>>({})
   items = signal<ItemsData>([])
@@ -31,7 +36,7 @@ class NewListComponent implements OnInit {
     this._UUID = this._activatedRoute.snapshot.params['id']
     this.label = this._activatedRoute.snapshot.data['label']
 
-    this._mainStateSrv.showLoader()
+    this.mainStateSrv.showLoader()
 
     forkJoin({
       groups: this._groupsSrv.loadGroups(),
@@ -40,8 +45,17 @@ class NewListComponent implements OnInit {
       this.groups.set(groups)
       this.items.set(items)
 
-      this._mainStateSrv.hideLoader()
+      this.mainStateSrv.hideLoader()
     })
+  }
+
+  /**
+   * Set the shopping state and disable / enable main interface
+   * @param $event
+   */
+  setShoppingState($event: boolean) {
+    this.shopping = $event
+    this.mainStateSrv.disableInterface($event)
   }
 }
 
