@@ -20,6 +20,6 @@ export class NewListGroupsService {
           acc[val.UUID] = val
           return acc
         }, {}))
-    )
+      )
   }
 }
