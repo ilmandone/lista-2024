@@ -9,7 +9,12 @@ import {
   untracked
 } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { GroupData, ItemsChanges, ItemsDataWithGroup } from '../../data/firebase.interfaces'
+import {
+  GroupData,
+  ItemDataWithGroup,
+  ItemsChanges,
+  ItemsDataWithGroup
+} from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
 import { MainStateService } from '../../shared/main-state.service'
 import { forkJoin } from 'rxjs'
@@ -56,7 +61,9 @@ class NewListComponent implements OnInit, OnDestroy {
   private _UUID!: string
   private _autoSaveTimeOutID!: number
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
+  private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
+
 
   label!: string
   editing = false
@@ -107,10 +114,10 @@ class NewListComponent implements OnInit, OnDestroy {
    * Save items changes
    * @private
    */
-  private _saveItemsChanges (fromEditing = false) {
+  private _saveItemsChanges(changes: SetOfItemsChanges<ItemsChanges> = this._itemsChanges, fromEditing = false) {
     this.mainStateSrv.showLoader()
 
-    this._listSrv.saveItems(this._itemsChanges, this._UUID).subscribe((r)=>{
+    this._listSrv.saveItems(changes, this._UUID).subscribe((r) => {
 
       // Show snackbar for save errors or for save after editing
       if (r || !r && fromEditing) {
@@ -140,14 +147,19 @@ class NewListComponent implements OnInit, OnDestroy {
 
   /**
    * Update item attribute
-   * @param change
    * @private
+   * @param data
    */
-  private _updateItem(change: ItemsChanges) {
-    const newItems = this._listSrv.updateItemsData(this.items(), [change], this.groups())
+  private _updateItem(data: { changed: ItemsChanges, original: ItemDataWithGroup }) {
+    const newItems = this._listSrv.updateItemsData(this.items(), [data.changed], this.groups())
 
     this.items.set(newItems)
-    this._itemsChanges.set([change])
+
+    this._itemsChanges.set([data.changed])
+    this._undoItemsChanges.set([{
+      ...data.original,
+      crud: data.changed.crud
+    }])
 
     this._askForListSave()
   }
@@ -168,10 +180,11 @@ class NewListComponent implements OnInit, OnDestroy {
 
     if (itemsUpdated)
 
-      if (this.shopping || this.editing) this._snackbarSrv.show({
-        ...snackOptions,
-        severity: 'warning'
-      }, 12)
+      if (this.editing)
+        this._snackbarSrv.show({
+          ...snackOptions,
+          severity: 'warning'
+        }, 12)
       else {
         this.items.set(
           this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
@@ -214,7 +227,7 @@ class NewListComponent implements OnInit, OnDestroy {
     console.log('LONG PRESSED')
   }
 
-  itemClicked($event: ItemsChanges) {
+  itemClicked($event: { changed: ItemsChanges, original: ItemDataWithGroup }) {
     if (!this.editing) {
       this._updateItem($event)
     }
