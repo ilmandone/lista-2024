@@ -43,7 +43,7 @@ import { SetOfItemsChanges } from '../../data/items.changes'
 })
 class NewListComponent implements OnInit, OnDestroy {
 
-  private readonly AUTOSAVE_DEBOUNCE_TIME = 1200
+  private readonly SAVE_DEBOUNCE_TIME = 1200
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _groupsSrv = inject(NewListGroupsService)
   private readonly _listSrv = inject(NewListService)
@@ -95,19 +95,44 @@ class NewListComponent implements OnInit, OnDestroy {
     })
   }
 
-  private _saveItems () {
-    console.log('SAVE ITEMS', this._itemsChanges)
+  /**
+   * Reset the list changes and state
+   * @private
+   */
+  private _reset() {
+    this._itemsChanges.clear()
   }
 
   /**
-   * Waiting AUTOSAVE_DEBOUNCE_TIME and update the list items in db
+   * Save items changes
+   * @private
+   */
+  private _saveItemsChanges () {
+    this.mainStateSrv.showLoader()
+
+    this._listSrv.saveItems(this._itemsChanges, this._UUID).subscribe((r)=>{
+
+      if (r) {
+        this._snackbarSrv.show({
+          message: r,
+          severity: 'error'
+        })
+      }
+
+      this._reset()
+      this.mainStateSrv.hideLoader()
+    })
+  }
+
+  /**
+   * Waiting SAVE_DEBOUNCE_TIME and update the list items in db
    *
-   * @description AUTOSAVE_DEBOUNCE_TIME
+   * @description SAVE_DEBOUNCE_TIME
    * @private
    */
   private _askForListSave() {
     if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
-    this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_DEBOUNCE_TIME)
+    this._autoSaveTimeOutID = window.setTimeout(this._saveItemsChanges.bind(this), this.SAVE_DEBOUNCE_TIME)
   }
 
   /**

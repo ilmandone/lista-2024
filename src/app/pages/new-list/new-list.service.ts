@@ -1,8 +1,8 @@
 import { inject, Injectable, signal } from '@angular/core'
-import { from, Observable } from 'rxjs'
+import { catchError, from, Observable, of } from 'rxjs'
 import {
   GroupData,
-  ItemDataWithGroup,
+  ItemDataWithGroup, ItemsChanges,
   ItemsData,
   ItemsDataWithGroup
 } from '../../data/firebase.interfaces'
@@ -10,6 +10,7 @@ import { FirebaseService } from '../../data/firebase.service'
 import { Unsubscribe } from 'firebase/firestore'
 import { Nullable } from '../../shared/common.interfaces'
 import { cloneDeep } from 'lodash'
+import { SetOfItemsChanges } from '../../data/items.changes'
 
 @Injectable()
 export class NewListService {
@@ -79,6 +80,12 @@ export class NewListService {
    */
   loadItems(UUID: string): Observable<ItemsData> {
     return from(this._firebaseSrv.loadList(UUID))
+  }
+
+  saveItems(changes: SetOfItemsChanges<ItemsChanges>, UUID: string): Observable<void | string> {
+    return from(this._firebaseSrv.updateList(changes.values, UUID)).pipe(
+      catchError(() => of('Aggiornamento della lista fallito'))
+    )
   }
 
   /**
