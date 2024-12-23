@@ -53,3 +53,36 @@
   </div>
 
 </main>
+
+@if (shopping || editing) {
+  <app-confirm-cancel
+    [confirmSize]="shopping ? 65 : 50"
+    [confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
+    (cancel)="cancel()"
+    (confirm)="confirm()"
+  >
+    <ng-template #cancelTemplate>
+
+		<span class="cancel-container">
+			@if (shopping) {
+        <mat-icon [fontIcon]="'close'"></mat-icon>
+      } @else {
+        <span>Cancel</span>
+      }
+
+      @if (!isMobile) {
+        <span> (ESC)</span>
+      }
+		</span>
+
+
+    </ng-template>
+
+    <ng-template #confirmTemplate>
+      <span>Confirm</span>
+      @if (!isMobile) {
+        <span> ( ⇧ + Alt + ⏎ )</span>
+      }
+    </ng-template>
+  </app-confirm-cancel>
+}

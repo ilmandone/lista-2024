@@ -30,6 +30,9 @@ import { ItemComponent } from '../../components/item/item.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
 import { ISnackBar } from '../../components/snack-bar/snack-bar.interface'
 import { SetOfItemsChanges } from '../../data/items.changes'
+import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
+import { MatIcon } from '@angular/material/icon'
+import { checkMobile } from '../../shared/detect.mobile'
 
 @Component({
   selector: 'app-new-list',
@@ -41,7 +44,9 @@ import { SetOfItemsChanges } from '../../data/items.changes'
     CdkDropList,
     CdkScrollable,
     ItemComponent,
-    LongPressDirective
+    LongPressDirective,
+    ConfirmCancelComponent,
+    MatIcon
   ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss'
@@ -61,10 +66,12 @@ class NewListComponent implements OnInit, OnDestroy {
   private _UUID!: string
   private _autoSaveTimeOutID!: number
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
+  private _itemsCache!: ItemsDataWithGroup
   private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
 
 
+  isMobile = checkMobile()
   label!: string
   editing = false
   shopping = false
@@ -81,6 +88,12 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#region Privates
+
+  private _clearChangesAndCache() {
+    this._itemsCache = []
+    this._undoItemsChanges.clear()
+    this._itemsChanges.clear()
+  }
 
   /**
    * Get groups and list items
@@ -103,14 +116,6 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Reset the list changes and state
-   * @private
-   */
-  private _reset() {
-    this._itemsChanges.clear()
-  }
-
-  /**
    * Save items changes
    * @private
    */
@@ -119,17 +124,25 @@ class NewListComponent implements OnInit, OnDestroy {
 
     this._listSrv.saveItems(changes, this._UUID).subscribe((r) => {
 
-      // Show snackbar for save errors or for save after editing
-      if (r || !r && fromEditing) {
-        this._snackbarSrv.show({
-          message: r ?? 'Lista Aggiornata',
-          severity: r ? 'error' : 'info'
-        })
-      } else {
-        this.mainStateSrv.showTopLineAlert('info')
+      const snackBarOptions: ISnackBar = {
+        message: r ?? 'Lista Aggiornata',
+        severity: r ? 'error' : 'info'
       }
 
-      this._reset()
+      if (r)
+        this._snackbarSrv.show(snackBarOptions)
+      else
+      {
+        if (fromEditing) {
+          this._snackbarSrv.show(snackBarOptions)
+          this._undoItemsChanges.clear()
+        } else {
+          this.mainStateSrv.showTopLineAlert('info')
+        }
+
+        this._itemsChanges.clear()
+      }
+
       this.mainStateSrv.hideLoader()
     })
   }
@@ -186,9 +199,14 @@ class NewListComponent implements OnInit, OnDestroy {
           severity: 'warning'
         }, 12)
       else {
-        this.items.set(
-          this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
-        )
+        itemsUpdated.forEach(iu => {
+          this._itemsChanges.removeByUUID(iu.UUID)
+          this._undoItemsChanges.removeByUUID(iu.UUID)
+        })
+
+        const newItems = this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
+
+        this.items.set(newItems)
         this._snackbarSrv.show(snackOptions, 6)
       }
   }
@@ -219,6 +237,13 @@ class NewListComponent implements OnInit, OnDestroy {
    * @param $event
    */
   setShoppingState($event: boolean) {
+    if ($event) {
+      this._clearChangesAndCache()
+      this._itemsCache = this.items()
+    } else {
+      this.cancel()
+    }
+
     this.shopping = $event
     this.mainStateSrv.disableInterface($event)
   }
@@ -227,11 +252,39 @@ class NewListComponent implements OnInit, OnDestroy {
     console.log('LONG PRESSED')
   }
 
+  /**
+   * Click on an item
+   * @param $event
+   */
   itemClicked($event: { changed: ItemsChanges, original: ItemDataWithGroup }) {
     if (!this.editing) {
       this._updateItem($event)
     }
   }
+
+  //#region Confirm / Undo
+
+  confirm() {
+    if (this.shopping) this.shopping = false
+    if (this.editing) this.editing = false
+
+    // NOTE: This will cover error from shopping save and changes from editing
+    if (this._itemsChanges.hasValues) this._saveItemsChanges()
+  }
+
+  cancel() {
+    if (this.shopping) {
+
+      // Cancel shopping will restore f/e and db items data
+      if (this._undoItemsChanges.hasValues) {
+        this.items.set(this._itemsCache)
+        this._saveItemsChanges(this._undoItemsChanges)
+      }
+
+      this.shopping = false
+    }
+  }
+  //#endregion
 }
 
 export default NewListComponent
