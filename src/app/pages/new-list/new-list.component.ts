@@ -107,16 +107,19 @@ class NewListComponent implements OnInit, OnDestroy {
    * Save items changes
    * @private
    */
-  private _saveItemsChanges () {
+  private _saveItemsChanges (fromEditing = false) {
     this.mainStateSrv.showLoader()
 
     this._listSrv.saveItems(this._itemsChanges, this._UUID).subscribe((r)=>{
 
-      if (r) {
+      // Show snackbar for save errors or for save after editing
+      if (r || !r && fromEditing) {
         this._snackbarSrv.show({
-          message: r,
-          severity: 'error'
+          message: r ?? 'Lista Aggiornata',
+          severity: r ? 'error' : 'info'
         })
+      } else {
+        this.mainStateSrv.showTopLineAlert('info')
       }
 
       this._reset()
