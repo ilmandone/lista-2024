@@ -109,12 +109,12 @@ class NewListComponent implements OnInit, OnDestroy {
       if (this.shopping || this.editing) this._snackbarSrv.show({
         ...snackOptions,
         severity: 'warning'
-      }, 120000)
+      }, 12)
       else {
         this.items.set(
           this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
         )
-        this._snackbarSrv.show(snackOptions, 6000)
+        this._snackbarSrv.show(snackOptions, 6)
       }
   }
 

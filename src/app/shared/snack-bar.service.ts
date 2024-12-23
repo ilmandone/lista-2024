@@ -10,10 +10,10 @@ export class SnackBarService {
 
   private _snackBar = inject(MatSnackBar);
 
-  show(options: ISnackBar, duration = 3000 ):  MatSnackBarRef<SnackBarComponent> {
+  show(options: ISnackBar, duration = 3 ):  MatSnackBarRef<SnackBarComponent> {
     return this._snackBar.openFromComponent(SnackBarComponent, {
       panelClass: `snack-bar--${options.severity}`,
-      duration,
+      duration: duration * 1000,
       verticalPosition: 'top',
       data: options,
     })
