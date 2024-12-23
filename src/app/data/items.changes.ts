@@ -1,5 +1,5 @@
-import { cloneDeep } from 'lodash'
-import { BasicItemChange, EditBag } from './firebase.interfaces'
+import { cloneDeep, keys } from 'lodash'
+import { BasicItemChange, EditBag, EditBagKeysValues } from './firebase.interfaces'
 
 export class SetOfItemsChanges<T extends BasicItemChange> {
   private _itemsChanges: EditBag<T> = {
@@ -14,6 +14,15 @@ export class SetOfItemsChanges<T extends BasicItemChange> {
    */
   get values(): EditBag<T> {
     return cloneDeep(this._itemsChanges)
+  }
+
+  /**
+   * Return true if edit bag have at last one item in its lists
+   */
+  get hasValues(): boolean {
+    return this._itemsChanges.updated.length > 0
+    || this._itemsChanges.created.length > 0
+    || this._itemsChanges.deleted.length > 0
   }
 
   get hasDeletedItems(): boolean {
@@ -61,6 +70,21 @@ export class SetOfItemsChanges<T extends BasicItemChange> {
         this._itemsChanges.updated.push(change)
       }
     }
+  }
+
+  /**
+   * Remove an item from all or specified edit bag lists
+   * @param UUID
+   * @param keys
+   */
+  removeByUUID (UUID: string, keys = EditBagKeysValues) {
+
+    keys.forEach(key => {
+      const index = this._itemsChanges[key].findIndex(ic => ic.UUID === UUID)
+      if (index) {
+        this._itemsChanges[key].splice(index, 1)
+      }
+    })
   }
 
   clear() {
