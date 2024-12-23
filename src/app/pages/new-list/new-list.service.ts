@@ -9,6 +9,7 @@ import {
 import { FirebaseService } from '../../data/firebase.service'
 import { Unsubscribe } from 'firebase/firestore'
 import { Nullable } from '../../shared/common.interfaces'
+import { cloneDeep } from 'lodash'
 
 @Injectable()
 export class NewListService {
@@ -39,12 +40,15 @@ export class NewListService {
    * @param groups
    */
   updateItemsData(originals: ItemsDataWithGroup, updates: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroup {
+
+    const o = cloneDeep(originals)
+
     // Get list of updates UUID
     const updateUUIDs = new Set(updates.map(u => u.UUID))
 
     // Save original as Map of UUID with data and index
     const originalsMap = new Map<string,  {item: ItemDataWithGroup, index: number}>()
-    originals.forEach((o, index) => {
+    o.forEach((o, index) => {
       if (updateUUIDs.has(o.UUID)) {
         originalsMap.set(o.UUID,{item: o,  index})
       }
@@ -56,7 +60,7 @@ export class NewListService {
       if (original) {
         const { index, item } = original
 
-        originals[index] = {
+        o[index] = {
           ...item,
           ...updated,
           groupData: updated.group !== item.group ?
@@ -65,7 +69,7 @@ export class NewListService {
       }
     })
 
-    return originals
+    return o
   }
 
   /**
