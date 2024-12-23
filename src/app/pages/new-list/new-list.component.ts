@@ -9,7 +9,7 @@ import {
   untracked
 } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { GroupData, ItemsDataWithGroup } from '../../data/firebase.interfaces'
+import { GroupData, ItemsChanges, ItemsDataWithGroup } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
 import { MainStateService } from '../../shared/main-state.service'
 import { forkJoin } from 'rxjs'
@@ -24,6 +24,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling'
 import { ItemComponent } from '../../components/item/item.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
 import { ISnackBar } from '../../components/snack-bar/snack-bar.interface'
+import { SetOfItemsChanges } from '../../data/items.changes'
 
 @Component({
   selector: 'app-new-list',
@@ -48,9 +49,11 @@ class NewListComponent implements OnInit, OnDestroy {
   private readonly _destroyRef = inject(DestroyRef)
   private readonly _snackbarSrv = inject(SnackBarService)
 
+
   readonly mainStateSrv = inject(MainStateService)
 
   private _UUID!: string
+  private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
 
   label!: string
@@ -88,6 +91,16 @@ class NewListComponent implements OnInit, OnDestroy {
 
       this.mainStateSrv.hideLoader()
     })
+  }
+
+  /**
+   * Update item attribute
+   * @param change
+   * @private
+   */
+  private _updateItem(change: ItemsChanges) {
+    const newItems = this._listSrv.updateItemsData(this.items(), [change], this.groups())
+    this.items.set(newItems)
   }
 
   /**
@@ -150,6 +163,12 @@ class NewListComponent implements OnInit, OnDestroy {
 
   longPressed() {
     console.log('LONG PRESSED')
+  }
+
+  itemClicked($event: ItemsChanges) {
+    if (!this.editing) {
+      this._updateItem($event)
+    }
   }
 }
 

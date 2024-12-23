@@ -32,13 +32,16 @@
           @if (!shopping || (shopping && !item.notToBuy)) {
             <app-item
               [appLongPress]="!shopping && !editing"
-              (longPress)="longPressed()"
 
               [data]="item"
               [editing]="editing"
               [extra]="item.inCart ? 'add_shopping_cart' : ''"
               [shopping]="shopping"
               [stroked]="item.notToBuy && !editing"
+
+              (clicked)="itemClicked($event)"
+              (longPress)="longPressed()"
+
             />
           }
         </div>
