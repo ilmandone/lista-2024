@@ -1,4 +1,4 @@
-import { cloneDeep, keys } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { BasicItemChange, EditBag, EditBagKeysValues } from './firebase.interfaces'
 
 export class SetOfItemsChanges<T extends BasicItemChange> {
