@@ -53,6 +53,8 @@ export interface GroupChanges extends BasicItemChange {
 export type GroupData = Omit<GroupChanges, 'crud'>
 export type GroupsData = GroupData[]
 
+export const EditBagKeysValues = ['created', 'updated', 'deleted'] as const
+
 export interface EditBag<T> {
 	created: T[]
 	updated: T[]
