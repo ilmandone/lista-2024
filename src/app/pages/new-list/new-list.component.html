@@ -18,11 +18,31 @@
 <main
   class="main"
   [class.main__with-footer]="shopping || editing"
+  cdkDropList
+  cdkScrollable
+  [cdkDropListAutoScrollStep]="20"
+  [cdkDropListAutoScrollDisabled]="false"
+  cdkDropListElementContainer=".main__container"
 >
 
   <div class="main__container">
     @defer (when items() !== null) {
-      <div>items loaded</div>
+      @for(item of items(); track item.UUID) {
+        <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || items()!.length < 2">
+          @if (!shopping || (shopping && !item.notToBuy)) {
+            <app-item
+              [appLongPress]="!shopping && !editing"
+              (longPress)="longPressed()"
+
+              [data]="item"
+              [editing]="editing"
+              [extra]="item.inCart ? 'add_shopping_cart' : ''"
+              [shopping]="shopping"
+              [stroked]="item.notToBuy && !editing"
+            />
+          }
+        </div>
+      }
     }
     @placeholder {
       <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>

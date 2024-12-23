@@ -19,13 +19,22 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { Unsubscribe } from 'firebase/firestore'
 import { SnackBarService } from '../../shared/snack-bar.service'
+import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop'
+import { CdkScrollable } from '@angular/cdk/scrolling'
+import { ItemComponent } from '../../components/item/item.component'
+import { LongPressDirective } from '../../shared/directives/long-press.directive'
 
 @Component({
   selector: 'app-new-list',
   standalone: true,
   imports: [
     ButtonToggleComponent,
-    LoaderComponent
+    LoaderComponent,
+    CdkDrag,
+    CdkDropList,
+    CdkScrollable,
+    ItemComponent,
+    LongPressDirective
   ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss'
@@ -45,24 +54,14 @@ class NewListComponent implements OnInit, OnDestroy {
 
   label!: string
   editing = false
-  shopping = true
+  shopping = false
 
   groups = signal<Record<string, GroupData>>({})
   items = signal<ItemsDataWithGroup>([])
 
   constructor() {
     effect(() => {
-      const itemsUpdated = this._listSrv.itemsUpdated$$();
-      if (itemsUpdated)
-        if (!this.shopping && !this.editing)
-          this.items.set(
-            this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
-          )
-        else this._snackbarSrv.show({
-          message:'Lista aggiornata da un altro utente',
-          severity: 'warning',
-          dismiss: true
-        }, 120000)
+      this._updateItemsFromOthersUsers()
     }, {
       allowSignalWrites: true
     })
@@ -88,6 +87,26 @@ class NewListComponent implements OnInit, OnDestroy {
 
       this.mainStateSrv.hideLoader()
     })
+  }
+
+  /**
+   * Update data if another user makes change
+   *
+   * @description In shopping or editing mode only notify that a user makes changes.
+   * @private
+   */
+  private _updateItemsFromOthersUsers() {
+    const itemsUpdated = this._listSrv.itemsUpdated$$()
+
+    if (itemsUpdated)
+      if (this.shopping || this.editing) this._snackbarSrv.show({
+        message: 'Lista aggiornata da un altro utente',
+        severity: 'warning',
+        dismiss: true
+      }, 120000)
+      else this.items.set(
+        this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
+      )
   }
 
   //#endregion
@@ -118,6 +137,10 @@ class NewListComponent implements OnInit, OnDestroy {
   setShoppingState($event: boolean) {
     this.shopping = $event
     this.mainStateSrv.disableInterface($event)
+  }
+
+  longPressed() {
+    console.log('LONG PRESSED')
   }
 }
 
