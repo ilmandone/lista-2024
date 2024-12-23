@@ -18,6 +18,7 @@ import { ButtonToggleComponent } from '../../components/button-toggle/button-tog
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { Unsubscribe } from 'firebase/firestore'
+import { SnackBarService } from '../../shared/snack-bar.service'
 
 @Component({
   selector: 'app-new-list',
@@ -35,6 +36,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private readonly _groupsSrv = inject(NewListGroupsService)
   private readonly _listSrv = inject(NewListService)
   private readonly _destroyRef = inject(DestroyRef)
+  private readonly _snackbarSrv = inject(SnackBarService)
 
   readonly mainStateSrv = inject(MainStateService)
 
@@ -43,7 +45,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   label!: string
   editing = false
-  shopping = false
+  shopping = true
 
   groups = signal<Record<string, GroupData>>({})
   items = signal<ItemsDataWithGroup>([])
@@ -56,7 +58,11 @@ class NewListComponent implements OnInit, OnDestroy {
           this.items.set(
             this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
           )
-        else throw new Error ('WARNING: Data updated from another user')
+        else this._snackbarSrv.show({
+          message:'Lista aggiornata da un altro utente',
+          severity: 'warning',
+          dismiss: true
+        }, 120000)
     }, {
       allowSignalWrites: true
     })
