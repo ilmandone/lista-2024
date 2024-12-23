@@ -43,6 +43,7 @@ import { SetOfItemsChanges } from '../../data/items.changes'
 })
 class NewListComponent implements OnInit, OnDestroy {
 
+  private readonly AUTOSAVE_DEBOUNCE_TIME = 1200
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _groupsSrv = inject(NewListGroupsService)
   private readonly _listSrv = inject(NewListService)
@@ -53,6 +54,7 @@ class NewListComponent implements OnInit, OnDestroy {
   readonly mainStateSrv = inject(MainStateService)
 
   private _UUID!: string
+  private _autoSaveTimeOutID!: number
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
 
@@ -93,6 +95,21 @@ class NewListComponent implements OnInit, OnDestroy {
     })
   }
 
+  private _saveItems () {
+    console.log('SAVE ITEMS', this._itemsChanges)
+  }
+
+  /**
+   * Waiting AUTOSAVE_DEBOUNCE_TIME and update the list items in db
+   *
+   * @description AUTOSAVE_DEBOUNCE_TIME
+   * @private
+   */
+  private _askForListSave() {
+    if (this._autoSaveTimeOutID) clearTimeout(this._autoSaveTimeOutID)
+    this._autoSaveTimeOutID = window.setTimeout(this._saveItems.bind(this), this.AUTOSAVE_DEBOUNCE_TIME)
+  }
+
   /**
    * Update item attribute
    * @param change
@@ -100,7 +117,11 @@ class NewListComponent implements OnInit, OnDestroy {
    */
   private _updateItem(change: ItemsChanges) {
     const newItems = this._listSrv.updateItemsData(this.items(), [change], this.groups())
+
     this.items.set(newItems)
+    this._itemsChanges.set([change])
+
+    this._askForListSave()
   }
 
   /**

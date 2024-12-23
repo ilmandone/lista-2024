@@ -28,6 +28,7 @@ export class NewListService {
     items.forEach((item, index) => {
       r[index] = { ...item, groupData: groups[item.group] }
     })
+
     return r
   }
 
@@ -41,14 +42,14 @@ export class NewListService {
    */
   updateItemsData(originals: ItemsDataWithGroup, updates: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroup {
 
-    const o = cloneDeep(originals)
+    const or = cloneDeep(originals)
 
     // Get list of updates UUID
     const updateUUIDs = new Set(updates.map(u => u.UUID))
 
     // Save original as Map of UUID with data and index
     const originalsMap = new Map<string,  {item: ItemDataWithGroup, index: number}>()
-    o.forEach((o, index) => {
+    or.forEach((o, index) => {
       if (updateUUIDs.has(o.UUID)) {
         originalsMap.set(o.UUID,{item: o,  index})
       }
@@ -60,7 +61,7 @@ export class NewListService {
       if (original) {
         const { index, item } = original
 
-        o[index] = {
+        or[index] = {
           ...item,
           ...updated,
           groupData: updated.group !== item.group ?
@@ -69,7 +70,7 @@ export class NewListService {
       }
     })
 
-    return o
+    return or
   }
 
   /**
