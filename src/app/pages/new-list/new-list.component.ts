@@ -23,6 +23,7 @@ import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop'
 import { CdkScrollable } from '@angular/cdk/scrolling'
 import { ItemComponent } from '../../components/item/item.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
+import { ISnackBar } from '../../components/snack-bar/snack-bar.interface'
 
 @Component({
   selector: 'app-new-list',
@@ -61,7 +62,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      this._updateItemsFromOthersUsers()
+      this._updatedItemFromOthersUsers()
     }, {
       allowSignalWrites: true
     })
@@ -95,18 +96,26 @@ class NewListComponent implements OnInit, OnDestroy {
    * @description In shopping or editing mode only notify that a user makes changes.
    * @private
    */
-  private _updateItemsFromOthersUsers() {
+  private _updatedItemFromOthersUsers() {
     const itemsUpdated = this._listSrv.itemsUpdated$$()
+    const snackOptions: ISnackBar = {
+      message: 'Lista aggiornata da un altro utente',
+      severity: 'info',
+      dismiss: true
+    }
 
     if (itemsUpdated)
+
       if (this.shopping || this.editing) this._snackbarSrv.show({
-        message: 'Lista aggiornata da un altro utente',
-        severity: 'warning',
-        dismiss: true
+        ...snackOptions,
+        severity: 'warning'
       }, 120000)
-      else this.items.set(
-        this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
-      )
+      else {
+        this.items.set(
+          this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
+        )
+        this._snackbarSrv.show(snackOptions, 6000)
+      }
   }
 
   //#endregion
