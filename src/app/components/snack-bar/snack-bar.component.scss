@@ -2,7 +2,7 @@
   padding: 0.35rem;
 
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 
   color: white;
@@ -16,9 +16,15 @@
     font-weight: 500;
   }
 
-  mat-icon {
+  mat-icon.ringing {
     transform-origin: center top;
     animation: ringing-keyframes 0.5s infinite ease-in-out;
+  }
+
+  button.close {
+    border: none;
+    background-color: transparent;
+    color: white;
   }
 }
 

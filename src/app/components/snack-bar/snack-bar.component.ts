@@ -20,6 +20,7 @@ export class SnackBarComponent{
 
   snackBarData: ISnackBar = inject(MAT_SNACK_BAR_DATA);
   snackBar = inject(MatSnackBarRef);
+  snackBarReference = inject(MatSnackBarRef)
 
   dismiss() {
     this.snackBar.dismiss()
