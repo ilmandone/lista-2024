@@ -265,11 +265,16 @@ class NewListComponent implements OnInit, OnDestroy {
   //#region Confirm / Undo
 
   confirm() {
-    if (this.shopping) this.shopping = false
+    if (this.shopping) {
+      this.shopping = false
+      this._shoppingFinalItemsUpdate()
+    }
+
     if (this.editing) this.editing = false
 
     // NOTE: This will cover error from shopping save and changes from editing
-    if (this._itemsChanges.hasValues) this._saveItemsChanges()
+    //if (this._itemsChanges.hasValues) this._saveItemsChanges()
+    this._saveItemsChanges()
   }
 
   cancel() {
@@ -285,6 +290,14 @@ class NewListComponent implements OnInit, OnDestroy {
     }
   }
   //#endregion
+  private _shoppingFinalItemsUpdate() {
+    this._undoItemsChanges.values.updated.forEach(() => {
+      // TODO: Modificare lo stato degli elementi modificati durante lo shopping impostando il
+      //  not-buable a true e il in-cart a false. Nella vecchia implementazione venivano salvati
+      //  gli indici degli elementi modificati per accedervi puntualmente
+
+    })
+  }
 }
 
 export default NewListComponent
