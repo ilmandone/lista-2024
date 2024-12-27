@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'
 import { SetOfItemsChanges } from '../../data/items.changes'
-import { ItemsChanges } from '../../data/firebase.interfaces'
+import { ItemsChanges, ItemsData } from '../../data/firebase.interfaces'
 
 @Injectable()
 export class NewListCartService {
@@ -40,5 +40,11 @@ export class NewListCartService {
 
   removeUndo(UUID: string) {
     this._undoItemsChanges.removeByUUID(UUID)
+  }
+
+  storeInCartItems(data: ItemsData) {
+    data.forEach(d => {
+      if (d.inCart) this.inCartUUID.add(d.UUID)
+    })
   }
 }

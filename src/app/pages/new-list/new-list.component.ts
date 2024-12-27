@@ -117,6 +117,7 @@ class NewListComponent implements OnInit, OnDestroy {
       this.itemsOrder.set(order)
       this.itemsRecord.set(data)
 
+      this._cartSrv.storeInCartItems(items)
 
       this.mainStateSrv.hideLoader()
     })
@@ -224,6 +225,9 @@ class NewListComponent implements OnInit, OnDestroy {
               ...itemData,
               crud: 'update'
             }])
+
+            if (iu.inCart) this._cartSrv.addInCart(iu.UUID)
+            else this._cartSrv.removeFromCart(iu.UUID)
           }
         })
 
