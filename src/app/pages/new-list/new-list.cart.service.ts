@@ -30,7 +30,6 @@ export class NewListCartService {
     data.forEach(d => {
       if (d.inCart) this._inCartUUID.add(d.UUID)
     })
-    console.log(this._inCartUUID)
   }
 
   /**
