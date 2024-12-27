@@ -11,6 +11,33 @@
         [toggle]="shopping"
         (toggleChange)="setShoppingState($event)"
       ></app-button-toggle>
+    } @else {
+
+      <!--Add new item-->
+      <button
+        mat-icon-button
+        title="add item"
+        type="button"
+        matTooltip="⇧ + Alt + A"
+        [matTooltipDisabled]="isMobile"
+        [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
+      >
+        <mat-icon [fontIcon]="'add'"></mat-icon>
+      </button>
+
+      <!--Delete one or more items-->
+      <button
+        mat-icon-button
+        title="add item"
+        type="button"
+        matTooltip="⇧ + Alt + D"
+        [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size ===
+        itemsOrder()!.length || isMobile"
+        [disabled]="selectedItems.size === 0 || selectedItems.size === itemsOrder().length ||
+        mainStateSrv.offline()"
+      >
+        <mat-icon [fontIcon]="'delete'"></mat-icon>
+      </button>
     }
   </div>
 </header>
@@ -43,8 +70,8 @@
               (clickedMore)="itemClicked($event)"
               (changed)="itemRenamed($event)"
               (groupChange)="itemGroupChange($event)"
-              (longPress)="longPressed()"
-
+              (longPress)="itemLongPress()"
+              (selectedChange)="itemSelected($event)"
             />
           }
         </div>

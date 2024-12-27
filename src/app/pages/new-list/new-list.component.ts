@@ -39,6 +39,9 @@ import {
   ListGroupsBottomSheetComponent
 } from '../list/list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
+import { MatIconButton } from '@angular/material/button'
+import { MatTooltip } from '@angular/material/tooltip'
+import { ItemSelectedEvent } from '../../components/item/item.interface'
 
 @Component({
   selector: 'app-new-list',
@@ -52,7 +55,9 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet'
     ItemComponent,
     LongPressDirective,
     ConfirmCancelComponent,
-    MatIcon
+    MatIcon,
+    MatIconButton,
+    MatTooltip
   ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss'
@@ -68,20 +73,18 @@ class NewListComponent implements OnInit, OnDestroy {
   private readonly _destroyRef = inject(DestroyRef)
   private readonly _snackbarSrv = inject(SnackBarService)
 
-
   readonly mainStateSrv = inject(MainStateService)
 
   private _UUID!: string
   private _autoSaveTimeOutID!: number
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _itemsRecordCache!: ItemsDataWithGroupRecord
-  // private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
-
 
   isMobile = checkMobile()
   label!: string
   editing = false
+  selectedItems = new Set<string>()
   shopping = false
 
   groups = signal<Record<string, GroupData>>({})
@@ -271,14 +274,7 @@ class NewListComponent implements OnInit, OnDestroy {
     this.mainStateSrv.disableInterface($event)
   }
 
-  /**
-   * Item long press
-   * @description Start edit mode
-   */
-  longPressed() {
-    this.editing = true
-    this._itemsRecordCache = this.itemsRecord()
-  }
+  //#region Item
 
   /**
    * Click on an item
@@ -290,6 +286,10 @@ class NewListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Item drop complete
+   * @param $event
+   */
   itemDrop($event: CdkDragDrop<ItemsData>) {
     const {
       changes,
@@ -302,6 +302,15 @@ class NewListComponent implements OnInit, OnDestroy {
     this.itemsRecord.set(records)
     this.itemsOrder.set(order)
     this._itemsChanges.set(changes)
+  }
+
+  /**
+   * Item long press
+   * @description Start edit mode
+   */
+  itemLongPress() {
+    this.editing = true
+    this._itemsRecordCache = this.itemsRecord()
   }
 
   /**
@@ -351,6 +360,17 @@ class NewListComponent implements OnInit, OnDestroy {
     ])
   }
 
+  /**
+   * Add or remove a UUID from the selected set
+   * @param $event
+   */
+  itemSelected($event: ItemSelectedEvent) {
+    if ($event.isSelected) this.selectedItems.add($event.UUID)
+    else this.selectedItems.delete($event.UUID)
+  }
+
+  //#endregion
+
   //#region Confirm / Undo
 
   confirm() {
@@ -381,7 +401,6 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
-
 }
 
 export default NewListComponent
