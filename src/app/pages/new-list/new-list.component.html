@@ -23,6 +23,7 @@
   [cdkDropListAutoScrollStep]="20"
   [cdkDropListAutoScrollDisabled]="false"
   cdkDropListElementContainer=".main__container"
+  (cdkDropListDropped)="itemDrop($event)"
 >
 
   <div class="main__container">

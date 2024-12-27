@@ -7,7 +7,6 @@ import {
   ItemDataWithGroup,
   ItemsChanges,
   ItemsData,
-  ItemsDataWithGroup,
   ItemsDataWithGroupRecord
 } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
@@ -15,6 +14,7 @@ import { Unsubscribe } from 'firebase/firestore'
 import { Nullable } from '../../shared/common.interfaces'
 import { cloneDeep } from 'lodash'
 import { SetOfItemsChanges } from '../../data/items.changes'
+import { moveItemInArray } from '@angular/cdk/drag-drop'
 
 @Injectable()
 export class NewListService {
@@ -22,6 +22,30 @@ export class NewListService {
   private readonly _firebaseSrv = inject(FirebaseService)
 
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
+
+  changeItemPosition(r: ItemsDataWithGroupRecord, o: string[], pI: number, cI: number): {records: ItemsDataWithGroupRecord, order: string[], changes: ItemsChanges[]} {
+    const records = cloneDeep(r)
+    const order = cloneDeep(o)
+    const changes: ItemsChanges[] = []
+
+    moveItemInArray(order, pI, cI)
+
+    const start = cI < pI ? cI : pI
+
+    for (let i = start; i < order.length; i ++) {
+      const item = records[order[i]]
+      item.position = i
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {groupData, ...change} = item
+      changes.push({
+        ...change,
+        crud: 'update'
+      })
+    }
+
+    return {records,  order, changes}
+  }
 
   /**
    * Return a Record of UUID, ItemsDataWithGroup and a list of UUID for order

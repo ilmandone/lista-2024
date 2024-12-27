@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router'
 import {
   GroupData,
   ItemDataWithGroup,
-  ItemsChanges,
+  ItemsChanges, ItemsData,
   ItemsDataWithGroupRecord
 } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
@@ -24,7 +24,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { Unsubscribe } from 'firebase/firestore'
 import { SnackBarService } from '../../shared/snack-bar.service'
-import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop'
+import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop'
 import { CdkScrollable } from '@angular/cdk/scrolling'
 import { ItemComponent } from '../../components/item/item.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
@@ -290,6 +290,20 @@ class NewListComponent implements OnInit, OnDestroy {
     }
   }
 
+  itemDrop($event: CdkDragDrop<ItemsData>) {
+    const {
+      changes,
+      order,
+      records
+    } = this._listSrv.changeItemPosition(
+      this.itemsRecord(), this.itemsOrder(), $event.previousIndex, $event.currentIndex
+    )
+
+    this.itemsRecord.set(records)
+    this.itemsOrder.set(order)
+    this._itemsChanges.set(changes)
+  }
+
   /**
    * Item group change with bottom sheet
    * @param $event
@@ -367,6 +381,7 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+
 }
 
 export default NewListComponent
