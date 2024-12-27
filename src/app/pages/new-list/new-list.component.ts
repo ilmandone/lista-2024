@@ -175,17 +175,8 @@ class NewListComponent implements OnInit, OnDestroy {
     this.itemsRecord.set(newRecords)
     this._itemsChanges.set([data.changed])
 
-    if (this.shopping) {
-
-      this._cartSrv.updateItemUndoAndInCart(data.changed)
-      /*if (data.changed.inCart) this._cartSrv.addInCart(data.changed.UUID)
-      else this._cartSrv.removeFromCart(data.changed.UUID)
-
-      this._cartSrv.setUndo([{
-        ...data.original,
-        crud: data.changed.crud
-      }])*/
-    }
+    if (this.shopping)
+      this._cartSrv.updateItemUndoAndInCart(data.changed, data.original)
 
     this._askForListSave()
   }

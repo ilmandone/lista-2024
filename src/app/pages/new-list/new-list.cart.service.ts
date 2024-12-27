@@ -26,17 +26,21 @@ export class NewListCartService {
     this._undoItemsChanges.clear()
   }
 
-  setUndo(data: ItemsChanges[]) {
-    this._undoItemsChanges.set(data)
-  }
-
   storeInCartItems(data: ItemsData) {
     data.forEach(d => {
       if (d.inCart) this._inCartUUID.add(d.UUID)
     })
+    console.log(this._inCartUUID)
   }
 
-  finalizeItemsForShoppingConfirm(items: ItemsDataWithGroupRecord): {record: ItemsDataWithGroupRecord, changes: ItemsChanges[]} {
+  /**
+   * On shopping confirm update items inCart and notToBuy values and return changes for save
+   * @param items
+   */
+  finalizeItemsForShoppingConfirm(items: ItemsDataWithGroupRecord): {
+    record: ItemsDataWithGroupRecord,
+    changes: ItemsChanges[]
+  } {
     const record = cloneDeep(items)
     const changes: ItemsChanges[] = []
     this._inCartUUID.forEach(ic => {
@@ -52,18 +56,19 @@ export class NewListCartService {
       })
     })
 
-    return {record, changes}
+    return { record, changes }
   }
 
-  updateItemUndoAndInCart(iu: ItemData, extraData?: ItemData) {
-
-    const itemData = extraData ?? iu
-
-    if (extraData)
-      this._undoItemsChanges.removeByUUID(iu.UUID)
+  /**
+   * Update item undo and in cart position
+   * @param iu
+   * @param originalData
+   */
+  updateItemUndoAndInCart(iu: ItemData, originalData: ItemData) {
+    this._undoItemsChanges.removeByUUID(iu.UUID)
 
     this._undoItemsChanges.set([{
-      ...itemData,
+      ...originalData,
       crud: 'update'
     }])
 
