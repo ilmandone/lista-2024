@@ -3,7 +3,6 @@
 
 ## TODO:
 
-
-
-1) Quando viene confermato il fine spesa dobbiamo aggiornare lo stato degli elementi che sono stati acquistati - Vedi TODO.
+1) Completare cancellazione e aggiunta
+2) Iniziare a guardare per il discorso dell'ordinamento e per la ricerca 
  
