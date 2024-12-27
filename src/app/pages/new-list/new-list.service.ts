@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core'
 import { catchError, from, Observable, of } from 'rxjs'
 import {
   GroupData,
-  GroupsRecord,
+  GroupsRecord, ItemData, ItemDataWithGroup,
   ItemsChanges,
   ItemsData,
   ItemsDataWithGroup,
@@ -50,6 +50,12 @@ export class NewListService {
     })
 
     return {data, order}
+ }
+
+ itemWithGroupToItemData(item: ItemDataWithGroup): ItemData {
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {groupData, ...itemData} = item
+    return itemData
  }
 
 

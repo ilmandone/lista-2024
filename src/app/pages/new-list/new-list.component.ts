@@ -34,7 +34,6 @@ import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-
 import { MatIcon } from '@angular/material/icon'
 import { checkMobile } from '../../shared/detect.mobile'
 import { NewListCartService } from './new-list.cart.service'
-import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'app-new-list',
@@ -178,16 +177,27 @@ class NewListComponent implements OnInit, OnDestroy {
 
     if (this.shopping) {
 
-      if (data.changed.inCart) this._cartSrv.addInCart(data.changed.UUID)
+      this._cartSrv.updateItemUndoAndInCart(data.changed)
+      /*if (data.changed.inCart) this._cartSrv.addInCart(data.changed.UUID)
       else this._cartSrv.removeFromCart(data.changed.UUID)
 
       this._cartSrv.setUndo([{
         ...data.original,
         crud: data.changed.crud
-      }])
+      }])*/
     }
 
     this._askForListSave()
+  }
+
+  private _shoppingFinalItemsUpdate() {
+
+    const {record, changes} = this._cartSrv.finalizeItemsForShoppingConfirm(this.itemsRecord())
+
+    if (changes.length > 0) {
+      this._itemsChanges.set(changes)
+      this.itemsRecord.set(record)
+    }
   }
 
   /**
@@ -216,18 +226,7 @@ class NewListComponent implements OnInit, OnDestroy {
           this._itemsChanges.removeByUUID(iu.UUID)
 
           if (this.shopping) {
-            this._cartSrv.removeUndo(iu.UUID)
-
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { groupData, ...itemData } = untracked(this.itemsRecord)[iu.UUID]
-
-            this._cartSrv.setUndo([{
-              ...itemData,
-              crud: 'update'
-            }])
-
-            if (iu.inCart) this._cartSrv.addInCart(iu.UUID)
-            else this._cartSrv.removeFromCart(iu.UUID)
+            this._cartSrv.updateItemUndoAndInCart(iu, this._listSrv.itemWithGroupToItemData(untracked(this.itemsRecord)[iu.UUID]))
           }
         })
 
@@ -318,30 +317,6 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
-
-  private _shoppingFinalItemsUpdate() {
-
-    const newRecords = cloneDeep(this.itemsRecord())
-    const finalizedChanges: ItemsChanges[] = []
-
-    this._cartSrv.inCart.forEach(ic => {
-      newRecords[ic].inCart = false
-      newRecords[ic].notToBuy = true
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { groupData, ...itemData } = newRecords[ic]
-
-      finalizedChanges.push({
-        ...itemData,
-        crud: 'update'
-      })
-    })
-
-    if (finalizedChanges.length > 0) {
-      this._itemsChanges.set(finalizedChanges)
-      this.itemsRecord.set(newRecords)
-    }
-  }
 }
 
 export default NewListComponent
