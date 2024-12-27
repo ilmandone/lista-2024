@@ -4,6 +4,7 @@ import {loginGuard} from "./guards/login.guard";
 import { newListResolver } from './pages/new-list/new-list.resolver'
 import { NewListGroupsService } from './pages/new-list/new-list.groups.service'
 import { NewListService } from './pages/new-list/new-list.service'
+import { NewListCartService } from './pages/new-list/new-list.cart.service'
 
 export const routes: Routes = [
   {
@@ -30,7 +31,8 @@ export const routes: Routes = [
         },
         providers: [
           NewListGroupsService,
-          NewListService
+          NewListService,
+          NewListCartService
         ]
       },
     ]

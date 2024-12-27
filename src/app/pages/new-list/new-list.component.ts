@@ -33,7 +33,7 @@ import { SetOfItemsChanges } from '../../data/items.changes'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { MatIcon } from '@angular/material/icon'
 import { checkMobile } from '../../shared/detect.mobile'
-import { cloneDeep } from 'lodash'
+import { NewListCartService } from './new-list.cart.service'
 
 @Component({
   selector: 'app-new-list',
@@ -57,6 +57,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private readonly SAVE_DEBOUNCE_TIME = 1200
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _groupsSrv = inject(NewListGroupsService)
+  private readonly _cartSrv = inject(NewListCartService)
   private readonly _listSrv = inject(NewListService)
   private readonly _destroyRef = inject(DestroyRef)
   private readonly _snackbarSrv = inject(SnackBarService)
@@ -68,7 +69,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private _autoSaveTimeOutID!: number
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _itemsRecordCache!: ItemsDataWithGroupRecord
-  private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
+  // private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
 
 
@@ -93,7 +94,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _clearChangesAndCache() {
     this._itemsRecordCache = {}
-    this._undoItemsChanges.clear()
+    this._cartSrv.clearAll()
     this._itemsChanges.clear()
   }
 
@@ -111,7 +112,7 @@ class NewListComponent implements OnInit, OnDestroy {
       items: this._listSrv.loadItems(this._UUID)
     }).subscribe(({ groups, items }) => {
       this.groups.set(groups)
-      const {data, order} = this._listSrv.mapItemsDataToRecordWithOrder(items, groups)
+      const { data, order } = this._listSrv.mapItemsDataToRecordWithOrder(items, groups)
       this.itemsOrder.set(order)
       this.itemsRecord.set(data)
 
@@ -136,11 +137,9 @@ class NewListComponent implements OnInit, OnDestroy {
 
       if (r)
         this._snackbarSrv.show(snackBarOptions)
-      else
-      {
+      else {
         if (fromEditing) {
           this._snackbarSrv.show(snackBarOptions)
-          this._undoItemsChanges.clear()
         } else {
           this.mainStateSrv.showTopLineAlert('info')
         }
@@ -173,12 +172,14 @@ class NewListComponent implements OnInit, OnDestroy {
     const newRecords = this._listSrv.updateItemsData(this.itemsRecord(), [data.changed], this.groups())
 
     this.itemsRecord.set(newRecords)
-
     this._itemsChanges.set([data.changed])
-    this._undoItemsChanges.set([{
-      ...data.original,
-      crud: data.changed.crud
-    }])
+
+    if (this.shopping) {
+      this._cartSrv.setUndo([{
+        ...data.original,
+        crud: data.changed.crud
+      }])
+    }
 
     this._askForListSave()
   }
@@ -207,7 +208,18 @@ class NewListComponent implements OnInit, OnDestroy {
       else {
         itemsUpdated.forEach(iu => {
           this._itemsChanges.removeByUUID(iu.UUID)
-          this._undoItemsChanges.removeByUUID(iu.UUID)
+
+          if (this.shopping) {
+            this._cartSrv.removeUndo(iu.UUID)
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { groupData, ...itemData } = untracked(this.itemsRecord)[iu.UUID]
+
+            this._cartSrv.setUndo([{
+              ...itemData,
+              crud: 'update'
+            }])
+          }
         })
 
         const newRecords = this._listSrv.updateItemsData(untracked(this.itemsRecord), itemsUpdated, untracked(this.groups))
@@ -287,37 +299,45 @@ class NewListComponent implements OnInit, OnDestroy {
     if (this.shopping) {
 
       // Cancel shopping will restore f/e and db items data
-      if (this._undoItemsChanges.hasValues) {
+      if (this._cartSrv.haveUndo) {
         this.itemsRecord.set(this._itemsRecordCache)
-        this._saveItemsChanges(this._undoItemsChanges)
+        this._saveItemsChanges(this._cartSrv.undos)
       }
 
       this.shopping = false
     }
   }
+
   //#endregion
+
   private _shoppingFinalItemsUpdate() {
 
-    if (!this._undoItemsChanges.hasValues) return
+    /*if (!this._undoItemsChanges.hasValues) return
 
     const finalizedChanges: ItemsChanges[] = []
     const newRecords = cloneDeep(this.itemsRecord())
 
     this._undoItemsChanges.values.updated.forEach((iu) => {
-      newRecords[iu.UUID].inCart = false;
-      newRecords[iu.UUID].notToBuy = true;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {groupData, ...itemData } = newRecords[iu.UUID]
+      // If the undo wasn't in cart -> current is in cart
+      if (!iu.inCart) {
+        newRecords[iu.UUID].inCart = false
+        newRecords[iu.UUID].notToBuy = true
 
-      finalizedChanges.push({
-        ...itemData,
-        crud: 'update'
-      })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { groupData, ...itemData } = newRecords[iu.UUID]
+
+        finalizedChanges.push({
+          ...itemData,
+          crud: 'update'
+        })
+      }
     })
 
-    this._itemsChanges.set(finalizedChanges)
-    this.itemsRecord.set(newRecords)
+    if (finalizedChanges.length > 0) {
+      this._itemsChanges.set(finalizedChanges)
+      this.itemsRecord.set(newRecords)
+    }*/
   }
 }
 
