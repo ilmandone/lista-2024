@@ -290,6 +290,10 @@ class NewListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Item group change with bottom sheet
+   * @param $event
+   */
   itemGroupChange($event: ItemsChanges) {
     this._bottomSheet
       .open(ListGroupsBottomSheetComponent, {
@@ -300,16 +304,16 @@ class NewListComponent implements OnInit, OnDestroy {
       .afterDismissed()
       .subscribe((data: GroupData) => {
         if (data) {
+          const newRecords = this._listSrv.updateItemGroup(this.itemsRecord(), $event.UUID, data)
 
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { crud, ...itemData } = $event
-          itemData.group = data.UUID
+          const { groupData, ...forChange } = newRecords[$event.UUID]
 
-          const newRecords = this._listSrv.updateItemsData(this.itemsRecord(), [itemData], this.groups())
           this._itemsChanges.set([{
-            ...newRecords[$event.UUID],
+            ...forChange,
             crud: 'update'
           }])
+
           this.itemsRecord.set(newRecords)
         }
       })

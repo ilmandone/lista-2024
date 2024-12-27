@@ -68,11 +68,9 @@ export class NewListService {
    * @param groups
    */
   updateItemsData(r: ItemsDataWithGroupRecord, updates: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroupRecord {
-
     const record = cloneDeep(r)
 
     updates.forEach(u => {
-
       const originalRecord = cloneDeep(record[u.UUID])
 
       record[u.UUID] = {
@@ -82,6 +80,21 @@ export class NewListService {
           groups[u.group] : originalRecord.groupData
       }
     })
+
+    return record
+  }
+
+  /**
+   * Update an item group and group data
+   * @param r
+   * @param UUID
+   * @param gd
+   */
+  updateItemGroup(r: ItemsDataWithGroupRecord, UUID: string, gd: GroupData): ItemsDataWithGroupRecord {
+    const record = cloneDeep(r)
+
+    record[UUID].group = gd.UUID
+    record[UUID].groupData = gd
 
     return record
   }
