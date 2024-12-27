@@ -40,6 +40,7 @@
               [stroked]="itemsRecord()[order].notToBuy && !editing"
 
               (clickedMore)="itemClicked($event)"
+              (changed)="itemRenamed($event)"
               (longPress)="longPressed()"
 
             />

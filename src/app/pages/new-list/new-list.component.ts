@@ -266,7 +266,8 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   longPressed() {
-    console.log('LONG PRESSED')
+    this.editing = true
+    this._itemsRecordCache = this.itemsRecord()
   }
 
   /**
@@ -279,6 +280,24 @@ class NewListComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Item renamed
+   * @param $event
+   */
+  itemRenamed($event: ItemsChanges) {
+    const newItemsRecord = {... this.itemsRecord()}
+    newItemsRecord[$event.UUID] = {
+      ...$event,
+      groupData: newItemsRecord[$event.UUID].groupData
+    }
+    this.itemsRecord.set(newItemsRecord)
+    this._itemsChanges.set([{
+      ...$event,
+      crud: 'update'
+    }
+    ])
+  }
+
   //#region Confirm / Undo
 
   confirm() {
@@ -289,8 +308,6 @@ class NewListComponent implements OnInit, OnDestroy {
 
     if (this.editing) this.editing = false
 
-    // NOTE: This will cover error from shopping save and changes from editing
-    // if (this._itemsChanges.hasValues) this._saveItemsChanges()
     this._saveItemsChanges()
   }
 
@@ -304,10 +321,14 @@ class NewListComponent implements OnInit, OnDestroy {
       }
 
       this.shopping = false
+    } else {
+      this.itemsRecord.set(this._itemsRecordCache)
+      this.editing = false
     }
   }
 
   //#endregion
+
 }
 
 export default NewListComponent
