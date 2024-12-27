@@ -395,7 +395,9 @@ class NewListComponent implements OnInit, OnDestroy {
 
       this.shopping = false
     } else {
+
       this.itemsRecord.set(this._itemsRecordCache)
+      if (this.selectedItems.size > 0) this.selectedItems.clear()
       this.editing = false
     }
   }
