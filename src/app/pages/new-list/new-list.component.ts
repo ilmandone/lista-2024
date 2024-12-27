@@ -34,6 +34,11 @@ import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-
 import { MatIcon } from '@angular/material/icon'
 import { checkMobile } from '../../shared/detect.mobile'
 import { NewListCartService } from './new-list.cart.service'
+import {
+  GroupBottomSheetData,
+  ListGroupsBottomSheetComponent
+} from '../list/list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+import { MatBottomSheet } from '@angular/material/bottom-sheet'
 
 @Component({
   selector: 'app-new-list',
@@ -58,6 +63,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private readonly _activatedRoute = inject(ActivatedRoute)
   private readonly _groupsSrv = inject(NewListGroupsService)
   private readonly _cartSrv = inject(NewListCartService)
+  private readonly _bottomSheet = inject(MatBottomSheet)
   private readonly _listSrv = inject(NewListService)
   private readonly _destroyRef = inject(DestroyRef)
   private readonly _snackbarSrv = inject(SnackBarService)
@@ -183,7 +189,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _shoppingFinalItemsUpdate() {
 
-    const {record, changes} = this._cartSrv.finalizeItemsForShoppingConfirm(this.itemsRecord())
+    const { record, changes } = this._cartSrv.finalizeItemsForShoppingConfirm(this.itemsRecord())
 
     if (changes.length > 0) {
       this._itemsChanges.set(changes)
@@ -265,6 +271,10 @@ class NewListComponent implements OnInit, OnDestroy {
     this.mainStateSrv.disableInterface($event)
   }
 
+  /**
+   * Item long press
+   * @description Start edit mode
+   */
   longPressed() {
     this.editing = true
     this._itemsRecordCache = this.itemsRecord()
@@ -280,12 +290,37 @@ class NewListComponent implements OnInit, OnDestroy {
     }
   }
 
+  itemGroupChange($event: ItemsChanges) {
+    this._bottomSheet
+      .open(ListGroupsBottomSheetComponent, {
+        data: {
+          UUID: $event.group
+        } as GroupBottomSheetData
+      })
+      .afterDismissed()
+      .subscribe((data: GroupData) => {
+        if (data) {
+
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { crud, ...itemData } = $event
+          itemData.group = data.UUID
+
+          const newRecords = this._listSrv.updateItemsData(this.itemsRecord(), [itemData], this.groups())
+          this._itemsChanges.set([{
+            ...newRecords[$event.UUID],
+            crud: 'update'
+          }])
+          this.itemsRecord.set(newRecords)
+        }
+      })
+  }
+
   /**
    * Item renamed
    * @param $event
    */
   itemRenamed($event: ItemsChanges) {
-    const newItemsRecord = {... this.itemsRecord()}
+    const newItemsRecord = { ...this.itemsRecord() }
     newItemsRecord[$event.UUID] = {
       ...$event,
       groupData: newItemsRecord[$event.UUID].groupData
@@ -328,7 +363,6 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
-
 }
 
 export default NewListComponent
