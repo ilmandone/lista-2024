@@ -79,7 +79,7 @@ export class NewListService {
         ...originalRecord,
         ...u,
         groupData: u.group !== originalRecord.group ?
-          groups[u.UUID] : originalRecord.groupData
+          groups[u.group] : originalRecord.groupData
       }
     })
 
