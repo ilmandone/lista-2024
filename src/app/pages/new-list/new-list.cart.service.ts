@@ -22,17 +22,7 @@ export class NewListCartService {
     return this._undoItemsChanges
   }
 
-  addInCart(UUID: string) {
-    this._inCartUUID.add(UUID)
-  }
-
-  removeFromCart(UUID: string) {
-    if (this._inCartUUID.has(UUID))
-      this._inCartUUID.delete(UUID)
-  }
-
-  clearAll() {
-    this._inCartUUID.clear()
+  clearUndo() {
     this._undoItemsChanges.clear()
   }
 

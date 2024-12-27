@@ -94,7 +94,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _clearChangesAndCache() {
     this._itemsRecordCache = {}
-    this._cartSrv.clearAll()
+    this._cartSrv.clearUndo()
     this._itemsChanges.clear()
   }
 
