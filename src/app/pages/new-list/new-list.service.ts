@@ -2,9 +2,11 @@ import { inject, Injectable, signal } from '@angular/core'
 import { catchError, from, Observable, of } from 'rxjs'
 import {
   GroupData,
-  ItemDataWithGroup, ItemsChanges,
+  GroupsRecord,
+  ItemsChanges,
   ItemsData,
-  ItemsDataWithGroup
+  ItemsDataWithGroup,
+  ItemsDataWithGroupRecord
 } from '../../data/firebase.interfaces'
 import { FirebaseService } from '../../data/firebase.service'
 import { Unsubscribe } from 'firebase/firestore'
@@ -24,7 +26,7 @@ export class NewListService {
    * @param items
    * @param groups
    */
-  addGroupDataInItems(items: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroup {
+  addGroupDataInItems(items: ItemsData, groups: GroupsRecord): ItemsDataWithGroup {
     const r: ItemsDataWithGroup = []
     items.forEach((item, index) => {
       r[index] = { ...item, groupData: groups[item.group] }
@@ -34,44 +36,48 @@ export class NewListService {
   }
 
   /**
+   * Return a Record of UUID, ItemsDataWithGroup and a list of UUID for order
+   * @param items
+   * @param groups
+   */
+  mapItemsDataToRecordWithOrder(items: ItemsData,  groups: GroupsRecord): {data: ItemsDataWithGroupRecord, order: string[]} {
+    const data: ItemsDataWithGroupRecord = {}
+    const order: string[] = []
+
+    items.forEach((item) => {
+      data[item.UUID] = { ...item, groupData: groups[item.group] }
+      order.push(item.UUID)
+    })
+
+    return {data, order}
+ }
+
+
+  /**
    * Updates data items with a set of items
    *
    * @description Updates items groups data are also matched
-   * @param originals
+   * @param r
    * @param updates
    * @param groups
    */
-  updateItemsData(originals: ItemsDataWithGroup, updates: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroup {
+  updateItemsData(r: ItemsDataWithGroupRecord, updates: ItemsData, groups: Record<string, GroupData>): ItemsDataWithGroupRecord {
 
-    const or = cloneDeep(originals)
+    const record = cloneDeep(r)
 
-    // Get list of updates UUID
-    const updateUUIDs = new Set(updates.map(u => u.UUID))
+    updates.forEach(u => {
 
-    // Save original as Map of UUID with data and index
-    const originalsMap = new Map<string,  {item: ItemDataWithGroup, index: number}>()
-    or.forEach((o, index) => {
-      if (updateUUIDs.has(o.UUID)) {
-        originalsMap.set(o.UUID,{item: o,  index})
+      const originalRecord = cloneDeep(record[u.UUID])
+
+      record[u.UUID] = {
+        ...originalRecord,
+        ...u,
+        groupData: u.group !== originalRecord.group ?
+          groups[u.UUID] : originalRecord.groupData
       }
     })
 
-    updates.forEach(updated => {
-      const original = originalsMap.get(updated.UUID)
-
-      if (original) {
-        const { index, item } = original
-
-        or[index] = {
-          ...item,
-          ...updated,
-          groupData: updated.group !== item.group ?
-            groups[updated.group] : item.groupData
-        }
-      }
-    })
-
-    return or
+    return record
   }
 
   /**

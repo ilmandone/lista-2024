@@ -10,7 +10,7 @@ export class SetOfItemsChanges<T extends BasicItemChange> {
 
   /**
    * Returns a deep copy of the _itemsChanges property.
-   * @return {EditBag<T>} A deep copy of the _itemsChanges property.
+   * @return {EditBag} A deep copy of the _itemsChanges property.
    */
   get values(): EditBag<T> {
     return cloneDeep(this._itemsChanges)
@@ -81,7 +81,7 @@ export class SetOfItemsChanges<T extends BasicItemChange> {
 
     keys.forEach(key => {
       const index = this._itemsChanges[key].findIndex(ic => ic.UUID === UUID)
-      if (index) {
+      if (index !== -1) {
         this._itemsChanges[key].splice(index, 1)
       }
     })

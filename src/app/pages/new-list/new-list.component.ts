@@ -13,7 +13,7 @@ import {
   GroupData,
   ItemDataWithGroup,
   ItemsChanges,
-  ItemsDataWithGroup
+  ItemsDataWithGroupRecord
 } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
 import { MainStateService } from '../../shared/main-state.service'
@@ -33,6 +33,7 @@ import { SetOfItemsChanges } from '../../data/items.changes'
 import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-cancel.component'
 import { MatIcon } from '@angular/material/icon'
 import { checkMobile } from '../../shared/detect.mobile'
+import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'app-new-list',
@@ -66,7 +67,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private _UUID!: string
   private _autoSaveTimeOutID!: number
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
-  private _itemsCache!: ItemsDataWithGroup
+  private _itemsRecordCache!: ItemsDataWithGroupRecord
   private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _listUpdateReg!: Unsubscribe
 
@@ -77,7 +78,8 @@ class NewListComponent implements OnInit, OnDestroy {
   shopping = false
 
   groups = signal<Record<string, GroupData>>({})
-  items = signal<ItemsDataWithGroup>([])
+  itemsOrder = signal<string[]>([])
+  itemsRecord = signal<ItemsDataWithGroupRecord>({})
 
   constructor() {
     effect(() => {
@@ -90,7 +92,7 @@ class NewListComponent implements OnInit, OnDestroy {
   //#region Privates
 
   private _clearChangesAndCache() {
-    this._itemsCache = []
+    this._itemsRecordCache = {}
     this._undoItemsChanges.clear()
     this._itemsChanges.clear()
   }
@@ -109,7 +111,10 @@ class NewListComponent implements OnInit, OnDestroy {
       items: this._listSrv.loadItems(this._UUID)
     }).subscribe(({ groups, items }) => {
       this.groups.set(groups)
-      this.items.set(this._listSrv.addGroupDataInItems(items, groups))
+      const {data, order} = this._listSrv.mapItemsDataToRecordWithOrder(items, groups)
+      this.itemsOrder.set(order)
+      this.itemsRecord.set(data)
+
 
       this.mainStateSrv.hideLoader()
     })
@@ -164,9 +169,10 @@ class NewListComponent implements OnInit, OnDestroy {
    * @param data
    */
   private _updateItem(data: { changed: ItemsChanges, original: ItemDataWithGroup }) {
-    const newItems = this._listSrv.updateItemsData(this.items(), [data.changed], this.groups())
 
-    this.items.set(newItems)
+    const newRecords = this._listSrv.updateItemsData(this.itemsRecord(), [data.changed], this.groups())
+
+    this.itemsRecord.set(newRecords)
 
     this._itemsChanges.set([data.changed])
     this._undoItemsChanges.set([{
@@ -204,9 +210,9 @@ class NewListComponent implements OnInit, OnDestroy {
           this._undoItemsChanges.removeByUUID(iu.UUID)
         })
 
-        const newItems = this._listSrv.updateItemsData(untracked(this.items), itemsUpdated, untracked(this.groups))
+        const newRecords = this._listSrv.updateItemsData(untracked(this.itemsRecord), itemsUpdated, untracked(this.groups))
 
-        this.items.set(newItems)
+        this.itemsRecord.set(newRecords)
         this._snackbarSrv.show(snackOptions, 6)
       }
   }
@@ -239,7 +245,7 @@ class NewListComponent implements OnInit, OnDestroy {
   setShoppingState($event: boolean) {
     if ($event) {
       this._clearChangesAndCache()
-      this._itemsCache = this.items()
+      this._itemsRecordCache = this.itemsRecord()
     } else {
       this.cancel()
     }
@@ -273,7 +279,7 @@ class NewListComponent implements OnInit, OnDestroy {
     if (this.editing) this.editing = false
 
     // NOTE: This will cover error from shopping save and changes from editing
-    //if (this._itemsChanges.hasValues) this._saveItemsChanges()
+    // if (this._itemsChanges.hasValues) this._saveItemsChanges()
     this._saveItemsChanges()
   }
 
@@ -282,7 +288,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
       // Cancel shopping will restore f/e and db items data
       if (this._undoItemsChanges.hasValues) {
-        this.items.set(this._itemsCache)
+        this.itemsRecord.set(this._itemsRecordCache)
         this._saveItemsChanges(this._undoItemsChanges)
       }
 
@@ -291,12 +297,27 @@ class NewListComponent implements OnInit, OnDestroy {
   }
   //#endregion
   private _shoppingFinalItemsUpdate() {
-    this._undoItemsChanges.values.updated.forEach(() => {
-      // TODO: Modificare lo stato degli elementi modificati durante lo shopping impostando il
-      //  not-buable a true e il in-cart a false. Nella vecchia implementazione venivano salvati
-      //  gli indici degli elementi modificati per accedervi puntualmente
 
+    if (!this._undoItemsChanges.hasValues) return
+
+    const finalizedChanges: ItemsChanges[] = []
+    const newRecords = cloneDeep(this.itemsRecord())
+
+    this._undoItemsChanges.values.updated.forEach((iu) => {
+      newRecords[iu.UUID].inCart = false;
+      newRecords[iu.UUID].notToBuy = true;
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {groupData, ...itemData } = newRecords[iu.UUID]
+
+      finalizedChanges.push({
+        ...itemData,
+        crud: 'update'
+      })
     })
+
+    this._itemsChanges.set(finalizedChanges)
+    this.itemsRecord.set(newRecords)
   }
 }
 
