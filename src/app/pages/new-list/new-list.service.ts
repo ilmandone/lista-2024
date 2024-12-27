@@ -2,7 +2,9 @@ import { inject, Injectable, signal } from '@angular/core'
 import { catchError, from, Observable, of } from 'rxjs'
 import {
   GroupData,
-  GroupsRecord, ItemData, ItemDataWithGroup,
+  GroupsRecord,
+  ItemData,
+  ItemDataWithGroup,
   ItemsChanges,
   ItemsData,
   ItemsDataWithGroup,
@@ -22,25 +24,14 @@ export class NewListService {
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
 
   /**
-   * Inject group data into list's items
-   * @param items
-   * @param groups
-   */
-  addGroupDataInItems(items: ItemsData, groups: GroupsRecord): ItemsDataWithGroup {
-    const r: ItemsDataWithGroup = []
-    items.forEach((item, index) => {
-      r[index] = { ...item, groupData: groups[item.group] }
-    })
-
-    return r
-  }
-
-  /**
    * Return a Record of UUID, ItemsDataWithGroup and a list of UUID for order
    * @param items
    * @param groups
    */
-  mapItemsDataToRecordWithOrder(items: ItemsData,  groups: GroupsRecord): {data: ItemsDataWithGroupRecord, order: string[]} {
+  mapItemsDataToRecordWithOrder(items: ItemsData, groups: GroupsRecord): {
+    data: ItemsDataWithGroupRecord,
+    order: string[]
+  } {
     const data: ItemsDataWithGroupRecord = {}
     const order: string[] = []
 
@@ -49,15 +40,19 @@ export class NewListService {
       order.push(item.UUID)
     })
 
-    return {data, order}
- }
+    return { data, order }
+  }
 
- itemWithGroupToItemData(item: ItemDataWithGroup): ItemData {
-   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {groupData, ...itemData} = item
+  /**
+   * Convert an ItemDataWithGroup to an ItemData
+   * @description remove the group data from a ItemDataWithGroup
+   * @param item
+   */
+  itemWithGroupToItemData(item: ItemDataWithGroup): ItemData {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { groupData, ...itemData } = item
     return itemData
- }
-
+  }
 
   /**
    * Updates data items with a set of items
@@ -107,6 +102,11 @@ export class NewListService {
     return from(this._firebaseSrv.loadList(UUID))
   }
 
+  /**
+   * Save items
+   * @param changes
+   * @param UUID
+   */
   saveItems(changes: SetOfItemsChanges<ItemsChanges>, UUID: string): Observable<void | string> {
     return from(this._firebaseSrv.updateList(changes.values, UUID)).pipe(
       catchError(() => of('Aggiornamento della lista fallito'))
