@@ -34,6 +34,7 @@ import { ConfirmCancelComponent } from '../../components/confirm-cancel/confirm-
 import { MatIcon } from '@angular/material/icon'
 import { checkMobile } from '../../shared/detect.mobile'
 import { NewListCartService } from './new-list.cart.service'
+import { cloneDeep } from 'lodash'
 
 @Component({
   selector: 'app-new-list',
@@ -175,6 +176,10 @@ class NewListComponent implements OnInit, OnDestroy {
     this._itemsChanges.set([data.changed])
 
     if (this.shopping) {
+
+      if (data.changed.inCart) this._cartSrv.addInCart(data.changed.UUID)
+      else this._cartSrv.removeFromCart(data.changed.UUID)
+
       this._cartSrv.setUndo([{
         ...data.original,
         crud: data.changed.crud
@@ -312,32 +317,26 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _shoppingFinalItemsUpdate() {
 
-    /*if (!this._undoItemsChanges.hasValues) return
-
-    const finalizedChanges: ItemsChanges[] = []
     const newRecords = cloneDeep(this.itemsRecord())
+    const finalizedChanges: ItemsChanges[] = []
 
-    this._undoItemsChanges.values.updated.forEach((iu) => {
+    this._cartSrv.inCart.forEach(ic => {
+      newRecords[ic].inCart = false
+      newRecords[ic].notToBuy = true
 
-      // If the undo wasn't in cart -> current is in cart
-      if (!iu.inCart) {
-        newRecords[iu.UUID].inCart = false
-        newRecords[iu.UUID].notToBuy = true
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { groupData, ...itemData } = newRecords[ic]
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { groupData, ...itemData } = newRecords[iu.UUID]
-
-        finalizedChanges.push({
-          ...itemData,
-          crud: 'update'
-        })
-      }
+      finalizedChanges.push({
+        ...itemData,
+        crud: 'update'
+      })
     })
 
     if (finalizedChanges.length > 0) {
       this._itemsChanges.set(finalizedChanges)
       this.itemsRecord.set(newRecords)
-    }*/
+    }
   }
 }
 

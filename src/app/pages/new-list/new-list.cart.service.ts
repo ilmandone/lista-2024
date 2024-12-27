@@ -5,27 +5,40 @@ import { ItemsChanges } from '../../data/firebase.interfaces'
 @Injectable()
 export class NewListCartService {
 
-  inCartUUID = new Set<string>()
-  undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
+  private inCartUUID = new Set<string>()
+  private _undoItemsChanges = new SetOfItemsChanges<ItemsChanges>()
 
   get haveUndo() {
-    return this.undoItemsChanges.hasValues
+    return this._undoItemsChanges.hasValues
   }
 
   get undos() {
-    return this.undoItemsChanges
+    return this._undoItemsChanges
+  }
+
+  get inCart() {
+    return this.inCartUUID
+  }
+
+  addInCart(UUID: string) {
+    this.inCartUUID.add(UUID)
+  }
+
+  removeFromCart(UUID: string) {
+    if (this.inCartUUID.has(UUID))
+      this.inCartUUID.delete(UUID)
   }
 
   clearAll() {
     this.inCartUUID.clear()
-    this.undoItemsChanges.clear()
+    this._undoItemsChanges.clear()
   }
 
   setUndo(data: ItemsChanges[]) {
-    this.undoItemsChanges.set(data)
+    this._undoItemsChanges.set(data)
   }
 
   removeUndo(UUID: string) {
-    this.undoItemsChanges.removeByUUID(UUID)
+    this._undoItemsChanges.removeByUUID(UUID)
   }
 }
