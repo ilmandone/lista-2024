@@ -445,6 +445,8 @@ class NewListComponent implements OnInit, OnDestroy {
     } else {
       this._saveItemsChanges(this._itemsChanges, true)
     }
+
+    if (this.selectedItems.size > 0) this.selectedItems.clear()
   }
 
   confirm() {
@@ -457,19 +459,17 @@ class NewListComponent implements OnInit, OnDestroy {
 
   cancel() {
     if (this.shopping) {
-
+      this.shopping = false
       // Cancel shopping will restore f/e and db items data
       if (this._cartSrv.haveUndo) {
         this.itemsRecord.set(this._itemsRecordCache)
         this._saveItemsChanges(this._cartSrv.undos)
       }
-
-      this.shopping = false
     } else {
-
+      this.editing = false
       this.itemsRecord.set(this._itemsRecordCache)
       if (this.selectedItems.size > 0) this.selectedItems.clear()
-      this.editing = false
+
     }
   }
 
