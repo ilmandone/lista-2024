@@ -24,6 +24,15 @@ export class NewListService {
 
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
 
+  /**
+   * Add new item in the list and update all the position information
+   * @param label
+   * @param group
+   * @param r
+   * @param o
+   * @param s
+   * @param g
+   */
   addItem(label: string, group: string, r: ItemsDataWithGroupRecord, o: string[], s: Set<string>, g: GroupsRecord): {
     records: ItemsDataWithGroupRecord,
     order: string[],
@@ -58,7 +67,7 @@ export class NewListService {
     for (let i = insertIndex + 2; i < order.length; i +=1 ){
 
       const rec = records[order[i]]
-      rec.position += 1
+      rec.position = i
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {groupData, ...updatedItemData} = rec
