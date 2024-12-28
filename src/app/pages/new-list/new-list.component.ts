@@ -12,7 +12,8 @@ import { ActivatedRoute } from '@angular/router'
 import {
   GroupData,
   ItemDataWithGroup,
-  ItemsChanges, ItemsData,
+  ItemsChanges,
+  ItemsData,
   ItemsDataWithGroupRecord
 } from '../../data/firebase.interfaces'
 import { NewListGroupsService } from './new-list.groups.service'
@@ -271,7 +272,19 @@ class NewListComponent implements OnInit, OnDestroy {
     this._dialog
       .open(ListNewDialogComponent)
       .afterClosed()
-      .subscribe(console.log)
+      .subscribe(r => {
+        const {
+          changes,
+          order,
+          records
+        } = this._listSrv.addItem(r.label, r.color, this.itemsRecord(), this.itemsOrder(), this.selectedItems, this.groups())
+
+        this.itemsRecord.set(records)
+        this.itemsOrder.set(order)
+        this._itemsChanges.set(changes)
+
+        this.selectedItems.clear()
+      })
   }
 
   /**
@@ -306,7 +319,11 @@ class NewListComponent implements OnInit, OnDestroy {
    * Delete one or more items
    */
   itemsDelete() {
-    const {changes, order, records} = this._listSrv.deleteItems(this.itemsRecord(), this.itemsOrder(), this.selectedItems)
+    const {
+      changes,
+      order,
+      records
+    } = this._listSrv.deleteItems(this.itemsRecord(), this.itemsOrder(), this.selectedItems)
 
     this.itemsOrder.set(order)
     this.itemsRecord.set(records)
@@ -404,7 +421,7 @@ class NewListComponent implements OnInit, OnDestroy {
    * Shopping confirmation
    * @private
    */
-  private _shoppingConfirm () {
+  private _shoppingConfirm() {
     this.shopping = false
     this._shoppingFinalItemsUpdate()
     this._saveItemsChanges()

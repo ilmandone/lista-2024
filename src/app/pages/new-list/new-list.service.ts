@@ -15,6 +15,7 @@ import { Nullable } from '../../shared/common.interfaces'
 import { cloneDeep } from 'lodash'
 import { SetOfItemsChanges } from '../../data/items.changes'
 import { moveItemInArray } from '@angular/cdk/drag-drop'
+import { v4 as uuidV4 } from 'uuid'
 
 @Injectable()
 export class NewListService {
@@ -22,6 +23,53 @@ export class NewListService {
   private readonly _firebaseSrv = inject(FirebaseService)
 
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
+
+  addItem(label: string, group: string, r: ItemsDataWithGroupRecord, o: string[], s: Set<string>, g: GroupsRecord): {
+    records: ItemsDataWithGroupRecord,
+    order: string[],
+    changes: ItemsChanges[]
+  } {
+    const order = [...o]
+    const selected = s.size > 0 ? [...s][0] : null
+    const records = cloneDeep(r)
+    const changes: ItemsChanges[] = []
+
+    const insertIndex = selected ? order.findIndex(o => o === selected) ?? order.length - 1 : order.length - 1
+
+    const newItem: ItemData = {
+      label,
+      group,
+      inCart: false,
+      notToBuy: false,
+      position: insertIndex + 1,
+      UUID: uuidV4(),
+    }
+
+    records[newItem.UUID] = { ...newItem, groupData: g[group] }
+
+    order.splice(insertIndex + 1, 0, newItem.UUID)
+
+    changes.push({
+      ...newItem,
+      crud: 'create'
+    })
+
+    // Update position of all items after the new one
+    for (let i = insertIndex + 2; i < order.length; i +=1 ){
+
+      const rec = records[order[i]]
+      rec.position += 1
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {groupData, ...updatedItemData} = rec
+      changes.push({
+        ...updatedItemData,
+        crud: 'update'
+      })
+    }
+
+    return { order: [...order], records, changes }
+  }
 
   /**
    * Delete items and return new records, order and changes
@@ -35,14 +83,14 @@ export class NewListService {
     changes: ItemsChanges[]
   } {
     const order = new Set(o)
-    const records = r
+    const records = cloneDeep(r)
     const changes: ItemsChanges[] = []
 
     // Remove items from order list and record
     selectedItems.forEach(i => {
 
       changes.push({
-        ... this.itemDataFromItemWithGroup(records[i]),
+        ...this.itemDataFromItemWithGroup(records[i]),
         crud: 'delete'
       })
 
