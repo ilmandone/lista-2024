@@ -46,6 +46,7 @@ import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MatDialog } from '@angular/material/dialog'
+import { ListNewDialogComponent } from '../list/list.new.dialog/list.new.dialog.component'
 
 @Component({
   selector: 'app-new-list',
@@ -266,6 +267,13 @@ class NewListComponent implements OnInit, OnDestroy {
     this._listUpdateReg()
   }
 
+  addNewItemsDialog() {
+    this._dialog
+      .open(ListNewDialogComponent)
+      .afterClosed()
+      .subscribe(console.log)
+  }
+
   /**
    * Set the shopping state and disable / enable main interface
    * @param $event
@@ -314,7 +322,7 @@ class NewListComponent implements OnInit, OnDestroy {
       changes,
       order,
       records
-    } = this._listSrv.changeItemPosition(
+    } = this._listSrv.updateItemPosition(
       this.itemsRecord(), this.itemsOrder(), $event.previousIndex, $event.currentIndex
     )
 

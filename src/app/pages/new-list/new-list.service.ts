@@ -24,38 +24,35 @@ export class NewListService {
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
 
   /**
-   * Change item position and return new records, order and changes
+   * Delete items and return new records, order and changes
    * @param r
    * @param o
-   * @param pI
-   * @param cI
+   * @param selectedItems
    */
-  changeItemPosition(r: ItemsDataWithGroupRecord, o: string[], pI: number, cI: number): {
+  deleteItems(r: ItemsDataWithGroupRecord, o: string[], selectedItems: Set<string>): {
     records: ItemsDataWithGroupRecord,
     order: string[],
     changes: ItemsChanges[]
   } {
-    const records = cloneDeep(r)
-    const order = cloneDeep(o)
+    const order = new Set(o)
+    const records = r
     const changes: ItemsChanges[] = []
 
-    moveItemInArray(order, pI, cI)
+    // Remove items from order list and record
+    selectedItems.forEach(i => {
 
-    const start = cI < pI ? cI : pI
-
-    for (let i = start; i < order.length; i++) {
-      const item = records[order[i]]
-      item.position = i
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { groupData, ...change } = item
       changes.push({
-        ...change,
-        crud: 'update'
+        ... this.itemDataFromItemWithGroup(records[i]),
+        crud: 'delete'
       })
-    }
 
-    return { records, order, changes }
+      order.delete(i)
+      delete records[i]
+    })
+
+    return {
+      order: [...order], records, changes
+    }
   }
 
   /**
@@ -130,35 +127,38 @@ export class NewListService {
   }
 
   /**
-   * Delete items and return new records, order and changes
+   * Change item position and return new records, order and changes
    * @param r
    * @param o
-   * @param selectedItems
+   * @param pI
+   * @param cI
    */
-  deleteItems(r: ItemsDataWithGroupRecord, o: string[], selectedItems: Set<string>): {
+  updateItemPosition(r: ItemsDataWithGroupRecord, o: string[], pI: number, cI: number): {
     records: ItemsDataWithGroupRecord,
     order: string[],
     changes: ItemsChanges[]
   } {
-    const order = new Set(o)
-    const records = r
+    const records = cloneDeep(r)
+    const order = cloneDeep(o)
     const changes: ItemsChanges[] = []
 
-    // Remove items from order list and record
-    selectedItems.forEach(i => {
+    moveItemInArray(order, pI, cI)
 
+    const start = cI < pI ? cI : pI
+
+    for (let i = start; i < order.length; i++) {
+      const item = records[order[i]]
+      item.position = i
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { groupData, ...change } = item
       changes.push({
-        ... this.itemDataFromItemWithGroup(records[i]),
-        crud: 'delete'
+        ...change,
+        crud: 'update'
       })
-
-      order.delete(i)
-      delete records[i]
-    })
-
-    return {
-      order: [...order], records, changes
     }
+
+    return { records, order, changes }
   }
 
   /**

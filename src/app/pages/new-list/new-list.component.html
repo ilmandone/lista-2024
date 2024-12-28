@@ -21,6 +21,7 @@
         matTooltip="⇧ + Alt + A"
         [matTooltipDisabled]="isMobile"
         [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
+        (click)="addNewItemsDialog()"
       >
         <mat-icon [fontIcon]="'add'"></mat-icon>
       </button>
