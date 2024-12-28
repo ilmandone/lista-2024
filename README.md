@@ -3,6 +3,6 @@
 
 ## TODO:
 
-1) Completare cancellazione e aggiunta
+1) Ripristinare le shortcuts per il desktop
 2) Iniziare a guardare per il discorso dell'ordinamento e per la ricerca 
  
