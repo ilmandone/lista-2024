@@ -328,6 +328,8 @@ class NewListComponent implements OnInit, OnDestroy {
     this.itemsOrder.set(order)
     this.itemsRecord.set(records)
     this._itemsChanges.set(changes)
+
+    this.selectedItems.clear()
   }
 
   /**
