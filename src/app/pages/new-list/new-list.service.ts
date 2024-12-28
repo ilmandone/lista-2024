@@ -91,24 +91,44 @@ export class NewListService {
     order: string[],
     changes: ItemsChanges[]
   } {
-    const order = new Set(o)
+    const order = [...o]
     const records = cloneDeep(r)
     const changes: ItemsChanges[] = []
 
+    let positionUpdatesStartIndex = o.length - 1
+
     // Remove items from order list and record
     selectedItems.forEach(i => {
-
       changes.push({
         ...this.itemDataFromItemWithGroup(records[i]),
         crud: 'delete'
       })
 
-      order.delete(i)
+      const deleteIndex = order.findIndex(os => os === i)
+
+      if (deleteIndex < positionUpdatesStartIndex)
+        positionUpdatesStartIndex = deleteIndex
+
+      order.splice(deleteIndex, 1)
       delete records[i]
     })
 
+    // Update all positions after the deleted items
+    for (let i = positionUpdatesStartIndex; i < order.length; i +=1) {
+
+      const rec = records[order[i]]
+      records[order[i]].position = i
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {groupData, ...updatedItemData} = rec
+      changes.push({
+        ...updatedItemData,
+        crud: 'update'
+      })
+    }
+
     return {
-      order: [...order], records, changes
+      order, records, changes
     }
   }
 
