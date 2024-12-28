@@ -72,7 +72,7 @@ export class NewListService {
    * @description remove the group data from a ItemDataWithGroup
    * @param item
    */
-  itemWithGroupToItemData(item: ItemDataWithGroup): ItemData {
+  extractItemData(item: ItemDataWithGroup): ItemData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { groupData, ...itemData } = item
     return itemData

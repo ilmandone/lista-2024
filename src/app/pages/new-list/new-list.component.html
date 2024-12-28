@@ -35,6 +35,7 @@
         itemsOrder()!.length || isMobile"
         [disabled]="selectedItems.size === 0 || selectedItems.size === itemsOrder().length ||
         mainStateSrv.offline()"
+        (click)="itemsDelete()"
       >
         <mat-icon [fontIcon]="'delete'"></mat-icon>
       </button>

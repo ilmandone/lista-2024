@@ -42,6 +42,10 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { MatIconButton } from '@angular/material/button'
 import { MatTooltip } from '@angular/material/tooltip'
 import { ItemSelectedEvent } from '../../components/item/item.interface'
+import {
+  DeleteConfirmDialogComponent
+} from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
+import { MatDialog } from '@angular/material/dialog'
 
 @Component({
   selector: 'app-new-list',
@@ -66,6 +70,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private readonly SAVE_DEBOUNCE_TIME = 1200
   private readonly _activatedRoute = inject(ActivatedRoute)
+  private readonly _dialog = inject(MatDialog)
   private readonly _groupsSrv = inject(NewListGroupsService)
   private readonly _cartSrv = inject(NewListCartService)
   private readonly _bottomSheet = inject(MatBottomSheet)
@@ -190,8 +195,11 @@ class NewListComponent implements OnInit, OnDestroy {
     this._askForListSave()
   }
 
+  /**
+   * Finalize data for end shopping confirmation
+   * @private
+   */
   private _shoppingFinalItemsUpdate() {
-
     const { record, changes } = this._cartSrv.finalizeItemsForShoppingConfirm(this.itemsRecord())
 
     if (changes.length > 0) {
@@ -226,7 +234,7 @@ class NewListComponent implements OnInit, OnDestroy {
           this._itemsChanges.removeByUUID(iu.UUID)
 
           if (this.shopping) {
-            this._cartSrv.updateItemUndoAndInCart(iu, this._listSrv.itemWithGroupToItemData(untracked(this.itemsRecord)[iu.UUID]))
+            this._cartSrv.updateItemUndoAndInCart(iu, this._listSrv.extractItemData(untracked(this.itemsRecord)[iu.UUID]))
           }
         })
 
@@ -284,6 +292,32 @@ class NewListComponent implements OnInit, OnDestroy {
     if (!this.editing) {
       this._updateItem($event)
     }
+  }
+
+  /**
+   * Delete one or more items
+   */
+  itemsDelete() {
+    const newOrder = new Set(this.itemsOrder())
+    const newItemsRecord = this.itemsRecord()
+    const changes: ItemsChanges[] = []
+
+
+    // Remove items from order list and record
+    this.selectedItems.forEach(i => {
+
+      changes.push({
+        ... this._listSrv.extractItemData(newItemsRecord[i]),
+        crud: 'delete'
+      })
+
+      newOrder.delete(i)
+      delete newItemsRecord[i]
+    })
+
+    this.itemsOrder.set([...newOrder])
+    this.itemsRecord.set(newItemsRecord)
+    this._itemsChanges.set(changes)
   }
 
   /**
@@ -373,15 +407,40 @@ class NewListComponent implements OnInit, OnDestroy {
 
   //#region Confirm / Undo
 
+  /**
+   * Shopping confirmation
+   * @private
+   */
+  private _shoppingConfirm () {
+    this.shopping = false
+    this._shoppingFinalItemsUpdate()
+    this._saveItemsChanges()
+  }
+
+  /**
+   * Edit confirmation
+   * @private
+   */
+  private _editConfirm() {
+    this.editing = false
+
+    if (this._itemsChanges.hasDeletedItems) {
+      const dr = this._dialog.open(DeleteConfirmDialogComponent)
+
+      dr.afterClosed().subscribe((result) => {
+        if (result) this._saveItemsChanges(this._itemsChanges, true)
+      })
+    } else {
+      this._saveItemsChanges(this._itemsChanges, true)
+    }
+  }
+
   confirm() {
     if (this.shopping) {
-      this.shopping = false
-      this._shoppingFinalItemsUpdate()
+      this._shoppingConfirm()
+    } else {
+      this._editConfirm()
     }
-
-    if (this.editing) this.editing = false
-
-    this._saveItemsChanges()
   }
 
   cancel() {
