@@ -23,7 +23,18 @@ export class NewListService {
 
   itemsUpdated$$ = signal<Nullable<ItemsData>>(null)
 
-  changeItemPosition(r: ItemsDataWithGroupRecord, o: string[], pI: number, cI: number): {records: ItemsDataWithGroupRecord, order: string[], changes: ItemsChanges[]} {
+  /**
+   * Change item position and return new records, order and changes
+   * @param r
+   * @param o
+   * @param pI
+   * @param cI
+   */
+  changeItemPosition(r: ItemsDataWithGroupRecord, o: string[], pI: number, cI: number): {
+    records: ItemsDataWithGroupRecord,
+    order: string[],
+    changes: ItemsChanges[]
+  } {
     const records = cloneDeep(r)
     const order = cloneDeep(o)
     const changes: ItemsChanges[] = []
@@ -32,19 +43,19 @@ export class NewListService {
 
     const start = cI < pI ? cI : pI
 
-    for (let i = start; i < order.length; i ++) {
+    for (let i = start; i < order.length; i++) {
       const item = records[order[i]]
       item.position = i
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {groupData, ...change} = item
+      const { groupData, ...change } = item
       changes.push({
         ...change,
         crud: 'update'
       })
     }
 
-    return {records,  order, changes}
+    return { records, order, changes }
   }
 
   /**
@@ -72,7 +83,7 @@ export class NewListService {
    * @description remove the group data from a ItemDataWithGroup
    * @param item
    */
-  extractItemData(item: ItemDataWithGroup): ItemData {
+  itemDataFromItemWithGroup(item: ItemDataWithGroup): ItemData {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { groupData, ...itemData } = item
     return itemData
@@ -116,6 +127,38 @@ export class NewListService {
     record[UUID].groupData = gd
 
     return record
+  }
+
+  /**
+   * Delete items and return new records, order and changes
+   * @param r
+   * @param o
+   * @param selectedItems
+   */
+  deleteItems(r: ItemsDataWithGroupRecord, o: string[], selectedItems: Set<string>): {
+    records: ItemsDataWithGroupRecord,
+    order: string[],
+    changes: ItemsChanges[]
+  } {
+    const order = new Set(o)
+    const records = r
+    const changes: ItemsChanges[] = []
+
+    // Remove items from order list and record
+    selectedItems.forEach(i => {
+
+      changes.push({
+        ... this.itemDataFromItemWithGroup(records[i]),
+        crud: 'delete'
+      })
+
+      order.delete(i)
+      delete records[i]
+    })
+
+    return {
+      order: [...order], records, changes
+    }
   }
 
   /**

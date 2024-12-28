@@ -234,7 +234,7 @@ class NewListComponent implements OnInit, OnDestroy {
           this._itemsChanges.removeByUUID(iu.UUID)
 
           if (this.shopping) {
-            this._cartSrv.updateItemUndoAndInCart(iu, this._listSrv.extractItemData(untracked(this.itemsRecord)[iu.UUID]))
+            this._cartSrv.updateItemUndoAndInCart(iu, this._listSrv.itemDataFromItemWithGroup(untracked(this.itemsRecord)[iu.UUID]))
           }
         })
 
@@ -298,25 +298,10 @@ class NewListComponent implements OnInit, OnDestroy {
    * Delete one or more items
    */
   itemsDelete() {
-    const newOrder = new Set(this.itemsOrder())
-    const newItemsRecord = this.itemsRecord()
-    const changes: ItemsChanges[] = []
+    const {changes, order, records} = this._listSrv.deleteItems(this.itemsRecord(), this.itemsOrder(), this.selectedItems)
 
-
-    // Remove items from order list and record
-    this.selectedItems.forEach(i => {
-
-      changes.push({
-        ... this._listSrv.extractItemData(newItemsRecord[i]),
-        crud: 'delete'
-      })
-
-      newOrder.delete(i)
-      delete newItemsRecord[i]
-    })
-
-    this.itemsOrder.set([...newOrder])
-    this.itemsRecord.set(newItemsRecord)
+    this.itemsOrder.set(order)
+    this.itemsRecord.set(records)
     this._itemsChanges.set(changes)
   }
 
