@@ -283,6 +283,11 @@ class NewListComponent implements OnInit, OnDestroy {
           if (this.shopping) {
             this._cartSrv.updateItemUndoAndInCart(iu, this._listSrv.itemDataFromItemWithGroup(untracked(this.itemsRecord)[iu.UUID]))
           }
+
+          this._itemsChanges.set([{
+            ...iu,
+           crud: 'update'
+          }])
         })
 
         const newRecords = this._listSrv.updateItemsData(untracked(this.itemsRecord), itemsUpdated, untracked(this.groups))

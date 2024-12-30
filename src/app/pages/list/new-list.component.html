@@ -57,7 +57,7 @@
 
   <div class="main__container">
     @defer (when itemsOrder().length > 0) {
-      @for(order of itemsOrder(); track order) {
+      @for (order of itemsOrder(); track order) {
         <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
           @if (!shopping || (shopping && !itemsRecord()[order].notToBuy)) {
             <app-item
@@ -79,8 +79,7 @@
           }
         </div>
       }
-    }
-    @placeholder {
+    } @placeholder {
       <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
     }
   </div>
