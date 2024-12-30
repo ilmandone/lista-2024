@@ -1,7 +1,7 @@
 import {
   Component,
   DestroyRef,
-  effect,
+  effect, HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -66,7 +66,7 @@ import { ListNewDialogComponent } from '../list/list.new.dialog/list.new.dialog.
     MatTooltip
   ],
   templateUrl: './new-list.component.html',
-  styleUrl: './new-list.component.scss'
+  styleUrl: './new-list.component.scss',
 })
 class NewListComponent implements OnInit, OnDestroy {
 
@@ -84,6 +84,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _UUID!: string
   private _autoSaveTimeOutID!: number
+  private _escKeyDisabled = false
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _itemsRecordCache!: ItemsDataWithGroupRecord
   private _listUpdateReg!: Unsubscribe
@@ -105,6 +106,44 @@ class NewListComponent implements OnInit, OnDestroy {
       allowSignalWrites: true
     })
   }
+
+  //#region Key pressed
+
+
+  @HostListener('window:keyup', ['$event']) onKeyPress($event: KeyboardEvent) {
+    if (this.isMobile) return
+
+    $event.preventDefault()
+    const k = $event.key.toLowerCase()
+
+    if (k === 'escape' && !this._escKeyDisabled && (this.shopping || this.editing)) {
+      this.cancel()
+      return
+    }
+
+    if (!$event.shiftKey || !$event.altKey) return
+
+    if (k === 'enter' && this.shopping || this.editing) {
+      this.confirm()
+    }
+
+    if (this.editing) {
+      switch (k) {
+        case 'a':
+          if (!this._escKeyDisabled) this.addNewItemsDialog()
+          break
+        case 'd':
+          if (this.selectedItems.size > 0 && this.selectedItems.size !== this.itemsOrder()?.length) {
+            this.itemsDelete()
+          }
+          break
+        default:
+          console.warn('Unknown shortcut key', k)
+      }
+    }
+  }
+
+  //#endregion
 
   //#region Privates
 
@@ -269,6 +308,7 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   addNewItemsDialog() {
+    this._escKeyDisabled = true
     this._dialog
       .open(ListNewDialogComponent)
       .afterClosed()
@@ -284,6 +324,8 @@ class NewListComponent implements OnInit, OnDestroy {
         this._itemsChanges.set(changes)
 
         this.selectedItems.clear()
+
+        this._escKeyDisabled = false
       })
   }
 
@@ -432,7 +474,7 @@ class NewListComponent implements OnInit, OnDestroy {
       message:'Spesa completata',
       severity: 'info',
       dismiss: true
-    },3000000)
+    })
   }
 
   /**
