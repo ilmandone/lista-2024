@@ -7,6 +7,10 @@
 
   color: white;
 
+  &.dismiss {
+    justify-content: space-between;
+  }
+
   > *:not(:last-child) {
     margin-right: 0.5rem;
   }

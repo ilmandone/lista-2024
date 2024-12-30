@@ -427,6 +427,12 @@ class NewListComponent implements OnInit, OnDestroy {
     this.shopping = false
     this._shoppingFinalItemsUpdate()
     this._saveItemsChanges()
+
+    this._snackbarSrv.show({
+      message:'Spesa completata',
+      severity: 'info',
+      dismiss: true
+    },3000000)
   }
 
   /**

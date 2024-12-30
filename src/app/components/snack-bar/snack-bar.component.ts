@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core'
+import { Component, HostBinding, inject, OnInit } from '@angular/core'
 import {
   MAT_SNACK_BAR_DATA,
   MatSnackBarAction,
@@ -16,13 +16,15 @@ import { MatButton, MatIconButton } from '@angular/material/button'
   templateUrl: './snack-bar.component.html',
   styleUrl: './snack-bar.component.scss',
 })
-export class SnackBarComponent{
+export class SnackBarComponent implements OnInit{
 
   snackBarData: ISnackBar = inject(MAT_SNACK_BAR_DATA);
-  snackBar = inject(MatSnackBarRef);
   snackBarReference = inject(MatSnackBarRef)
 
-  dismiss() {
-    this.snackBar.dismiss()
+  @HostBinding('class.dismiss')
+  dismiss = false
+
+  ngOnInit() {
+    this.dismiss = this.snackBarData.dismiss ?? false
   }
 }
