@@ -1,0 +1,120 @@
+<header class="header">
+  <div class="header__title">
+    <h1>{{ label }}</h1>
+  </div>
+  <div class="header__controls">
+    @if (!editing) {
+      <!--Shopping mode-->
+      <app-button-toggle
+        [disabled]="mainStateSrv.offline()"
+        [fontIcon]="'shopping_cart'"
+        [toggle]="shopping"
+        (toggleChange)="setShoppingState($event)"
+      ></app-button-toggle>
+    } @else {
+
+      <!--Add new item-->
+      <button
+        mat-icon-button
+        title="add item"
+        type="button"
+        matTooltip="⇧ + Alt + A"
+        [matTooltipDisabled]="isMobile"
+        [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
+        (click)="addNewItemsDialog()"
+      >
+        <mat-icon [fontIcon]="'add'"></mat-icon>
+      </button>
+
+      <!--Delete one or more items-->
+      <button
+        mat-icon-button
+        title="add item"
+        type="button"
+        matTooltip="⇧ + Alt + D"
+        [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size ===
+        itemsOrder()!.length || isMobile"
+        [disabled]="selectedItems.size === 0 || selectedItems.size === itemsOrder().length ||
+        mainStateSrv.offline()"
+        (click)="itemsDelete()"
+      >
+        <mat-icon [fontIcon]="'delete'"></mat-icon>
+      </button>
+    }
+  </div>
+</header>
+
+<main
+  class="main"
+  [class.main__with-footer]="shopping || editing"
+  cdkDropList
+  cdkScrollable
+  [cdkDropListAutoScrollStep]="20"
+  [cdkDropListAutoScrollDisabled]="false"
+  cdkDropListElementContainer=".main__container"
+  (cdkDropListDropped)="itemDrop($event)"
+>
+
+  <div class="main__container">
+    @defer (when itemsOrder().length > 0) {
+      @for(order of itemsOrder(); track order) {
+        <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
+          @if (!shopping || (shopping && !itemsRecord()[order].notToBuy)) {
+            <app-item
+              [appLongPress]="!shopping && !editing"
+
+              [data]="itemsRecord()[order]"
+              [editing]="editing"
+              [extra]="itemsRecord()[order].inCart ? 'add_shopping_cart' : ''"
+              [shopping]="shopping"
+              [selected]="selectedItems.has(itemsRecord()[order].UUID)"
+              [stroked]="itemsRecord()[order].notToBuy && !editing"
+              (clickedMore)="itemClicked($event)"
+              (changed)="itemRenamed($event)"
+              (groupChange)="itemGroupChange($event)"
+              (longPress)="itemLongPress()"
+              (selectedChange)="itemSelected($event)"
+            />
+          }
+        </div>
+      }
+    }
+    @placeholder {
+      <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
+    }
+  </div>
+
+</main>
+
+@if (shopping || editing) {
+  <app-confirm-cancel
+    [confirmSize]="shopping ? 65 : 50"
+    [confirmLabel]="shopping ? 'Concludi la spesa' : 'Confirm'"
+    (cancel)="cancel()"
+    (confirm)="confirm()"
+  >
+    <ng-template #cancelTemplate>
+
+		<span class="cancel-container">
+			@if (shopping) {
+        <mat-icon [fontIcon]="'close'"></mat-icon>
+      } @else {
+        <span>Cancel</span>
+      }
+
+      @if (!isMobile) {
+        <span> (ESC)</span>
+      }
+		</span>
+
+
+    </ng-template>
+
+    <ng-template #confirmTemplate>
+      <span>Confirm</span>
+      @if (!isMobile) {
+        <span> ( ⇧ + Alt + ⏎ )</span>
+      }
+    </ng-template>
+  </app-confirm-cancel>
+}

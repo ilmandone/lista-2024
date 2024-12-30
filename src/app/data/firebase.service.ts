@@ -299,13 +299,11 @@ export class FirebaseService {
 			// Create
 			for (const create of changes.created) {
 				const d = doc(itemsCollection, create.UUID)
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {crud, ...data} = create
 				batch.set(d, {
-					UUID: create.UUID,
-					inCart: false,
-					label: create.label,
-					notToBuy: false,
-					group: create.group,
-					position: create.position
+					...data
 				})
 			}
 

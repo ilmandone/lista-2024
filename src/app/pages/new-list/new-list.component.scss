@@ -1,0 +1,91 @@
+@use "~styles/drag-and-drop.scss";
+@use "~styles/shared.scss";
+@use "~styles/utils.scss";
+@use "~styles/typo.scss";
+
+:host {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: utils.getRealVh(100);
+
+  .header {
+    width: calc(100% - var(--main-header-height));
+    height: var(--main-header-height);
+
+    margin-left: var(--main-nav-width);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__title {
+      flex: 1;
+      overflow: hidden;
+
+      h1 {
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        font-size: typo.$text-xl;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+
+        @include utils.media-query('t') {
+          font-size: typo.$text-2xl;
+        }
+      }
+    }
+
+    &__controls {
+      flex: 0;
+      display: flex;
+
+      button {
+        @include shared.disabledOpacity;
+      }
+    }
+  }
+
+  .main {
+    @include shared.mainCommon;
+
+    transition-property: height, padding;
+    transition-duration: 0.4s;
+    transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+    will-change: height;
+
+    &__with-footer {
+      height: calc(#{utils.getRealVh(100)} - var(--main-header-height) - 4.5rem);
+      padding-bottom: 0;
+    }
+
+    // Drag and drop
+    @include drag-and-drop.main;
+
+    &__container {
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    &.cdk-drop-list-dragging .drag-box:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  @include drag-and-drop.common;
+
+  .cancel-container {
+    display: flex;
+    align-items: center;
+
+    > span {
+      display: block;
+    }
+  }
+}

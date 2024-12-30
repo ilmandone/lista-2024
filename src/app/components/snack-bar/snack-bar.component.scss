@@ -7,6 +7,10 @@
 
   color: white;
 
+  &.dismiss {
+    justify-content: space-between;
+  }
+
   > *:not(:last-child) {
     margin-right: 0.5rem;
   }
@@ -16,9 +20,15 @@
     font-weight: 500;
   }
 
-  mat-icon {
+  mat-icon.ringing {
     transform-origin: center top;
     animation: ringing-keyframes 0.5s infinite ease-in-out;
+  }
+
+  button.close {
+    border: none;
+    background-color: transparent;
+    color: white;
   }
 }
 
