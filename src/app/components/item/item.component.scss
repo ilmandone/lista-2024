@@ -16,6 +16,10 @@
       color: var(--mat-outlined-button-state-layer-color);
     }
 
+    &.stroked {
+      background-color: var(--mat-app-background-color);
+    }
+
     &.editing {
 
       app-focus-input {
@@ -35,7 +39,7 @@
       }
 
       .shopping-icon {
-        filter: saturate(0.5);
+        filter: saturate(0.25);
       }
     }
 
