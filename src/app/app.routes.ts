@@ -1,10 +1,10 @@
 import {Routes} from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import {loginGuard} from "./guards/login.guard";
-import { newListResolver } from './pages/new-list/new-list.resolver'
-import { NewListGroupsService } from './pages/new-list/new-list.groups.service'
-import { NewListService } from './pages/new-list/new-list.service'
-import { NewListCartService } from './pages/new-list/new-list.cart.service'
+import { newListResolver } from './pages/list/new-list.resolver'
+import { NewListGroupsService } from './pages/list/new-list.groups.service'
+import { NewListService } from './pages/list/new-list.service'
+import { NewListCartService } from './pages/list/new-list.cart.service'
 
 export const routes: Routes = [
   {
@@ -24,7 +24,7 @@ export const routes: Routes = [
       },
       {
         path: 'list/:id',
-        loadComponent: () => import('./pages/new-list/new-list.component'),
+        loadComponent: () => import('./pages/list/new-list.component'),
         canActivate: [authGuard],
         resolve: {
           label: newListResolver
