@@ -1,7 +1,8 @@
-@use "~styles/drag-and-drop";
-@use "~styles/shared";
-@use "~styles/utils";
-@use "~styles/typo";
+@use "../../../styles/drag-and-drop";
+@use "../../../styles/shared";
+@use "../../../styles/utils";
+@use "../../../styles/typo";
+
 
 :host {
   position: relative;
