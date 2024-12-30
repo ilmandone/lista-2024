@@ -1,7 +1,8 @@
 import {
   Component,
   DestroyRef,
-  effect, HostListener,
+  effect,
+  HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -38,7 +39,7 @@ import { NewListCartService } from './new-list.cart.service'
 import {
   GroupBottomSheetData,
   ListGroupsBottomSheetComponent
-} from '../list/list.groups.bottom-sheet/list.groups.bottom-sheet.component'
+} from './list.groups.bottom-sheet/list.groups.bottom-sheet.component'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { MatIconButton } from '@angular/material/button'
 import { MatTooltip } from '@angular/material/tooltip'
@@ -47,7 +48,8 @@ import {
   DeleteConfirmDialogComponent
 } from '../../shared/delete.confirm.dialog/delete.confirm.dialog.component'
 import { MatDialog } from '@angular/material/dialog'
-import { ListNewDialogComponent } from '../list/list.new.dialog/list.new.dialog.component'
+import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
+import { fadeInOut } from './new-list.animations'
 
 @Component({
   selector: 'app-new-list',
@@ -67,6 +69,10 @@ import { ListNewDialogComponent } from '../list/list.new.dialog/list.new.dialog.
   ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss',
+  animations: [
+    // Fade In/Out
+    fadeInOut
+  ]
 })
 class NewListComponent implements OnInit, OnDestroy {
 
