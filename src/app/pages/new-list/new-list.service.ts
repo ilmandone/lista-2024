@@ -50,7 +50,7 @@ export class NewListService {
       group,
       inCart: false,
       notToBuy: false,
-      position: insertIndex + 1,
+      position: insertIndex,
       UUID: uuidV4(),
     }
 
@@ -67,7 +67,7 @@ export class NewListService {
     for (let i = insertIndex + 2; i < order.length; i +=1 ){
 
       const rec = records[order[i]]
-      rec.position = i
+      rec.position = i - 1
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {groupData, ...updatedItemData} = rec
@@ -117,7 +117,7 @@ export class NewListService {
     for (let i = positionUpdatesStartIndex; i < order.length; i +=1) {
 
       const rec = records[order[i]]
-      records[order[i]].position = i
+      records[order[i]].position = i - 1
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {groupData, ...updatedItemData} = rec
