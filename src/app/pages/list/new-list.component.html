@@ -74,6 +74,8 @@
         <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
           @if (!shopping || (shopping && !itemsRecord()[order].notToBuy)) {
             <app-item
+              [id]="itemsRecord()[order].UUID"
+
               [@fadeInOut]
               [appLongPress]="!shopping && !editing"
 

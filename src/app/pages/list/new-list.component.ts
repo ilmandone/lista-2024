@@ -476,6 +476,9 @@ class NewListComponent implements OnInit, OnDestroy {
 
   //#region Search items
 
+  /**
+   * Open a bottom sheet for item search by label
+   */
   searchItemsBottomSheet() {
     this._bottomSheet.open(ListFindBottomSheetComponent, {
       data: {
@@ -484,7 +487,9 @@ class NewListComponent implements OnInit, OnDestroy {
         }
       }
     })
-      .afterDismissed().subscribe(r => console.log(r))
+      .afterDismissed().subscribe(r => {
+      document.getElementById(r)?.scrollIntoView({ behavior: 'smooth' });
+    })
   }
 
   //#endregion
