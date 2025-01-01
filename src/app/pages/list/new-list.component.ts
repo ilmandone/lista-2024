@@ -290,7 +290,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
           this._itemsChanges.set([{
             ...iu,
-           crud: 'update'
+            crud: 'update'
           }])
         })
 
@@ -481,9 +481,10 @@ class NewListComponent implements OnInit, OnDestroy {
       data: {
         searchCbFN: (v: Nullable<string>) => {
           return v ? Object.values(this.itemsRecord()).filter(i => i.label.toLowerCase().includes(v.toLowerCase())) : []
-        },
+        }
       }
     })
+      .afterDismissed().subscribe(r => console.log(r))
   }
 
   //#endregion
@@ -500,7 +501,7 @@ class NewListComponent implements OnInit, OnDestroy {
     this._saveItemsChanges()
 
     this._snackbarSrv.show({
-      message:'Spesa completata',
+      message: 'Spesa completata',
       severity: 'info',
       dismiss: true
     })
