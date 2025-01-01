@@ -1,4 +1,10 @@
-
-  <mat-icon class="material-icons-outlined">notifications</mat-icon>
-  <span>{{ snackBarData.message }}</span>
-
+@if (!snackBarData.dismiss) {
+  <mat-icon class="ringing material-icons-outlined">notifications</mat-icon>
+}
+<span>{{ snackBarData.message }}</span>
+@if (snackBarData.dismiss) {
+  <button class="close" matSnackBarAction (click)="snackBarReference.dismiss()"
+          type="button">
+    <mat-icon>close</mat-icon>
+  </button>
+}

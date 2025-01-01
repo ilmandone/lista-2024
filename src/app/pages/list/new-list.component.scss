@@ -1,9 +1,7 @@
-@use "~styles/shared.scss";
-@use "~styles/utils.scss";
-@use "~styles/vars.scss";
-@use "~styles/typo.scss";
-
-@use '~styles/drag-and-drop.scss';
+@use "../../../styles/drag-and-drop";
+@use "../../../styles/shared";
+@use "../../../styles/utils";
+@use "../../../styles/typo";
 
 :host {
   position: relative;
@@ -26,42 +24,34 @@
     &__title {
       flex: 1;
       overflow: hidden;
+
+      h1 {
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        font-size: typo.$text-xl;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+
+        @include utils.media-query('t') {
+          font-size: typo.$text-2xl;
+        }
+      }
     }
 
     &__controls {
       flex: 0;
-
       display: flex;
-    }
 
-    @include utils.media-query('t') {
-      &__controls {
-        padding-right: 1rem;
+      button {
+        @include shared.disabledOpacity;
       }
-    }
-
-    h1 {
-      width: 100%;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-
-      font-size: typo.$text-xl;
-      font-weight: 400;
-      letter-spacing: -0.5px;
-
-      @include utils.media-query('t') {
-        font-size: typo.$text-2xl;
-      }
-    }
-
-    button {
-      @include shared.disabledOpacity;
     }
   }
 
   .main {
-
     @include shared.mainCommon;
 
     transition-property: height, padding;
@@ -70,13 +60,12 @@
     will-change: height;
 
     &__with-footer {
-      height: calc(utils.getRealVh(100) - var(--main-header-height) - 4.5rem);
+      height: calc(#{utils.getRealVh(100)} - var(--main-header-height) - 4.5rem);
       padding-bottom: 0;
     }
 
-
     // Drag and drop
-		@include drag-and-drop.main;
+    @include drag-and-drop.main;
 
     &__container {
       height: 100%;
@@ -87,7 +76,6 @@
     &.cdk-drop-list-dragging .drag-box:not(.cdk-drag-placeholder) {
       transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
     }
-
   }
 
   @include drag-and-drop.common;

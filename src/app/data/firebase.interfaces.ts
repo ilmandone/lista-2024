@@ -41,7 +41,7 @@ export interface ItemDataWithGroup extends ItemData {
 }
 
 export type ItemsDataWithGroup = ItemDataWithGroup[]
-
+export type ItemsDataWithGroupRecord = Record<string,  ItemDataWithGroup>
 // Groups
 
 export interface GroupChanges extends BasicItemChange {
@@ -52,6 +52,9 @@ export interface GroupChanges extends BasicItemChange {
 
 export type GroupData = Omit<GroupChanges, 'crud'>
 export type GroupsData = GroupData[]
+export type GroupsRecord = Record<string, GroupData>
+
+export const EditBagKeysValues = ['created', 'updated', 'deleted'] as const
 
 export interface EditBag<T> {
 	created: T[]

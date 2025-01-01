@@ -6,6 +6,7 @@
   [class.disabled]="mainStateSrv.offline()"
   [class.editing]="editing()"
   [class.in-cart]="shopping() && extra()"
+  [class.stroked]="stroked()"
   [matRippleDisabled]="editing() || mainStateSrv.offline()"
 >
   <!--Left group-->

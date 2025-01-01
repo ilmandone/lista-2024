@@ -4,41 +4,13 @@
   </div>
   <div class="header__controls">
     @if (!editing) {
-
       <!--Shopping mode-->
       <app-button-toggle
         [disabled]="mainStateSrv.offline()"
         [fontIcon]="'shopping_cart'"
         [toggle]="shopping"
-        (toggleChange)="shoppingState($event)"
+        (toggleChange)="setShoppingState($event)"
       ></app-button-toggle>
-
-      <!-- Sort menu-->
-      <button
-        mat-icon-button
-        title="sort by"
-        [matMenuTriggerFor]="sortMenu"
-        [disabled]="shopping || mainStateSrv.offline()"
-        type="button"
-      >
-        <mat-icon [fontIcon]="'dashboard'"></mat-icon>
-      </button>
-
-      <mat-menu #sortMenu="matMenu" class="sort-menu" >
-        <button mat-menu-item [disabled]="sortMode === 'position'" (click)="sortItems('position')">
-          <mat-icon>list</mat-icon>
-          Default</button>
-        <button mat-menu-item [disabled]="sortMode === 'label'" (click)="sortItems('label')">
-          Nome
-          <mat-icon>text_fields</mat-icon>
-        </button>
-        <button mat-menu-item  [disabled]="sortMode === 'group'" (click)="sortItems('group')">
-          Gruppi
-          <mat-icon>grid_view</mat-icon>
-        </button>
-      </mat-menu>
-
-
     } @else {
 
       <!--Add new item-->
@@ -48,8 +20,8 @@
         type="button"
         matTooltip="⇧ + Alt + A"
         [matTooltipDisabled]="isMobile"
-        [disabled]="selectedItems.size > 1 || mainStateSrv.offline() || sortMode !== 'position'"
-        (click)="openNewItemDialog()"
+        [disabled]="selectedItems.size > 1 || mainStateSrv.offline()"
+        (click)="addNewItemsDialog()"
       >
         <mat-icon [fontIcon]="'add'"></mat-icon>
       </button>
@@ -60,9 +32,11 @@
         title="add item"
         type="button"
         matTooltip="⇧ + Alt + D"
-        [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length || isMobile"
-        [disabled]="selectedItems.size === 0 || selectedItems.size === itemsData()!.length || mainStateSrv.offline()"
-        (click)="itemsDeleted()"
+        [matTooltipDisabled]="selectedItems.size === 0 || selectedItems.size ===
+        itemsOrder()!.length || isMobile"
+        [disabled]="selectedItems.size === 0 || selectedItems.size === itemsOrder().length ||
+        mainStateSrv.offline()"
+        (click)="itemsDelete()"
       >
         <mat-icon [fontIcon]="'delete'"></mat-icon>
       </button>
@@ -82,39 +56,33 @@
 >
 
   <div class="main__container">
-    @defer (when itemsData() !== null) {
-      <!--Items-->
-      @for (item of itemsData(); track item.UUID) {
-        <!-- Drag Box -->
-        <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsData()!.length < 2">
-          @if (!shopping || (shopping && !item.notToBuy)) {
+    @defer (when itemsOrder().length > 0) {
+      @for (order of itemsOrder(); track order) {
+        <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
+          @if (!shopping || (shopping && !itemsRecord()[order].notToBuy)) {
             <app-item
+              [@fadeInOut]
               [appLongPress]="!shopping && !editing"
-              (longPress)="longPressed()"
 
-              [data]="item"
+              [data]="itemsRecord()[order]"
               [editing]="editing"
-              [extra]="item.inCart ? 'add_shopping_cart' : ''"
-              [selected]="selectedItems.has(item.UUID)"
+              [extra]="itemsRecord()[order].inCart ? 'add_shopping_cart' : ''"
               [shopping]="shopping"
-              [sortable]="!(sortMode === 'group' || sortMode === 'label')"
-              [stroked]="item.notToBuy && !editing"
-              (changed)="itemChanged($event)"
-              (clicked)="itemClicked($event)"
-
-              (groupChange)="itemGroupChanged($event)"
-
+              [selected]="selectedItems.has(itemsRecord()[order].UUID)"
+              [stroked]="itemsRecord()[order].notToBuy && !editing"
+              (clickedMore)="itemClicked($event)"
+              (changed)="itemRenamed($event)"
+              (groupChange)="itemGroupChange($event)"
+              (longPress)="itemLongPress()"
               (selectedChange)="itemSelected($event)"
-            ></app-item>
+            />
           }
-          <div class="list-drag-placeholder" *cdkDragPlaceholder></div>
         </div>
       }
     } @placeholder {
       <app-loader [mode]="'indeterminate'" [loading]="true"></app-loader>
     }
   </div>
-
 
 </main>
 
