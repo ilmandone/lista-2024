@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core'
+import { Component, ElementRef, inject, ViewChild } from '@angular/core'
 import {
   FormControl,
   FormGroup,
@@ -39,6 +39,9 @@ export interface ListFindBottomSheetData {
   styleUrl: './list.find.bottom-sheet.component.scss'
 })
 export class ListFindBottomSheetComponent {
+
+  @ViewChild('inputElement', {static: true}) inputElement!: ElementRef;
+
   readonly data: ListFindBottomSheetData = inject(MAT_BOTTOM_SHEET_DATA)
   readonly searchItemFC = new FormControl<Nullable<string>>(null, [Validators.minLength(2)])
   readonly searchItemsFG = new FormGroup<SearchItemsFG>({
@@ -49,8 +52,11 @@ export class ListFindBottomSheetComponent {
   itemsFound: ItemsDataWithGroup = []
 
   searchItem() {
-    if (this.searchItemFC.valid)
+    if (this.searchItemFC.valid) {
       this.itemsFound = this.data.searchCbFN(this.searchItemFC.value)
+      this.inputElement.nativeElement.blur()
+    }
+
   }
 
   clear() {

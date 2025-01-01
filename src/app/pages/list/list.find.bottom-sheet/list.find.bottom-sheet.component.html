@@ -4,11 +4,7 @@
     <button
       mat-button
       (click)="dismiss(i.UUID)"
-    ><span class="button-span">
-      <span class="button-span__content">
-        {{i.label}}
-      </span>
-    </span>
+    >{{i.label}}
 
     </button>
   }
@@ -19,6 +15,7 @@
   <mat-form-field class="form-field">
     <mat-label>Cerca</mat-label>
     <input
+      #inputElement
       [formControl]="searchItemFC"
       [required]="true"
       matInput
