@@ -3,6 +3,19 @@
     <h1>{{ label }}</h1>
   </div>
   <div class="header__controls">
+
+    <!--Add new item-->
+    <button
+      mat-icon-button
+      title="search item"
+      type="button"
+      matTooltip="⇧ + Alt + F"
+      [matTooltipDisabled]="isMobile"
+      (click)="searchItemsBottomSheet()"
+    >
+      <mat-icon [fontIcon]="'search'"></mat-icon>
+    </button>
+
     @if (!editing) {
       <!--Shopping mode-->
       <app-button-toggle
@@ -61,6 +74,8 @@
         <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
           @if (!shopping || (shopping && !itemsRecord()[order].notToBuy)) {
             <app-item
+              [id]="itemsRecord()[order].UUID"
+
               [@fadeInOut]
               [appLongPress]="!shopping && !editing"
 

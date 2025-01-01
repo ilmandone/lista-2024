@@ -1,0 +1,52 @@
+
+<div class="result-wrapper">
+  @for(i of itemsFound; track i.UUID) {
+    <button
+      mat-button
+      (click)="dismiss(i.UUID)"
+    ><span class="button-span">
+      <span class="button-span__content">
+        {{i.label}}
+      </span>
+    </span>
+
+    </button>
+  }
+</div>
+
+<form [formGroup]="searchItemsFG" (ngSubmit)="searchItem()">
+
+  <mat-form-field class="form-field">
+    <mat-label>Cerca</mat-label>
+    <input
+      [formControl]="searchItemFC"
+      [required]="true"
+      matInput
+      placeholder="Label"
+      type="text"
+    />
+    <mat-error>
+      @if(searchItemFC.invalid) {
+        Inserisci almeno due caratteri
+      }
+    </mat-error>
+  </mat-form-field>
+
+  <button
+    mat-icon-button
+    title="search"
+    type="submit"
+  >
+    <mat-icon [fontIcon]="'search'"></mat-icon>
+  </button>
+  <button
+    mat-icon-button
+    type="button"
+    (click)="clear()"
+  >
+    <mat-icon [fontIcon]="'clear_all'"></mat-icon>
+  </button>
+</form>
+
+
+

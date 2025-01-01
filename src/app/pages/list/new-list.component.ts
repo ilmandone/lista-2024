@@ -50,6 +50,10 @@ import {
 import { MatDialog } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { fadeInOut } from './new-list.animations'
+import {
+  ListFindBottomSheetComponent
+} from './list.find.bottom-sheet/list.find.bottom-sheet.component'
+import { Nullable } from '../../shared/common.interfaces'
 
 @Component({
   selector: 'app-new-list',
@@ -286,7 +290,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
           this._itemsChanges.set([{
             ...iu,
-           crud: 'update'
+            crud: 'update'
           }])
         })
 
@@ -470,6 +474,26 @@ class NewListComponent implements OnInit, OnDestroy {
 
   //#endregion
 
+  //#region Search items
+
+  /**
+   * Open a bottom sheet for item search by label
+   */
+  searchItemsBottomSheet() {
+    this._bottomSheet.open(ListFindBottomSheetComponent, {
+      data: {
+        searchCbFN: (v: Nullable<string>) => {
+          return v ? Object.values(this.itemsRecord()).filter(i => i.label.toLowerCase().includes(v.toLowerCase())) : []
+        }
+      }
+    })
+      .afterDismissed().subscribe(r => {
+      document.getElementById(r)?.scrollIntoView({ behavior: 'smooth' });
+    })
+  }
+
+  //#endregion
+
   //#region Confirm / Undo
 
   /**
@@ -482,7 +506,7 @@ class NewListComponent implements OnInit, OnDestroy {
     this._saveItemsChanges()
 
     this._snackbarSrv.show({
-      message:'Spesa completata',
+      message: 'Spesa completata',
       severity: 'info',
       dismiss: true
     })
@@ -533,6 +557,7 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+
 }
 
 export default NewListComponent
