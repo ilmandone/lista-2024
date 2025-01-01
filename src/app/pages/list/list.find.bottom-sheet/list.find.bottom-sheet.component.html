@@ -1,0 +1,28 @@
+
+<div class="result-wrapper">
+  priva
+</div>
+
+<form [formGroup]="searchItemsFG" (ngSubmit)="searchItem()">
+  <mat-form-field class="form-field">
+    <mat-label>Cerca</mat-label>
+    <input
+      [formControl]="searchItemFC"
+      [required]="true"
+      cdkFocusInitial
+      matInput
+      placeholder="Label"
+      type="text"
+    />
+  </mat-form-field>
+  <button
+    mat-icon-button
+    title="search"
+    type="submit"
+  >
+    <mat-icon [fontIcon]="'search'"></mat-icon>
+  </button>
+</form>
+
+
+

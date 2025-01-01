@@ -1,0 +1,26 @@
+@use '~styles/typo.scss';
+:host {
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+
+  %commons {
+    margin: 1rem 2%;
+    width: 96%;
+  }
+
+  .result-wrapper {
+    @extend %commons;
+  }
+
+  form {
+    @extend %commons;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+
+    .form-field {
+      flex: 1;
+      margin-right: 1rem;
+    }
+  }
+}
