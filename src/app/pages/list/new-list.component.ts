@@ -50,6 +50,10 @@ import {
 import { MatDialog } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { fadeInOut } from './new-list.animations'
+import {
+  ListFindBottomSheetComponent
+} from './list.find.bottom-sheet/list.find.bottom-sheet.component'
+import { Nullable } from '../../shared/common.interfaces'
 
 @Component({
   selector: 'app-new-list',
@@ -470,6 +474,20 @@ class NewListComponent implements OnInit, OnDestroy {
 
   //#endregion
 
+  //#region Search items
+
+  searchItemsBottomSheet() {
+    this._bottomSheet.open(ListFindBottomSheetComponent, {
+      data: {
+        searchCbFN: (v: Nullable<string>) => {
+          return v ? Object.values(this.itemsRecord()).filter(i => i.label.toLowerCase().includes(v.toLowerCase())) : []
+        },
+      }
+    })
+  }
+
+  //#endregion
+
   //#region Confirm / Undo
 
   /**
@@ -533,6 +551,7 @@ class NewListComponent implements OnInit, OnDestroy {
   }
 
   //#endregion
+
 }
 
 export default NewListComponent
