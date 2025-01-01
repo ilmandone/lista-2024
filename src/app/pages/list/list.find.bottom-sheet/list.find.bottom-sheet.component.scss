@@ -1,6 +1,5 @@
 @use '~styles/typo.scss';
 :host {
-  //padding: 0.5rem 0 0;
   overflow: hidden;
 
   %commons {
@@ -16,11 +15,29 @@
     flex-flow: column;
     overflow-y: auto;
 
-    button {
+    button.mat-mdc-button {
       min-height: 3rem;
-      justify-content: flex-start;
-
       margin-bottom: 0.5rem;
+
+      border-radius: 0.25rem;
+      background-color: var(--search-items-background-color);
+
+      justify-content: flex-start;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      .button-span {
+        display: block;
+
+        &__content {
+          display: block;
+          width: 98%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
 

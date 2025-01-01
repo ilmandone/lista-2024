@@ -4,7 +4,13 @@
     <button
       mat-button
       (click)="dismiss(i.UUID)"
-    >{{i.label}}</button>
+    ><span class="button-span">
+      <span class="button-span__content">
+        {{i.label}}
+      </span>
+    </span>
+
+    </button>
   }
 </div>
 
