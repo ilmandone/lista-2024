@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { Unsubscribe } from 'firebase/firestore'
 import { SnackBarService } from '../../shared/snack-bar.service'
-import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop'
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { CdkScrollable } from '@angular/cdk/scrolling'
 import { ItemComponent } from '../../components/item/item.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
@@ -69,7 +69,8 @@ import { Nullable } from '../../shared/common.interfaces'
     ConfirmCancelComponent,
     MatIcon,
     MatIconButton,
-    MatTooltip
+    MatTooltip,
+    CdkDragPlaceholder
   ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss',
