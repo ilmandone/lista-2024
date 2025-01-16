@@ -72,19 +72,24 @@
     @defer (when itemsOrder().length > 0) {
       @for (order of itemsOrder(); track order) {
         <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
-          @if (!shopping || (shopping && !itemsRecord()[order].notToBuy)) {
+          @let item = itemsRecord()[order];
+
+          @if (!shopping || (shopping && !item.notToBuy)) {
+
+            @let UUID = item.UUID;
+
             <app-item
-              [id]="itemsRecord()[order].UUID"
+              [id]="UUID"
 
               [@fadeInOut]
               [appLongPress]="!shopping && !editing"
 
-              [data]="itemsRecord()[order]"
+              [data]="item"
               [editing]="editing"
-              [extra]="itemsRecord()[order].inCart ? 'add_shopping_cart' : ''"
+              [extra]="item.inCart ? 'add_shopping_cart' : ''"
               [shopping]="shopping"
-              [selected]="selectedItems.has(itemsRecord()[order].UUID)"
-              [stroked]="itemsRecord()[order].notToBuy && !editing"
+              [selected]="selectedItems.has(UUID)"
+              [stroked]="item.notToBuy && !editing"
               (clickedMore)="itemClicked($event)"
               (changed)="itemRenamed($event)"
               (groupChange)="itemGroupChange($event)"
