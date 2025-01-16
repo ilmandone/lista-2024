@@ -98,6 +98,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private _escKeyDisabled = false
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _itemsRecordCache!: ItemsDataWithGroupRecord
+  private _itemsOrderCache!: string[]
   private _listUpdateReg!: Unsubscribe
 
   isMobile = checkMobile()
@@ -160,6 +161,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _clearChangesAndCache() {
     this._itemsRecordCache = {}
+    this._itemsOrderCache = []
     this._cartSrv.clearUndo()
     this._itemsChanges.clear()
   }
@@ -415,6 +417,7 @@ class NewListComponent implements OnInit, OnDestroy {
   itemLongPress() {
     this.editing = true
     this._itemsRecordCache = this.itemsRecord()
+    this._itemsOrderCache = this.itemsOrder()
   }
 
   /**
@@ -551,9 +554,10 @@ class NewListComponent implements OnInit, OnDestroy {
       }
     } else {
       this.editing = false
-      this.itemsRecord.set(this._itemsRecordCache)
-      if (this.selectedItems.size > 0) this.selectedItems.clear()
 
+      this.itemsRecord.set(this._itemsRecordCache)
+      this.itemsOrder.set(this._itemsOrderCache)
+      if (this.selectedItems.size > 0) this.selectedItems.clear()
     }
   }
 
