@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { LoaderComponent } from '../../components/loader/loader.component'
 import { Unsubscribe } from 'firebase/firestore'
 import { SnackBarService } from '../../shared/snack-bar.service'
-import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop'
+import { CdkDrag, CdkDragDrop, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop'
 import { CdkScrollable } from '@angular/cdk/scrolling'
 import { ItemComponent } from '../../components/item/item.component'
 import { LongPressDirective } from '../../shared/directives/long-press.directive'
@@ -50,6 +50,10 @@ import {
 import { MatDialog } from '@angular/material/dialog'
 import { ListNewDialogComponent } from './list.new.dialog/list.new.dialog.component'
 import { fadeInOut } from './new-list.animations'
+import {
+  ListFindBottomSheetComponent
+} from './list.find.bottom-sheet/list.find.bottom-sheet.component'
+import { Nullable } from '../../shared/common.interfaces'
 
 @Component({
   selector: 'app-new-list',
@@ -65,7 +69,8 @@ import { fadeInOut } from './new-list.animations'
     ConfirmCancelComponent,
     MatIcon,
     MatIconButton,
-    MatTooltip
+    MatTooltip,
+    CdkDragPlaceholder
   ],
   templateUrl: './new-list.component.html',
   styleUrl: './new-list.component.scss',
@@ -93,6 +98,7 @@ class NewListComponent implements OnInit, OnDestroy {
   private _escKeyDisabled = false
   private _itemsChanges = new SetOfItemsChanges<ItemsChanges>()
   private _itemsRecordCache!: ItemsDataWithGroupRecord
+  private _itemsOrderCache!: string[]
   private _listUpdateReg!: Unsubscribe
 
   isMobile = checkMobile()
@@ -155,6 +161,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
   private _clearChangesAndCache() {
     this._itemsRecordCache = {}
+    this._itemsOrderCache = []
     this._cartSrv.clearUndo()
     this._itemsChanges.clear()
   }
@@ -286,7 +293,7 @@ class NewListComponent implements OnInit, OnDestroy {
 
           this._itemsChanges.set([{
             ...iu,
-           crud: 'update'
+            crud: 'update'
           }])
         })
 
@@ -410,6 +417,7 @@ class NewListComponent implements OnInit, OnDestroy {
   itemLongPress() {
     this.editing = true
     this._itemsRecordCache = this.itemsRecord()
+    this._itemsOrderCache = this.itemsOrder()
   }
 
   /**
@@ -470,6 +478,26 @@ class NewListComponent implements OnInit, OnDestroy {
 
   //#endregion
 
+  //#region Search items
+
+  /**
+   * Open a bottom sheet for item search by label
+   */
+  searchItemsBottomSheet() {
+    this._bottomSheet.open(ListFindBottomSheetComponent, {
+      data: {
+        searchCbFN: (v: Nullable<string>) => {
+          return v ? Object.values(this.itemsRecord()).filter(i => i.label.toLowerCase().includes(v.toLowerCase())) : []
+        }
+      }
+    })
+      .afterDismissed().subscribe(r => {
+      document.getElementById(r)?.scrollIntoView({ behavior: 'smooth' });
+    })
+  }
+
+  //#endregion
+
   //#region Confirm / Undo
 
   /**
@@ -482,7 +510,7 @@ class NewListComponent implements OnInit, OnDestroy {
     this._saveItemsChanges()
 
     this._snackbarSrv.show({
-      message:'Spesa completata',
+      message: 'Spesa completata',
       severity: 'info',
       dismiss: true
     })
@@ -526,13 +554,15 @@ class NewListComponent implements OnInit, OnDestroy {
       }
     } else {
       this.editing = false
-      this.itemsRecord.set(this._itemsRecordCache)
-      if (this.selectedItems.size > 0) this.selectedItems.clear()
 
+      this.itemsRecord.set(this._itemsRecordCache)
+      this.itemsOrder.set(this._itemsOrderCache)
+      if (this.selectedItems.size > 0) this.selectedItems.clear()
     }
   }
 
   //#endregion
+
 }
 
 export default NewListComponent
