@@ -70,7 +70,7 @@
 
   <div class="main__container">
     @defer (when itemsOrder().length > 0) {
-      @for (order of itemsOrder(); track order) {
+      @for (order of itemsOrder(); track $index) {
         <div class="drag-box" cdkDrag [cdkDragDisabled]="!editing || itemsOrder()!.length < 2">
           @let item = itemsRecord()[order];
 
